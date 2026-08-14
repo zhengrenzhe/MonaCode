@@ -1,0 +1,151 @@
+<style>
+  :root{--ok:#059669;--warn:#d97706;--bad:#dc2626;--blue:#2563eb;--violet:#7c3aed;--cyan:#0891b2;--slate:#475569}
+  .hero{display:flex;gap:14px;align-items:flex-start;margin:12px 0 14px;padding:15px;border:1px solid var(--ok);border-radius:14px;background:color-mix(in srgb,var(--ok) 6%,var(--surface))}.hero-mark{width:62px;height:62px;flex:0 0 62px;display:grid;place-items:center;border-radius:14px;background:var(--ok);color:#fff;font-weight:900;font-size:12px}.hero h3{margin:0 0 5px;font-size:14px}.hero p{margin:0;color:var(--muted);font-size:8.4px;line-height:1.5}
+  .facts{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px;margin:12px 0}.fact{padding:9px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}.fact b{display:block;color:var(--accent);font-size:9px;margin-bottom:3px}.fact span{font-size:7.2px;line-height:1.42;color:var(--muted)}
+  .section{margin-top:15px}.section h3{margin:0 0 8px;font-size:12px}.section p.note{margin:0 0 8px;color:var(--muted);font-size:7.6px;line-height:1.48}
+  .options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.option{border:1px solid var(--border);border-radius:11px;padding:10px;background:var(--surface)}.option h4{margin:0 0 5px;font-size:9.5px}.option p{margin:0;font-size:7.4px;line-height:1.48;color:var(--muted)}.option.reject{border-color:var(--bad)}.option.keep{border-color:var(--ok);box-shadow:0 0 0 2px color-mix(in srgb,var(--ok) 12%,transparent)}
+  .badge{display:inline-block;margin-bottom:6px;padding:2px 6px;border-radius:999px;font-size:6.8px;font-weight:850}.red{color:#b91c1c;background:color-mix(in srgb,var(--bad) 13%,var(--surface))}.green{color:#047857;background:color-mix(in srgb,var(--ok) 14%,var(--surface))}.amber{color:#b45309;background:color-mix(in srgb,var(--warn) 15%,var(--surface))}
+  .flow{padding:11px;border:1px solid var(--border);border-radius:12px;background:var(--surface)}.lane{display:grid;grid-template-columns:1.05fr 18px 1.15fr 18px 1.15fr 18px 1.1fr;align-items:stretch;gap:4px;margin:5px 0}.node{display:flex;flex-direction:column;justify-content:center;min-height:46px;padding:7px;border:1px solid var(--border);border-radius:9px;font-size:7.4px;line-height:1.35}.node b{font-size:8.1px}.node em{font-style:normal;color:var(--muted);font-size:6.5px;margin-top:2px}.arrow{display:grid;place-items:center;color:var(--muted);font-size:15px}.blue{border-color:var(--blue)}.violet{border-color:var(--violet)}.cyan{border-color:var(--cyan)}.ok{border-color:var(--ok)}
+  .matrix{border:1px solid var(--border);border-radius:11px;overflow:hidden}.row{display:grid;grid-template-columns:.78fr 1.15fr 1.25fr 1.15fr;border-top:1px solid var(--border)}.row:first-child{border-top:0;font-weight:800;background:color-mix(in srgb,var(--accent) 6%,var(--surface))}.cell{padding:7px 8px;border-left:1px solid var(--border);font-size:7.2px;line-height:1.43}.cell:first-child{border-left:0}.yes{color:#047857;font-weight:750}.no{color:#b91c1c;font-weight:750}.gate{color:#b45309;font-weight:750}
+  .stamps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.stamp{padding:9px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}.stamp b{display:block;font-size:8.6px;margin-bottom:4px}.stamp span{font-size:7.1px;line-height:1.43;color:var(--muted)}
+  .attacks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.attack{padding:8px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}.attack h4{margin:0 0 4px;font-size:8.3px}.attack p{margin:0;font-size:6.9px;line-height:1.43;color:var(--muted)}.attack b{color:var(--text)}.attack.hit{border-color:var(--warn)}.attack.closed{border-color:var(--ok)}
+  .boundary{display:grid;grid-template-columns:1.25fr 1fr;gap:8px}.box{padding:10px;border:1px solid var(--border);border-radius:11px;background:var(--surface)}.box h4{margin:0 0 6px;font-size:9.5px}.box ul{margin:0 0 0 14px;padding:0;font-size:7.4px;line-height:1.5}
+  .source{margin-top:12px;padding:9px 10px;border-left:3px solid var(--blue);background:color-mix(in srgb,var(--blue) 5%,var(--surface));color:var(--muted);font-size:7.2px;line-height:1.48}
+  .actions{display:flex;gap:8px;margin-top:14px}.decision{flex:1;border:1px solid var(--border);border-radius:11px;padding:11px;cursor:pointer;background:var(--surface)}.decision h3{margin:0 0 3px;font-size:10px}.decision small{color:var(--muted);font-size:7.2px}
+  @media(max-width:950px){.facts{grid-template-columns:1fr 1fr}.options,.attacks,.stamps,.boundary{grid-template-columns:1fr}.lane{grid-template-columns:1fr 12px 1fr 12px 1fr 12px 1fr}.row{grid-template-columns:.7fr 1fr 1.08fr 1fr}.cell{padding:5px 4px;font-size:6.6px}}
+</style>
+
+<h2>布局与渲染收敛版：V1-R2 Core Text 单一排版真相</h2>
+<p class="subtitle">对抗依据：本地 Monaco Editor 0.56 源码、MacOSX 26.5 SDK 公共头文件、Apple 官方文档，以及本机 macOS 26.6 的 TextKit 2 / Core Text 运行时探针。此版删除了 V1-R 中无法由公共合同证明的 TextKit 分段排版路线。</p>
+
+<div class="hero">
+  <div class="hero-mark">V1-R2</div>
+  <div><h3>MonaViewGraph + Core Text 固定为唯一布局链；CoreGraphics 与 Metal 只替换像素生成和合成</h3><p>ProjectionEngine 精确拥有 model↔view、断行、折叠、注入文本和纵向索引；Core Text 精确拥有每个物化 view row 的 shaping、glyph runs、bidi caret 与 hit-test；Renderer 不得重新排版。TextKit 2 不进入主文本生产链。由此消除逐行双排版、整代排版切换、IME 期间换后端和 TextKit 离屏 estimate 四类状态。</p></div>
+</div>
+
+<div class="facts">
+  <div class="fact"><b>Monaco 同步全量 projection</b><span>wrap/config 变化时重建全部 line projections，并同步更新 view-line count prefix sum；这在调用返回后立即可观察。</span></div>
+  <div class="fact"><b>TextKit 2 离屏不是精确真相</b><span>Apple 明示其布局始终 noncontiguous；未 ensure 的离屏数据不保证准确，全量 ensure 对大文档代价高。</span></div>
+  <div class="fact"><b>本机 TextKit 反例</b><span>clipping 仍换行；maximumLines=1 只截断；break delegate 不能强制外部 break map；裸 line fragment 不产出几何。</span></div>
+  <div class="fact"><b>本机 Core Text 正例</b><span>CTTypesetter 按指定 UTF-16 range 生成 CTLine；contextual/cluster break、position↔index、bidi 主/次 caret 均返回有效数据。</span></div>
+  <div class="fact"><b>Metal 不是 typesetter</b><span>Metal 只接收 buffer、texture、shader 和 drawable；Unicode shaping 与 font fallback 固定来自同一 CTLine/CTRun 结果。</span></div>
+</div>
+
+<div class="section">
+  <h3>路线判决</h3>
+  <div class="options">
+    <div class="option reject"><span class="badge red">删除</span><h4>TextKit 2 独占主布局</h4><p>离屏 estimate 不能进入精确 view graph；全量 ensure 仍无法接收外部 Monaco simple break map。该路线同时破坏同步映射与断行等价。</p></div>
+    <div class="option reject"><span class="badge red">删除</span><h4>TextKit viewport row shaper</h4><p>公共 API 没有“给定 break range 后只 shaping 且永不二次换行”的合同。本机三项探针已经击穿此假设。</p></div>
+    <div class="option keep"><span class="badge green">锁定</span><h4>Projection + Core Text + Renderer</h4><p>断行范围由 Mona 决定，CTTypesetterCreateLine 接收精确 range；所有 renderer 消费同一 LineLayoutRecord，不存在第二套坐标。</p></div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>唯一数据流</h3>
+  <div class="flow">
+    <div class="lane">
+      <div class="node blue"><b>Immutable View Snapshot</b><em>model/version + options + style epochs</em></div><div class="arrow">›</div>
+      <div class="node violet"><b>MonaProjectionEngine</b><em>simple exact port / advanced native rules</em></div><div class="arrow">›</div>
+      <div class="node ok"><b>MonaViewGraph</b><em>exact mapping + Int64 vertical indexes</em></div><div class="arrow">›</div>
+      <div class="node ok"><b>MainActor Apply Gate</b><em>exact stamp match, atomic root install</em></div>
+    </div>
+    <div class="lane">
+      <div class="node ok"><b>Projected View Row</b><em>render string + reversible UTF-16 map</em></div><div class="arrow">›</div>
+      <div class="node cyan"><b>Core Text Layout</b><em>CTTypesetter / CTLine / CTRun / caret edges</em></div><div class="arrow">›</div>
+      <div class="node violet"><b>LineLayoutRecord</b><em>only geometry truth for all consumers</em></div><div class="arrow">›</div>
+      <div class="node blue"><b>CG or Metal Renderer</b><em>pixels only; no break or hit-test authority</em></div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>断行与跨引擎等价边界</h3>
+  <div class="matrix">
+    <div class="row"><div class="cell">模式</div><div class="cell">固定算法</div><div class="cell">等价 oracle</div><div class="cell">可观察效果</div></div>
+    <div class="row"><div class="cell"><b>simple</b></div><div class="cell">逐语句移植 Monaco 0.56 MonospaceLineBreaksComputer；UTF-16、tab、fullwidth、break-before/after、indent、injected text、escaped LF 全部保留</div><div class="cell yes">给定相同 FontInfo 数值和 options，break offsets / visible columns / mappings 必须逐项相等</div><div class="cell">本机字体度量驱动端到端列数；浏览器与 Core Text 的像素断点不作为跨引擎 oracle</div></div>
+    <div class="row"><div class="cell"><b>advanced</b></div><div class="cell">CTTypesetterSuggestLineBreak；锁定 Unicode 17.0 / UAX #14 rev.55 数据执行 CSS Text 3 keep-all 边界抑制；无可接受点时以 SuggestClusterBreak 实现 overflow-wrap:anywhere</div><div class="cell yes">不拆 surrogate/typographic cluster；range 可逆；宽度、indent、hard break、keepAll 语义逐项验证</div><div class="cell">语义等价于“委托平台排版器”；同一 logical line 的所有 CTLine 均由同一 CTTypesetter range 创建，以保留跨行 shaping context</div></div>
+    <div class="row"><div class="cell"><b>accessibility</b></div><div class="cell">启用时固定切到 advanced，和 Monaco 的配置分支一致</div><div class="cell yes">AX 文字、range、frame、selection 与当前 ViewGraph/LineLayoutRecord 同代</div><div class="cell">离屏 frame 查询同步物化目标 rows，不滚动、不采用 estimate</div></div>
+    <div class="row"><div class="cell"><b>display string</b></div><div class="cell">tab expansion、faux indent、control replacement、injected text 形成 RenderStringMap</div><div class="cell yes">每个 display boundary 可映射回 view/model 或明确的 synthetic affinity</div><div class="cell">Core Text index 永不直接冒充 model offset</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>失效域：删除 V1-R 的单一大 LayoutStamp</h3>
+  <div class="stamps">
+    <div class="stamp"><b>ProjectionStamp</b><span>model/version、hidden/injected roots、全部 wrap options、tabSize、base FontMetricsID、逻辑 contentWidth。它只决定 view rows 和映射。</span></div>
+    <div class="stamp"><b>VerticalStamp</b><span>projection root、base/custom line heights、zones、padding。view-line 与 zone 高度按 Monaco 规则截成整数点，前缀和使用 Int64。</span></div>
+    <div class="stamp"><b>ScrollDimensionStamp</b><span>vertical root、observed width root、viewport size、scroll-beyond 与 scrollbar options。覆盖横向滚动条对总高度的反向影响。</span></div>
+    <div class="stamp"><b>GeometryStamp</b><span>projected row、RenderStringMap、base/inline/token typography、font features/variations、letter spacing。颜色不进入该 stamp。</span></div>
+    <div class="stamp"><b>PaintStamp</b><span>token/decorations 的颜色和线型、selection、find、caret、theme paint。主题中的 bold/italic 属于 GeometryStamp，不属于纯 paint。</span></div>
+    <div class="stamp"><b>Surface + FrameStamp</b><span>backing scale、color space、renderer/resource generation；再合并 accepted roots、viewport、scroll 与 visible record set。scale 变化不触发 rewrap。</span></div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>字体与 line box 合同</h3>
+  <div class="matrix">
+    <div class="row"><div class="cell">输入</div><div class="cell">固定解析</div><div class="cell">失效范围</div><div class="cell">结果</div></div>
+    <div class="row"><div class="cell"><b>默认字体</b></div><div class="cell">macOS 默认保留 Monaco 0.56 的 `Menlo, Monaco, 'Courier New', monospace`、12 pt、normal、letterSpacing 0</div><div class="cell">font resolver / metrics / geometry</div><div class="cell">逐项解析已安装 family；generic monospace 最终落到系统等宽字体</div></div>
+    <div class="row"><div class="cell"><b>lineHeight</b></div><div class="cell">0 → round(1.5 × fontSize)；0&lt;x&lt;8 → round(x × fontSize)；最小 8；zoom multiplier 与 Monaco 顺序一致</div><div class="cell">VerticalStamp</div><div class="cell">row 的 CSS-like strut 使用 base ascent/descent 分配 half-leading；custom line-height decoration 对同一 row 取最大值</div></div>
+    <div class="row"><div class="cell"><b>features / variations</b></div><div class="cell">四字符 OpenType tag/value 映射到 kCTFontFeatureSettingsAttribute；axis tag/value 映射到 kCTFontVariationAttribute</div><div class="cell">base 值改 projection + geometry；inline/token 值只改 geometry</div><div class="cell">CTLine 的实际 fallback font/run 成为 record 内容；Metal 不自行做 font fallback</div></div>
+    <div class="row"><div class="cell"><b>字体注册变化</b></div><div class="cell">监听 kCTFontManagerRegisteredFontsChangedNotification</div><div class="cell">resolver epoch、base metrics、受影响 geometry/surfaces</div><div class="cell">同名 family 新增/删除后不会继续复用旧 CTFont/atlas entry</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>坐标、滚动与大文档</h3>
+  <div class="boundary">
+    <div class="box"><h4>固定坐标合同</h4><ul><li>model/view column 均为 UTF-16；validatePosition 禁止 surrogate pair 内部位置，组合序列内部仍是合法 API position</li><li>键盘左右移动按 grapheme；pointer hit-test 采用 CTLine index 并归一到合法 UTF-16 boundary</li><li>bidi record 保存 primary/secondary caret offsets 和 visual caret edges；selection 可生成多个 visual segments</li><li>内部横坐标为 Double 逻辑点；纵坐标、scrollTop/Left 和高度为 Int64 整数逻辑点</li><li>每帧以当前 scroll origin 做局部坐标减法后才转换 CGFloat/Float，NSView/CALayer/Metal 从不承载巨型 document frame</li></ul></div>
+    <div class="box"><h4>MonaScrollModel 是唯一滚动真相</h4><ul><li>NSScroller、wheel phase/momentum 与 natural-direction 只是输入/输出适配器，不使用巨型 NSScrollView documentView</li><li>精确触控板 delta 保存在 Double residual；公开 scroll position 与 accepted frame 使用整数点</li><li>rewrap/zone/line-height 变化以首个可见 model position + row delta 恢复 stable viewport</li><li>水平 scrollWidth 只取已物化/显式查询 rows 的有效最大宽度，并加 zone/widget minWidth；它不伪装成全文精确值</li></ul></div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>渲染器合同：只换像素，不换排版</h3>
+  <div class="matrix">
+    <div class="row"><div class="cell">Renderer</div><div class="cell">输入</div><div class="cell">文字路径</div><div class="cell">选择规则</div></div>
+    <div class="row"><div class="cell"><b>CoreGraphics tiled</b></div><div class="cell">FrameSnapshot + LineLayoutRecords</div><div class="cell">CTLine/CTRun draw 到 viewport/tile surfaces；selection、caret、decorations 用同一 geometry</div><div class="cell gate">完整能力后跑既定同机 Monaco 0.56 独立指标；全部不差才取得默认资格</div></div>
+    <div class="row"><div class="cell"><b>Metal compositor</b></div><div class="cell">同一 records；不重新运行 typesetter</div><div class="cell">mask-compatible glyph atlas；color glyph、non-identity matrix 与复杂 run 栅格成 RGBA line/run tile 后由 Metal 合成</div><div class="cell gate">CoreGraphics 任一指标落后即启用；Metal 自身仍须全部通过同一门槛</div></div>
+    <div class="row"><div class="cell"><b>资源 fallback</b></div><div class="cell">geometry 不变，renderer/resource generation 递增</div><div class="cell">Metal 分配/设备失败时，下一完整 frame 切 CoreGraphics；禁止一帧跨 generation 混合</div><div class="cell yes">IME、AX、hit-test 不受 renderer 切换影响，因为它们只读 LineLayoutRecord</div></div>
+    <div class="row"><div class="cell"><b>display clock</b></div><div class="cell">CG 使用 view/window CADisplayLink；Metal 使用 CAMetalDisplayLink update</div><div class="cell">按实际 display target timestamp admission；窗口离屏时停止无效 frame work</div><div class="cell yes">60/120 Hz、p50/p95/p99、cold/hot、missed presentation、input-to-present 与资源指标分别比较</div></div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>发散攻击闭环</h3>
+  <div class="attacks">
+    <div class="attack hit"><h4>01 · TextKit estimate 污染 graph</h4><p><b>命中并删除：</b>TextKit 2 不再进入主文本布局。</p></div>
+    <div class="attack hit"><h4>02 · 外部 break map 交给 TextKit</h4><p><b>命中并删除：</b>公开 API 与本机探针均未提供此合同。</p></div>
+    <div class="attack closed"><h4>03 · simple / advanced 混为一谈</h4><p><b>收敛：</b>纯算法精确 oracle 与 native typography oracle 分离。</p></div>
+    <div class="attack closed"><h4>04 · inline font 改写 wrapping</h4><p><b>收敛：</b>与 Monaco 一致，只改 row geometry；不改 projection。</p></div>
+    <div class="attack hit"><h4>05 · 主题一律 paint-only</h4><p><b>命中并修正：</b>token bold/italic 进入 GeometryStamp，颜色才是 paint。</p></div>
+    <div class="attack hit"><h4>06 · backing scale 触发 rewrap</h4><p><b>命中并修正：</b>scale 只失效 surface；逻辑 width 不变时 projection 不变。</p></div>
+    <div class="attack closed"><h4>07 · scrollWidth 伪装全文精确</h4><p><b>收敛：</b>明确为 observed width，reveal/query 先物化目标 row。</p></div>
+    <div class="attack closed"><h4>08 · 巨型 NSScrollView 坐标</h4><p><b>收敛：</b>Int64 scroll model + 固定 viewport surface + frame-local origin。</p></div>
+    <div class="attack closed"><h4>09 · emoji/RTL 逐行换排版器</h4><p><b>收敛：</b>全部由 Core Text 排版；renderer 仅混合 mask/RGBA payload。</p></div>
+    <div class="attack closed"><h4>10 · bidi 单一 caret x</h4><p><b>收敛：</b>保存 CTLine primary/secondary offsets 与 visual caret edges。</p></div>
+    <div class="attack closed"><h4>11 · tab/inlay offset 泄漏</h4><p><b>收敛：</b>RenderStringMap 隔离 display UTF-16 与 model UTF-16。</p></div>
+    <div class="attack closed"><h4>12 · zone 做 attachment</h4><p><b>收敛：</b>独立 VerticalWhitespaceIndex；zone 无文本位置。</p></div>
+    <div class="attack closed"><h4>13 · diff 两侧单独闪动</h4><p><b>收敛：</b>两个独立 ViewGraph；paired spacer zones 在同一 presentation batch 安装。</p></div>
+    <div class="attack closed"><h4>14 · IME/AX 请求离屏 estimate</h4><p><b>收敛：</b>QueryGeometryBarrier 同步精确物化，不滚动、不提交临时 frame。</p></div>
+    <div class="attack closed"><h4>15 · 异步旧结果覆盖新文本</h4><p><b>收敛：</b>六类 stamps 全等才安装；迟到结果直接丢弃。</p></div>
+    <div class="attack closed"><h4>16 · Metal atlas 资源丢失</h4><p><b>收敛：</b>renderer generation 切换；完整旧 frame 保留到完整新 frame admission。</p></div>
+    <div class="attack closed"><h4>17 · 字体安装后缓存失真</h4><p><b>收敛：</b>注册字体变化通知递增 resolver/metrics epoch。</p></div>
+    <div class="attack closed"><h4>18 · 超长行被裁成模型删除</h4><p><b>收敛：</b>10,000 只截 paint；model/mapping/commands 全文保留；-1 无内部短上限。</p></div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>不再属于设计不确定性的三项实测结果</h3>
+  <div class="boundary">
+    <div class="box"><h4>决策规则已经固定</h4><ul><li>CoreGraphics 全指标通过：它取得默认 renderer，Metal 保留为可选加速器</li><li>CoreGraphics 任一指标落后：Metal 成为交付必需项；Metal 未全过则本节未验收</li><li>cache 只允许有界 working set；默认 overscan 固定为每侧 max(20 rows, 1 viewport)；任何额外 retention 都计入资源对比</li></ul></div>
+    <div class="box"><h4>当前事实状态</h4><ul><li>仓库没有可执行 MonaCode slice</li><li>因此没有 renderer 已取得性能通过结论</li><li>这不是架构分叉；同一门槛会产生唯一选择</li><li>未经实测不写“TextKit/CG/Metal 更快”的结论</li></ul></div>
+  </div>
+</div>
+
+<div class="source"><b>证据索引：</b>Monaco 0.56 `viewModelLines`, `monospaceLineBreaksComputer`, `domLineBreaksComputer`, `modelLineProjection`, `LinesLayout`, `LineHeights`, `ViewLines`, `ViewGpuContext`; MacOSX26.5 SDK `NSTextLayoutManager`, `NSTextLayoutFragment`, `NSTextLineFragment`, `NSTextContainer`, `NSAccessibilityProtocols`, `CTTypesetter`, `CTLine`, `CTRun`, `CTFontDescriptor`, `CAMetalDisplayLink`, `NSView`, `NSWindow`; Apple “Meet TextKit 2” 对 noncontiguous / offscreen estimates / ensureLayout cost 的明示。本机探针的 TextKit line ranges、delegate callbacks、Core Text range/caret/bidi 数据已记录在本轮工具输出中。</div>
+
+<div class="actions">
+  <div class="decision" data-choice="accept-layout-v1r2" onclick="toggleSelect(this)"><h3>采纳 V1-R2</h3><small>锁定 Core Text 单一排版真相、六类失效域、自有滚动模型以及 CG/Metal 的确定选择规则。</small></div>
+  <div class="decision" data-choice="challenge-layout-v1r2" onclick="toggleSelect(this)"><h3>指出新反例</h3><small>反例必须落在未覆盖的可观察行为、公开 API 合同或既定验收指标上。</small></div>
+</div>

@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "product": "MonaCode",
+  "decision": "adopted",
+  "adoptedOn": "2026-08-14",
+  "behaviorBaseline": "monaco-editor@0.56.0",
+  "promotedRevision": "G4-R-full-scope-final",
+  "contract": {
+    "path": "artifacts/monacode-g4r-authoritative-manifest.json",
+    "artifactRevision": "G4-R-full-scope-candidate",
+    "sha256": "f4d0da0ff6c1ad90ab1376588260afd6c92c1eca236619449c9b6532b5e57021",
+    "bytesAreImmutable": true
+  },
+  "humanReadableCompanion": {
+    "path": "artifacts/global-g4r-authoritative-contract.html",
+    "sha256": "4bbcce9ddb7ac5bf69d4dfa1945913a49f6f37186ffea7c645469684e029adf8",
+    "normative": false
+  },
+  "audit": {
+    "path": "artifacts/monacode-g4r-audit.mjs",
+    "sha256": "5b37ec76ec3d381feb35bfb57d5457314b3c5dd60fd0e8b8271cb93e2ac88071",
+    "acceptedStatus": "pass",
+    "acceptedFailureCount": 0,
+    "acceptedUnresolvedScopeDecisions": 0
+  },
+  "archive": {
+    "checksumIndex": "SHA256SUMS",
+    "artifactCount": 72,
+    "htmlCount": 52,
+    "jsonCount": 19,
+    "moduleCount": 1,
+    "runtimeStateExcluded": [
+      ".last-port",
+      ".last-token",
+      "server-info",
+      "server-instance-id",
+      "server.pid"
+    ]
+  },
+  "status": {
+    "designScope": "frozen",
+    "implementation": "not-started",
+    "releaseAcceptance": "not-passed"
+  },
+  "changeRule": "Any change to feature scope, cuts, native adaptations, architecture, host contracts, correctness gates, or performance thresholds requires a new global revision and adoption record."
+}

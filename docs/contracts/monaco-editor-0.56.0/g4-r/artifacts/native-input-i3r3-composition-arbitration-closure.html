@@ -1,0 +1,48 @@
+<style>
+  :root{--ok:#059669;--warn:#d97706;--bad:#dc2626;--blue:#2563eb;--violet:#7c3aed;--cyan:#0891b2}
+  .hero{display:flex;gap:13px;align-items:flex-start;padding:14px;border:2px solid var(--bad);border-radius:14px;background:color-mix(in srgb,var(--bad) 5%,var(--surface));margin:12px 0 15px}.mark{width:62px;height:62px;flex:0 0 62px;display:grid;place-items:center;border-radius:13px;background:var(--bad);color:#fff;font-weight:900}.hero h3{margin:0 0 5px;font-size:14px}.hero p{margin:0;color:var(--muted);font-size:8.2px;line-height:1.5}
+  .section{margin-top:15px}.section h3{margin:0 0 8px;font-size:12px}.hits{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.hit{padding:9px;border:1px solid var(--warn);border-radius:10px;background:var(--surface)}.hit b{display:block;font-size:8.4px;margin-bottom:3px}.hit span{display:block;color:var(--muted);font-size:6.9px;line-height:1.43}.hit em{font-style:normal;color:#b45309;font-weight:800}
+  .flow{display:grid;grid-template-columns:1fr 20px 1.15fr 20px 1.15fr 20px 1fr;gap:4px;align-items:stretch;padding:11px;border:1px solid var(--border);border-radius:11px;background:var(--surface)}.node{padding:8px;border:1px solid var(--blue);border-radius:9px;font-size:7px;line-height:1.43}.node b{display:block;font-size:8.2px}.node.guard{border-color:var(--bad)}.node.ime{border-color:var(--violet)}.node.sink{border-color:var(--ok)}.arrow{display:grid;place-items:center;color:var(--muted);font-size:14px}
+  .matrix{border:1px solid var(--border);border-radius:11px;overflow:hidden}.row{display:grid;grid-template-columns:.82fr 1.12fr 1.65fr 1.1fr;border-top:1px solid var(--border)}.row:first-child{border-top:0;font-weight:800;background:color-mix(in srgb,var(--accent) 6%,var(--surface))}.cell{padding:7px 8px;border-left:1px solid var(--border);font-size:7px;line-height:1.45}.cell:first-child{border-left:0}.yes{color:#047857;font-weight:750}.no{color:#b91c1c;font-weight:750}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.card{padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}.card h4{margin:0 0 5px;font-size:9px}.card ul{margin:0 0 0 14px;padding:0;font-size:7px;line-height:1.5}.source{margin-top:12px;padding:9px 10px;border-left:3px solid var(--blue);background:color-mix(in srgb,var(--blue) 5%,var(--surface));color:var(--muted);font-size:7px;line-height:1.48}
+  @media(max-width:980px){.hits,.cards{grid-template-columns:1fr 1fr}.flow{grid-template-columns:1fr}.arrow{transform:rotate(90deg)}.row{grid-template-columns:.65fr 1fr 1.15fr .75fr}.cell{padding:5px 4px;font-size:6.2px}}
+</style>
+
+<h2>原生输入第五轮攻击：I3-R3 composition 与 keybinding 仲裁闭包</h2>
+<p class="subtitle">本页修正 I3-R2 的全局 resolver-first 错误，并补上 AppKit 菜单 key equivalent 在 view.keyDown 之前消费事件的缺口。I3-R 的双平面、事务、ModelInputBarrier 与 I3-R2 的 key mapping / resolver 排序继续有效。</p>
+
+<div class="hero"><div class="mark">I3-R3</div><div><h3>I3-R2 的“每个 keyDown 都先解析 keybinding”作废；唯一规则改为 composition-aware exclusive arbitration</h3><p>有 marked text 时，NSTextInputContext.handleEvent 先取得一次且仅一次的消费权；无 marked text 时，resolver 先取得消费权。任何事件只进入 input system、keybinding command、native menu 三个 sink 中的一个。</p></div></div>
+
+<div class="section"><h3>本轮四个确定命中</h3><div class="hits">
+  <div class="hit"><b>27 · 候选方向键被 cursor command 抢走</b><span>Monaco 的 cursorLeft / cursorRight 只要求 textInputFocus，没有 !isComposing 条件。<em>浏览器靠输入节点 stopPropagation 隔离，不靠 resolver context。</em></span></div>
+  <div class="hit"><b>28 · composition Backspace 被 deleteLeft 抢走</b><span>deleteLeft 同样只要求 textInputFocus。<em>Monaco textarea 在 currentComposition + Backspace 时显式 stopPropagation。</em></span></div>
+  <div class="hit"><b>29 · view.keyDown 不是最早入口</b><span>AppKit 的 local event monitor 在 NSApplication.sendEvent 分发前运行；menu key equivalent 能直接触发 action。<em>只覆盖 keyDown 会漏掉或双执行 Command 快捷键。</em></span></div>
+  <div class="hit"><b>30 · chord 与 IME 可同时存活</b><span>Monaco 进入 MoreChordsNeeded 后调用 IME.disable，退出时 IME.enable。<em>原生状态机禁止 ChordActive 与 MarkedActive 同时为真。</em></span></div>
+</div></div>
+
+<div class="section"><h3>进程内唯一事件入口</h3><div class="flow">
+  <div class="node"><b>AppKeyEventGateway</b>进程内一个 ref-counted NSEvent local monitor；只处理 key window 中 first responder 属于已注册 editor 的 keyDown</div><div class="arrow">›</div>
+  <div class="node guard"><b>Immutable dispatch record</b>event identity、editor ID、composition token、context snapshot、semantic chord；同一 NSEvent 只创建一条记录</div><div class="arrow">›</div>
+  <div class="node ime"><b>State-dependent arbitration</b>MarkedActive → input context first；Idle → resolver first；ChordActive → resolver only</div><div class="arrow">›</div>
+  <div class="node sink"><b>Exactly one sink</b>return nil＝已消费；return original event＝交还 menu / NSView；NSView 读取 record 后只执行尚未执行的 input fallback</div>
+</div></div>
+
+<div class="section"><h3>完整仲裁表</h3><div class="matrix">
+  <div class="row"><div class="cell">入口状态</div><div class="cell">第一阶段</div><div class="cell">分支与唯一结果</div><div class="cell">不变量</div></div>
+  <div class="row"><div class="cell"><b>MarkedActive</b></div><div class="cell">inputContext.handleEvent(originalEvent)</div><div class="cell">true：gateway 返回 nil；false：soft-resolve。KbFound / MoreChordsNeeded 返回 nil；NoMatching 返回原事件，并标记 NSView 不得再次 handleEvent，只能执行一次 interpret fallback。</div><div class="cell yes">候选键不触发 editor move/delete</div></div>
+  <div class="row"><div class="cell"><b>Idle</b></div><div class="cell">resolver(normalizedEvent, contextSnapshot)</div><div class="cell">KbFound / MoreChordsNeeded：gateway 返回 nil；NoMatching：返回原事件。若 menu 未消费，NSView.keyDown 按 record 调用一次 interpretKeyEvents。</div><div class="cell yes">快捷键与文字输入互斥</div></div>
+  <div class="row"><div class="cell"><b>ChordActive</b></div><div class="cell">resolver(currentPrefix + normalizedEvent)</div><div class="cell">期间不调用 inputContext / interpretKeyEvents。找到命令、无匹配、focus loss 或 timeout 均退出 chord 并恢复 composition admission。</div><div class="cell yes">无文字泄漏进 chord</div></div>
+  <div class="row"><div class="cell"><b>Menu fallback</b></div><div class="cell">gateway NoMatching 后 AppKit 正常分发</div><div class="cell">menu item 命中时 action 进入统一 CommandService；未命中时事件到 NSView。dispatch record 在 menu action、NSView sink 或本轮 main-run-loop 尾部清除。</div><div class="cell yes">无第二次 resolve / execute</div></div>
+  <div class="row"><div class="cell"><b>Editor unfocused</b></div><div class="cell">registry 查找失败</div><div class="cell">monitor 原样返回 NSEvent，不建 record、不查询 context、不调用 input context；AppKit 获得完整原生行为。</div><div class="cell yes">组件不劫持宿主应用</div></div>
+  <div class="row"><div class="cell"><b>Nested tracking loop</b></div><div class="cell">AppKit 不向 local monitor 投递</div><div class="cell">菜单跟踪、控件跟踪、窗口拖动期间不承诺 editor keybinding；焦点仍在 editor 且事件重新进入 sendEvent 后恢复正常入口。</div><div class="cell yes">与 SDK 明示边界一致</div></div>
+</div></div>
+
+<div class="section"><h3>composition / chord 原子状态机</h3><div class="cards">
+  <div class="card"><h4>Enter composition</h4><ul><li>仅 Idle 允许 setMarkedText 建立 MarkedActive</li><li>每次 callback 继续走 I3-R PreparedInputCommit</li><li>handleEvent=true 后不得继续 resolver</li><li>flagsChanged 不创建 single-modifier candidate</li><li>insert/unmark/discard 完成后回到 Idle</li></ul></div>
+  <div class="card"><h4>Enter chord</h4><ul><li>仅 resolver 的 MoreChordsNeeded 建立 ChordActive</li><li>若 inputContext 返回 false 后仍有 marked text，先走 ModelInputBarrier：保留已写入文本并清除 mark</li><li>进入后拒绝新的 setMarkedText admission</li><li>保持 500 ms polling、elapsed&gt;5000 ms、focus-loss 规则</li><li>退出后恢复 inputContext admission</li></ul></div>
+  <div class="card"><h4>Command during mark</h4><ul><li>inputContext 返回 false 才允许 resolver 命中</li><li>纯读取 command 直接运行，不改 mark</li><li>任何 model/selection mutation 自动进入既有 ModelInputBarrier</li><li>barrier 后重新验证 R1 DependencyStamp / ApplyTicket</li><li>同一 event 不再进入 native menu</li></ul></div>
+  <div class="card"><h4>Dispatch ledger</h4><ul><li>key 由 NSEvent object identity + eventNumber + timestamp 构成</li><li>只存 immutable snapshot 与阶段 bit，不跨 main-run-loop</li><li>local monitor、menu action、NSView 共享同一 record</li><li>过期 record 在 run-loop 尾部清除并记 fault</li><li>所有入口 MainActor，记录内无 await</li></ul></div>
+  <div class="card"><h4>Hard traces</h4><ul><li>拼音：方向、上下候选、Backspace、Enter、Escape</li><li>ABC：Option dead key、组合完成、重复键</li><li>marked 中 Cmd-C / Cmd-Z / custom Cmd binding</li><li>marked → first chord → second chord / timeout</li><li>native menu 与 dynamic override 同 key equivalent</li></ul></div>
+  <div class="card"><h4>Current status</h4><ul><li>最终 core 源码事实已复核</li><li>本机 SDK 事件 monitor / input context 契约已复核</li><li>仓库仍无 input gateway / resolver implementation</li><li>上述 hard traces 尚未运行</li><li>C04 / C07 仍未通过</li></ul></div>
+</div></div>
+
+<div class="source"><b>事实索引：</b>最终 monaco-editor-core@0.56.0：textAreaEditContextInput 在 KEY_IN_COMPOSITION 或 currentComposition+Backspace 时 stopPropagation；nativeEditContext 在 KEY_IN_COMPOSITION 时 stopPropagation；StandaloneKeybindingService 的 container listener 位于输入节点之后；cursor/delete commands 不含 composition guard；AbstractKeybindingService 在 MoreChordsNeeded 时 IME.disable、退出时 IME.enable。文件 SHA-256：textAreaEditContextInput <code>d5e7aa36…6062</code>，nativeEditContext <code>00ec3d82…2fc</code>，abstractKeybindingService <code>6618f912…2e6</code>，coreCommands <code>ef7d5d68…beb6</code>，standaloneServices <code>1db8e094…e540</code>。本机 MacOSX26.5.sdk 的 NSEvent.h 明示 local monitor 在 NSApplication.sendEvent 前运行、返回 nil 可阻止分发，并明示 nested tracking loop 不投递；NSTextInputContext.h 明示 handleEvent 返回事件是否被系统消费。</div>

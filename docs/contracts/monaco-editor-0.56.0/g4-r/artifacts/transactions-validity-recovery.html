@@ -1,0 +1,159 @@
+<style>
+  :root { --green:#059669; --blue:#2563eb; --violet:#7c3aed; --amber:#d97706; --red:#dc2626; }
+  .lock { display:flex; gap:12px; align-items:flex-start; margin:12px 0 16px; padding:14px; border:1px solid var(--green); border-radius:14px; background:color-mix(in srgb,var(--green) 7%,var(--surface)); }
+  .lock-mark { width:38px; height:38px; flex:0 0 38px; display:grid; place-items:center; border-radius:11px; color:white; background:var(--green); font-weight:850; }
+  .lock h3 { margin:0 0 4px; font-size:14px; }
+  .lock p { margin:0; color:var(--muted); font-size:11px; line-height:1.45; }
+  .flow { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:7px; align-items:stretch; margin:13px 0 17px; }
+  .flow-card { position:relative; padding:10px; border:1px solid var(--border); border-radius:10px; background:var(--surface); }
+  .flow-card:not(:last-child)::after { content:'›'; position:absolute; right:-7px; top:50%; transform:translate(50%,-50%); z-index:2; width:17px; height:17px; display:grid; place-items:center; border-radius:50%; color:var(--muted); background:var(--surface); border:1px solid var(--border); }
+  .flow-card b { display:block; font-size:11px; margin-bottom:4px; }
+  .flow-card span { display:block; color:var(--muted); font-size:9px; line-height:1.38; }
+  .blue { border-color:var(--blue); background:color-mix(in srgb,var(--blue) 5%,var(--surface)); }
+  .green { border-color:var(--green); background:color-mix(in srgb,var(--green) 5%,var(--surface)); }
+  .violet { border-color:var(--violet); background:color-mix(in srgb,var(--violet) 5%,var(--surface)); }
+  .section-title { display:flex; justify-content:space-between; align-items:baseline; gap:10px; margin:16px 0 8px; }
+  .section-title h3 { margin:0; font-size:14px; }
+  .section-title small { color:var(--muted); font-size:9px; }
+  .rules { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:9px; }
+  .rule { padding:11px; border:1px solid var(--border); border-radius:11px; background:var(--surface); }
+  .rule h4 { margin:0 0 6px; font-size:11px; }
+  .rule p, .rule li { font-size:9px; line-height:1.48; }
+  .rule p { margin:0; color:var(--muted); }
+  .rule ul { margin:5px 0 0 14px; padding:0; }
+  .matrix { border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+  .mrow { display:grid; grid-template-columns:1.05fr 1.2fr 1.5fr; border-top:1px solid var(--border); }
+  .mrow:first-child { border-top:0; background:color-mix(in srgb,var(--accent) 6%,var(--surface)); font-weight:750; }
+  .mcell { padding:7px 8px; border-left:1px solid var(--border); font-size:9px; line-height:1.4; }
+  .mcell:first-child { border-left:0; }
+  .tag { display:inline-block; padding:2px 6px; border-radius:999px; font-size:8px; font-weight:800; }
+  .exact { color:#b91c1c; background:color-mix(in srgb,var(--red) 13%,var(--surface)); }
+  .tracked { color:#6d28d9; background:color-mix(in srgb,var(--violet) 14%,var(--surface)); }
+  .continue { color:#1d4ed8; background:color-mix(in srgb,var(--blue) 13%,var(--surface)); }
+  .workspace { color:#047857; background:color-mix(in srgb,var(--green) 14%,var(--surface)); }
+  .states { display:grid; grid-template-columns:1.1fr .9fr; gap:10px; }
+  .statebox { border:1px solid var(--border); border-radius:12px; padding:11px; background:var(--surface); }
+  .statebox h4 { margin:0 0 8px; font-size:12px; }
+  .state-line { display:flex; gap:5px; align-items:center; flex-wrap:wrap; }
+  .state { padding:5px 7px; border:1px solid var(--border); border-radius:7px; font-size:8px; background:color-mix(in srgb,var(--accent) 4%,var(--surface)); }
+  .arrow { color:var(--muted); font-size:10px; }
+  .statebox ul { margin:8px 0 0 14px; padding:0; font-size:9px; line-height:1.5; }
+  .callout { margin-top:10px; padding:10px 11px; border:1px solid var(--amber); border-radius:10px; background:color-mix(in srgb,var(--amber) 6%,var(--surface)); font-size:9px; line-height:1.48; }
+  .failures { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+  .failure { border:1px solid var(--border); border-radius:10px; padding:10px; background:var(--surface); }
+  .failure b { font-size:10px; }
+  .failure p { margin:4px 0 0; color:var(--muted); font-size:9px; line-height:1.42; }
+  .facts { margin-top:12px; padding:9px 10px; border-left:3px solid var(--blue); background:color-mix(in srgb,var(--blue) 5%,var(--surface)); font-size:9px; line-height:1.48; color:var(--muted); }
+  .actions { display:flex; gap:9px; margin-top:15px; }
+  .decision { flex:1; border:1px solid var(--border); border-radius:11px; padding:11px; cursor:pointer; background:var(--surface); }
+  .decision.selected { border-color:var(--accent); box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 18%,transparent); }
+  .decision h3 { margin:0 0 3px; font-size:12px; }
+  .decision small { color:var(--muted); font-size:9px; }
+  @media(max-width:900px){.flow{grid-template-columns:1fr}.flow-card:not(:last-child)::after{content:'⌄';right:50%;top:auto;bottom:-9px}.rules{grid-template-columns:1fr}.states,.failures{grid-template-columns:1fr}.mrow{grid-template-columns:.8fr 1fr 1.25fr}.mcell{padding:6px 4px;font-size:8px}}
+</style>
+
+<h2>A+ 的提交、有效性与恢复契约</h2>
+<p class="subtitle">目标：同步模型语义不打折；后台任务不触碰 live state；任何失败都只能影响自己的边界。</p>
+
+<div class="lock">
+  <div class="lock-mark">A+</div>
+  <div>
+    <h3>所有 live mutation 只有一个入口：MainActor EditTransaction</h3>
+    <p>公开 ITextModel 风格 API 在 MainActor 同步执行；后台调用方提交 Sendable EditIntent。模型提交结束后才投递事件，监听器异常不回滚已经提交的文本。</p>
+  </div>
+</div>
+
+<div class="flow">
+  <div class="flow-card blue"><b>1 · EditIntent</b><span>model instance、可选 baseVersion、operations、source、undo group</span></div>
+  <div class="flow-card blue"><b>2 · Preflight</b><span>Monaco 范围归一化、EOL 归一化、重叠检查、反向 edits、事件草案；零 mutation</span></div>
+  <div class="flow-card green"><b>3 · Commit</b><span>Piece Tree、line index、Decoration Tree、undo stack、版本；不调用外部代码</span></div>
+  <div class="flow-card violet"><b>4 · Event batch</b><span>不可变 payload；同一 delivery queue 完成旧版本全部 listener 后再投递重入事件</span></div>
+  <div class="flow-card violet"><b>5 · Invalidate</b><span>取消失效请求、标记 layout/diff 重算、异步回包仍须过 MainActor gate</span></div>
+</div>
+
+<div class="section-title"><h3>文本事务的确定规则</h3><small>以 Monaco 0.56 本地源码为行为基线</small></div>
+<div class="rules">
+  <div class="rule">
+    <h4>版本不简化成“一事务一次”</h4>
+    <ul>
+      <li>非空 text batch：versionId +1；空 batch 不变</li>
+      <li>EOL 真正变化：versionId +1；setValue：+1</li>
+      <li>undo/redo 同时恢复 text 与 EOL 时保留 Monaco 的实际增量与合并事件</li>
+      <li>alternativeVersionId 在 undo/redo 后恢复栈中记录值</li>
+    </ul>
+  </div>
+  <div class="rule">
+    <h4>失败发生在 mutation 之前</h4>
+    <ul>
+      <li>范围按 Monaco 规则校验与夹取</li>
+      <li>相接 ranges 合法；真正重叠直接拒绝</li>
+      <li>baseVersion 仅用于异步/edit-producing 路径</li>
+      <li>preflight 任一失败：typed error、版本不变、无事件</li>
+    </ul>
+  </div>
+  <div class="rule">
+    <h4>跨模型文本事务</h4>
+    <ul>
+      <li>先 preflight 全部目标模型，再提交全部模型</li>
+      <li>全部模型完成 mutation 后才按输入顺序投递事件</li>
+      <li>一个 shared undo element 覆盖整次 workspace text edit</li>
+      <li>任一 open model 版本不符：整批不执行</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section-title"><h3>AsyncValidityTicket 不是单一 versionId</h3><small>modelInstance + version + anchor + editor/config/provider/session epochs + request ID</small></div>
+<div class="matrix">
+  <div class="mrow"><div class="mcell">策略</div><div class="mcell">进入该策略的结果</div><div class="mcell">MainActor 接纳条件</div></div>
+  <div class="mrow"><div class="mcell"><span class="tag exact">EXACT</span></div><div class="mcell">semantic tokens、folding、inlay hints、document symbols、diff、format/rename/code action edits</div><div class="mcell">同一 model instance 与精确 version；edit-producing 结果要求每个目标文档版本全部匹配，否则整批拒绝</div></div>
+  <div class="mrow"><div class="mcell"><span class="tag tracked">TRACKED</span></div><div class="mcell">definition/declaration/type/implementation/references、hover、document links 的交互锚点</div><div class="mcell">tracked anchor 仍存在，锚点文本 fingerprint 未变，editor/config/provider/session epoch 全部匹配</div></div>
+  <div class="mrow"><div class="mcell"><span class="tag continue">CONTINUATION</span></div><div class="mcell">completion、inline completion、signature help</div><div class="mcell">只接受该 feature 明确定义的连续输入状态；其余编辑、光标跳转、composition epoch 改变立即取消并重发</div></div>
+  <div class="mrow"><div class="mcell"><span class="tag workspace">WORKSPACE</span></div><div class="mcell">workspace symbols、与当前文档无关的 commands/results</div><div class="mcell">provider registration、configuration 与 LSP session epoch 匹配；不绑定 model version</div></div>
+</div>
+
+<div class="callout"><b>诊断特例：</b>带 version 的 push diagnostics 仅在精确匹配时接纳。未带 version 的诊断在收到时绑定当前 model version，并转换成 tracked decorations；同一 server+URI 的下一次 publish 全量替换，session 重启或 document ownership close 时清除。这样同时遵守 LSP 的 optional version 与“新 publish 替换旧 publish”规则。</div>
+
+<div class="section-title"><h3>故障恢复状态机</h3><small>不会把 LSP、TextKit 或 Provider 故障升级成 model corruption</small></div>
+<div class="states">
+  <div class="statebox">
+    <h4>LSP session</h4>
+    <div class="state-line">
+      <span class="state">stopped</span><span class="arrow">›</span><span class="state">starting</span><span class="arrow">›</span><span class="state">initializing</span><span class="arrow">›</span><span class="state">ready</span><span class="arrow">›</span><span class="state">restarting</span><span class="arrow">›</span><span class="state">suspended</span>
+    </div>
+    <ul>
+      <li>意外退出：session epoch +1，取消 pending requests，清除 session-owned transient UI 与 diagnostics，立即退化 pure text</li>
+      <li>滚动 180 秒内前 4 次 crash 自动重建 transport；第 5 次进入 suspended</li>
+      <li>显式 host/user restart 清空 crash window 并创建新 session；正常 shutdown 不计 crash</li>
+    </ul>
+  </div>
+  <div class="statebox">
+    <h4>Layout + Render backend</h4>
+    <div class="state-line"><span class="state">healthy</span><span class="arrow">›</span><span class="state">discard graph</span><span class="arrow">›</span><span class="state">rebuild latest snapshot</span><span class="arrow">›</span><span class="state">next backend</span></div>
+    <ul>
+      <li>版本缺口或乱序结果：只丢该 editor graph，从最新 snapshot 重建</li>
+      <li>同一 snapshot 的一次完整重建仍失败：该 editor 切换下一后端</li>
+      <li>model、undo、其他 editor graph 不受影响</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section-title"><h3>失败隔离表</h3></div>
+<div class="failures">
+  <div class="failure"><b>stale / cancellation</b><p>静默丢弃；连续型功能重发，瞬时 UI 关闭。不向用户展示 ContentModified。</p></div>
+  <div class="failure"><b>Provider / transport error</b><p>结束对应请求与 UI，记录结构化 error；live model、selection 与 undo 不变。</p></div>
+  <div class="failure"><b>validation / version conflict</b><p>返回明确 action failure；workspace/applyEdit 填 applied=false、failureReason 与 failedChange。</p></div>
+  <div class="failure"><b>core invariant violation</b><p>测试与 Debug 直接失败并输出复现数据。Release 不执行猜测性回滚；损坏 model 不继续接受 mutation。</p></div>
+</div>
+
+<div class="callout"><b>WorkspaceEdit capability 不虚报：</b>core 对全部 open models 提供原子 text transaction。涉及 closed files 或 create/rename/delete 时，只按 host WorkspaceResourceTransaction 明确担保的等级广告：全资源原子才报 transactional；全体文本资源原子才报 textOnlyTransactional；否则报 abort。第一方与第三方 host 使用同一 capability contract。</div>
+
+<div class="facts"><b>证据边界：</b>Monaco 0.56 本地源码显示 applyEdits 在非空 change 时递增版本、拒绝 overlapping ranges、延迟合并 content event，并隔离 listener/view-model 异常。LSP 3.18 规定旧结果可在转换后继续使用、诊断 version 可省略、TextDocumentEdit edits 不得重叠，并给出 5 crashes / 180 seconds 的 VS Code 防重启风暴规则。</div>
+
+<div class="actions">
+  <div class="decision" data-choice="accept-transaction-validity-recovery" onclick="toggleSelect(this)">
+    <h3>采纳这组规则</h3><small>下一节锁定 input / IME / 多光标与 TextKit adapter 的精确数据流。</small>
+  </div>
+  <div class="decision" data-choice="revise-transaction-validity-recovery" onclick="toggleSelect(this)">
+    <h3>调整规则</h3><small>重点可调整：versionless diagnostics、LSP crash 门槛、WorkspaceEdit capability。</small>
+  </div>
+</div>

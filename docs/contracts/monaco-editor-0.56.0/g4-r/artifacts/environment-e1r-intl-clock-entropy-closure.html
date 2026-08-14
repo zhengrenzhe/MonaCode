@@ -1,0 +1,53 @@
+<style>
+  :root{--ok:#059669;--warn:#d97706;--bad:#dc2626;--blue:#2563eb;--violet:#7c3aed;--cyan:#0891b2}
+  .hero{display:flex;gap:13px;align-items:flex-start;padding:14px;border:2px solid var(--violet);border-radius:14px;background:color-mix(in srgb,var(--violet) 6%,var(--surface));margin:12px 0 15px}.mark{width:66px;height:66px;flex:0 0 66px;display:grid;place-items:center;border-radius:13px;background:var(--violet);color:#fff;font-weight:900}.hero h3{margin:0 0 5px;font-size:14px}.hero p{margin:0;color:var(--muted);font-size:8px;line-height:1.5}
+  .section{margin-top:15px}.section h3{margin:0 0 8px;font-size:12px}.counts{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:7px}.count{padding:9px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}.count strong{display:block;font-size:20px;color:var(--violet)}.count b{display:block;font-size:7.7px}.count span{display:block;margin-top:3px;color:var(--muted);font-size:6.5px;line-height:1.4}
+  .hits{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.hit{padding:9px;border:1px solid var(--warn);border-radius:10px;background:var(--surface)}.hit b{display:block;font-size:8.2px;margin-bottom:3px}.hit span{display:block;color:var(--muted);font-size:6.7px;line-height:1.44}.hit em{font-style:normal;color:#b45309;font-weight:800}
+  .matrix{border:1px solid var(--border);border-radius:11px;overflow:hidden}.row{display:grid;grid-template-columns:.75fr 1.15fr 2fr 1.2fr;border-top:1px solid var(--border)}.row:first-child{border-top:0;font-weight:800;background:color-mix(in srgb,var(--accent) 6%,var(--surface))}.cell{padding:7px 8px;border-left:1px solid var(--border);font-size:6.8px;line-height:1.45}.cell:first-child{border-left:0}.yes{color:#047857;font-weight:750}.no{color:#b91c1c;font-weight:750}.warn{color:#b45309;font-weight:750}
+  .cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.card{padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}.card h4{margin:0 0 5px;font-size:8.7px}.card ul{margin:0 0 0 14px;padding:0;font-size:6.7px;line-height:1.5}.artifact{padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--surface);font-size:7px;line-height:1.55}.source{margin-top:12px;padding:9px 10px;border-left:3px solid var(--blue);background:color-mix(in srgb,var(--blue) 5%,var(--surface));color:var(--muted);font-size:6.8px;line-height:1.48}
+  @media(max-width:1050px){.counts{grid-template-columns:repeat(3,1fr)}.hits,.cards{grid-template-columns:1fr 1fr}.row{grid-template-columns:.6fr .9fr 1.25fr .9fr}.cell{padding:5px 4px;font-size:6.1px}}
+</style>
+
+<h2>运行环境攻击：E1-R 国际化、时钟与熵源闭包</h2>
+<p class="subtitle">同一份 Monaco 源码同时依赖 UI 语言、浏览器默认 locale、Unicode/ICU 数据、墙上时钟、微任务、帧调度与全局随机序列。E1-R 将这些来源拆开，并为每个可观测点固定 native 语义。</p>
+
+<div class="hero"><div class="mark">E1-R</div><div><h3>UI profile ≠ runtime locale；Chrome 151 的实际 ICU 基线已锁定为 Chromium ICU 78.2</h3><p>当前机器的 N1 UI 默认仍是 en，运行时 locale 是 zh-CN，时区是 Asia/Shanghai。Chrome 151.0.7922.109 标签锁定 ICU submodule d578f2e；本机 icudtl.dat 为 10,876,560 bytes，SHA-256 9f48c7f9…ebe。产品不链接 ICU runtime，而是生成带完整来源与许可记录的不可变 Swift 表。</p></div></div>
+
+<div class="section"><h3>全闭包事实</h3><div class="counts">
+  <div class="count"><strong>956</strong><b>reachable JS</b><span>AST 解析得到；另有 98 个 imported style resources。</span></div>
+  <div class="count"><strong>1054</strong><b>total files</b><span>956 个 JavaScript modules + 98 个 style resources。</span></div>
+  <div class="count"><strong>8</strong><b>Math.random</b><span>5 个文件；活动 draw 必须共享全局序列。</span></div>
+  <div class="count"><strong>90</strong><b>Date.now</b><span>39 个文件；固定为 Unix epoch wall milliseconds。</span></div>
+  <div class="count"><strong>94</strong><b>timer calls</b><span>含 free/member timeout 与 interval 调用。</span></div>
+  <div class="count"><strong>11</strong><b>localeCompare</b><span>8 个文件；默认 runtime locale，不是 N1 profile。</span></div>
+</div></div>
+
+<div class="section"><h3>四个反例命中</h3><div class="hits">
+  <div class="hit"><b>121 · UI 语言等于系统 locale</b><span>固定 Chrome 中 NLS 默认输出英文，但 Intl 默认 locale 是 zh-CN。<em>两者分离，且都在初始化后不可变。</em></span></div>
+  <div class="hit"><b>122 · Swift uppercased 足够</b><span>ECMA-402 的 locale case 允许实现选择 locale 数据。<em>Foundation 结果不作真值；Chrome 151 是 exact oracle。</em></span></div>
+  <div class="hit"><b>123 · RANDOM_HEX 固定六位</b><span>注入 0.5 的 Chrome 结果是 <code>0.8</code>。<em>先执行 ECMA Number::toString(16)，再取最后 6 个 UTF-16。</em></span></div>
+  <div class="hit"><b>124 · timeout 使用 monotonic clock</b><span>源码 DateTimeout 直接读取 Date.now。<em>语义时钟固定为 wall clock；替换为 monotonic 会改变墙钟跳变结果。</em></span></div>
+</div></div>
+
+<div class="section"><h3>五类国际化语义</h3><div class="matrix">
+  <div class="row"><div class="cell">类别</div><div class="cell">源语义</div><div class="cell">Native 合同</div><div class="cell">数据/状态</div></div>
+  <div class="row"><div class="cell"><b>N1 messages</b></div><div class="cell">localize identity/profile</div><div class="cell">显式选择 immutable profile；默认 en；不自动读取系统 locale。</div><div class="cell yes">2120 keys / 15 profiles</div></div>
+  <div class="row"><div class="cell"><b>Default case</b></div><div class="cell">toUpperCase / toLowerCase</div><div class="cell">仓库 Swift 算法 + Unicode 17/Chrome 数据；raw UTF-16 与孤立 surrogate 保留。</div><div class="cell yes">15 + 123 hits</div></div>
+  <div class="row"><div class="cell"><b>Locale case</b></div><div class="cell">toLocaleUpper/LowerCase</div><div class="cell">使用独立 MonaRuntimeLocale；当前验收值 zh-CN。</div><div class="cell yes">6 + 10 hits</div></div>
+  <div class="row"><div class="cell"><b>Collation</b></div><div class="cell">4 Collator profiles + localeCompare</div><div class="cell">完整 Chrome locale 表；Sort Lines 稳定排序；base-numeric 的 raw tie-break 保留。</div><div class="cell yes">all baseline locales</div></div>
+  <div class="row"><div class="cell"><b>Normalization</b></div><div class="cell">NFD / deaccent / lowercase</div><div class="cell">仅 U+0080 以上进入 NFD；只去 U+0300..036F；两个精确 10000 LRU。</div><div class="cell yes">nfc cache inert</div></div>
+</div></div>
+
+<div class="section"><h3>熵与调度不能各模块自建</h3><div class="cards">
+  <div class="card"><h4>Global entropy</h4><ul><li>一个 MonaRandomDoubleSource</li><li>quickSelect 与 suggest sampling 也消耗 draw</li><li>无注册 animation 路径不消耗</li><li>测试注入精确 binary64 trace</li></ul></div>
+  <div class="card"><h4>UUID</h4><ul><li>独立 crypto source</li><li>16 bytes 注入</li><li>强制 v4 与 variant bits</li><li>canonical lowercase 8-4-4-4-12</li></ul></div>
+  <div class="card"><h4>Clock queues</h4><ul><li>Date.now / StopWatch(false) = epoch wall ms</li><li>13 个 retained StopWatch = mach_absolute_time</li><li>input latency 同属 high-resolution domain</li><li>microtask/timer/frame 各保留源顺序</li></ul></div>
+  <div class="card"><h4>System probes</h4><ul><li>matchMedia → native AX/screen state</li><li>DOM observers → NSView events</li><li>RemoteAuthorities 不 rewrite/fetch</li><li>无隐式 filesystem/network/process</li></ul></div>
+</div></div>
+
+<div class="section"><h3>机器可核对工件</h3><div class="artifact">
+  <a href="./monacode-e1r-environment-intl-clock-entropy-manifest.json">打开 monacode-e1r-environment-intl-clock-entropy-manifest.json</a><br>
+  文件 SHA-256（含结尾 LF）：<code>ecc1e42b7061baf4ade5bd3fd5e3c1c2ee89d46f96b3aafc4c94dba5edb78dc9</code>。候选实现还必须生成逐 occurrence 的 <code>MonaEnvironmentManifest.json</code>；当前 native source、generated tables 与 differential fixtures 均为 0，verdict=<code>not-passed</code>。
+</div></div>
+
+<div class="source"><b>事实索引：</b>AST 闭包为 956 个 JavaScript modules、98 个 style resources、6275 条 import/export edges，external static imports=0。Chrome 151.0.7922.109 的 Chromium tag commit 为 <code>28a7a6c4…039</code>，<code>base/time/time_apple.mm</code> 使用 <code>mach_absolute_time</code> 构造 TimeTicks；ICU gitlink 为 <code>d578f2e8…738</code>，README.chromium 标明 ICU 78.2。本机 Chrome icudtl.dat SHA-256 为 <code>9f48c7f9…ebe</code>。当前没有 MonaCode 实现或验收结果。</div>

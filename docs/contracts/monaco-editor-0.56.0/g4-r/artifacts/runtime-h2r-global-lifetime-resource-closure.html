@@ -1,0 +1,67 @@
+<style>
+  :root{--ok:#059669;--warn:#d97706;--bad:#dc2626;--blue:#2563eb;--violet:#7c3aed;--cyan:#0891b2}
+  .hero{display:flex;gap:13px;align-items:flex-start;padding:14px;border:2px solid var(--ok);border-radius:14px;background:color-mix(in srgb,var(--ok) 6%,var(--surface));margin:12px 0 15px}.mark{width:66px;height:66px;flex:0 0 66px;display:grid;place-items:center;border-radius:13px;background:var(--ok);color:#fff;font-weight:900}.hero h3{margin:0 0 5px;font-size:14px}.hero p{margin:0;color:var(--muted);font-size:8.2px;line-height:1.5}
+  .section{margin-top:15px}.section h3{margin:0 0 8px;font-size:12px}.hits{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.hit{padding:9px;border:1px solid var(--warn);border-radius:10px;background:var(--surface)}.hit b{display:block;font-size:8.2px;margin-bottom:3px}.hit span{display:block;color:var(--muted);font-size:6.75px;line-height:1.43}.hit em{font-style:normal;color:#b45309;font-weight:800}
+  .matrix{border:1px solid var(--border);border-radius:11px;overflow:hidden}.row{display:grid;grid-template-columns:.9fr 1.25fr 1.65fr 1fr;border-top:1px solid var(--border)}.row:first-child{border-top:0;font-weight:800;background:color-mix(in srgb,var(--accent) 6%,var(--surface))}.cell{padding:7px 8px;border-left:1px solid var(--border);font-size:6.9px;line-height:1.45}.cell:first-child{border-left:0}.yes{color:#047857;font-weight:750}.no{color:#b91c1c;font-weight:750}
+  .flow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.node{padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--surface);font-size:6.9px;line-height:1.45}.node b{display:block;font-size:8.7px;color:var(--blue);margin-bottom:4px}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.card{padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}.card h4{margin:0 0 5px;font-size:9px}.card ul{margin:0 0 0 14px;padding:0;font-size:7px;line-height:1.5}.artifact{padding:11px;border:1px solid var(--blue);border-radius:11px;background:color-mix(in srgb,var(--blue) 5%,var(--surface));font-size:7px;line-height:1.52}.artifact code{font-size:6.3px;word-break:break-all}.artifact a{font-weight:800;color:var(--blue)}.source{margin-top:12px;padding:9px 10px;border-left:3px solid var(--blue);background:color-mix(in srgb,var(--blue) 5%,var(--surface));color:var(--muted);font-size:7px;line-height:1.48}
+  @media(max-width:1040px){.hits{grid-template-columns:1fr 1fr}.flow,.cards{grid-template-columns:1fr}.row{grid-template-columns:.7fr .95fr 1.15fr .8fr}.cell{padding:5px 4px;font-size:6.2px}}
+</style>
+
+<h2>运行时边界第十轮攻击：H2-R 全局状态、生命周期与资源闭包</h2>
+<p class="subtitle">H2-R 不增加功能。它覆盖 H1-R 的两态 model ownership、补全 Monaco standalone 的进程级 registries，并把 M1-R/Q1-R 中模糊的大文件与内存失败条款改成可执行合同。</p>
+
+<div class="hero"><div class="mark">H2-R</div><div><h3>共享状态按 Monaco 保持进程级；editor 状态按实例隔离；model 构造保留三态；大文件使用初始 UTF-16 units 严格边界</h3><p>全局 singleton 不伪装成 per-editor dependency container。多个 editor 可共享一个 model，但 selection、scroll、focus、fold、context、widgets、layout 与 renderer cache 独立。资源验收只声明可恢复 checkpoint；Swift/OS fatal OOM 明确不在恢复承诺内。</p></div></div>
+
+<div class="section"><h3>本轮十二个确定命中</h3><div class="hits">
+  <div class="hit"><b>88 · model 只有“有/无”两态</b><span>baseline 区分 omitted、object、null。<em>冻结 implicit-owned、external-borrowed、none 三态。</em></span></div>
+  <div class="hit"><b>89 · services 全局，registries 可按 editor</b><span>model、marker、theme、language/provider、command/keybinding/menu 与 editor list 同样由 singleton/module registry 持有。<em>全部进程级。</em></span></div>
+  <div class="hit"><b>90 · editor 的 theme 只影响自己</b><span>StandaloneEditor constructor/update 直接调用同一 ThemeService.setTheme。<em>最后一次成功选择更新全部 live editors。</em></span></div>
+  <div class="hit"><b>91 · 重复 command ID 覆盖并销毁旧项</b><span>CommandsRegistry 为每个 ID 保存 linked-list stack。<em>最新项先执行；dispose 后恢复前一项。</em></span></div>
+  <div class="hit"><b>92 · 同分 provider 先注册优先</b><span>LanguageFeatureRegistry 用递增 clock 反向排序。<em>同分时后注册优先；builtin 再降级。</em></span></div>
+  <div class="hit"><b>93 · 20/50/256 “MB”是字节</b><span>判断输入是 JS string/model valueLength。<em>单位固定为初始 UTF-16 code units，不是序列化 bytes。</em></span></div>
+  <div class="hit"><b>94 · 大文件 flag 随编辑重算</b><span>三项只在 TextModel constructor 赋值。<em>后续跨阈值增长或缩小均不改变 flag。</em></span></div>
+  <div class="hit"><b>95 · 关闭 largeFileOptimizations 会清除三项</b><span>50 Mi sync flag 在优化分支之外计算。<em>只强制关闭 tokenization 与 heap flag；sync 仍生效。</em></span></div>
+  <div class="hit"><b>96 · 100 Mi-unit 性能样本覆盖阈值语义</b><span>单一大样本不测边界、sticky 或 false 分支。<em>T−1/T/T+1 全部进入 correctness。</em></span></div>
+  <div class="hit"><b>97 · allocator denial 等于真实 OOM 可恢复</b><span>Swift/OS fatal OOM 没有通用恢复通道。<em>只验 test-SPI 的 pre-publication fallible checkpoints；禁止扩大结论。</em></span></div>
+  <div class="hit"><b>98 · “有界 cache”可直接验收</b><span>没有 ID、owner、bound 与 counter 就无法判断 plateau。<em>每个 candidate 必须生成 cache manifest，并与 linked registry set-equal。</em></span></div>
+  <div class="hit"><b>99 · 没有实体 numpad 就删除 mapping gate</b><span>当前 HID service list 无外接键盘，输入源含 ABC 与简体拼音。<em>numpad 用合成 NSEvent 做硬 gate；实体 HID 只覆盖 run manifest 中设备。</em></span></div>
+</div></div>
+
+<div class="section"><h3>进程全局与 editor 私有的唯一分界</h3><div class="matrix">
+  <div class="row"><div class="cell">Owner</div><div class="cell">状态</div><div class="cell">确定语义</div><div class="cell">失败条件</div></div>
+  <div class="row"><div class="cell"><b>Process</b></div><div class="cell">environment/services、models、editors/diff editors、markers</div><div class="cell">first-access freeze；URI 唯一；create/dispose 与 marker changes 全局可观察</div><div class="cell no">per-editor duplicate registry</div></div>
+  <div class="row"><div class="cell"><b>Process</b></div><div class="cell">themes、languages/config/tokens、30 providers、commands/keybindings/menu/actions、openers</div><div class="cell">全部 live editor 共享；注册顺序与 dispose 精确；theme last-writer-wins</div><div class="cell no">主题或 provider 隔离</div></div>
+  <div class="row"><div class="cell"><b>Editor</b></div><div class="cell">attachment tag、selection/cursors、scroll/focus/context、fold/zones/injected、widgets、IME/pointer</div><div class="cell">同一 model 可多挂载；model change fanout，但这些状态互不复制、互不覆盖</div><div class="cell no">共享 selection/view state</div></div>
+  <div class="row"><div class="cell"><b>Editor</b></div><div class="cell">projection、CT records、surfaces 与 derived caches</div><div class="cell">按 editor+generation 持有；dispose 释放；不处置 borrowed model 或 global registrations</div><div class="cell no">跨 editor stale generation</div></div>
+</div></div>
+
+<div class="section"><h3>Code editor 初始 model 三态</h3><div class="flow">
+  <div class="node"><b>implicitOwned · model omitted</b>由 value 或空 raw UTF-16 创建 process-registered model，选择/推断 language，editor 拥有；首次 detach、replace 或 editor dispose 时处置。</div>
+  <div class="node"><b>externalBorrowed · model object</b>挂载精确引用；construction value/language 不创建 model；replace/dispose 只 detach，绝不处置外部 model。</div>
+  <div class="node"><b>none · explicit null</b>不创建、不挂载；construction value/language 不创建 model；之后仅通过 mapped setModel 挂载 borrowed model。</div>
+</div></div>
+
+<div class="section"><h3>大文件构造 flag：边界全部是 &gt;，且全部 sticky</h3><div class="matrix">
+  <div class="row"><div class="cell">Flag</div><div class="cell">初始条件</div><div class="cell">largeFileOptimizations=false</div><div class="cell">公开/功能效果</div></div>
+  <div class="row"><div class="cell"><b>Tokenization</b></div><div class="cell">length &gt; 20×1024² units 或 lines &gt; 300,000</div><div class="cell">强制 false</div><div class="cell">retained token/fold/highlight/multicursor/CodeLens/sticky paths 复刻检查</div></div>
+  <div class="row"><div class="cell"><b>Syncing</b></div><div class="cell">length &gt; 50×1024² units</div><div class="cell">阈值继续生效</div><div class="cell">retained find/link/section-header/background-job 可观察行为复刻；public Worker 仍 cut</div></div>
+  <div class="row"><div class="cell"><b>Heap operation</b></div><div class="cell">length &gt; 256×1024² units</div><div class="cell">强制 false</div><div class="cell">getValue/getLinesContent 失败；replace-all 零 mutation 拒绝</div></div>
+  <div class="row"><div class="cell"><b>Create limit</b></div><div class="cell">baseline 无另设 hard reject threshold</div><div class="cell">同左</div><div class="cell">可表示且资源足够时创建；100 Mi-unit 是 performance fixture，不是 max</div></div>
+</div></div>
+
+<div class="section"><h3>资源与失败边界</h3><div class="cards">
+  <div class="card"><h4>Semantic state</h4><ul><li>model、undo、decorations、markers、view state 不是 cache</li><li>registrations 由 caller disposable/model lifetime 管理</li><li>memory pressure 不丢 state</li><li>prepared commit 与 presented frame 不被驱逐</li><li>外部 LSP process/transport 属于 host</li></ul></div>
+  <div class="card"><h4>MonaCacheManifest</h4><ul><li>每个 strong derived cache 有稳定 ID</li><li>记录 owner/key/max entries 或 bytes</li><li>记录 eviction/epochs/pressure action/counter</li><li>linked registry 与 JSON ID set-equal</li><li>固定 corpus 100 cycles 不越 bound</li></ul></div>
+  <div class="card"><h4>Failure claim</h4><ul><li>SPI 在 mutation/publication 前拒绝 fallible request</li><li>throwing/async API 返回 typed resource failure</li><li>同步无错误通道 API 保持 pre-call state</li><li>test observer 记录拒绝点</li><li>fatal OOM 不属于可恢复结论</li></ul></div>
+</div></div>
+
+<div class="section"><h3>机器可核对工件</h3><div class="artifact">
+  <a href="./monacode-h2r-runtime-resource-manifest.json">打开 monacode-h2r-runtime-resource-manifest.json</a><br>
+  文件 SHA-256（含结尾 LF）：<code>1df20eaf7e1124e519bafe4a8d41025a70991432b40bba9531acbda7ce09d024</code>。<br>
+  JSON 固定 8 类 process-global state、7 类 per-editor state、3 个 model construction cases、3 个 large-model flags、cache-manifest schema、failure claim 与 8 组 verification。<br>
+  <code>productStatus</code> 仍为 source=0、全部 gate not-run；本页没有产品通过结论。
+</div></div>
+
+<div class="source"><b>事实索引：</b>固定 TextModel source SHA-256 <code>26a68ea9…00cbc</code>：阈值为 20×1024²、300,000、50×1024²、256×1024²，比较符为 <code>&gt;</code>，输入是初始 buffer valueLength/lineCount，三项只在 constructor 赋值；50 Mi sync 位于 largeFileOptimizations 分支外。固定 StandaloneEditor/Services/CodeEditor/Theme/ModelService/LanguageRegistry/CommandsRegistry 源码 hashes 已写入 JSON：model omitted/object/null 分支、全局 services、global theme、URI duplicate rejection、provider score/time 与 command stack 均可逐行复核。当前 <code>defaults</code> 列出 ABC 与 <code>com.apple.inputmethod.SCIM.ITABC</code>；<code>hidutil list</code> 未列外接键盘。当前工作区没有 product cache registry、cache manifest 或任何产品 gate 结果。</div>
+
+<div class="section"><div class="decision" data-choice="accept-h2r"><h4>H2-R 作为全局合同输入</h4><span>冻结 global/instance ownership、model 三态与资源边界；继续攻击验收闭包后再提交全局合同。</span></div></div>

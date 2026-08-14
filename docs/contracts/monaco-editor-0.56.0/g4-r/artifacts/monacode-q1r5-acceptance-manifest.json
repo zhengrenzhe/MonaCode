@@ -1,0 +1,277 @@
+{
+  "schemaVersion": 1,
+  "identity": {
+    "product": "MonaCode",
+    "revision": "Q1-R5-complete-acceptance",
+    "date": "2026-08-14",
+    "status": "design-acceptance-only"
+  },
+  "overrides": [
+    "Q1-R5 replaces every prior C01-C08 summary while retaining the non-conflicting detailed corpora and oracles from Q1-R through Q1-R4.",
+    "Q1-R5 expands correctness from eight to ten gates because F1-R4 public declarations, H1-R/H2-R native embedding and distribution provenance were not covered by the old eight-gate partition.",
+    "Q1-R5 does not add a performance workload or metric; P00-P13, M0/M1, the paired intersection-union verdict and environment protocol remain unchanged.",
+    "Q1-R5 defines every editor document-size label from Q1-R as MiU16 units; protocol frames, files, process footprint and transport labels remain bytes.",
+    "Q1-R5 replaces generic allocator denial with H2-R recoverable checkpoints and explicitly excludes fatal OOM recovery."
+  ],
+  "units": {
+    "MiU16": "1048576 UTF-16 code units in model text",
+    "MiB": "1048576 serialized or resident bytes",
+    "documentWorkloadRule": "all P00-P13 document sizes previously labeled MiB are MiU16; line-count and raw-unit labels are unchanged",
+    "resourceRule": "LSP, clipboard, executable, footprint, IOSurface and filesystem sizes remain byte units"
+  },
+  "sourceManifests": [
+    {
+      "id": "F1-R3-scope",
+      "file": "monaco-0.56.0-f1r3-scope-manifest.json",
+      "sha256": "31d79fd334a6e461e6ee03726a08a40e6f0f9978cbabe04d6096fcca1a79c1d5"
+    },
+    {
+      "id": "F1-R3-instance",
+      "file": "monaco-0.56.0-f1r3-instance-surface-manifest.json",
+      "sha256": "1163834f91fbf3f3ecaeb334e16160be25c7703ee6295b2bc82aad96d3c1ab5e"
+    },
+    {
+      "id": "F1-R4-public",
+      "file": "monaco-0.56.0-f1r4-public-declaration-manifest.json",
+      "sha256": "b6cb6c73add7739821f1daafa12efc520561d6f7aaeafd841209394dbe990a34"
+    },
+    {
+      "id": "A2-R2-accessibility",
+      "file": "monaco-0.56.0-a2r-accessibility-manifest.json",
+      "sha256": "f8f8123c4c8d426106c40ea71ba64d08940d3961e57db0a0bbb276a87e2432da"
+    },
+    {
+      "id": "H1-R-native-boundary",
+      "file": "monacode-h1r-native-boundary-manifest.json",
+      "sha256": "b4da93f958462af3215a82c020bba98e6aab02bbdfe6a705b21de5f34dbf825c"
+    },
+    {
+      "id": "H2-R-runtime-resource",
+      "file": "monacode-h2r-runtime-resource-manifest.json",
+      "sha256": "1df20eaf7e1124e519bafe4a8d41025a70991432b40bba9531acbda7ce09d024"
+    }
+  ],
+  "candidateGeneratedArtifacts": [
+    {
+      "file": "MonaNativeDeclarationManifest.json",
+      "producer": "Swift symbol graph plus repository declaration mapper",
+      "requiredFor": "C04",
+      "status": "absent"
+    },
+    {
+      "file": "MonaCacheManifest.json",
+      "producer": "linked cache registry exporter",
+      "requiredFor": "C09",
+      "status": "absent"
+    },
+    {
+      "file": "MonaDistributionManifest.json",
+      "producer": "release artifact and notice scanner",
+      "requiredFor": "C10",
+      "status": "absent"
+    },
+    {
+      "file": "QEnvironmentID.json",
+      "producer": "per-run preflight collector",
+      "requiredFor": "C07 and every P cell",
+      "status": "absent"
+    }
+  ],
+  "correctnessGates": [
+    {
+      "id": "C01",
+      "name": "ITextModel, Piece Tree and large-model policy",
+      "coverage": [
+        "73 ITextModel declarations and 70 unique members with zero cuts",
+        "raw UTF-16 value, position, range, EOL, version, event, undo, search, decoration and snapshot traces",
+        "256 deterministic seeds times 10000 edit, EOL, undo, decoration and search operations",
+        "20 MiU16, 300000-line, 50 MiU16 and 256 MiU16 T-1, T and T+1 construction boundaries",
+        "post-construction grow and shrink stickiness plus largeFileOptimizations false branches"
+      ],
+      "pass": "every exact-domain observation is equal to M0/M1 and every H2-R threshold effect is equal to the pinned source",
+      "status": "not-run"
+    },
+    {
+      "id": "C02",
+      "name": "ECMAScript RegExp and search",
+      "coverage": [
+        "signed Q1 generator corpus and Chrome 151 differential",
+        "g and u always; i only when matchCase is false; m only when multiline is detected",
+        "literal, whole-word, captures, replacement, zero-length, CRLF compensation, lone-surrogate and lastIndex traces"
+      ],
+      "pass": "match ranges, captures, lastIndex and replacement raw units are equal",
+      "status": "not-run"
+    },
+    {
+      "id": "C03",
+      "name": "Projection and native geometry",
+      "coverage": [
+        "projection, fold, injected text, view zones, bidi isolation and model-view mapping exact domain",
+        "Core Text property oracle for caret, hit, selection, scroll and AX geometry",
+        "ASCII, CRLF, CJK, Arabic and bidi, combining, emoji ZWJ and RI, tabs, 1M-unit line and lone-surrogate corpus"
+      ],
+      "pass": "exact projection observations are equal and every V1-R4 native geometry invariant holds",
+      "status": "not-run"
+    },
+    {
+      "id": "C04",
+      "name": "Complete public declaration and registry surface",
+      "coverage": [
+        "555 source declaration paths: 434 retained and 121 cut",
+        "candidate Swift symbol graph mapped one-to-one into MonaNativeDeclarationManifest",
+        "all retained declaration fields, overloads, optionality, callbacks and explicit member cuts",
+        "19, 68, 57 and 4 runtime namespace values with F1-R4 LSP disposition override",
+        "64 features, 167 actions, 127 pure-text actions, 454 commands, 53 contributions, 379 keybindings, 18 menus and 121 items",
+        "five editor-instance interface declaration sequences and behavior traces"
+      ],
+      "pass": "source and native path/disposition sets are equal, cut symbols are absent, compile fixtures invoke every callable and no retained mapping is a silent no-op",
+      "status": "not-run"
+    },
+    {
+      "id": "C05",
+      "name": "Options, diff and multi-diff",
+      "coverage": [
+        "174 options: 157 retained inputs, 6 computed-only and 11 cuts",
+        "default, invalid, clamp, merge, update and change-event behavior",
+        "22 diff and 7 diff-editor option groups",
+        "legacy and advanced diff plus stable-ID multi-diff insert, remove, reorder and state preservation"
+      ],
+      "pass": "retained non-geometry results and events are equal, geometry routes to C03, and every cut symbol is absent",
+      "status": "not-run"
+    },
+    {
+      "id": "C06",
+      "name": "Language registries and LSP 3.18",
+      "coverage": [
+        "30 direct registry surfaces, 25 LSP mappings and 5 direct-only surfaces",
+        "selector score, later-registration priority, dynamic registration, resolve, release, cancellation and disposal",
+        "framing, UTF-8 and raw-UTF16 JSON, request and response, error direction, restart and out-of-order matrices",
+        "one retained and extended MonacoLspClient path and three absent concrete web transport constructors",
+        "zero shipped language implementations and plain-text fallback"
+      ],
+      "pass": "registry, UI result, transaction, cancellation, disposal and protocol observations satisfy L2-R through L2-R3 and H2-R",
+      "status": "not-run"
+    },
+    {
+      "id": "C07",
+      "name": "Native input, accessibility and transfer",
+      "coverage": [
+        "ABC and com.apple.inputmethod.SCIM.ITABC real input-context traces",
+        "IME marked text, candidate, dead key, character palette, dictation, undo and multi-cursor",
+        "synthesized NSEvent semantic table for numpad and physical keys absent from QEnvironmentID",
+        "VoiceOver text, widget, focus, action, range, value, frame and announcement traces",
+        "copy, cut, paste, drag, drop, Paste As and workspace-edit transfer paths"
+      ],
+      "pass": "all I3-R through I4-R and A1-R through A2-R state, model, selection, action and AX contracts hold; unavailable permission or required real input source leaves the gate not passed",
+      "status": "not-run"
+    },
+    {
+      "id": "C08",
+      "name": "Core Graphics and conditional Metal renderer",
+      "coverage": [
+        "Core Graphics CTLine and golden reference for every scale, subpixel phase, fallback and color-glyph case",
+        "generation, rollover, stale-resource and failure fallback",
+        "when Metal exists, identical LineLayoutRecord input and linear premultiplied RGBA comparison"
+      ],
+      "pass": "Core Graphics goldens pass; Metal is absent and N/A until triggered, or its maximum per-channel absolute difference is at most 1/255 with zero stale generation",
+      "status": "not-run"
+    },
+    {
+      "id": "C09",
+      "name": "Native embedding, global lifetime and resources",
+      "coverage": [
+        "three SwiftPM products, three AppKit views, four SwiftUI wrapper/controller types and seven host contract groups",
+        "four WorkspaceEdit failure modes and every host fallback, prepare, revalidation, commit, undo and reentry branch",
+        "eight process-global state classes, seven per-editor state classes and three initial-model states",
+        "shared and independent models, URI duplicate and recreate, global theme, marker, provider, command, action, keybinding, opener and disposal traces",
+        "MonaCacheManifest and linked cache-registry exact-set check, declared high-water bounds, memory pressure and H2-R recoverable checkpoints"
+      ],
+      "pass": "compile, lifetime, isolation, atomicity, cache-bound and fault-injection fixtures all pass with zero leaked pin or partial publication",
+      "status": "not-run"
+    },
+    {
+      "id": "C10",
+      "name": "Distribution, dependency and license provenance",
+      "coverage": [
+        "swift package dump-package, describe and show-dependencies for the exact three-product graph",
+        "release builds of all products and the sample host at arm64 macOS 26.0 minimum",
+        "Swift symbol graphs, API digester output, linked dylibs, bundled resources and every artifact SHA-256",
+        "no third-party production runtime and no UIKit, WebWorker, JavaScript engine, TextKit backend or undeclared implementation product",
+        "MIT notices for copied Monaco code, CC BY 4.0 Codicon attribution and modification notice, CC BY 3.0 Git Logo attribution for the bundled full font, and MIT notice for Codicon code"
+      ],
+      "pass": "MonaDistributionManifest matches the package, binaries, resources, dependency graph, public API and notice files with no missing or extra entry",
+      "status": "not-run"
+    }
+  ],
+  "performance": {
+    "workloads": [
+      "P00",
+      "P01",
+      "P02",
+      "P03",
+      "P04",
+      "P05",
+      "P06",
+      "P07",
+      "P08",
+      "P09",
+      "P10",
+      "P11",
+      "P12",
+      "P13"
+    ],
+    "baselines": [
+      "M0 official Monaco",
+      "M1 capability-matched Monaco"
+    ],
+    "verdict": "for every preregistered workload, metric, refresh-rate and baseline cell, the paired one-sided 95 percent basic-bootstrap upper bound of native over comparator cost is at most 1.00",
+    "refreshRatesHz": [
+      60,
+      120
+    ],
+    "frameBudgetsMilliseconds": {
+      "60": 16.666666666666668,
+      "120": 8.333333333333334
+    },
+    "metalTrigger": "only a failed renderer-owned P metric after a correct full Core Graphics implementation triggers Metal",
+    "status": "not-run"
+  },
+  "crossCuttingGates": {
+    "reliability": [
+      "1000 create, attach, detach and dispose cycles",
+      "24 hour mixed P02-P13 soak",
+      "zero definite leaks, Main Thread Checker findings, data loss, half commit, crash or hang",
+      "ASan, TSan and UBSan in separate full runs; Metal validation only when Metal exists",
+      "cache counters remain within the candidate's signed MonaCacheManifest"
+    ],
+    "failureInjection": [
+      "H2-R recoverable allocation checkpoints",
+      "Core Text NULL and Metal resource or present failure",
+      "LSP malformed and oversized frame, disconnect, restart, late response and duplicate ID",
+      "provider throw, cancellation, reentry and late release",
+      "host opener, command and workspace rejection",
+      "IME reentry, folded composition and disposal during callback"
+    ],
+    "complexity": [
+      "Piece Tree edit, search, offset and decoration operations retain Monaco asymptotic upper bounds",
+      "projection and vertical prefix queries never scan the full document on a viewport hot path",
+      "render work scales with visible rows and changed dependencies",
+      "operation counters, not wall time, prove the growth class"
+    ],
+    "fatalOOM": "excluded from recoverable-failure claims and never injected as if it were a catchable Swift error"
+  },
+  "releaseVerdictRule": {
+    "pass": "C01-C10, every P00-P13 cell and every cross-cutting gate pass for one exact MonaCode revision and signed artifact set",
+    "notPass": "missing artifact, permission, input source, valid sample count, comparator result or any skipped or failed cell",
+    "scope": "the verdict applies only to the recorded arm64 current-machine QEnvironmentID and the locked macOS release target; it makes no iOS, iPadOS, x86_64, external-display or absent-HID claim"
+  },
+  "currentStatus": {
+    "productSourceFiles": 0,
+    "productExecutables": 0,
+    "candidateGeneratedArtifactsPresent": 0,
+    "correctnessGatesPassed": 0,
+    "performanceCellsPassed": 0,
+    "crossCuttingGatesPassed": 0,
+    "releaseVerdict": "not-passed"
+  }
+}
