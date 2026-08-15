@@ -174,13 +174,13 @@ The G5-R task graph uses this forward-only order:
 1. Phase 00 creates the Swift package graph, provenance inputs, differential harness, environment collectors, and plan-preserving infrastructure.
 2. Phase 01 implements base values, events, raw UTF-16 Piece Tree model truth, transactions, reconciliation, and model lifetime.
 3. Phase 02 implements model semantics, search, RegExp and Unicode profiles, environment semantics, and retained ECMAScript intrinsics.
-4. Phase 03 implements projection, vertical indexes, Core Text geometry, Core Graphics rendering, scrolling, hit testing, and deterministic renderer selection.
+4. Phase 03 implements projection, vertical indexes, Core Text geometry, Core Graphics rendering, scrolling, and hit testing, then runs the locked renderer-owned decision gate. A passing Core Graphics result freezes Metal as absent; a failing renderer-owned result triggers Metal implementation and parity validation before any later phase begins.
 5. Phase 04 implements keyboard input, IME, pointer and scroll adaptation, clipboard, drag and drop, Services, accessibility, and AppKit/SwiftUI editor embedding.
 6. Phase 05 implements the complete public declaration surface, commands, actions, keybindings, menus, options, themes, icons, localization, and all retained feature identities.
 7. Phase 06 implements providers, LSP transport and protocol mapping, snippets, Markdown presentation, and plain-text fallback.
 8. Phase 07 implements diff, standalone services, WorkspaceEdit, host contracts, resource bounds, source closure, all remaining public diff views and SwiftUI types, and final public API closure.
 9. Phase 08 builds the release candidate, completes license notices, emits the distribution manifest, and regenerates and validates all static candidate manifests after public API closure.
-10. Phase 09 captures `QEnvironmentID`, runs C01-C10, P00-P13, cross-cutting and failure-injection gates, executes conditional Metal work when the renderer-owned trigger fires, and produces the final release verdict last.
+10. Phase 09 captures `QEnvironmentID`, runs C01-C10, P00-P13, cross-cutting and failure-injection gates against the renderer frozen by Phase 03, and produces the final release verdict last. Phase 09 never adds or changes product source.
 
 Every dependency points from a later task to an earlier task. Distribution exists before C10. Public API closure exists before the final native declaration manifest. Candidate validation exists before acceptance. The release verdict depends on every acceptance result and has no outgoing dependency into candidate construction.
 
@@ -220,7 +220,7 @@ The seven required candidate artifacts have explicit producer and finalizer task
 6. `MonaDistributionManifest` after the Phase 08 release candidate and notices exist.
 7. `QEnvironmentID` at the start of each Phase 09 acceptance run.
 
-Static manifests generated earlier in development are provisional evidence. Phase 08 regenerates and hashes their final forms. Acceptance consumes only final forms. `QEnvironmentID` is run-specific and joins the six static manifests before the first C/P result is accepted.
+Static manifests generated earlier in development are provisional evidence. The Phase 03 renderer decision completes before any static manifest finalizer. Phase 08 therefore regenerates and hashes final forms containing the fixed Core Graphics-only or Core Graphics-plus-Metal source set. Acceptance consumes only final forms. `QEnvironmentID` is run-specific and joins the six static manifests before the first C/P result is accepted.
 
 Plan audit outputs use `docs/contracts/monaco-editor-0.56.0/g5-r/implementation-plan/verification/`. Product acceptance outputs use `artifacts/acceptance-evidence/g5-r/`. A plan audit uses the states `planned`, `mapped`, and `structurally-verified`; it never uses `implemented`, `passed`, or `released`. Those latter states require product code and executed acceptance evidence.
 
