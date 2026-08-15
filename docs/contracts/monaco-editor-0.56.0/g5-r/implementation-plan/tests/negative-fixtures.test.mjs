@@ -15,12 +15,15 @@ const run = (args = []) => spawnSync(process.execPath, [verifier, ...args], {
   maxBuffer: 32 * 1024 * 1024
 });
 
-test('the empty candidate plan fails with JSON stdout and diagnostics stderr', () => {
+test('an incomplete candidate plan fails with JSON stdout and diagnostics stderr', () => {
   const result = run();
   assert.equal(result.status, 1);
   const output = JSON.parse(result.stdout);
   assert.equal(output.status, 'fail');
   assert.equal(output.findingCount > 0, true);
+  assert.equal(output.coverage.retainedFeatureIds, 62);
+  assert.equal(output.coverage.missingRetainedFeatureIds, 0);
+  assert.equal(output.coverage.nativeColorizeReplacements, 3);
   assert.equal(result.stderr.includes('PLAN_'), true);
 });
 

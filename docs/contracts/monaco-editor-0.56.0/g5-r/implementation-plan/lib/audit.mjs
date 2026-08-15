@@ -91,6 +91,21 @@ function resultFromGroups({
   const environmentFailures = evidenceFindings.filter((row) => row.id === 'PLAN_ENVIRONMENT_MISMATCH').length;
   const dependencyFailures = graphFindings.length;
   const markerFailures = markdownFindings.length;
+  const ownershipByKey = new Map((plan.ownership ?? []).map((row) => [identityKey(row), row]));
+  const retainedFeatures = inventory.identities.filter((identity) => identity.kind === 'feature' && identity.retained);
+  const mappedRetainedFeatures = retainedFeatures.filter((identity) => (
+    (ownershipByKey.get(identityKey(identity))?.implementationOwners?.length ?? 0) === 1
+    && (ownershipByKey.get(identityKey(identity))?.testOwners?.length ?? 0) > 0
+  ));
+  const nativeColorizePaths = [
+    'editor.colorize',
+    'editor.colorizeElement',
+    'editor.colorizeModelLine'
+  ];
+  const mappedNativeColorizePaths = nativeColorizePaths.filter((id) => {
+    const row = ownershipByKey.get(`publicPath:${id}`);
+    return (row?.implementationOwners?.length ?? 0) === 1 && (row?.testOwners?.length ?? 0) > 0;
+  });
   return {
     status: findings.length === 0 ? 'pass' : 'fail',
     findingCount: findings.length,
@@ -109,7 +124,10 @@ function resultFromGroups({
       contractIdentities: inventory.identities.length,
       retainedIdentities: inventory.retained.length,
       dispositionOnlyIdentities: inventory.dispositionOnly.length,
-      ownershipRows: (plan.ownership ?? []).length
+      ownershipRows: (plan.ownership ?? []).length,
+      retainedFeatureIds: retainedFeatures.length,
+      missingRetainedFeatureIds: retainedFeatures.length - mappedRetainedFeatures.length,
+      nativeColorizeReplacements: mappedNativeColorizePaths.length
     },
     topologicalOrder: graphFindings.length === 0 ? topologicalOrder(plan.tasks ?? []) : [],
     documentHashes: documentHashes(plan, planDirectory, phaseID)
