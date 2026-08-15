@@ -3939,9 +3939,1332 @@
       "commitBoundary": [
         "Tests/ConformanceAndFailureInjection/Phase03RendererConformanceTests.swift"
       ]
+    },
+    {
+      "id": "P04-T001",
+      "phase": "04",
+      "title": "Define platform-neutral keyboard event semantics in Core",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P03-T012"
+      ],
+      "contractRefs": [
+        "I3-R.keyboardSemantics",
+        "I3-R4.publicEvents",
+        "F1-R5.nativeEventTypes"
+      ],
+      "ownership": [
+        "input:core-key-event",
+        "input:key-dispatch-outcome"
+      ],
+      "files": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Sources/MonaCode/Input/MonaKeyEvent.swift",
+          "Sources/MonaCode/Input/MonaKeyDispatchOutcome.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/Input/MonaKeyEventTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaKeyCode",
+          "MonaKeyMod"
+        ],
+        "produces": [
+          "MonaKeyEvent",
+          "MonaKeyDispatchOutcome"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaKeyEventTests/testModifierAndRepeatMatrix",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "KEY_EVENT_SEMANTIC_MISMATCH fixture=modifier-repeat"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Represent key code, scan-independent key text, modifiers, repeat, composing state, and handled outcome as platform-neutral values.",
+          "Separate prevent-default and stop-propagation decisions from platform dispatch.",
+          "Preserve unknown key codes without collapsing them to a known case."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaKeyEventTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "CORE_KEY_EVENTS matrices=36 unknownCodes=preserved"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-04/P04-T001.json"
+      ],
+      "completion": [
+        "Core input values contain no platform types.",
+        "Modifier and repeat semantics match frozen traces.",
+        "Dispatch outcomes remain explicit."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCode/Input/MonaKeyEvent.swift",
+        "Sources/MonaCode/Input/MonaKeyDispatchOutcome.swift",
+        "Tests/MonaCodeTests/Input/MonaKeyEventTests.swift"
+      ]
+    },
+    {
+      "id": "P04-T002",
+      "phase": "04",
+      "title": "Translate AppKit key events through one native gateway",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P04-T001"
+      ],
+      "contractRefs": [
+        "I3-R.AppKeyEventGateway",
+        "I3-R2.keyMapping",
+        "C07"
+      ],
+      "ownership": [
+        "input:appkit-key-gateway"
+      ],
+      "files": {
+        "productTarget": "MonaCodeAppKit",
+        "create": [
+          "Sources/MonaCodeAppKit/Input/MonaAppKeyEventGateway.swift",
+          "Sources/MonaCodeAppKit/Input/MonaMacKeyCodeMap.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeAppKitTests/Input/MonaAppKeyEventGatewayTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaKeyEvent",
+          "MonaKeyDispatchOutcome"
+        ],
+        "produces": [
+          "MonaAppKeyEventGateway",
+          "MonaMacKeyCodeMap"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaAppKeyEventGatewayTests/testABCDeadKeyAndRepeatMatrix",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "APP_KEY_GATEWAY_MISMATCH fixture=abc-dead-key"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Translate hardware-independent AppKit event fields to Core key values exactly once.",
+          "Preserve dead-key, repeat, function-key, keypad, modifier-only, and unrecognized cases.",
+          "Apply Core dispatch outcomes at the native boundary after command resolution."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaAppKeyEventGatewayTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "APP_KEY_GATEWAY ABC=pass keyMap=exact"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-04/P04-T002.json"
+      ],
+      "completion": [
+        "ABC key matrices match I3-R.",
+        "Unknown keys survive translation.",
+        "Native default handling follows Core outcomes."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCodeAppKit/Input/MonaAppKeyEventGateway.swift",
+        "Sources/MonaCodeAppKit/Input/MonaMacKeyCodeMap.swift",
+        "Tests/MonaCodeAppKitTests/Input/MonaAppKeyEventGatewayTests.swift"
+      ]
+    },
+    {
+      "id": "P04-T003",
+      "phase": "04",
+      "title": "Port keybinding resolution and chord state to Core",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P04-T001",
+        "P01-T012"
+      ],
+      "contractRefs": [
+        "I3-R2.keybindingResolver",
+        "F1-R3.keybindings",
+        "C04"
+      ],
+      "ownership": [
+        "normativeLayer:native-input:I3-R2",
+        "input:keybinding-resolver",
+        "input:chord-state"
+      ],
+      "files": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Sources/MonaCode/Input/MonaKeybinding.swift",
+          "Sources/MonaCode/Input/MonaKeybindingResolver.swift",
+          "Sources/MonaCode/Input/MonaChordState.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/Input/MonaKeybindingResolverTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaKeyEvent",
+          "MonaGlobalLifetime"
+        ],
+        "produces": [
+          "MonaKeybinding",
+          "MonaKeybindingResolver",
+          "MonaChordState"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaKeybindingResolverTests/testChordWeightAndWhenOrder",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "KEYBINDING_RESOLUTION_MISMATCH fixture=chord-weight-when"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Port resolver ordering, weight, command removal, when-clause matching, chord entry, timeout, cancellation, and replay.",
+          "Store chord state per editor with deterministic clock injection.",
+          "Return a Core dispatch outcome without invoking platform APIs."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaKeybindingResolverTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "KEYBINDING_RESOLVER registrations=379 order=exact"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-04/P04-T003.json"
+      ],
+      "completion": [
+        "All 379 frozen keybinding identities retain order.",
+        "Chord state and timeout traces match.",
+        "Core remains platform-neutral."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCode/Input/MonaKeybinding.swift",
+        "Sources/MonaCode/Input/MonaKeybindingResolver.swift",
+        "Sources/MonaCode/Input/MonaChordState.swift",
+        "Tests/MonaCodeTests/Input/MonaKeybindingResolverTests.swift"
+      ]
+    },
+    {
+      "id": "P04-T004",
+      "phase": "04",
+      "title": "Implement marked-text input and composition arbitration",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P04-T002",
+        "P04-T003",
+        "P03-T007"
+      ],
+      "contractRefs": [
+        "I3-R",
+        "I3-R3.compositionArbitration",
+        "C07",
+        "P13"
+      ],
+      "ownership": [
+        "normativeLayer:native-input:I3-R",
+        "input:text-client",
+        "input:composition-arbitration"
+      ],
+      "files": {
+        "productTarget": "MonaCodeAppKit",
+        "create": [
+          "Sources/MonaCodeAppKit/Input/MonaTextInputClient.swift",
+          "Sources/MonaCodeAppKit/Input/MonaCompositionSession.swift",
+          "Sources/MonaCodeAppKit/Input/MonaCompositionArbiter.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeAppKitTests/Input/MonaCompositionTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaAppKeyEventGateway",
+          "MonaKeybindingResolver",
+          "MonaQueryGeometryBarrier",
+          "MonaTransactionGateway"
+        ],
+        "produces": [
+          "MonaTextInputClient",
+          "MonaCompositionSession",
+          "MonaCompositionArbiter"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaCompositionTests/testPinyinMarkedTextBarrierTrace",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "COMPOSITION_ARBITRATION_MISMATCH fixture=pinyin-marked-text"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Implement marked text, selected range, replacement range, attributed substring, first-rect, and character-index queries.",
+          "Arbitrate keybinding, command insertion, marked-text update, commit, cancel, fold, and disposal through one session state machine.",
+          "Use the geometry barrier for every synchronous native geometry query.",
+          "Preserve raw UTF-16 replacement ranges through ABC and Pinyin traces."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaCompositionTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "COMPOSITION_GATE ABC=pass Pinyin=pass mixedGeneration=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-04/P04-T004.json"
+      ],
+      "completion": [
+        "ABC and Pinyin marked-text matrices pass.",
+        "No keybinding mutates an active protected composition incorrectly.",
+        "Composition geometry uses one complete generation."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCodeAppKit/Input/MonaTextInputClient.swift",
+        "Sources/MonaCodeAppKit/Input/MonaCompositionSession.swift",
+        "Sources/MonaCodeAppKit/Input/MonaCompositionArbiter.swift",
+        "Tests/MonaCodeAppKitTests/Input/MonaCompositionTests.swift"
+      ]
+    },
+    {
+      "id": "P04-T005",
+      "phase": "04",
+      "title": "Replicate multi-cursor input through ModelInputBarrier",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P04-T004",
+        "P01-T010"
+      ],
+      "contractRefs": [
+        "I3-R3.multiCursorComposition",
+        "R1.inputBarrier",
+        "P09"
+      ],
+      "ownership": [
+        "normativeLayer:native-input:I3-R3",
+        "input:model-input-barrier"
+      ],
+      "files": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Sources/MonaCode/Input/MonaModelInputBarrier.swift",
+          "Sources/MonaCode/Input/MonaMultiCursorInputPlan.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/Input/MonaModelInputBarrierTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaTransactionGateway",
+          "MonaPublicationGate",
+          "MonaSelection"
+        ],
+        "produces": [
+          "MonaModelInputBarrier",
+          "MonaMultiCursorInputPlan"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaModelInputBarrierTests/testOverlappingCompositionReplication",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "MODEL_INPUT_BARRIER_PARTIAL_COMMIT cursors=10000"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Prepare primary and secondary cursor edits against one immutable model version.",
+          "Apply overlap, merge, ordering, snippet, clipboard, and composition replication rules before commit.",
+          "Publish all cursor edits and selections in one transaction or publish none."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaModelInputBarrierTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "MODEL_INPUT_BARRIER cursorCounts=1,100,10000 partialCommits=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-04/P04-T005.json"
+      ],
+      "completion": [
+        "Multi-cursor traces match comparator ordering.",
+        "Overlap resolution is deterministic.",
+        "Failure and cancellation publish no partial cursor edits."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCode/Input/MonaModelInputBarrier.swift",
+        "Sources/MonaCode/Input/MonaMultiCursorInputPlan.swift",
+        "Tests/MonaCodeTests/Input/MonaModelInputBarrierTests.swift"
+      ]
+    },
+    {
+      "id": "P04-T006",
+      "phase": "04",
+      "title": "Project pointer, scroll, and context-menu events through AppKit",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P04-T002",
+        "P03-T007"
+      ],
+      "contractRefs": [
+        "I3-R4.pointerScrollMenu",
+        "F1-R5.nativeEventTypes",
+        "C07"
+      ],
+      "ownership": [
+        "input:pointer",
+        "input:scroll",
+        "input:context-menu"
+      ],
+      "files": {
+        "productTarget": "MonaCodeAppKit",
+        "create": [
+          "Sources/MonaCodeAppKit/Input/MonaPointerGateway.swift",
+          "Sources/MonaCodeAppKit/Input/MonaScrollGateway.swift",
+          "Sources/MonaCodeAppKit/Input/MonaContextMenuGateway.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeAppKitTests/Input/MonaPointerScrollMenuTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaHitTester",
+          "MonaScrollModel"
+        ],
+        "produces": [
+          "MonaPointerGateway",
+          "MonaScrollGateway",
+          "MonaContextMenuGateway"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaPointerScrollMenuTests/testPreciseScrollPhaseTrace",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "POINTER_SCROLL_MISMATCH fixture=precise-scroll-phase"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Translate button, click count, modifiers, pressure, precise scrolling, phases, momentum, magnification, and coordinates.",
+          "Resolve targets through the geometry barrier before Core command dispatch.",
+          "Build native context menus from the ordered Core menu model."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaPointerScrollMenuTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "POINTER_SCROLL_MENU targetMatrices=42 phaseOrder=exact"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-04/P04-T006.json"
+      ],
+      "completion": [
+        "Pointer targets and scroll phases match native contract fixtures.",
+        "Context menu order matches the registry.",
+        "No stale geometry target is dispatched."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCodeAppKit/Input/MonaPointerGateway.swift",
+        "Sources/MonaCodeAppKit/Input/MonaScrollGateway.swift",
+        "Sources/MonaCodeAppKit/Input/MonaContextMenuGateway.swift",
+        "Tests/MonaCodeAppKitTests/Input/MonaPointerScrollMenuTests.swift"
+      ]
+    },
+    {
+      "id": "P04-T007",
+      "phase": "04",
+      "title": "Implement public EventControl and native event adaptation",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P04-T001",
+        "P04-T006"
+      ],
+      "contractRefs": [
+        "I3-R4.publicEventControl",
+        "F1-R5.eventAdaptation",
+        "C04"
+      ],
+      "ownership": [
+        "normativeLayer:native-input:I3-R4",
+        "input:event-control"
+      ],
+      "files": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Sources/MonaCode/Input/MonaEventControl.swift",
+          "Sources/MonaCode/Input/MonaPublicInputEvents.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/Input/MonaEventControlTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaKeyEvent",
+          "MonaKeyDispatchOutcome"
+        ],
+        "produces": [
+          "MonaEventControl",
+          "MonaPublicKeyboardEvent",
+          "MonaPublicMouseEvent",
+          "MonaPublicScrollEvent"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaEventControlTests/testPreventDefaultStopPropagationIndependence",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "EVENT_CONTROL_MISMATCH fixture=independent-flags"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Expose explicit prevent-default and stop-propagation state transitions.",
+          "Project platform-neutral keyboard, mouse, and scroll fields into public native-adapted event values.",
+          "Ensure public callbacks cannot mutate the underlying native event object."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaEventControlTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "EVENT_CONTROL flags=independent publicEvents=3"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-04/P04-T007.json"
+      ],
+      "completion": [
+        "Public event controls preserve independent flags.",
+        "Three native-adapted event surfaces are stable.",
+        "Core public types contain no platform object."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCode/Input/MonaEventControl.swift",
+        "Sources/MonaCode/Input/MonaPublicInputEvents.swift",
+        "Tests/MonaCodeTests/Input/MonaEventControlTests.swift"
+      ]
+    },
+    {
+      "id": "P04-T008",
+      "phase": "04",
+      "title": "Implement copy, cut, paste, and paste-edit pipelines",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P04-T005"
+      ],
+      "contractRefs": [
+        "I4-R.clipboard",
+        "L2-R.DocumentPasteEdit",
+        "C07",
+        "P09"
+      ],
+      "ownership": [
+        "transfer:pasteboard",
+        "provider:DocumentPasteEdit"
+      ],
+      "files": {
+        "productTarget": "MonaCodeAppKit",
+        "create": [
+          "Sources/MonaCodeAppKit/Transfer/MonaPasteboardGateway.swift",
+          "Sources/MonaCodeAppKit/Transfer/MonaPasteEditPipeline.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeAppKitTests/Transfer/MonaPasteboardTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaModelInputBarrier",
+          "MonaAsyncValidityTicket"
+        ],
+        "produces": [
+          "MonaPasteboardGateway",
+          "MonaPasteEditPipeline"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaPasteboardTests/testMultiCursorPasteSpreadAndRollback",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "PASTE_TRANSACTION_PARTIAL_COMMIT cursor=99"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Read and write the exact retained plain-text, rich-text, and editor metadata representations.",
+          "Run direct paste-edit providers in deterministic order under cancellation and validity tickets.",
+          "Commit cut and multi-cursor paste through the model input barrier."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaPasteboardTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "PASTEBOARD copy=pass cut=pass paste=pass partialCommits=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-04/P04-T008.json"
+      ],
+      "completion": [
+        "Copy/cut/paste matrices match I4-R.",
+        "Provider cancellation has no side effects.",
+        "Clipboard spreading preserves cursor order."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCodeAppKit/Transfer/MonaPasteboardGateway.swift",
+        "Sources/MonaCodeAppKit/Transfer/MonaPasteEditPipeline.swift",
+        "Tests/MonaCodeAppKitTests/Transfer/MonaPasteboardTests.swift"
+      ]
+    },
+    {
+      "id": "P04-T009",
+      "phase": "04",
+      "title": "Implement drag, drop, and macOS Services transfer",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P04-T008",
+        "P04-T006"
+      ],
+      "contractRefs": [
+        "I4-R.dragDropServices",
+        "L2-R.DocumentDropEdit",
+        "C07"
+      ],
+      "ownership": [
+        "normativeLayer:clipboard-drag-drop-services:I4-R",
+        "transfer:drag-drop-services"
+      ],
+      "files": {
+        "productTarget": "MonaCodeAppKit",
+        "create": [
+          "Sources/MonaCodeAppKit/Transfer/MonaDragDropGateway.swift",
+          "Sources/MonaCodeAppKit/Transfer/MonaServicesGateway.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeAppKitTests/Transfer/MonaDragDropServicesTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaPasteEditPipeline",
+          "MonaHitTester",
+          "MonaModelInputBarrier"
+        ],
+        "produces": [
+          "MonaDragDropGateway",
+          "MonaServicesGateway"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaDragDropServicesTests/testStaleDropLocationIsRejected",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "DROP_VALIDITY_REJECTED expectedGeneration=4 actualGeneration=3"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Validate drag types, operation masks, drop geometry, direct drop-edit providers, and transfer payloads before commit.",
+          "Map macOS Services read and write selection operations to the same transfer pipeline.",
+          "Reject stale drop geometry and dispose provider lists exactly once."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaDragDropServicesTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "DRAG_DROP_SERVICES matrices=28 staleDrops=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-04/P04-T009.json"
+      ],
+      "completion": [
+        "Drag/drop and Services traces pass.",
+        "Stale geometry never mutates the model.",
+        "All transfers use one transactional boundary."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCodeAppKit/Transfer/MonaDragDropGateway.swift",
+        "Sources/MonaCodeAppKit/Transfer/MonaServicesGateway.swift",
+        "Tests/MonaCodeAppKitTests/Transfer/MonaDragDropServicesTests.swift"
+      ]
+    },
+    {
+      "id": "P04-T010",
+      "phase": "04",
+      "title": "Expose the raw UTF-16 native text accessibility surface",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P04-T004",
+        "P03-T007"
+      ],
+      "contractRefs": [
+        "A1-R",
+        "A1-R2.textSelectors",
+        "C07",
+        "P13"
+      ],
+      "ownership": [
+        "normativeLayer:accessibility:A1-R",
+        "accessibility:text-area"
+      ],
+      "files": {
+        "productTarget": "MonaCodeAppKit",
+        "create": [
+          "Sources/MonaCodeAppKit/Accessibility/MonaAXTextArea.swift",
+          "Sources/MonaCodeAppKit/Accessibility/MonaAXTextRangeMapper.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeAppKitTests/Accessibility/MonaAXTextAreaTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaCodeModel",
+          "MonaSelection",
+          "MonaQueryGeometryBarrier"
+        ],
+        "produces": [
+          "MonaAXTextArea",
+          "MonaAXTextRangeMapper"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaAXTextAreaTests/testIsolatedSurrogateRangeRoundTrip",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "AX_RAW_UTF16_ROUNDTRIP_MISMATCH range=7:1"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Implement the frozen native text selectors for value, selection, visible range, attributed substring, range-for-position, bounds-for-range, and line mapping.",
+          "Convert between accessibility integer ranges and raw model UTF-16 offsets without repair.",
+          "Route geometry queries through the complete-generation barrier."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaAXTextAreaTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "AX_TEXT_SURFACE selectors=closed rawUTF16=pass"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-04/P04-T010.json"
+      ],
+      "completion": [
+        "Every required text selector exists.",
+        "Isolated-surrogate ranges round-trip.",
+        "Large full-document queries remain bounded by the contract."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCodeAppKit/Accessibility/MonaAXTextArea.swift",
+        "Sources/MonaCodeAppKit/Accessibility/MonaAXTextRangeMapper.swift",
+        "Tests/MonaCodeAppKitTests/Accessibility/MonaAXTextAreaTests.swift"
+      ]
+    },
+    {
+      "id": "P04-T011",
+      "phase": "04",
+      "title": "Implement accessibility controls, proxies, links, diagnostics, and actions",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P04-T010",
+        "P04-T006"
+      ],
+      "contractRefs": [
+        "A1-R2.selectorAttributeActionClosure",
+        "A2-R2.widgetClosure",
+        "C07"
+      ],
+      "ownership": [
+        "normativeLayer:accessibility:A1-R2",
+        "machineArtifact:A2-R2-accessibility"
+      ],
+      "files": {
+        "productTarget": "MonaCodeAppKit",
+        "create": [
+          "Sources/MonaCodeAppKit/Accessibility/MonaAXElementGraph.swift",
+          "Sources/MonaCodeAppKit/Accessibility/MonaAXWidgetProxy.swift",
+          "Sources/MonaCodeAppKit/Accessibility/MonaAXDiagnosticElement.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeAppKitTests/Accessibility/MonaAXElementGraphTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaAXTextArea",
+          "MonaHitTester"
+        ],
+        "produces": [
+          "MonaAXElementGraph",
+          "MonaAXWidgetProxy",
+          "MonaAXDiagnosticElement"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaAXElementGraphTests/testSelectorAttributeActionManifest",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "AX_SURFACE_MISSING selector=accessibilityPerformPress"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Instantiate exactly the required editor, gutter, widget, link, diagnostic, and proxy roles.",
+          "Expose the frozen selector, attribute, parameterized-attribute, and action sets per role.",
+          "Preserve stable element identity across viewport recycling while semantic ownership remains unchanged."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaAXElementGraphTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "AX_ELEMENT_GRAPH roles=exact selectors=exact actions=exact"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-04/P04-T011.json"
+      ],
+      "completion": [
+        "A1-R2 and A2-R2 identity sets match.",
+        "Recycled views do not change semantic element identity.",
+        "Unsupported actions are absent rather than inert."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCodeAppKit/Accessibility/MonaAXElementGraph.swift",
+        "Sources/MonaCodeAppKit/Accessibility/MonaAXWidgetProxy.swift",
+        "Sources/MonaCodeAppKit/Accessibility/MonaAXDiagnosticElement.swift",
+        "Tests/MonaCodeAppKitTests/Accessibility/MonaAXElementGraphTests.swift"
+      ]
+    },
+    {
+      "id": "P04-T012",
+      "phase": "04",
+      "title": "Implement focus modes and the localized announcement bridge",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P04-T011",
+        "P04-T003"
+      ],
+      "contractRefs": [
+        "A2-R2.focusModes",
+        "N1-R.announcements",
+        "S1-R.feedback",
+        "C07"
+      ],
+      "ownership": [
+        "normativeLayer:accessibility:A2-R2",
+        "accessibility:focus",
+        "accessibility:announcements"
+      ],
+      "files": {
+        "productTarget": "MonaCodeAppKit",
+        "create": [
+          "Sources/MonaCodeAppKit/Accessibility/MonaAXFocusCoordinator.swift",
+          "Sources/MonaCodeAppKit/Accessibility/MonaAXAnnouncementBridge.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeAppKitTests/Accessibility/MonaAXFocusAnnouncementTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaAXElementGraph",
+          "MonaChordState",
+          "MonaCodeEnvironment"
+        ],
+        "produces": [
+          "MonaAXFocusCoordinator",
+          "MonaAXAnnouncementBridge"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaAXFocusAnnouncementTests/testFocusModeTransitionOrder",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "AX_FOCUS_ORDER_MISMATCH transition=widget-to-editor"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Implement editor, widget, accessibility-optimized, tab-focus, and temporary focus transitions as one state machine.",
+          "Deduplicate and serialize announcements without audio or unsupported notification UI.",
+          "Resolve announcement text through the explicit N1 localization profile."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaAXFocusAnnouncementTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "AX_FOCUS_ANNOUNCEMENT focusModes=exact duplicates=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-04/P04-T012.json"
+      ],
+      "completion": [
+        "Focus transition matrices match A2-R2.",
+        "Announcements use explicit localized messages.",
+        "No prohibited audio or notification surface is introduced."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCodeAppKit/Accessibility/MonaAXFocusCoordinator.swift",
+        "Sources/MonaCodeAppKit/Accessibility/MonaAXAnnouncementBridge.swift",
+        "Tests/MonaCodeAppKitTests/Accessibility/MonaAXFocusAnnouncementTests.swift"
+      ]
+    },
+    {
+      "id": "P04-T013",
+      "phase": "04",
+      "title": "Route accessibility setters through ModelInputBarrier",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P04-T005",
+        "P04-T010",
+        "P04-T012"
+      ],
+      "contractRefs": [
+        "A1-R2.setters",
+        "R1.transactionRecovery",
+        "C07"
+      ],
+      "ownership": [
+        "accessibility:model-input-barrier"
+      ],
+      "files": {
+        "productTarget": "MonaCodeAppKit",
+        "create": [
+          "Sources/MonaCodeAppKit/Accessibility/MonaAXMutationGateway.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeAppKitTests/Accessibility/MonaAXMutationGatewayTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaAXTextArea",
+          "MonaModelInputBarrier",
+          "MonaAXFocusCoordinator"
+        ],
+        "produces": [
+          "MonaAXMutationGateway"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaAXMutationGatewayTests/testSetValueFailureRollsBack",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "AX_MUTATION_PARTIAL_COMMIT selector=setValue"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Translate set-value, set-selection, increment, decrement, press, and custom actions into Core input plans.",
+          "Validate focus, editability, model version, range, and owner generation before commit.",
+          "Publish accessibility notifications only after transaction success."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaAXMutationGatewayTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "AX_MUTATION_GATEWAY actions=closed partialCommits=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-04/P04-T013.json"
+      ],
+      "completion": [
+        "Every mutating accessibility action uses the model barrier.",
+        "Failure emits no success notification.",
+        "Read-only and stale mutations fail explicitly."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCodeAppKit/Accessibility/MonaAXMutationGateway.swift",
+        "Tests/MonaCodeAppKitTests/Accessibility/MonaAXMutationGatewayTests.swift"
+      ]
+    },
+    {
+      "id": "P04-T014",
+      "phase": "04",
+      "title": "Deliver MonaCodeEditorView as the AppKit editor boundary",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P04-T006",
+        "P04-T009",
+        "P04-T013",
+        "P03-T012"
+      ],
+      "contractRefs": [
+        "H1-R.editorView",
+        "G5-R.deliveryScope.requiredViews",
+        "C09"
+      ],
+      "ownership": [
+        "public-view:MonaCodeEditorView"
+      ],
+      "files": {
+        "productTarget": "MonaCodeAppKit",
+        "create": [
+          "Sources/MonaCodeAppKit/Views/MonaCodeEditorView.swift",
+          "Sources/MonaCodeAppKit/Views/MonaEditorAttachment.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeAppKitTests/Views/MonaCodeEditorViewLifecycleTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaCodeModel",
+          "MonaCoreGraphicsRenderer",
+          "ConditionalMonaMetalRenderer",
+          "MonaTextInputClient",
+          "MonaAXElementGraph"
+        ],
+        "produces": [
+          "MonaCodeEditorView",
+          "MonaEditorAttachment"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaCodeEditorViewLifecycleTests/testAttachDetachDisposeBaseline",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "EDITOR_VIEW_LIFETIME_LEAK cycle=1000"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Compose model attachment, projection, renderer branch, input, transfer, accessibility, widgets, and lifetime ownership in one native view.",
+          "Keep model lifetime independent from view attachment and detach all callbacks before disposal.",
+          "Expose only the contract-owned editor view surface."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaCodeEditorViewLifecycleTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "MONACODE_EDITOR_VIEW cycles=1000 baselineReturn=pass"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-04/P04-T014.json"
+      ],
+      "completion": [
+        "The required AppKit editor view exists.",
+        "Attach/detach/dispose returns to warm baseline.",
+        "No hidden global owner is created."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCodeAppKit/Views/MonaCodeEditorView.swift",
+        "Sources/MonaCodeAppKit/Views/MonaEditorAttachment.swift",
+        "Tests/MonaCodeAppKitTests/Views/MonaCodeEditorViewLifecycleTests.swift"
+      ]
+    },
+    {
+      "id": "P04-T015",
+      "phase": "04",
+      "title": "Deliver MonaCodeEditor and MonaSwiftUIEditorController lifecycle wrappers",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P04-T014"
+      ],
+      "contractRefs": [
+        "H1-R.swiftUIBoundary",
+        "G5-R.deliveryScope.requiredSwiftUITypes",
+        "C09"
+      ],
+      "ownership": [
+        "public-swiftui:MonaCodeEditor",
+        "public-swiftui:MonaSwiftUIEditorController"
+      ],
+      "files": {
+        "productTarget": "MonaCodeSwiftUI",
+        "create": [
+          "Sources/MonaCodeSwiftUI/MonaCodeEditor.swift",
+          "Sources/MonaCodeSwiftUI/MonaSwiftUIEditorController.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeAppKitTests/Views/MonaCodeEditorSwiftUILifecycleTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaCodeEditorView",
+          "MonaEditorAttachment"
+        ],
+        "produces": [
+          "MonaCodeEditor",
+          "MonaSwiftUIEditorController"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaCodeEditorSwiftUILifecycleTests/testUpdateDoesNotRecreateModel",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "SWIFTUI_LIFECYCLE_IDENTITY_DRIFT update=2"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Wrap the AppKit view with stable identity and explicit controller ownership.",
+          "Map SwiftUI updates to declared option, model, and focus changes only.",
+          "Keep text semantics, rendering, input, provider execution, and command logic outside the wrapper."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaCodeEditorSwiftUILifecycleTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "SWIFTUI_EDITOR_WRAPPER updates=100 identityStable=pass"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-04/P04-T015.json"
+      ],
+      "completion": [
+        "Both required SwiftUI editor types exist.",
+        "Updates preserve model and view identity.",
+        "Wrapper behavior remains lifecycle-only."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCodeSwiftUI/MonaCodeEditor.swift",
+        "Sources/MonaCodeSwiftUI/MonaSwiftUIEditorController.swift",
+        "Tests/MonaCodeAppKitTests/Views/MonaCodeEditorSwiftUILifecycleTests.swift"
+      ]
+    },
+    {
+      "id": "P04-T016",
+      "phase": "04",
+      "title": "Close native input, transfer, accessibility, and editor embedding",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P04-T007",
+        "P04-T009",
+        "P04-T013",
+        "P04-T015"
+      ],
+      "contractRefs": [
+        "I3-R",
+        "I3-R2",
+        "I3-R3",
+        "I3-R4",
+        "I4-R",
+        "A1-R",
+        "A1-R2",
+        "A2-R2",
+        "C07"
+      ],
+      "ownership": [
+        "phase-gate:04"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [],
+        "modify": [],
+        "test": [
+          "Tests/ConformanceAndFailureInjection/Phase04NativeBoundaryConformanceTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaCodeEditorView",
+          "MonaCodeEditor",
+          "MonaTextInputClient",
+          "MonaPasteboardGateway",
+          "MonaDragDropGateway",
+          "MonaAXMutationGateway"
+        ],
+        "produces": [
+          "Phase04NativeBoundaryGate"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter Phase04NativeBoundaryConformanceTests/testSeededCompositionReentry",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "PHASE04_NATIVE_GATE_FAILED fixture=composition-reentry"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Run ABC, Pinyin, chord, multi-cursor, pointer, scroll, menu, clipboard, drag/drop, Services, VoiceOver, focus, and lifecycle matrices.",
+          "Inject reentry, stale geometry, cancellation, disposal, read-only, provider, and allocation failures.",
+          "Verify Core source remains free of AppKit-owned types and every mutation uses a declared gateway."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter Phase04NativeBoundaryConformanceTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "PHASE04_NATIVE_GATE C07=pass coreBoundary=pass partialCommits=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-04/P04-T016.json"
+      ],
+      "completion": [
+        "C07 prerequisites pass for editor scope.",
+        "Core and AppKit boundaries remain exact.",
+        "No failure path publishes partial input state."
+      ],
+      "commitBoundary": [
+        "Tests/ConformanceAndFailureInjection/Phase04NativeBoundaryConformanceTests.swift"
+      ]
     }
   ],
   "ownership": [
+    {
+      "kind": "machineArtifact",
+      "id": "A2-R2-accessibility",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P04-T012"
+      ],
+      "testOwners": [
+        "P04-T012"
+      ]
+    },
     {
       "kind": "machineArtifact",
       "id": "E1-R-environment-intl",
@@ -3999,6 +5322,39 @@
     },
     {
       "kind": "normativeLayer",
+      "id": "accessibility:A1-R",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P04-T010"
+      ],
+      "testOwners": [
+        "P04-T010"
+      ]
+    },
+    {
+      "kind": "normativeLayer",
+      "id": "accessibility:A1-R2",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P04-T011"
+      ],
+      "testOwners": [
+        "P04-T011"
+      ]
+    },
+    {
+      "kind": "normativeLayer",
+      "id": "accessibility:A2-R2",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P04-T012"
+      ],
+      "testOwners": [
+        "P04-T012"
+      ]
+    },
+    {
+      "kind": "normativeLayer",
       "id": "base-values-events:B1-R",
       "disposition": "retained",
       "implementationOwners": [
@@ -4006,6 +5362,17 @@
       ],
       "testOwners": [
         "P01-T013"
+      ]
+    },
+    {
+      "kind": "normativeLayer",
+      "id": "clipboard-drag-drop-services:I4-R",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P04-T009"
+      ],
+      "testOwners": [
+        "P04-T009"
       ]
     },
     {
@@ -4105,6 +5472,50 @@
       ],
       "testOwners": [
         "P02-T009"
+      ]
+    },
+    {
+      "kind": "normativeLayer",
+      "id": "native-input:I3-R",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P04-T004"
+      ],
+      "testOwners": [
+        "P04-T004"
+      ]
+    },
+    {
+      "kind": "normativeLayer",
+      "id": "native-input:I3-R2",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P04-T003"
+      ],
+      "testOwners": [
+        "P04-T003"
+      ]
+    },
+    {
+      "kind": "normativeLayer",
+      "id": "native-input:I3-R3",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P04-T005"
+      ],
+      "testOwners": [
+        "P04-T005"
+      ]
+    },
+    {
+      "kind": "normativeLayer",
+      "id": "native-input:I3-R4",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P04-T007"
+      ],
+      "testOwners": [
+        "P04-T007"
       ]
     },
     {
@@ -4244,6 +5655,10 @@
     {
       "path": "implementation-plan/phase-03-projection-layout-rendering.md",
       "sha256": "66f6b9e5d15be38bef8a2f259d1a54e20c1c96752609db4554af857c0a8c5cea"
+    },
+    {
+      "path": "implementation-plan/phase-04-input-transfer-accessibility.md",
+      "sha256": "be1458e09ab12cb4f45554dc2774be4b9a4597a79fbb0d8bbc76e58a01de82cf"
     }
   ],
   "audit": {
