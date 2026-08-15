@@ -1,0 +1,104 @@
+{
+  "schemaVersion": 1,
+  "identity": {
+    "product": "MonaCode",
+    "revision": "G5-R-full-scope-candidate",
+    "status": "candidate",
+    "observedOn": "2026-08-15"
+  },
+  "qualifiedEnvironment": {
+    "macOS": {
+      "version": "26.6.1",
+      "build": "25G76"
+    },
+    "xcode": {
+      "version": "26.6",
+      "build": "17F113"
+    },
+    "macOSSDK": "26.5",
+    "swift": {
+      "version": "6.3.3"
+    },
+    "architecture": "arm64",
+    "hardwareClass": {
+      "formFactor": "MacBook Pro",
+      "modelClass": "Mac16,7",
+      "chipClass": "Apple M4 Pro",
+      "gpuCoreCount": 20,
+      "memoryGiB": 48,
+      "metalVersion": "Metal 4"
+    },
+    "builtInDisplay": {
+      "pixels": {
+        "width": 3456,
+        "height": 2234
+      },
+      "logicalPoints": {
+        "width": 1728,
+        "height": 1117
+      },
+      "backingScale": 2,
+      "refreshHz": 120
+    },
+    "chrome": {
+      "version": "151.0.7922.138",
+      "binarySha256": "ee37661755341e9fc1babf9c20ec09d6a36e50aa8713ceb08082f8bbe2d8217d",
+      "chromiumTagCommit": "41fa82442390a4d4456c78f2d69a832d5720cb27",
+      "v8": {
+        "version": "15.1.206.17",
+        "sourceCommit": "00c2754b59cf5f79b323950c63b07cfb1a8377d4"
+      },
+      "icu": {
+        "version": "78.2",
+        "sourceCommit": "d578f2e8b7bd5938e21cfb6bf15c079e0aa5b738",
+        "dataSha256": "9f48c7f9c7c94d516a14870707e910ab94d75ae640ff6842c4af53276cd26ebe"
+      },
+      "timeSource": {
+        "file": "base/time/time_apple.mm",
+        "sha256": "0015cb2fa5ee082bb61f07e24c150d161b08a7148143914d43c58f4850c68134"
+      }
+    },
+    "locale": {
+      "appleLocale": "zh_CN",
+      "appleLanguages": [
+        "zh-Hans-CN"
+      ],
+      "timeZone": "Asia/Shanghai"
+    },
+    "requiredInputSourceIDs": [
+      "input-mode:com.apple.inputmethod.SCIM.ITABC",
+      "keyboard-layout:ABC"
+    ]
+  },
+  "designTimeObservation": {
+    "observedOn": "2026-08-15",
+    "externalDisplayCount": 1,
+    "externalDisplaySlots": [
+      {
+        "label": "LG display",
+        "qualification": "unqualified"
+      }
+    ],
+    "effect": "No formal correctness or performance run from this observation is release evidence."
+  },
+  "qualificationPredicate": {
+    "releaseDisplayScope": "built-in-display-only",
+    "externalDisplayCountRequired": 0,
+    "externalDisplayBehavior": "excluded-from-release-verdict"
+  },
+  "sourceProvenance": {
+    "allowedHost": "chromium.googlesource.com",
+    "verifiedOn": "2026-08-15",
+    "sources": [
+      "https://chromium.googlesource.com/chromium/src/+/41fa82442390a4d4456c78f2d69a832d5720cb27/?format=JSON",
+      "https://chromium.googlesource.com/v8/v8/+/00c2754b59cf5f79b323950c63b07cfb1a8377d4/?format=JSON",
+      "https://chromium.googlesource.com/chromium/deps/icu/+/d578f2e8b7bd5938e21cfb6bf15c079e0aa5b738/?format=JSON",
+      "https://chromium.googlesource.com/chromium/src/+/41fa82442390a4d4456c78f2d69a832d5720cb27/base/time/time_apple.mm?format=TEXT"
+    ]
+  },
+  "privacyPolicy": {
+    "forbiddenKeyPattern": "serial|uuid|udid|account|user",
+    "forbiddenValueClass": "UUID-shaped persistent identifiers",
+    "collectionRule": "Serialize only non-identifying hardware classes, display slots, locale, input-source identifiers, and toolchain or comparator provenance."
+  }
+}
