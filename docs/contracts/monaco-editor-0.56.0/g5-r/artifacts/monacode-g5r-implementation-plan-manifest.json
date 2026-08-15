@@ -13976,6 +13976,2463 @@
       "commitBoundary": [
         "Tests/PlanStructureTests/SixStaticCandidateSetTests.mjs"
       ]
+    },
+    {
+      "id": "P09-T001",
+      "phase": "09",
+      "title": "Recollect and finalize the per-run privacy-filtered QEnvironmentID",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P08-T016"
+      ],
+      "contractRefs": [
+        "G5-R.currentLocalEnvironment",
+        "Q1-R4.environmentIdentity",
+        "Q1-R5.preflight",
+        "G5-R.validationScope.privacy"
+      ],
+      "ownership": [
+        "candidate-finalizer:QEnvironmentID.json"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [
+          "Tools/Qualification/finalize-qenvironment.mjs"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/PlanStructureTests/FormalQEnvironmentPreflightTests.mjs"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "QEnvironmentIDPreflight",
+          "MonaStaticCandidateSet"
+        ],
+        "produces": [
+          "QEnvironmentID.json"
+        ]
+      },
+      "red": [
+        {
+          "run": "node --test Tests/PlanStructureTests/FormalQEnvironmentPreflightTests.mjs --test-name-pattern external-display",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "QENVIRONMENT_FORMAL_RUN_REJECTED externalDisplayCount=1 required=0"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Collect a fresh environment identity immediately before each formal run.",
+          "Require macOS build 25G76, Chrome 151.0.7922.138 with pinned binary and ICU hashes, arm64, built-in display only, zero external displays, exact 60 or 120 Hz cell, required ABC and SCIM.ITABC input sources, runtime locale fields, and manifest-approved fonts.",
+          "Recursively reject serial, account, user, UUID, UDID, raw identity keys, and UUID-shaped values in every produced artifact.",
+          "Bind the environment, six static candidate hashes, source revision, and run nonce-free identifier by SHA-256."
+        ]
+      },
+      "green": [
+        {
+          "run": "node --test Tests/PlanStructureTests/FormalQEnvironmentPreflightTests.mjs",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "CANDIDATE_FINAL name=QEnvironmentID.json build=25G76 chrome=151.0.7922.138 externalDisplays=0 privacy=pass"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-09/P09-T001.json"
+      ],
+      "completion": [
+        "QEnvironmentID is fresh for the formal run.",
+        "Every qualification predicate is exact.",
+        "No forbidden identity field or value is persisted."
+      ],
+      "commitBoundary": [
+        "Tools/Qualification/finalize-qenvironment.mjs",
+        "Tests/PlanStructureTests/FormalQEnvironmentPreflightTests.mjs"
+      ]
+    },
+    {
+      "id": "P09-T002",
+      "phase": "09",
+      "title": "Join all seven candidates into one qualified acceptance set",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P08-T016",
+        "P09-T001"
+      ],
+      "contractRefs": [
+        "G5-R.candidateGeneratedArtifacts",
+        "Q1-R5.candidateJoin"
+      ],
+      "ownership": [
+        "candidate-consumer:MonaNativeDeclarationManifest.json",
+        "candidate-consumer:MonaRegExpUnicodeManifest.json",
+        "candidate-consumer:MonaEnvironmentManifest.json",
+        "candidate-consumer:MonaSourceClosureManifest.json",
+        "candidate-consumer:MonaCacheManifest.json",
+        "candidate-consumer:MonaDistributionManifest.json",
+        "candidate-consumer:QEnvironmentID.json"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [],
+        "modify": [],
+        "test": [
+          "Tests/PlanStructureTests/QualifiedCandidateSetTests.mjs"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaStaticCandidateSet",
+          "QEnvironmentID.json"
+        ],
+        "produces": [
+          "MonaQualifiedCandidateSet"
+        ]
+      },
+      "red": [
+        {
+          "run": "node --test Tests/PlanStructureTests/QualifiedCandidateSetTests.mjs --test-name-pattern mixed-revision",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "QUALIFIED_CANDIDATE_SET_INVALID reason=mixed-source-revision"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Require exactly seven candidate names and validate every schema, hash, source revision, environment predicate, dependency edge, and mutual reference.",
+          "Reject stale, duplicate, extra, mixed-revision, pre-environment, or post-source-change artifacts.",
+          "Emit one qualified set hash consumed unchanged by every C/P and cross-cutting task."
+        ]
+      },
+      "green": [
+        {
+          "run": "node --test Tests/PlanStructureTests/QualifiedCandidateSetTests.mjs",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "QUALIFIED_CANDIDATE_SET count=7 sourceRevisions=1 environments=1"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-09/P09-T002.json"
+      ],
+      "completion": [
+        "Exactly seven mutually consistent candidates join.",
+        "All acceptance tasks consume one immutable set hash.",
+        "No product source changes after qualification."
+      ],
+      "commitBoundary": [
+        "Tests/PlanStructureTests/QualifiedCandidateSetTests.mjs"
+      ]
+    },
+    {
+      "id": "P09-T010",
+      "phase": "09",
+      "title": "Run C01: model and exact semantic equivalence",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P09-T002",
+        "P01-T013",
+        "P02-T009"
+      ],
+      "contractRefs": [
+        "G5-R.acceptance.correctnessGates.C01",
+        "Q1-R5",
+        "C01"
+      ],
+      "ownership": [
+        "correctnessGate:C01"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [],
+        "modify": [],
+        "test": [
+          "Tests/ConformanceAndFailureInjection/Correctness/C01Tests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaQualifiedCandidateSet",
+          "M0Comparator",
+          "M1Comparator",
+          "QEnvironmentID.json"
+        ],
+        "produces": [
+          "C01Evidence"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter C01Tests/testSeededMismatch",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "CORRECTNESS_GATE_FAILED gate=C01"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Compare base values, URI, raw UTF-16 Piece Tree, 70 model members, transactions, undo, decorations, search, RegExp, and Unicode outputs against M0 and M1.",
+          "Run every contract overlay, T-1/T/T+1 boundary, raw-unit fixture, native-adapted assertion, failure row, and exact-set check assigned to the gate.",
+          "Bind comparator, native, environment, candidate, source revision, fixture, and output hashes in one evidence manifest.",
+          "Treat every missing, skipped, stale, malformed, canceled, or unauthorized case as not-passed."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter C01Tests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "CORRECTNESS_GATE_PASS gate=C01 skipped=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-09/P09-T010.json"
+      ],
+      "completion": [
+        "C01 has zero mismatches.",
+        "Every assigned overlay and failure row executed.",
+        "Evidence binds to the qualified candidate set."
+      ],
+      "commitBoundary": [
+        "Tests/ConformanceAndFailureInjection/Correctness/C01Tests.swift"
+      ]
+    },
+    {
+      "id": "P09-T011",
+      "phase": "09",
+      "title": "Run C02: environment, locale, clock, entropy, and intrinsic equivalence",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P09-T002",
+        "P00-T012",
+        "P02-T009"
+      ],
+      "contractRefs": [
+        "G5-R.acceptance.correctnessGates.C02",
+        "Q1-R5",
+        "C02"
+      ],
+      "ownership": [
+        "correctnessGate:C02"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [],
+        "modify": [],
+        "test": [
+          "Tests/ConformanceAndFailureInjection/Correctness/C02Tests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaQualifiedCandidateSet",
+          "M0Comparator",
+          "M1Comparator",
+          "QEnvironmentID.json"
+        ],
+        "produces": [
+          "C02Evidence"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter C02Tests/testSeededMismatch",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "CORRECTNESS_GATE_FAILED gate=C02"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Replay identical wall-clock, high-resolution clock, entropy, locale, case, collation, normalization, number, codec, and hash traces across M0, M1, and native.",
+          "Run every contract overlay, T-1/T/T+1 boundary, raw-unit fixture, native-adapted assertion, failure row, and exact-set check assigned to the gate.",
+          "Bind comparator, native, environment, candidate, source revision, fixture, and output hashes in one evidence manifest.",
+          "Treat every missing, skipped, stale, malformed, canceled, or unauthorized case as not-passed."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter C02Tests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "CORRECTNESS_GATE_PASS gate=C02 skipped=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-09/P09-T011.json"
+      ],
+      "completion": [
+        "C02 has zero mismatches.",
+        "Every assigned overlay and failure row executed.",
+        "Evidence binds to the qualified candidate set."
+      ],
+      "commitBoundary": [
+        "Tests/ConformanceAndFailureInjection/Correctness/C02Tests.swift"
+      ]
+    },
+    {
+      "id": "P09-T012",
+      "phase": "09",
+      "title": "Run C03: projection, layout, scroll, and geometry equivalence",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P09-T002",
+        "P03-T012"
+      ],
+      "contractRefs": [
+        "G5-R.acceptance.correctnessGates.C03",
+        "Q1-R5",
+        "C03"
+      ],
+      "ownership": [
+        "correctnessGate:C03"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [],
+        "modify": [],
+        "test": [
+          "Tests/ConformanceAndFailureInjection/Correctness/C03Tests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaQualifiedCandidateSet",
+          "M0Comparator",
+          "M1Comparator",
+          "QEnvironmentID.json"
+        ],
+        "produces": [
+          "C03Evidence"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter C03Tests/testSeededMismatch",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "CORRECTNESS_GATE_FAILED gate=C03"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Compare projection, wrapping, folding, injected text, vertical indexes, scroll order, shaping, raw-offset geometry, stamps, and bounded failure behavior.",
+          "Run every contract overlay, T-1/T/T+1 boundary, raw-unit fixture, native-adapted assertion, failure row, and exact-set check assigned to the gate.",
+          "Bind comparator, native, environment, candidate, source revision, fixture, and output hashes in one evidence manifest.",
+          "Treat every missing, skipped, stale, malformed, canceled, or unauthorized case as not-passed."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter C03Tests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "CORRECTNESS_GATE_PASS gate=C03 skipped=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-09/P09-T012.json"
+      ],
+      "completion": [
+        "C03 has zero mismatches.",
+        "Every assigned overlay and failure row executed.",
+        "Evidence binds to the qualified candidate set."
+      ],
+      "commitBoundary": [
+        "Tests/ConformanceAndFailureInjection/Correctness/C03Tests.swift"
+      ]
+    },
+    {
+      "id": "P09-T013",
+      "phase": "09",
+      "title": "Run C04: public declarations, registries, options, themes, localization, and runtime-style closure",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P09-T002",
+        "P05-T200",
+        "P07-T008"
+      ],
+      "contractRefs": [
+        "G5-R.acceptance.correctnessGates.C04",
+        "Q1-R5",
+        "C04"
+      ],
+      "ownership": [
+        "correctnessGate:C04"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [],
+        "modify": [],
+        "test": [
+          "Tests/ConformanceAndFailureInjection/Correctness/C04Tests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaQualifiedCandidateSet",
+          "M0Comparator",
+          "M1Comparator",
+          "QEnvironmentID.json"
+        ],
+        "produces": [
+          "C04Evidence"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter C04Tests/testSeededMismatch",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "CORRECTNESS_GATE_FAILED gate=C04"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Validate all 555 public paths, registry identities, option boundaries, theme assets, 2120 messages, native type adaptations, and X1-R occurrence sets.",
+          "Run every contract overlay, T-1/T/T+1 boundary, raw-unit fixture, native-adapted assertion, failure row, and exact-set check assigned to the gate.",
+          "Bind comparator, native, environment, candidate, source revision, fixture, and output hashes in one evidence manifest.",
+          "Treat every missing, skipped, stale, malformed, canceled, or unauthorized case as not-passed."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter C04Tests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "CORRECTNESS_GATE_PASS gate=C04 skipped=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-09/P09-T013.json"
+      ],
+      "completion": [
+        "C04 has zero mismatches.",
+        "Every assigned overlay and failure row executed.",
+        "Evidence binds to the qualified candidate set."
+      ],
+      "commitBoundary": [
+        "Tests/ConformanceAndFailureInjection/Correctness/C04Tests.swift"
+      ]
+    },
+    {
+      "id": "P09-T014",
+      "phase": "09",
+      "title": "Run C05: retained feature and diff equivalence",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P09-T002",
+        "P05-T200",
+        "P07-T010"
+      ],
+      "contractRefs": [
+        "G5-R.acceptance.correctnessGates.C05",
+        "Q1-R5",
+        "C05"
+      ],
+      "ownership": [
+        "correctnessGate:C05"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [],
+        "modify": [],
+        "test": [
+          "Tests/ConformanceAndFailureInjection/Correctness/C05Tests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaQualifiedCandidateSet",
+          "M0Comparator",
+          "M1Comparator",
+          "QEnvironmentID.json"
+        ],
+        "produces": [
+          "C05Evidence"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter C05Tests/testSeededMismatch",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "CORRECTNESS_GATE_FAILED gate=C05"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Execute all 62 retained feature entry points, five instance sequences, legacy and advanced diff, timeout, cache, and native replacement behavior.",
+          "Run every contract overlay, T-1/T/T+1 boundary, raw-unit fixture, native-adapted assertion, failure row, and exact-set check assigned to the gate.",
+          "Bind comparator, native, environment, candidate, source revision, fixture, and output hashes in one evidence manifest.",
+          "Treat every missing, skipped, stale, malformed, canceled, or unauthorized case as not-passed."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter C05Tests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "CORRECTNESS_GATE_PASS gate=C05 skipped=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-09/P09-T014.json"
+      ],
+      "completion": [
+        "C05 has zero mismatches.",
+        "Every assigned overlay and failure row executed.",
+        "Evidence binds to the qualified candidate set."
+      ],
+      "commitBoundary": [
+        "Tests/ConformanceAndFailureInjection/Correctness/C05Tests.swift"
+      ]
+    },
+    {
+      "id": "P09-T015",
+      "phase": "09",
+      "title": "Run C06: provider, LSP, snippet, and Markdown equivalence",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P09-T002",
+        "P06-T010"
+      ],
+      "contractRefs": [
+        "G5-R.acceptance.correctnessGates.C06",
+        "Q1-R5",
+        "C06"
+      ],
+      "ownership": [
+        "correctnessGate:C06"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [],
+        "modify": [],
+        "test": [
+          "Tests/ConformanceAndFailureInjection/Correctness/C06Tests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaQualifiedCandidateSet",
+          "M0Comparator",
+          "M1Comparator",
+          "QEnvironmentID.json"
+        ],
+        "produces": [
+          "C06Evidence"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter C06Tests/testSeededMismatch",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "CORRECTNESS_GATE_FAILED gate=C06"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Validate 30 provider surfaces, 25 LSP mappings, five direct-only paths, transport, framing, JSON-RPC, session, fallback, snippet, and hostile Markdown matrices.",
+          "Run every contract overlay, T-1/T/T+1 boundary, raw-unit fixture, native-adapted assertion, failure row, and exact-set check assigned to the gate.",
+          "Bind comparator, native, environment, candidate, source revision, fixture, and output hashes in one evidence manifest.",
+          "Treat every missing, skipped, stale, malformed, canceled, or unauthorized case as not-passed."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter C06Tests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "CORRECTNESS_GATE_PASS gate=C06 skipped=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-09/P09-T015.json"
+      ],
+      "completion": [
+        "C06 has zero mismatches.",
+        "Every assigned overlay and failure row executed.",
+        "Evidence binds to the qualified candidate set."
+      ],
+      "commitBoundary": [
+        "Tests/ConformanceAndFailureInjection/Correctness/C06Tests.swift"
+      ]
+    },
+    {
+      "id": "P09-T016",
+      "phase": "09",
+      "title": "Run C07: native input, transfer, accessibility, and workspace-edit equivalence",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P09-T002",
+        "P04-T016",
+        "P07-T006"
+      ],
+      "contractRefs": [
+        "G5-R.acceptance.correctnessGates.C07",
+        "Q1-R5",
+        "C07"
+      ],
+      "ownership": [
+        "correctnessGate:C07"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [],
+        "modify": [],
+        "test": [
+          "Tests/ConformanceAndFailureInjection/Correctness/C07Tests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaQualifiedCandidateSet",
+          "M0Comparator",
+          "M1Comparator",
+          "QEnvironmentID.json"
+        ],
+        "produces": [
+          "C07Evidence"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter C07Tests/testSeededMismatch",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "CORRECTNESS_GATE_FAILED gate=C07"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Run ABC and Pinyin, chords, multi-cursor input, pointer, scroll, menu, copy/cut/paste, drag/drop, Services, VoiceOver, focus, announcements, and four WorkspaceEdit outcomes.",
+          "Run every contract overlay, T-1/T/T+1 boundary, raw-unit fixture, native-adapted assertion, failure row, and exact-set check assigned to the gate.",
+          "Bind comparator, native, environment, candidate, source revision, fixture, and output hashes in one evidence manifest.",
+          "Treat every missing, skipped, stale, malformed, canceled, or unauthorized case as not-passed."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter C07Tests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "CORRECTNESS_GATE_PASS gate=C07 skipped=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-09/P09-T016.json"
+      ],
+      "completion": [
+        "C07 has zero mismatches.",
+        "Every assigned overlay and failure row executed.",
+        "Evidence binds to the qualified candidate set."
+      ],
+      "commitBoundary": [
+        "Tests/ConformanceAndFailureInjection/Correctness/C07Tests.swift"
+      ]
+    },
+    {
+      "id": "P09-T017",
+      "phase": "09",
+      "title": "Run C08: renderer correctness and frozen branch parity",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P09-T002",
+        "P03-T012"
+      ],
+      "contractRefs": [
+        "G5-R.acceptance.correctnessGates.C08",
+        "Q1-R5",
+        "C08"
+      ],
+      "ownership": [
+        "correctnessGate:C08"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [],
+        "modify": [],
+        "test": [
+          "Tests/ConformanceAndFailureInjection/Correctness/C08Tests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaQualifiedCandidateSet",
+          "M0Comparator",
+          "M1Comparator",
+          "QEnvironmentID.json"
+        ],
+        "produces": [
+          "C08Evidence"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter C08Tests/testSeededMismatch",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "CORRECTNESS_GATE_FAILED gate=C08"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Validate every Core Graphics golden, scale, subpixel phase, fallback, color glyph, generation, failure, and the frozen Phase 03 Metal absence-or-parity branch.",
+          "Run every contract overlay, T-1/T/T+1 boundary, raw-unit fixture, native-adapted assertion, failure row, and exact-set check assigned to the gate.",
+          "Bind comparator, native, environment, candidate, source revision, fixture, and output hashes in one evidence manifest.",
+          "Treat every missing, skipped, stale, malformed, canceled, or unauthorized case as not-passed."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter C08Tests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "CORRECTNESS_GATE_PASS gate=C08 skipped=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-09/P09-T017.json"
+      ],
+      "completion": [
+        "C08 has zero mismatches.",
+        "Every assigned overlay and failure row executed.",
+        "Evidence binds to the qualified candidate set."
+      ],
+      "commitBoundary": [
+        "Tests/ConformanceAndFailureInjection/Correctness/C08Tests.swift"
+      ]
+    },
+    {
+      "id": "P09-T018",
+      "phase": "09",
+      "title": "Run C09: delivery views, hosts, lifetimes, services, and resource bounds",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P09-T002",
+        "P04-T015",
+        "P07-T010"
+      ],
+      "contractRefs": [
+        "G5-R.acceptance.correctnessGates.C09",
+        "Q1-R5",
+        "C09"
+      ],
+      "ownership": [
+        "correctnessGate:C09"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [],
+        "modify": [],
+        "test": [
+          "Tests/ConformanceAndFailureInjection/Correctness/C09Tests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaQualifiedCandidateSet",
+          "M0Comparator",
+          "M1Comparator",
+          "QEnvironmentID.json"
+        ],
+        "produces": [
+          "C09Evidence"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter C09Tests/testSeededMismatch",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "CORRECTNESS_GATE_FAILED gate=C09"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Validate three products, three views, four wrappers, seven host groups, ten concrete host types, service and cache exact sets, lifetime ownership, plateau, and workspace rollback.",
+          "Run every contract overlay, T-1/T/T+1 boundary, raw-unit fixture, native-adapted assertion, failure row, and exact-set check assigned to the gate.",
+          "Bind comparator, native, environment, candidate, source revision, fixture, and output hashes in one evidence manifest.",
+          "Treat every missing, skipped, stale, malformed, canceled, or unauthorized case as not-passed."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter C09Tests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "CORRECTNESS_GATE_PASS gate=C09 skipped=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-09/P09-T018.json"
+      ],
+      "completion": [
+        "C09 has zero mismatches.",
+        "Every assigned overlay and failure row executed.",
+        "Evidence binds to the qualified candidate set."
+      ],
+      "commitBoundary": [
+        "Tests/ConformanceAndFailureInjection/Correctness/C09Tests.swift"
+      ]
+    },
+    {
+      "id": "P09-T019",
+      "phase": "09",
+      "title": "Run C10: release package, API, dependency, resource, hash, and license closure",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P09-T002",
+        "P08-T016"
+      ],
+      "contractRefs": [
+        "G5-R.acceptance.correctnessGates.C10",
+        "Q1-R5",
+        "C10"
+      ],
+      "ownership": [
+        "correctnessGate:C10"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [],
+        "modify": [],
+        "test": [
+          "Tests/ConformanceAndFailureInjection/Correctness/C10Tests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaQualifiedCandidateSet",
+          "M0Comparator",
+          "M1Comparator",
+          "QEnvironmentID.json"
+        ],
+        "produces": [
+          "C10Evidence"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter C10Tests/testSeededMismatch",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "CORRECTNESS_GATE_FAILED gate=C10"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Validate release architecture and deployment, three-product graph, symbol graphs, API digests, linked libraries, resources, seven candidates, artifact hashes, forbidden absences, and license notices.",
+          "Run every contract overlay, T-1/T/T+1 boundary, raw-unit fixture, native-adapted assertion, failure row, and exact-set check assigned to the gate.",
+          "Bind comparator, native, environment, candidate, source revision, fixture, and output hashes in one evidence manifest.",
+          "Treat every missing, skipped, stale, malformed, canceled, or unauthorized case as not-passed."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter C10Tests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "CORRECTNESS_GATE_PASS gate=C10 skipped=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-09/P09-T019.json"
+      ],
+      "completion": [
+        "C10 has zero mismatches.",
+        "Every assigned overlay and failure row executed.",
+        "Evidence binds to the qualified candidate set."
+      ],
+      "commitBoundary": [
+        "Tests/ConformanceAndFailureInjection/Correctness/C10Tests.swift"
+      ]
+    },
+    {
+      "id": "P09-T030",
+      "phase": "09",
+      "title": "Run P00: cold startup",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P09-T002",
+        "P00-T012"
+      ],
+      "contractRefs": [
+        "G5-R.performanceDecision.workloads.P00",
+        "Q1-R2",
+        "Q1-R3",
+        "Q1-R4",
+        "Q1-R5"
+      ],
+      "ownership": [
+        "performanceWorkload:P00"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [],
+        "modify": [],
+        "test": [
+          "Tests/BenchmarkHarness/Workloads/P00WorkloadTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaQualifiedCandidateSet",
+          "M0Comparator",
+          "M1Comparator",
+          "BootstrapVerdict",
+          "QEnvironmentID.json",
+          "DisplayCellLock"
+        ],
+        "produces": [
+          "P00Evidence"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter P00WorkloadTests/testSeededRegression",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "PERFORMANCE_NO_REGRESSION_FAILED workload=P00 comparator=M0"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Measure 50 fresh-profile, fresh-process-tree launches of the 1 MiU16/100000-line corpus from launch to ready, then terminate each tree.",
+          "Collect 50 cold balanced blocks per valid cell, with attempt cap 2x, six balanced AB/BA orderings where applicable, thermal-state sampling, no outlier deletion, and separate total/component metrics.",
+          "Evaluate M0 and M1 independently with positive log-ratio, manifest-declared near-zero difference, or discrete-zero verdict form; resample whole balanced blocks 1000000 times.",
+          "Require the one-sided 95 percent bootstrap upper bound to be at most zero on unrounded binary64 values for every comparator and cell.",
+          "Keep exact 60 Hz and 120 Hz frame cells separate; refresh rate changes only the deadline and never the relative no-regression threshold."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter P00WorkloadTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "PERFORMANCE_WORKLOAD_PASS workload=P00 baselines=M0,M1 skipped=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-09/P09-T030.json"
+      ],
+      "completion": [
+        "P00 passes every M0 and M1 cell.",
+        "Every sample block satisfies environment, font, display, cold/hot, and statistic validity.",
+        "No cell is skipped or clamped."
+      ],
+      "commitBoundary": [
+        "Tests/BenchmarkHarness/Workloads/P00WorkloadTests.swift"
+      ]
+    },
+    {
+      "id": "P09-T031",
+      "phase": "09",
+      "title": "Run P01: model load",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P09-T002",
+        "P01-T013"
+      ],
+      "contractRefs": [
+        "G5-R.performanceDecision.workloads.P01",
+        "Q1-R2",
+        "Q1-R3",
+        "Q1-R4",
+        "Q1-R5"
+      ],
+      "ownership": [
+        "performanceWorkload:P01"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [],
+        "modify": [],
+        "test": [
+          "Tests/BenchmarkHarness/Workloads/P01WorkloadTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaQualifiedCandidateSet",
+          "M0Comparator",
+          "M1Comparator",
+          "BootstrapVerdict",
+          "QEnvironmentID.json",
+          "DisplayCellLock"
+        ],
+        "produces": [
+          "P01Evidence"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter P01WorkloadTests/testSeededRegression",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "PERFORMANCE_NO_REGRESSION_FAILED workload=P01 comparator=M0"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Load 1 MiU16 and 100 MiU16 raw-text corpora across LF, CRLF, valid Unicode, isolated-surrogate, and mixed-line families.",
+          "Collect 30 hot balanced blocks per valid cell, with attempt cap 2x, six balanced AB/BA orderings where applicable, thermal-state sampling, no outlier deletion, and separate total/component metrics.",
+          "Evaluate M0 and M1 independently with positive log-ratio, manifest-declared near-zero difference, or discrete-zero verdict form; resample whole balanced blocks 1000000 times.",
+          "Require the one-sided 95 percent bootstrap upper bound to be at most zero on unrounded binary64 values for every comparator and cell.",
+          "Keep exact 60 Hz and 120 Hz frame cells separate; refresh rate changes only the deadline and never the relative no-regression threshold."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter P01WorkloadTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "PERFORMANCE_WORKLOAD_PASS workload=P01 baselines=M0,M1 skipped=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-09/P09-T031.json"
+      ],
+      "completion": [
+        "P01 passes every M0 and M1 cell.",
+        "Every sample block satisfies environment, font, display, cold/hot, and statistic validity.",
+        "No cell is skipped or clamped."
+      ],
+      "commitBoundary": [
+        "Tests/BenchmarkHarness/Workloads/P01WorkloadTests.swift"
+      ]
+    },
+    {
+      "id": "P09-T032",
+      "phase": "09",
+      "title": "Run P02: typing and undo",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P09-T002",
+        "P02-T001",
+        "P04-T005"
+      ],
+      "contractRefs": [
+        "G5-R.performanceDecision.workloads.P02",
+        "Q1-R2",
+        "Q1-R3",
+        "Q1-R4",
+        "Q1-R5"
+      ],
+      "ownership": [
+        "performanceWorkload:P02"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [],
+        "modify": [],
+        "test": [
+          "Tests/BenchmarkHarness/Workloads/P02WorkloadTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaQualifiedCandidateSet",
+          "M0Comparator",
+          "M1Comparator",
+          "BootstrapVerdict",
+          "QEnvironmentID.json",
+          "DisplayCellLock"
+        ],
+        "produces": [
+          "P02Evidence"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter P02WorkloadTests/testSeededRegression",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "PERFORMANCE_NO_REGRESSION_FAILED workload=P02 comparator=M0"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Execute 10000 ABC typing, delete, selection, undo, and redo actions on the 1 MiU16 corpus.",
+          "Collect 30 hot balanced blocks per valid cell, with attempt cap 2x, six balanced AB/BA orderings where applicable, thermal-state sampling, no outlier deletion, and separate total/component metrics.",
+          "Evaluate M0 and M1 independently with positive log-ratio, manifest-declared near-zero difference, or discrete-zero verdict form; resample whole balanced blocks 1000000 times.",
+          "Require the one-sided 95 percent bootstrap upper bound to be at most zero on unrounded binary64 values for every comparator and cell.",
+          "Keep exact 60 Hz and 120 Hz frame cells separate; refresh rate changes only the deadline and never the relative no-regression threshold."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter P02WorkloadTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "PERFORMANCE_WORKLOAD_PASS workload=P02 baselines=M0,M1 skipped=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-09/P09-T032.json"
+      ],
+      "completion": [
+        "P02 passes every M0 and M1 cell.",
+        "Every sample block satisfies environment, font, display, cold/hot, and statistic validity.",
+        "No cell is skipped or clamped."
+      ],
+      "commitBoundary": [
+        "Tests/BenchmarkHarness/Workloads/P02WorkloadTests.swift"
+      ]
+    },
+    {
+      "id": "P09-T033",
+      "phase": "09",
+      "title": "Run P03: batch edits",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P09-T002",
+        "P01-T009"
+      ],
+      "contractRefs": [
+        "G5-R.performanceDecision.workloads.P03",
+        "Q1-R2",
+        "Q1-R3",
+        "Q1-R4",
+        "Q1-R5"
+      ],
+      "ownership": [
+        "performanceWorkload:P03"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [],
+        "modify": [],
+        "test": [
+          "Tests/BenchmarkHarness/Workloads/P03WorkloadTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaQualifiedCandidateSet",
+          "M0Comparator",
+          "M1Comparator",
+          "BootstrapVerdict",
+          "QEnvironmentID.json",
+          "DisplayCellLock"
+        ],
+        "produces": [
+          "P03Evidence"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter P03WorkloadTests/testSeededRegression",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "PERFORMANCE_NO_REGRESSION_FAILED workload=P03 comparator=M0"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Prepare and commit 1, 100, and 10000 non-overlapping edits while measuring preparation and commit components separately.",
+          "Collect 30 hot balanced blocks per valid cell, with attempt cap 2x, six balanced AB/BA orderings where applicable, thermal-state sampling, no outlier deletion, and separate total/component metrics.",
+          "Evaluate M0 and M1 independently with positive log-ratio, manifest-declared near-zero difference, or discrete-zero verdict form; resample whole balanced blocks 1000000 times.",
+          "Require the one-sided 95 percent bootstrap upper bound to be at most zero on unrounded binary64 values for every comparator and cell.",
+          "Keep exact 60 Hz and 120 Hz frame cells separate; refresh rate changes only the deadline and never the relative no-regression threshold."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter P03WorkloadTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "PERFORMANCE_WORKLOAD_PASS workload=P03 baselines=M0,M1 skipped=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-09/P09-T033.json"
+      ],
+      "completion": [
+        "P03 passes every M0 and M1 cell.",
+        "Every sample block satisfies environment, font, display, cold/hot, and statistic validity.",
+        "No cell is skipped or clamped."
+      ],
+      "commitBoundary": [
+        "Tests/BenchmarkHarness/Workloads/P03WorkloadTests.swift"
+      ]
+    },
+    {
+      "id": "P09-T034",
+      "phase": "09",
+      "title": "Run P04: vertical scroll",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P09-T002",
+        "P03-T012"
+      ],
+      "contractRefs": [
+        "G5-R.performanceDecision.workloads.P04",
+        "Q1-R2",
+        "Q1-R3",
+        "Q1-R4",
+        "Q1-R5"
+      ],
+      "ownership": [
+        "performanceWorkload:P04"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [],
+        "modify": [],
+        "test": [
+          "Tests/BenchmarkHarness/Workloads/P04WorkloadTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaQualifiedCandidateSet",
+          "M0Comparator",
+          "M1Comparator",
+          "BootstrapVerdict",
+          "QEnvironmentID.json",
+          "DisplayCellLock"
+        ],
+        "produces": [
+          "P04Evidence"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter P04WorkloadTests/testSeededRegression",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "PERFORMANCE_NO_REGRESSION_FAILED workload=P04 comparator=M0"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Inject at least 10000 intervals over the 100 MiU16/1000000-line corpus in separate exact 60 Hz and 120 Hz cells.",
+          "Collect 30 hot balanced blocks per valid cell, with attempt cap 2x, six balanced AB/BA orderings where applicable, thermal-state sampling, no outlier deletion, and separate total/component metrics.",
+          "Evaluate M0 and M1 independently with positive log-ratio, manifest-declared near-zero difference, or discrete-zero verdict form; resample whole balanced blocks 1000000 times.",
+          "Require the one-sided 95 percent bootstrap upper bound to be at most zero on unrounded binary64 values for every comparator and cell.",
+          "Keep exact 60 Hz and 120 Hz frame cells separate; refresh rate changes only the deadline and never the relative no-regression threshold."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter P04WorkloadTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "PERFORMANCE_WORKLOAD_PASS workload=P04 baselines=M0,M1 skipped=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-09/P09-T034.json"
+      ],
+      "completion": [
+        "P04 passes every M0 and M1 cell.",
+        "Every sample block satisfies environment, font, display, cold/hot, and statistic validity.",
+        "No cell is skipped or clamped."
+      ],
+      "commitBoundary": [
+        "Tests/BenchmarkHarness/Workloads/P04WorkloadTests.swift"
+      ]
+    },
+    {
+      "id": "P09-T035",
+      "phase": "09",
+      "title": "Run P05: long line",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P09-T002",
+        "P03-T012",
+        "P05-T005"
+      ],
+      "contractRefs": [
+        "G5-R.performanceDecision.workloads.P05",
+        "Q1-R2",
+        "Q1-R3",
+        "Q1-R4",
+        "Q1-R5"
+      ],
+      "ownership": [
+        "performanceWorkload:P05"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [],
+        "modify": [],
+        "test": [
+          "Tests/BenchmarkHarness/Workloads/P05WorkloadTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaQualifiedCandidateSet",
+          "M0Comparator",
+          "M1Comparator",
+          "BootstrapVerdict",
+          "QEnvironmentID.json",
+          "DisplayCellLock"
+        ],
+        "produces": [
+          "P05Evidence"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter P05WorkloadTests/testSeededRegression",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "PERFORMANCE_NO_REGRESSION_FAILED workload=P05 comparator=M0"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Render 1000000-unit lines with stopRenderingLineAfter equal to 10000 and -1 across scale, fallback, and subpixel cells.",
+          "Collect 30 hot balanced blocks per valid cell, with attempt cap 2x, six balanced AB/BA orderings where applicable, thermal-state sampling, no outlier deletion, and separate total/component metrics.",
+          "Evaluate M0 and M1 independently with positive log-ratio, manifest-declared near-zero difference, or discrete-zero verdict form; resample whole balanced blocks 1000000 times.",
+          "Require the one-sided 95 percent bootstrap upper bound to be at most zero on unrounded binary64 values for every comparator and cell.",
+          "Keep exact 60 Hz and 120 Hz frame cells separate; refresh rate changes only the deadline and never the relative no-regression threshold."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter P05WorkloadTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "PERFORMANCE_WORKLOAD_PASS workload=P05 baselines=M0,M1 skipped=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-09/P09-T035.json"
+      ],
+      "completion": [
+        "P05 passes every M0 and M1 cell.",
+        "Every sample block satisfies environment, font, display, cold/hot, and statistic validity.",
+        "No cell is skipped or clamped."
+      ],
+      "commitBoundary": [
+        "Tests/BenchmarkHarness/Workloads/P05WorkloadTests.swift"
+      ]
+    },
+    {
+      "id": "P09-T036",
+      "phase": "09",
+      "title": "Run P06: wrap and resize",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P09-T002",
+        "P03-T012"
+      ],
+      "contractRefs": [
+        "G5-R.performanceDecision.workloads.P06",
+        "Q1-R2",
+        "Q1-R3",
+        "Q1-R4",
+        "Q1-R5"
+      ],
+      "ownership": [
+        "performanceWorkload:P06"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [],
+        "modify": [],
+        "test": [
+          "Tests/BenchmarkHarness/Workloads/P06WorkloadTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaQualifiedCandidateSet",
+          "M0Comparator",
+          "M1Comparator",
+          "BootstrapVerdict",
+          "QEnvironmentID.json",
+          "DisplayCellLock"
+        ],
+        "produces": [
+          "P06Evidence"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter P06WorkloadTests/testSeededRegression",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "PERFORMANCE_NO_REGRESSION_FAILED workload=P06 comparator=M0"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Cycle widths 320, 768, and 1440 points 10000 times over 100000 mixed-script lines with fold, inlay, and variable-height matrices.",
+          "Collect 30 hot balanced blocks per valid cell, with attempt cap 2x, six balanced AB/BA orderings where applicable, thermal-state sampling, no outlier deletion, and separate total/component metrics.",
+          "Evaluate M0 and M1 independently with positive log-ratio, manifest-declared near-zero difference, or discrete-zero verdict form; resample whole balanced blocks 1000000 times.",
+          "Require the one-sided 95 percent bootstrap upper bound to be at most zero on unrounded binary64 values for every comparator and cell.",
+          "Keep exact 60 Hz and 120 Hz frame cells separate; refresh rate changes only the deadline and never the relative no-regression threshold."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter P06WorkloadTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "PERFORMANCE_WORKLOAD_PASS workload=P06 baselines=M0,M1 skipped=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-09/P09-T036.json"
+      ],
+      "completion": [
+        "P06 passes every M0 and M1 cell.",
+        "Every sample block satisfies environment, font, display, cold/hot, and statistic validity.",
+        "No cell is skipped or clamped."
+      ],
+      "commitBoundary": [
+        "Tests/BenchmarkHarness/Workloads/P06WorkloadTests.swift"
+      ]
+    },
+    {
+      "id": "P09-T037",
+      "phase": "09",
+      "title": "Run P07: decorations",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P09-T002",
+        "P02-T002",
+        "P03-T012"
+      ],
+      "contractRefs": [
+        "G5-R.performanceDecision.workloads.P07",
+        "Q1-R2",
+        "Q1-R3",
+        "Q1-R4",
+        "Q1-R5"
+      ],
+      "ownership": [
+        "performanceWorkload:P07"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [],
+        "modify": [],
+        "test": [
+          "Tests/BenchmarkHarness/Workloads/P07WorkloadTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaQualifiedCandidateSet",
+          "M0Comparator",
+          "M1Comparator",
+          "BootstrapVerdict",
+          "QEnvironmentID.json",
+          "DisplayCellLock"
+        ],
+        "produces": [
+          "P07Evidence"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter P07WorkloadTests/testSeededRegression",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "PERFORMANCE_NO_REGRESSION_FAILED workload=P07 comparator=M0"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Update 100000 model decorations with 10000 visible/offscreen mixed actions and exact interval-operation counters.",
+          "Collect 30 hot balanced blocks per valid cell, with attempt cap 2x, six balanced AB/BA orderings where applicable, thermal-state sampling, no outlier deletion, and separate total/component metrics.",
+          "Evaluate M0 and M1 independently with positive log-ratio, manifest-declared near-zero difference, or discrete-zero verdict form; resample whole balanced blocks 1000000 times.",
+          "Require the one-sided 95 percent bootstrap upper bound to be at most zero on unrounded binary64 values for every comparator and cell.",
+          "Keep exact 60 Hz and 120 Hz frame cells separate; refresh rate changes only the deadline and never the relative no-regression threshold."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter P07WorkloadTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "PERFORMANCE_WORKLOAD_PASS workload=P07 baselines=M0,M1 skipped=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-09/P09-T037.json"
+      ],
+      "completion": [
+        "P07 passes every M0 and M1 cell.",
+        "Every sample block satisfies environment, font, display, cold/hot, and statistic validity.",
+        "No cell is skipped or clamped."
+      ],
+      "commitBoundary": [
+        "Tests/BenchmarkHarness/Workloads/P07WorkloadTests.swift"
+      ]
+    },
+    {
+      "id": "P09-T038",
+      "phase": "09",
+      "title": "Run P08: find and replace",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P09-T002",
+        "P02-T009"
+      ],
+      "contractRefs": [
+        "G5-R.performanceDecision.workloads.P08",
+        "Q1-R2",
+        "Q1-R3",
+        "Q1-R4",
+        "Q1-R5"
+      ],
+      "ownership": [
+        "performanceWorkload:P08"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [],
+        "modify": [],
+        "test": [
+          "Tests/BenchmarkHarness/Workloads/P08WorkloadTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaQualifiedCandidateSet",
+          "M0Comparator",
+          "M1Comparator",
+          "BootstrapVerdict",
+          "QEnvironmentID.json",
+          "DisplayCellLock"
+        ],
+        "produces": [
+          "P08Evidence"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter P08WorkloadTests/testSeededRegression",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "PERFORMANCE_NO_REGRESSION_FAILED workload=P08 comparator=M0"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Run literal, /gimu, zero-length, capture replacement, density 0/0.1/10/1000 per KiB, RegExp consumer, case, normalization, binary64, decoder, and hash matrices on 10 MiU16.",
+          "Collect 30 hot balanced blocks per valid cell, with attempt cap 2x, six balanced AB/BA orderings where applicable, thermal-state sampling, no outlier deletion, and separate total/component metrics.",
+          "Evaluate M0 and M1 independently with positive log-ratio, manifest-declared near-zero difference, or discrete-zero verdict form; resample whole balanced blocks 1000000 times.",
+          "Require the one-sided 95 percent bootstrap upper bound to be at most zero on unrounded binary64 values for every comparator and cell.",
+          "Keep exact 60 Hz and 120 Hz frame cells separate; refresh rate changes only the deadline and never the relative no-regression threshold."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter P08WorkloadTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "PERFORMANCE_WORKLOAD_PASS workload=P08 baselines=M0,M1 skipped=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-09/P09-T038.json"
+      ],
+      "completion": [
+        "P08 passes every M0 and M1 cell.",
+        "Every sample block satisfies environment, font, display, cold/hot, and statistic validity.",
+        "No cell is skipped or clamped."
+      ],
+      "commitBoundary": [
+        "Tests/BenchmarkHarness/Workloads/P08WorkloadTests.swift"
+      ]
+    },
+    {
+      "id": "P09-T039",
+      "phase": "09",
+      "title": "Run P09: multi-cursor and snippet",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P09-T002",
+        "P04-T005",
+        "P06-T007"
+      ],
+      "contractRefs": [
+        "G5-R.performanceDecision.workloads.P09",
+        "Q1-R2",
+        "Q1-R3",
+        "Q1-R4",
+        "Q1-R5"
+      ],
+      "ownership": [
+        "performanceWorkload:P09"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [],
+        "modify": [],
+        "test": [
+          "Tests/BenchmarkHarness/Workloads/P09WorkloadTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaQualifiedCandidateSet",
+          "M0Comparator",
+          "M1Comparator",
+          "BootstrapVerdict",
+          "QEnvironmentID.json",
+          "DisplayCellLock"
+        ],
+        "produces": [
+          "P09Evidence"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter P09WorkloadTests/testSeededRegression",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "PERFORMANCE_NO_REGRESSION_FAILED workload=P09 comparator=M0"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Run type, paste, delete, undo, overlap, snippet insertion, 39 variables, clipboard spread, time snapshot, random, and UUID traces for 1, 100, and 10000 cursors.",
+          "Collect 30 hot balanced blocks per valid cell, with attempt cap 2x, six balanced AB/BA orderings where applicable, thermal-state sampling, no outlier deletion, and separate total/component metrics.",
+          "Evaluate M0 and M1 independently with positive log-ratio, manifest-declared near-zero difference, or discrete-zero verdict form; resample whole balanced blocks 1000000 times.",
+          "Require the one-sided 95 percent bootstrap upper bound to be at most zero on unrounded binary64 values for every comparator and cell.",
+          "Keep exact 60 Hz and 120 Hz frame cells separate; refresh rate changes only the deadline and never the relative no-regression threshold."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter P09WorkloadTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "PERFORMANCE_WORKLOAD_PASS workload=P09 baselines=M0,M1 skipped=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-09/P09-T039.json"
+      ],
+      "completion": [
+        "P09 passes every M0 and M1 cell.",
+        "Every sample block satisfies environment, font, display, cold/hot, and statistic validity.",
+        "No cell is skipped or clamped."
+      ],
+      "commitBoundary": [
+        "Tests/BenchmarkHarness/Workloads/P09WorkloadTests.swift"
+      ]
+    },
+    {
+      "id": "P09-T040",
+      "phase": "09",
+      "title": "Run P10: diff and multi-diff",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P09-T002",
+        "P07-T002",
+        "P07-T009"
+      ],
+      "contractRefs": [
+        "G5-R.performanceDecision.workloads.P10",
+        "Q1-R2",
+        "Q1-R3",
+        "Q1-R4",
+        "Q1-R5"
+      ],
+      "ownership": [
+        "performanceWorkload:P10"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [],
+        "modify": [],
+        "test": [
+          "Tests/BenchmarkHarness/Workloads/P10WorkloadTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaQualifiedCandidateSet",
+          "M0Comparator",
+          "M1Comparator",
+          "BootstrapVerdict",
+          "QEnvironmentID.json",
+          "DisplayCellLock"
+        ],
+        "produces": [
+          "P10Evidence"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter P10WorkloadTests/testSeededRegression",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "PERFORMANCE_NO_REGRESSION_FAILED workload=P10 comparator=M0"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Run legacy/advanced diff on 1/10/50 MiU16 with 1/10/30 percent changes and multi-diff 1/10/100 items of 1 MiU16, including timeout and cache cells.",
+          "Collect 30 hot balanced blocks per valid cell, with attempt cap 2x, six balanced AB/BA orderings where applicable, thermal-state sampling, no outlier deletion, and separate total/component metrics.",
+          "Evaluate M0 and M1 independently with positive log-ratio, manifest-declared near-zero difference, or discrete-zero verdict form; resample whole balanced blocks 1000000 times.",
+          "Require the one-sided 95 percent bootstrap upper bound to be at most zero on unrounded binary64 values for every comparator and cell.",
+          "Keep exact 60 Hz and 120 Hz frame cells separate; refresh rate changes only the deadline and never the relative no-regression threshold."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter P10WorkloadTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "PERFORMANCE_WORKLOAD_PASS workload=P10 baselines=M0,M1 skipped=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-09/P09-T040.json"
+      ],
+      "completion": [
+        "P10 passes every M0 and M1 cell.",
+        "Every sample block satisfies environment, font, display, cold/hot, and statistic validity.",
+        "No cell is skipped or clamped."
+      ],
+      "commitBoundary": [
+        "Tests/BenchmarkHarness/Workloads/P10WorkloadTests.swift"
+      ]
+    },
+    {
+      "id": "P09-T041",
+      "phase": "09",
+      "title": "Run P11: provider and LSP",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P09-T002",
+        "P06-T010",
+        "P07-T003"
+      ],
+      "contractRefs": [
+        "G5-R.performanceDecision.workloads.P11",
+        "Q1-R2",
+        "Q1-R3",
+        "Q1-R4",
+        "Q1-R5"
+      ],
+      "ownership": [
+        "performanceWorkload:P11"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [],
+        "modify": [],
+        "test": [
+          "Tests/BenchmarkHarness/Workloads/P11WorkloadTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaQualifiedCandidateSet",
+          "M0Comparator",
+          "M1Comparator",
+          "BootstrapVerdict",
+          "QEnvironmentID.json",
+          "DisplayCellLock"
+        ],
+        "produces": [
+          "P11Evidence"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter P11WorkloadTests/testSeededRegression",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "PERFORMANCE_NO_REGRESSION_FAILED workload=P11 comparator=M0"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Run 30 provider surfaces, 25 mappings, 0/1/10000 results, cancellation, stale, resolve, Markdown, session, framing, and 0/10/100 ms injected transport delays with adapter delay subtraction.",
+          "Collect 30 hot balanced blocks per valid cell, with attempt cap 2x, six balanced AB/BA orderings where applicable, thermal-state sampling, no outlier deletion, and separate total/component metrics.",
+          "Evaluate M0 and M1 independently with positive log-ratio, manifest-declared near-zero difference, or discrete-zero verdict form; resample whole balanced blocks 1000000 times.",
+          "Require the one-sided 95 percent bootstrap upper bound to be at most zero on unrounded binary64 values for every comparator and cell.",
+          "Keep exact 60 Hz and 120 Hz frame cells separate; refresh rate changes only the deadline and never the relative no-regression threshold."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter P11WorkloadTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "PERFORMANCE_WORKLOAD_PASS workload=P11 baselines=M0,M1 skipped=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-09/P09-T041.json"
+      ],
+      "completion": [
+        "P11 passes every M0 and M1 cell.",
+        "Every sample block satisfies environment, font, display, cold/hot, and statistic validity.",
+        "No cell is skipped or clamped."
+      ],
+      "commitBoundary": [
+        "Tests/BenchmarkHarness/Workloads/P11WorkloadTests.swift"
+      ]
+    },
+    {
+      "id": "P09-T042",
+      "phase": "09",
+      "title": "Run P12: shared model",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P09-T002",
+        "P04-T014",
+        "P07-T009"
+      ],
+      "contractRefs": [
+        "G5-R.performanceDecision.workloads.P12",
+        "Q1-R2",
+        "Q1-R3",
+        "Q1-R4",
+        "Q1-R5"
+      ],
+      "ownership": [
+        "performanceWorkload:P12"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [],
+        "modify": [],
+        "test": [
+          "Tests/BenchmarkHarness/Workloads/P12WorkloadTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaQualifiedCandidateSet",
+          "M0Comparator",
+          "M1Comparator",
+          "BootstrapVerdict",
+          "QEnvironmentID.json",
+          "DisplayCellLock"
+        ],
+        "produces": [
+          "P12Evidence"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter P12WorkloadTests/testSeededRegression",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "PERFORMANCE_NO_REGRESSION_FAILED workload=P12 comparator=M0"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Drive four editors over one 10 MiU16 model with independent wrap, fold, selection, and scroll state through 10000 interleaved actions and commit fanout.",
+          "Collect 30 hot balanced blocks per valid cell, with attempt cap 2x, six balanced AB/BA orderings where applicable, thermal-state sampling, no outlier deletion, and separate total/component metrics.",
+          "Evaluate M0 and M1 independently with positive log-ratio, manifest-declared near-zero difference, or discrete-zero verdict form; resample whole balanced blocks 1000000 times.",
+          "Require the one-sided 95 percent bootstrap upper bound to be at most zero on unrounded binary64 values for every comparator and cell.",
+          "Keep exact 60 Hz and 120 Hz frame cells separate; refresh rate changes only the deadline and never the relative no-regression threshold."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter P12WorkloadTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "PERFORMANCE_WORKLOAD_PASS workload=P12 baselines=M0,M1 skipped=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-09/P09-T042.json"
+      ],
+      "completion": [
+        "P12 passes every M0 and M1 cell.",
+        "Every sample block satisfies environment, font, display, cold/hot, and statistic validity.",
+        "No cell is skipped or clamped."
+      ],
+      "commitBoundary": [
+        "Tests/BenchmarkHarness/Workloads/P12WorkloadTests.swift"
+      ]
+    },
+    {
+      "id": "P09-T043",
+      "phase": "09",
+      "title": "Run P13: IME and accessibility queries",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P09-T002",
+        "P04-T016"
+      ],
+      "contractRefs": [
+        "G5-R.performanceDecision.workloads.P13",
+        "Q1-R2",
+        "Q1-R3",
+        "Q1-R4",
+        "Q1-R5"
+      ],
+      "ownership": [
+        "performanceWorkload:P13"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [],
+        "modify": [],
+        "test": [
+          "Tests/BenchmarkHarness/Workloads/P13WorkloadTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaQualifiedCandidateSet",
+          "M0Comparator",
+          "M1Comparator",
+          "BootstrapVerdict",
+          "QEnvironmentID.json",
+          "DisplayCellLock"
+        ],
+        "produces": [
+          "P13Evidence"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter P13WorkloadTests/testSeededRegression",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "PERFORMANCE_NO_REGRESSION_FAILED workload=P13 comparator=M0"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Run ABC/Pinyin marked-text traces, 10000 small accessibility range queries, 100 full-document queries, VoiceOver on/off, and callback latency.",
+          "Collect 30 hot balanced blocks per valid cell, with attempt cap 2x, six balanced AB/BA orderings where applicable, thermal-state sampling, no outlier deletion, and separate total/component metrics.",
+          "Evaluate M0 and M1 independently with positive log-ratio, manifest-declared near-zero difference, or discrete-zero verdict form; resample whole balanced blocks 1000000 times.",
+          "Require the one-sided 95 percent bootstrap upper bound to be at most zero on unrounded binary64 values for every comparator and cell.",
+          "Keep exact 60 Hz and 120 Hz frame cells separate; refresh rate changes only the deadline and never the relative no-regression threshold."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter P13WorkloadTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "PERFORMANCE_WORKLOAD_PASS workload=P13 baselines=M0,M1 skipped=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-09/P09-T043.json"
+      ],
+      "completion": [
+        "P13 passes every M0 and M1 cell.",
+        "Every sample block satisfies environment, font, display, cold/hot, and statistic validity.",
+        "No cell is skipped or clamped."
+      ],
+      "commitBoundary": [
+        "Tests/BenchmarkHarness/Workloads/P13WorkloadTests.swift"
+      ]
+    },
+    {
+      "id": "P09-T050",
+      "phase": "09",
+      "title": "Run lifecycle, 24-hour soak, sanitizers, and validation layers",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P09-T002",
+        "P09-T030",
+        "P09-T031",
+        "P09-T032",
+        "P09-T033",
+        "P09-T034",
+        "P09-T035",
+        "P09-T036",
+        "P09-T037",
+        "P09-T038",
+        "P09-T039",
+        "P09-T040",
+        "P09-T041",
+        "P09-T042",
+        "P09-T043"
+      ],
+      "contractRefs": [
+        "G5-R.acceptance.crossCutting.lifecycle",
+        "G5-R.acceptance.crossCutting.soak",
+        "G5-R.acceptance.crossCutting.sanitizers"
+      ],
+      "ownership": [
+        "acceptance:lifecycle-1000",
+        "acceptance:soak-24h",
+        "acceptance:sanitizers"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [],
+        "modify": [],
+        "test": [
+          "Tests/ConformanceAndFailureInjection/CrossCutting/LifecycleSoakSanitizerTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaQualifiedCandidateSet",
+          "MonaCacheManifest.json",
+          "RendererBranchEvidence"
+        ],
+        "produces": [
+          "LifecycleSoakSanitizerEvidence"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter LifecycleSoakSanitizerTests/testSeededLifetimeLeak",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "LIFECYCLE_SOAK_GATE_FAILED reason=definite-leak"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Run 1000 create, attach, detach, and dispose cycles and require weak accounting to return to the warm baseline.",
+          "Run 24 hours of mixed P02-P13 actions and require quiescent allocations and counters to remain within MonaCacheManifest bounds.",
+          "Run complete ASan, TSan, and UBSan suites separately with zero findings and Main Thread Checker with zero findings.",
+          "Run Metal validation only for the triggered-and-required renderer branch; record not-applicable for the absent branch.",
+          "Treat crash, hang, data loss, half commit, leak, race, undefined behavior, validation error, or counter overflow as failure."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter LifecycleSoakSanitizerTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "LIFECYCLE_SOAK_SANITIZERS cycles=1000 hours=24 findings=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-09/P09-T050.json"
+      ],
+      "completion": [
+        "1000 cycles return to baseline.",
+        "24-hour soak stays within declared plateaus.",
+        "All applicable sanitizers and validation layers report zero findings."
+      ],
+      "commitBoundary": [
+        "Tests/ConformanceAndFailureInjection/CrossCutting/LifecycleSoakSanitizerTests.swift"
+      ]
+    },
+    {
+      "id": "P09-T051",
+      "phase": "09",
+      "title": "Run failure-injection and algorithmic complexity gates",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P09-T002",
+        "P09-T010",
+        "P09-T011",
+        "P09-T012",
+        "P09-T013",
+        "P09-T014",
+        "P09-T015",
+        "P09-T016",
+        "P09-T017",
+        "P09-T018",
+        "P09-T019"
+      ],
+      "contractRefs": [
+        "G5-R.acceptance.crossCutting.failureInjection",
+        "G5-R.acceptance.crossCutting.complexity",
+        "R1",
+        "H2-R"
+      ],
+      "ownership": [
+        "acceptance:failure-injection",
+        "acceptance:complexity-gates"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [],
+        "modify": [],
+        "test": [
+          "Tests/ConformanceAndFailureInjection/CrossCutting/FailureAndComplexityTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaQualifiedCandidateSet",
+          "Phase01ModelGate",
+          "Phase03RendererGate",
+          "Phase04NativeBoundaryGate",
+          "Phase06LanguageGate",
+          "Phase07HostAndDiffGate"
+        ],
+        "produces": [
+          "FailureInjectionEvidence",
+          "ComplexityEvidence"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter FailureAndComplexityTests/testSeededViewportFullScan",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "COMPLEXITY_GATE_FAILED operation=viewport-layout observed=full-document-scan"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Inject every declared recoverable allocation, shaping, renderer resource, LSP framing/session, provider, host, workspace, IME, cache, reentry, cancellation, and disposal failure.",
+          "Require typed failure plus rollback or drop with zero half-committed state; exclude fatal OOM from recoverable claims.",
+          "Use operation counters to prove Piece Tree, decoration, projection, vertical index, layout, renderer, search, diff, provider, and fanout growth classes retain Monaco upper bounds.",
+          "Fail immediately on any worse asymptotic order, viewport full-document scan, or work not bounded by visible rows plus changed dependencies."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter FailureAndComplexityTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "FAILURE_COMPLEXITY recoverableRows=all halfCommits=0 growthRegressions=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-09/P09-T051.json"
+      ],
+      "completion": [
+        "Every declared recoverable failure is injected.",
+        "All invariants and rollback rules hold.",
+        "Every operation-count growth class remains within the frozen bound."
+      ],
+      "commitBoundary": [
+        "Tests/ConformanceAndFailureInjection/CrossCutting/FailureAndComplexityTests.swift"
+      ]
+    },
+    {
+      "id": "P09-T052",
+      "phase": "09",
+      "title": "Validate the frozen Phase 03 renderer decision without source changes",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P09-T012",
+        "P09-T017",
+        "P09-T034",
+        "P09-T035",
+        "P09-T036"
+      ],
+      "contractRefs": [
+        "G5-R.performanceDecision.metalTrigger",
+        "V1-R4.rendererDecision",
+        "C03",
+        "C08"
+      ],
+      "ownership": [
+        "acceptance:renderer-decision-validation"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [],
+        "modify": [],
+        "test": [
+          "Tests/ConformanceAndFailureInjection/CrossCutting/RendererDecisionValidationTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaRendererDecision",
+          "RendererBranchEvidence",
+          "C03Evidence",
+          "C08Evidence",
+          "P04Evidence",
+          "P05Evidence",
+          "P06Evidence"
+        ],
+        "produces": [
+          "RendererDecisionValidationEvidence"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter RendererDecisionValidationTests/testDecisionEvidenceCannotBeRecomputed",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "RENDERER_DECISION_VALIDATION_FAILED reason=phase09-source-change"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Verify the immutable Phase 03 decision hash, Core Graphics completion predecessor, trigger metric scope, selected source set, and absence-or-parity evidence.",
+          "Confirm every current renderer correctness and performance cell agrees with the frozen branch.",
+          "Reject any Phase 09 source creation, decision recomputation, cross-domain trigger, missing fallback, or unvalidated triggered branch."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter RendererDecisionValidationTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "RENDERER_DECISION_VALIDATION frozen=pass sourceChanges=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-09/P09-T052.json"
+      ],
+      "completion": [
+        "Renderer branch matches Phase 03 exactly.",
+        "No later product source or decision change exists.",
+        "All applicable parity and fallback evidence passes."
+      ],
+      "commitBoundary": [
+        "Tests/ConformanceAndFailureInjection/CrossCutting/RendererDecisionValidationTests.swift"
+      ]
+    },
+    {
+      "id": "P09-T099",
+      "phase": "09",
+      "title": "Aggregate the final all-or-nothing G5-R release verdict",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P09-T002",
+        "P09-T010",
+        "P09-T011",
+        "P09-T012",
+        "P09-T013",
+        "P09-T014",
+        "P09-T015",
+        "P09-T016",
+        "P09-T017",
+        "P09-T018",
+        "P09-T019",
+        "P09-T030",
+        "P09-T031",
+        "P09-T032",
+        "P09-T033",
+        "P09-T034",
+        "P09-T035",
+        "P09-T036",
+        "P09-T037",
+        "P09-T038",
+        "P09-T039",
+        "P09-T040",
+        "P09-T041",
+        "P09-T042",
+        "P09-T043",
+        "P09-T050",
+        "P09-T051",
+        "P09-T052"
+      ],
+      "contractRefs": [
+        "G5-R.acceptance.releaseVerdict",
+        "G5-R.designClosure.stoppingCriterion",
+        "Q1-R5"
+      ],
+      "ownership": [
+        "release:final-verdict"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [
+          "Tools/Release/release-verdict.mjs",
+          "RELEASE_VERDICT.md"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/PlanStructureTests/FinalReleaseVerdictTests.mjs"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaQualifiedCandidateSet",
+          "C01Evidence",
+          "C02Evidence",
+          "C03Evidence",
+          "C04Evidence",
+          "C05Evidence",
+          "C06Evidence",
+          "C07Evidence",
+          "C08Evidence",
+          "C09Evidence",
+          "C10Evidence",
+          "P00Evidence",
+          "P01Evidence",
+          "P02Evidence",
+          "P03Evidence",
+          "P04Evidence",
+          "P05Evidence",
+          "P06Evidence",
+          "P07Evidence",
+          "P08Evidence",
+          "P09Evidence",
+          "P10Evidence",
+          "P11Evidence",
+          "P12Evidence",
+          "P13Evidence",
+          "LifecycleSoakSanitizerEvidence",
+          "FailureInjectionEvidence",
+          "ComplexityEvidence",
+          "RendererDecisionValidationEvidence"
+        ],
+        "produces": [
+          "MonaG5RReleaseVerdict"
+        ]
+      },
+      "red": [
+        {
+          "run": "node --test Tests/PlanStructureTests/FinalReleaseVerdictTests.mjs --test-name-pattern skipped-cell",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "RELEASE_VERDICT_NOT_PASSED reason=skipped-cell cell=P04-M1-120Hz"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Verify one source revision, one seven-candidate set, one exact qualified environment, C01-C10, every P00-P13 M0/M1 cell, lifecycle, soak, sanitizers, validation, failure injection, complexity, and renderer decision evidence.",
+          "Reject missing, failed, skipped, stale, malformed, unauthorized, mixed-revision, mixed-environment, unhashed, or unsigned-input evidence.",
+          "Emit passed only when every prerequisite passes; otherwise emit not-passed with the complete sorted blocker set.",
+          "Keep the frozen G5-R design contract unchanged and record empirical implementation state only in the verdict and candidate artifacts."
+        ]
+      },
+      "green": [
+        {
+          "run": "node --test Tests/PlanStructureTests/FinalReleaseVerdictTests.mjs",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "RELEASE_VERDICT passed sourceRevisions=1 candidates=7 correctness=10 performance=14 skipped=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-09/P09-T099.json"
+      ],
+      "completion": [
+        "The verdict task is last in topological order.",
+        "Passed requires every frozen product and evidence condition.",
+        "Contract files remain hash-identical to the adopted G5-R lock."
+      ],
+      "commitBoundary": [
+        "Tools/Release/release-verdict.mjs",
+        "RELEASE_VERDICT.md",
+        "Tests/PlanStructureTests/FinalReleaseVerdictTests.mjs"
+      ]
     }
   ],
   "ownership": [
@@ -15876,6 +18333,17 @@
       ],
       "testOwners": [
         "P08-T013"
+      ]
+    },
+    {
+      "kind": "candidateArtifact",
+      "id": "QEnvironmentID.json",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P09-T001"
+      ],
+      "testOwners": [
+        "P09-T001"
       ]
     },
     {
@@ -26186,6 +28654,116 @@
       ],
       "testOwners": [
         "P05-T002"
+      ]
+    },
+    {
+      "kind": "correctnessGate",
+      "id": "C01",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P09-T010"
+      ],
+      "testOwners": [
+        "P09-T010"
+      ]
+    },
+    {
+      "kind": "correctnessGate",
+      "id": "C02",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P09-T011"
+      ],
+      "testOwners": [
+        "P09-T011"
+      ]
+    },
+    {
+      "kind": "correctnessGate",
+      "id": "C03",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P09-T012"
+      ],
+      "testOwners": [
+        "P09-T012"
+      ]
+    },
+    {
+      "kind": "correctnessGate",
+      "id": "C04",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P09-T013"
+      ],
+      "testOwners": [
+        "P09-T013"
+      ]
+    },
+    {
+      "kind": "correctnessGate",
+      "id": "C05",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P09-T014"
+      ],
+      "testOwners": [
+        "P09-T014"
+      ]
+    },
+    {
+      "kind": "correctnessGate",
+      "id": "C06",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P09-T015"
+      ],
+      "testOwners": [
+        "P09-T015"
+      ]
+    },
+    {
+      "kind": "correctnessGate",
+      "id": "C07",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P09-T016"
+      ],
+      "testOwners": [
+        "P09-T016"
+      ]
+    },
+    {
+      "kind": "correctnessGate",
+      "id": "C08",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P09-T017"
+      ],
+      "testOwners": [
+        "P09-T017"
+      ]
+    },
+    {
+      "kind": "correctnessGate",
+      "id": "C09",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P09-T018"
+      ],
+      "testOwners": [
+        "P09-T018"
+      ]
+    },
+    {
+      "kind": "correctnessGate",
+      "id": "C10",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P09-T019"
+      ],
+      "testOwners": [
+        "P09-T019"
       ]
     },
     {
@@ -44752,6 +47330,160 @@
       ]
     },
     {
+      "kind": "performanceWorkload",
+      "id": "P00",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P09-T030"
+      ],
+      "testOwners": [
+        "P09-T030"
+      ]
+    },
+    {
+      "kind": "performanceWorkload",
+      "id": "P01",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P09-T031"
+      ],
+      "testOwners": [
+        "P09-T031"
+      ]
+    },
+    {
+      "kind": "performanceWorkload",
+      "id": "P02",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P09-T032"
+      ],
+      "testOwners": [
+        "P09-T032"
+      ]
+    },
+    {
+      "kind": "performanceWorkload",
+      "id": "P03",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P09-T033"
+      ],
+      "testOwners": [
+        "P09-T033"
+      ]
+    },
+    {
+      "kind": "performanceWorkload",
+      "id": "P04",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P09-T034"
+      ],
+      "testOwners": [
+        "P09-T034"
+      ]
+    },
+    {
+      "kind": "performanceWorkload",
+      "id": "P05",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P09-T035"
+      ],
+      "testOwners": [
+        "P09-T035"
+      ]
+    },
+    {
+      "kind": "performanceWorkload",
+      "id": "P06",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P09-T036"
+      ],
+      "testOwners": [
+        "P09-T036"
+      ]
+    },
+    {
+      "kind": "performanceWorkload",
+      "id": "P07",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P09-T037"
+      ],
+      "testOwners": [
+        "P09-T037"
+      ]
+    },
+    {
+      "kind": "performanceWorkload",
+      "id": "P08",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P09-T038"
+      ],
+      "testOwners": [
+        "P09-T038"
+      ]
+    },
+    {
+      "kind": "performanceWorkload",
+      "id": "P09",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P09-T039"
+      ],
+      "testOwners": [
+        "P09-T039"
+      ]
+    },
+    {
+      "kind": "performanceWorkload",
+      "id": "P10",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P09-T040"
+      ],
+      "testOwners": [
+        "P09-T040"
+      ]
+    },
+    {
+      "kind": "performanceWorkload",
+      "id": "P11",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P09-T041"
+      ],
+      "testOwners": [
+        "P09-T041"
+      ]
+    },
+    {
+      "kind": "performanceWorkload",
+      "id": "P12",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P09-T042"
+      ],
+      "testOwners": [
+        "P09-T042"
+      ]
+    },
+    {
+      "kind": "performanceWorkload",
+      "id": "P13",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P09-T043"
+      ],
+      "testOwners": [
+        "P09-T043"
+      ]
+    },
+    {
       "kind": "planArtifact",
       "id": "adversarialReview",
       "disposition": "structural-plan-governance",
@@ -52219,6 +54951,10 @@
     {
       "path": "implementation-plan/phase-08-release-candidate-distribution.md",
       "sha256": "39717442073baf94f74126c777fa4c12d319ff8a4a3ffef07b0cbf099e164b74"
+    },
+    {
+      "path": "implementation-plan/phase-09-acceptance-release-verdict.md",
+      "sha256": "0c22e1c8e8dd512823c0d3e06bf0c1c88e0eb376991fca9c1833dce8aaadc2b2"
     }
   ],
   "audit": {
