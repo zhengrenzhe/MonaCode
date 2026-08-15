@@ -2964,6 +2964,981 @@
       "commitBoundary": [
         "Tests/ConformanceAndFailureInjection/Phase02SemanticConformanceTests.swift"
       ]
+    },
+    {
+      "id": "P03-T001",
+      "phase": "03",
+      "title": "Build ViewGraph projection and logarithmic vertical indexes",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P02-T009"
+      ],
+      "contractRefs": [
+        "V1-R3.projection",
+        "V1-R3.verticalIndex",
+        "C03",
+        "P04",
+        "P06"
+      ],
+      "ownership": [
+        "layout:view-graph",
+        "layout:vertical-indexes"
+      ],
+      "files": {
+        "productTarget": "MonaCodeAppKit",
+        "create": [
+          "Sources/MonaCodeAppKit/Layout/MonaViewGraph.swift",
+          "Sources/MonaCodeAppKit/Layout/MonaViewLine.swift",
+          "Sources/MonaCodeAppKit/Layout/MonaVerticalIndex.swift",
+          "Sources/MonaCodeAppKit/Layout/MonaViewZoneIndex.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeAppKitTests/Layout/MonaViewGraphDifferentialTests.swift",
+          "Tests/MonaCodeAppKitTests/Layout/MonaVerticalIndexComplexityTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaCodeModel",
+          "MonaDecorationTree",
+          "MonaAsyncValidityTicket"
+        ],
+        "produces": [
+          "MonaViewGraph",
+          "MonaVerticalIndex",
+          "MonaViewZoneIndex"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaViewGraphDifferentialTests/testFoldInjectedWrapProjection",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "PROJECTION_DIFFERENTIAL_MISMATCH fixture=fold-injected-wrap"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Project model lines, folding, hidden ranges, injected text, wrapping, and view zones into immutable view-line identities.",
+          "Maintain prefix-height and line-mapping indexes without viewport-path full-document scans.",
+          "Publish a new projection generation only after every affected index is complete."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaViewGraphDifferentialTests && swift test --filter MonaVerticalIndexComplexityTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "VIEW_GRAPH_PARITY mappings=exact complexity=pass"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-03/P03-T001.json"
+      ],
+      "completion": [
+        "Projection mappings match comparator fixtures.",
+        "Vertical queries retain logarithmic growth.",
+        "Incomplete generations are never visible."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCodeAppKit/Layout/MonaViewGraph.swift",
+        "Sources/MonaCodeAppKit/Layout/MonaViewLine.swift",
+        "Sources/MonaCodeAppKit/Layout/MonaVerticalIndex.swift",
+        "Sources/MonaCodeAppKit/Layout/MonaViewZoneIndex.swift",
+        "Tests/MonaCodeAppKitTests/Layout/MonaViewGraphDifferentialTests.swift",
+        "Tests/MonaCodeAppKitTests/Layout/MonaVerticalIndexComplexityTests.swift"
+      ]
+    },
+    {
+      "id": "P03-T002",
+      "phase": "03",
+      "title": "Shape mixed-script lines with Core Text and deterministic fallback",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P03-T001"
+      ],
+      "contractRefs": [
+        "V1-R3.shaping",
+        "V1-R4.crossEngineGeometry",
+        "C03",
+        "C08"
+      ],
+      "ownership": [
+        "layout:core-text-shaping",
+        "layout:font-fallback"
+      ],
+      "files": {
+        "productTarget": "MonaCodeAppKit",
+        "create": [
+          "Sources/MonaCodeAppKit/Layout/MonaTextShaper.swift",
+          "Sources/MonaCodeAppKit/Layout/MonaFontFallbackResolver.swift",
+          "Sources/MonaCodeAppKit/Layout/MonaGlyphRun.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeAppKitTests/Layout/MonaTextShaperTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaViewGraph",
+          "FontProvenanceRecord"
+        ],
+        "produces": [
+          "MonaTextShaper",
+          "MonaGlyphRun",
+          "MonaFontFallbackResolution"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaTextShaperTests/testBidiFallbackColorGlyphMatrix",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "SHAPING_GEOMETRY_MISMATCH fixture=bidi-fallback-color-glyph"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Shape raw UTF-16 lines with explicit font descriptors, direction, scale, tab stops, and fallback order.",
+          "Preserve isolated-surrogate input positions even when no glyph is emitted.",
+          "Record every face and run for Q1-R4 font provenance.",
+          "Return a bounded typed failure instead of publishing partial runs."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaTextShaperTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "TEXT_SHAPING matrices=64 failedPartialRuns=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-03/P03-T002.json"
+      ],
+      "completion": [
+        "Mixed-script geometry passes fixed goldens.",
+        "Fallback order is deterministic.",
+        "Raw-unit mappings survive missing glyphs and isolated surrogates."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCodeAppKit/Layout/MonaTextShaper.swift",
+        "Sources/MonaCodeAppKit/Layout/MonaFontFallbackResolver.swift",
+        "Sources/MonaCodeAppKit/Layout/MonaGlyphRun.swift",
+        "Tests/MonaCodeAppKitTests/Layout/MonaTextShaperTests.swift"
+      ]
+    },
+    {
+      "id": "P03-T003",
+      "phase": "03",
+      "title": "Freeze shared immutable LineLayoutRecord geometry",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P03-T002"
+      ],
+      "contractRefs": [
+        "V1-R3.lineLayoutRecord",
+        "V1-R4.rendererParity",
+        "C03",
+        "C08"
+      ],
+      "ownership": [
+        "layout:line-layout-record",
+        "renderer:shared-geometry"
+      ],
+      "files": {
+        "productTarget": "MonaCodeAppKit",
+        "create": [
+          "Sources/MonaCodeAppKit/Layout/MonaLineLayoutRecord.swift",
+          "Sources/MonaCodeAppKit/Layout/MonaLineLayoutBuilder.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeAppKitTests/Layout/MonaLineLayoutRecordTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaGlyphRun",
+          "MonaViewGraph"
+        ],
+        "produces": [
+          "MonaLineLayoutRecord",
+          "MonaLineLayoutBuilder"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaLineLayoutRecordTests/testRawOffsetGeometryRoundTrip",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "LINE_LAYOUT_ROUNDTRIP_MISMATCH offset=isolated-surrogate"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Store glyph runs, advances, baselines, raw-unit boundaries, bidi levels, injected-text spans, decorations, and paint inputs in one immutable record.",
+          "Make hit testing and every renderer consume the same record without reshaping.",
+          "Key records by complete dependency stamps rather than viewport position alone."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaLineLayoutRecordTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "LINE_LAYOUT_RECORD roundTrips=512 immutable=pass"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-03/P03-T003.json"
+      ],
+      "completion": [
+        "Geometry round-trips raw offsets and points.",
+        "Core Graphics and conditional Metal share one record.",
+        "No renderer owns separate text layout."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCodeAppKit/Layout/MonaLineLayoutRecord.swift",
+        "Sources/MonaCodeAppKit/Layout/MonaLineLayoutBuilder.swift",
+        "Tests/MonaCodeAppKitTests/Layout/MonaLineLayoutRecordTests.swift"
+      ]
+    },
+    {
+      "id": "P03-T004",
+      "phase": "03",
+      "title": "Define seven non-contradictory dependency stamp domains",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P03-T003"
+      ],
+      "contractRefs": [
+        "V1-R3.generationModel",
+        "V1-R4.crossEngineInvalidation",
+        "R1.validity"
+      ],
+      "ownership": [
+        "layout:seven-dependency-stamps"
+      ],
+      "files": {
+        "productTarget": "MonaCodeAppKit",
+        "create": [
+          "Sources/MonaCodeAppKit/Layout/MonaDependencyStamps.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeAppKitTests/Layout/MonaDependencyStampTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaLineLayoutRecord",
+          "MonaAsyncValidityTicket"
+        ],
+        "produces": [
+          "ProjectionStamp",
+          "VerticalStamp",
+          "ScrollDimensionStamp",
+          "GeometryStamp",
+          "PaintStamp",
+          "SurfaceStamp",
+          "FrameStamp"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaDependencyStampTests/testEveryMutationInvalidatesExactDomains",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "DEPENDENCY_STAMP_UNDER_INVALIDATION mutation=font-fallback"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Define ProjectionStamp, VerticalStamp, ScrollDimensionStamp, GeometryStamp, PaintStamp, SurfaceStamp, and FrameStamp as distinct immutable values.",
+          "Enumerate every mutation-to-domain edge from V1-R3 and V1-R4.",
+          "Reject both missing invalidations and invalidation fanout beyond the frozen edge set."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaDependencyStampTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "DEPENDENCY_STAMPS domains=7 mutationEdges=exact"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-03/P03-T004.json"
+      ],
+      "completion": [
+        "Exactly seven stamp domains exist.",
+        "Every frozen dependency edge is represented once.",
+        "No six-domain compatibility prose remains normative."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCodeAppKit/Layout/MonaDependencyStamps.swift",
+        "Tests/MonaCodeAppKitTests/Layout/MonaDependencyStampTests.swift"
+      ]
+    },
+    {
+      "id": "P03-T005",
+      "phase": "03",
+      "title": "Implement scroll truth and dimension convergence",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P03-T001",
+        "P03-T004"
+      ],
+      "contractRefs": [
+        "V1-R3.scrollTruth",
+        "I3-R4.scrollEvents",
+        "C03",
+        "P04"
+      ],
+      "ownership": [
+        "layout:scroll-model",
+        "layout:scroll-dimensions"
+      ],
+      "files": {
+        "productTarget": "MonaCodeAppKit",
+        "create": [
+          "Sources/MonaCodeAppKit/Layout/MonaScrollModel.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeAppKitTests/Layout/MonaScrollModelTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaVerticalIndex",
+          "ScrollDimensionStamp"
+        ],
+        "produces": [
+          "MonaScrollModel",
+          "MonaScrollSnapshot"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaScrollModelTests/testDimensionShrinkClampOrder",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "SCROLL_DIFFERENTIAL_MISMATCH fixture=dimension-shrink-clamp"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Separate requested, validated, and published scroll positions.",
+          "Converge content dimensions, viewport dimensions, and clamping in the frozen event order.",
+          "Preserve subpixel values until the final surface transform."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaScrollModelTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "SCROLL_MODEL traces=240 eventOrder=exact"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-03/P03-T005.json"
+      ],
+      "completion": [
+        "Scroll traces match comparator order.",
+        "Dimension shrink never publishes an out-of-range position.",
+        "Subpixel coordinates remain stable."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCodeAppKit/Layout/MonaScrollModel.swift",
+        "Tests/MonaCodeAppKitTests/Layout/MonaScrollModelTests.swift"
+      ]
+    },
+    {
+      "id": "P03-T006",
+      "phase": "03",
+      "title": "Complete the correct Core Graphics tiled renderer",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P03-T003",
+        "P03-T004",
+        "P03-T005"
+      ],
+      "contractRefs": [
+        "V1-R3.coreGraphicsRenderer",
+        "V1-R4.colorSpace",
+        "C03",
+        "C08",
+        "P04"
+      ],
+      "ownership": [
+        "renderer:core-graphics-complete"
+      ],
+      "files": {
+        "productTarget": "MonaCodeAppKit",
+        "create": [
+          "Sources/MonaCodeAppKit/Rendering/MonaCoreGraphicsRenderer.swift",
+          "Sources/MonaCodeAppKit/Rendering/MonaRenderTileCache.swift",
+          "Sources/MonaCodeAppKit/Rendering/MonaRenderSurface.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeAppKitTests/Rendering/MonaCoreGraphicsRendererTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaLineLayoutRecord",
+          "PaintStamp",
+          "SurfaceStamp",
+          "FrameStamp",
+          "MonaScrollSnapshot"
+        ],
+        "produces": [
+          "MonaCoreGraphicsRenderer",
+          "MonaRenderTileCache",
+          "MonaRenderSurface"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaCoreGraphicsRendererTests/testScaleSubpixelFallbackMatrix",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "CORE_GRAPHICS_GOLDEN_MISMATCH cell=scale2-phase0.5-fallback"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Paint only complete immutable layout records into generation-keyed tiles.",
+          "Composite text, selections, cursors, decorations, widgets, gutters, minimap inputs, and overlays in frozen z-order.",
+          "Use linear premultiplied RGBA and preserve scale plus subpixel phase in cache keys.",
+          "Bound tile memory and evict without losing current-generation truth."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaCoreGraphicsRendererTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "CORE_GRAPHICS_RENDERER goldens=all cacheBounded=pass"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-03/P03-T006.json"
+      ],
+      "completion": [
+        "Core Graphics is functionally complete before any Metal decision.",
+        "All scale/subpixel/fallback/color-glyph goldens pass.",
+        "Tile memory remains within the declared bound."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCodeAppKit/Rendering/MonaCoreGraphicsRenderer.swift",
+        "Sources/MonaCodeAppKit/Rendering/MonaRenderTileCache.swift",
+        "Sources/MonaCodeAppKit/Rendering/MonaRenderSurface.swift",
+        "Tests/MonaCodeAppKitTests/Rendering/MonaCoreGraphicsRendererTests.swift"
+      ]
+    },
+    {
+      "id": "P03-T007",
+      "phase": "03",
+      "title": "Enforce the QueryGeometryBarrier for hit testing and native queries",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P03-T005",
+        "P03-T006"
+      ],
+      "contractRefs": [
+        "V1-R3.geometryBarrier",
+        "I3-R3.compositionGeometry",
+        "A1-R.textQueries"
+      ],
+      "ownership": [
+        "layout:query-geometry-barrier",
+        "layout:hit-testing"
+      ],
+      "files": {
+        "productTarget": "MonaCodeAppKit",
+        "create": [
+          "Sources/MonaCodeAppKit/Layout/MonaQueryGeometryBarrier.swift",
+          "Sources/MonaCodeAppKit/Layout/MonaHitTester.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeAppKitTests/Layout/MonaQueryGeometryBarrierTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaLineLayoutRecord",
+          "MonaScrollSnapshot",
+          "FrameStamp"
+        ],
+        "produces": [
+          "MonaQueryGeometryBarrier",
+          "MonaHitTester"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaQueryGeometryBarrierTests/testRejectsMixedGenerationQuery",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "GEOMETRY_BARRIER_MIXED_GENERATION requested=8 available=7"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Answer point, range, caret, selection, composition, and accessibility geometry only from one complete generation.",
+          "Synchronously finish bounded visible-line work when the contract requires an immediate query.",
+          "Return typed unavailable geometry when bounded completion fails."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaQueryGeometryBarrierTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "GEOMETRY_BARRIER mixedGeneration=0 boundedFailure=typed"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-03/P03-T007.json"
+      ],
+      "completion": [
+        "No query combines generations.",
+        "Hit testing round-trips with layout records.",
+        "Failure never fabricates geometry."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCodeAppKit/Layout/MonaQueryGeometryBarrier.swift",
+        "Sources/MonaCodeAppKit/Layout/MonaHitTester.swift",
+        "Tests/MonaCodeAppKitTests/Layout/MonaQueryGeometryBarrierTests.swift"
+      ]
+    },
+    {
+      "id": "P03-T008",
+      "phase": "03",
+      "title": "Represent bounded Core Text failure with FailedLineRecord",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P03-T002",
+        "P03-T007"
+      ],
+      "contractRefs": [
+        "V1-R3.failedLineRecord",
+        "R1.failureIsolation",
+        "C08"
+      ],
+      "ownership": [
+        "layout:failed-line-record"
+      ],
+      "files": {
+        "productTarget": "MonaCodeAppKit",
+        "create": [
+          "Sources/MonaCodeAppKit/Layout/MonaFailedLineRecord.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeAppKitTests/Layout/MonaFailedLineRecordTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaTextShaper",
+          "MonaQueryGeometryBarrier"
+        ],
+        "produces": [
+          "MonaFailedLineRecord"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaFailedLineRecordTests/testInjectedShapingFailure",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "PARTIAL_LINE_LAYOUT_PUBLISHED line=17"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Convert bounded shaping and line-construction failures into immutable failed-line records.",
+          "Retain raw range, dependency stamps, typed reason, retry generation, and safe fallback height.",
+          "Prevent hit testing, selection geometry, or renderer code from consuming partial glyph data."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaFailedLineRecordTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "FAILED_LINE_RECORD injections=12 partialPublished=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-03/P03-T008.json"
+      ],
+      "completion": [
+        "Injected failures never publish partial geometry.",
+        "Retry follows dependency generation changes.",
+        "The editor remains responsive with typed degraded lines."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCodeAppKit/Layout/MonaFailedLineRecord.swift",
+        "Tests/MonaCodeAppKitTests/Layout/MonaFailedLineRecordTests.swift"
+      ]
+    },
+    {
+      "id": "P03-T009",
+      "phase": "03",
+      "title": "Instrument renderer-owned correctness and performance metrics",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P03-T006",
+        "P03-T007",
+        "P03-T008"
+      ],
+      "contractRefs": [
+        "V1-R4.measurementPartition",
+        "Q1-R2.componentMetrics",
+        "Q1-R3.statistics"
+      ],
+      "ownership": [
+        "renderer:metric-instrumentation"
+      ],
+      "files": {
+        "productTarget": "MonaCodeAppKit",
+        "create": [
+          "Sources/MonaCodeAppKit/Rendering/MonaRendererMetrics.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeAppKitTests/Rendering/MonaRendererMetricsTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaCoreGraphicsRenderer",
+          "MonaRenderSurface",
+          "MonaFailedLineRecord",
+          "MonaHighResolutionClock"
+        ],
+        "produces": [
+          "MonaRendererMetrics",
+          "RendererMetricTrace"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaRendererMetricsTests/testExcludesModelAndProviderTime",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "RENDERER_METRIC_SCOPE_VIOLATION metric=layout-ready-to-present"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Measure layout-ready-to-present, GPU frame time when present, renderer-surface footprint, missed presentation, and renderer energy.",
+          "Exclude model load, RegExp, diff, provider, LSP, and whole-application resource costs from renderer trigger metrics.",
+          "Emit balanced block identifiers and unrounded binary64 samples for Q1-R3."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaRendererMetricsTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "RENDERER_METRICS scoped=5 crossDomainSamples=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-03/P03-T009.json"
+      ],
+      "completion": [
+        "Every trigger metric is renderer-attributable.",
+        "End-to-end metrics cannot trigger Metal directly.",
+        "Metric traces are bootstrap-ready."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCodeAppKit/Rendering/MonaRendererMetrics.swift",
+        "Tests/MonaCodeAppKitTests/Rendering/MonaRendererMetricsTests.swift"
+      ]
+    },
+    {
+      "id": "P03-T010",
+      "phase": "03",
+      "title": "Resolve the renderer decision from complete Core Graphics evidence",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P03-T009"
+      ],
+      "contractRefs": [
+        "G5-R.performanceDecision.metalTrigger",
+        "V1-R4.rendererDecision",
+        "C03",
+        "C08"
+      ],
+      "ownership": [
+        "renderer:decision-gate",
+        "renderer-metric:C03",
+        "renderer-metric:C08"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeAppKitTests/Rendering/MonaRendererDecisionGateTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaCoreGraphicsRenderer",
+          "RendererMetricTrace",
+          "BootstrapVerdict"
+        ],
+        "produces": [
+          "MonaRendererDecision"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaRendererDecisionGateTests/testRejectsEndToEndTrigger",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "RENDERER_TRIGGER_SCOPE_INVALID metric=first-present"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Run all renderer-owned C03/C08 correctness cells and paired M0/M1 performance cells after Core Graphics completion.",
+          "Record exactly one immutable decision: not-triggered-and-absent or triggered-and-required.",
+          "Reject first-present, input-to-present, whole-application footprint, and other cross-domain metrics as direct triggers."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaRendererDecisionGateTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "RENDERER_DECISION valid=1 branchesRecorded=1"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-03/P03-T010.json"
+      ],
+      "completion": [
+        "Exactly one renderer branch is recorded.",
+        "The decision consumes complete Core Graphics evidence.",
+        "Only C03/C08 renderer-owned metrics affect the branch."
+      ],
+      "commitBoundary": [
+        "Tests/MonaCodeAppKitTests/Rendering/MonaRendererDecisionGateTests.swift"
+      ]
+    },
+    {
+      "id": "P03-T011",
+      "phase": "03",
+      "title": "Execute the conditional Metal branch entirely inside Phase 03",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P03-T010"
+      ],
+      "contractRefs": [
+        "G5-R.performanceDecision.metalTrigger",
+        "V1-R4.crossEngineEquivalence",
+        "C08"
+      ],
+      "ownership": [
+        "renderer:metal-conditional"
+      ],
+      "files": {
+        "productTarget": "MonaCodeAppKit",
+        "create": [
+          "Sources/MonaCodeAppKit/Rendering/MonaMetalRenderer.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeAppKitTests/Rendering/MonaMetalRendererParityTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaRendererDecision",
+          "MonaLineLayoutRecord",
+          "MonaRenderSurface"
+        ],
+        "produces": [
+          "ConditionalMonaMetalRenderer",
+          "RendererBranchEvidence"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaMetalRendererParityTests/testRequiredBranchCannotRemainAbsent",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "METAL_BRANCH_INCOMPLETE decision=triggered-and-required"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "When the decision is not-triggered-and-absent, record source absence and execute no product-source change.",
+          "When the decision is triggered-and-required, implement rendering from the shared layout record and linear premultiplied RGBA inputs.",
+          "Require per-channel absolute difference at most 1/255 against Core Graphics.",
+          "Fall back to the next complete Core Graphics generation on device, resource, or presentation failure."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaMetalRendererParityTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "RENDERER_BRANCH valid=1 parityOrAbsence=pass"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-03/P03-T011.json"
+      ],
+      "completion": [
+        "The not-triggered branch contains no Metal source.",
+        "The triggered branch completes parity and failure fallback.",
+        "No later phase creates renderer source."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCodeAppKit/Rendering/MonaMetalRenderer.swift",
+        "Tests/MonaCodeAppKitTests/Rendering/MonaMetalRendererParityTests.swift"
+      ]
+    },
+    {
+      "id": "P03-T012",
+      "phase": "03",
+      "title": "Close projection, geometry, and renderer parity before native input",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P03-T011"
+      ],
+      "contractRefs": [
+        "V1-R3",
+        "V1-R4",
+        "C03",
+        "C08",
+        "P04",
+        "P06"
+      ],
+      "ownership": [
+        "normativeLayer:layout-rendering:V1-R3",
+        "normativeLayer:layout-rendering:V1-R4",
+        "phase-gate:03"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [],
+        "modify": [],
+        "test": [
+          "Tests/ConformanceAndFailureInjection/Phase03RendererConformanceTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaViewGraph",
+          "MonaLineLayoutRecord",
+          "MonaScrollModel",
+          "MonaCoreGraphicsRenderer",
+          "MonaQueryGeometryBarrier",
+          "MonaFailedLineRecord",
+          "RendererBranchEvidence"
+        ],
+        "produces": [
+          "Phase03RendererGate"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter Phase03RendererConformanceTests/testSeededGenerationTear",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "PHASE03_RENDERER_GATE_FAILED reason=mixed-generation-frame"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Run projection, geometry, scroll, shaping, failure, Core Graphics, and selected renderer-branch matrices as one revision-locked suite.",
+          "Prove viewport operation counts scale with visible rows plus changed dependencies.",
+          "Freeze the renderer source set and branch evidence consumed by Phase 08 candidate generation."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter Phase03RendererConformanceTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "PHASE03_RENDERER_GATE C03=pass C08=pass mixedGeneration=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-03/P03-T012.json"
+      ],
+      "completion": [
+        "C03 and C08 renderer prerequisites pass.",
+        "The renderer decision is immutable.",
+        "Renderer source production is closed at Phase 03."
+      ],
+      "commitBoundary": [
+        "Tests/ConformanceAndFailureInjection/Phase03RendererConformanceTests.swift"
+      ]
     }
   ],
   "ownership": [
@@ -3075,6 +4050,28 @@
       ],
       "testOwners": [
         "P00-T007"
+      ]
+    },
+    {
+      "kind": "normativeLayer",
+      "id": "layout-rendering:V1-R3",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P03-T012"
+      ],
+      "testOwners": [
+        "P03-T012"
+      ]
+    },
+    {
+      "kind": "normativeLayer",
+      "id": "layout-rendering:V1-R4",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P03-T012"
+      ],
+      "testOwners": [
+        "P03-T012"
       ]
     },
     {
@@ -3243,6 +4240,10 @@
     {
       "path": "implementation-plan/phase-02-model-semantics.md",
       "sha256": "60bdb2d1658cee00520b73367cfc028cbf17948073ca3e4e75589152640d318c"
+    },
+    {
+      "path": "implementation-plan/phase-03-projection-layout-rendering.md",
+      "sha256": "66f6b9e5d15be38bef8a2f259d1a54e20c1c96752609db4554af857c0a8c5cea"
     }
   ],
   "audit": {
