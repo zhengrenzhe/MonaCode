@@ -85,6 +85,8 @@ function mutate(plan, row) {
     plan.qualificationEnvironment.macOSBuild = row.value;
   } else if (row.mutation === 'add-metal-gate-owner') {
     plan.tasks.find((candidate) => candidate.id === row.task).ownership.push(row.value);
+  } else if (row.mutation === 'acceptance-before-distribution') {
+    plan.tasks.find((candidate) => candidate.id === row.task).dependencies = row.value;
   } else {
     throw new Error(`unknown mutation: ${row.mutation}`);
   }
@@ -112,3 +114,10 @@ for (const name of [
     assert.deepEqual(findings.map((finding) => finding.id).sort(), row.expectedFindingIds);
   });
 }
+
+test('rejects acceptance-before-distribution.json against the complete candidate graph', () => {
+  const row = fixture('acceptance-before-distribution.json');
+  const plan = structuredClone(seedManifest);
+  mutate(plan, row);
+  assert.deepEqual(auditBoundaries(plan, contract).map((finding) => finding.id), row.expectedFindingIds);
+});

@@ -3,12 +3,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 
-import {
-  auditBoundaries,
-  auditCandidateOrder,
-  auditMetalTrigger,
-  auditPackageGraph
-} from './boundaries.mjs';
+import { auditBoundaries } from './boundaries.mjs';
 import { auditOwnership } from './coverage.mjs';
 import { auditEvidence } from './evidence.mjs';
 import { compareFindings } from './findings.mjs';
@@ -242,6 +237,8 @@ function applyBoundaryMutation(plan, row) {
     plan.qualificationEnvironment.macOSBuild = row.value;
   } else if (row.mutation === 'add-metal-gate-owner') {
     plan.tasks.find((task) => task.id === row.task).ownership.push(row.value);
+  } else if (row.mutation === 'acceptance-before-distribution') {
+    plan.tasks.find((task) => task.id === row.task).dependencies = row.value;
   } else {
     throw new Error(`unknown boundary fixture mutation: ${row.mutation}`);
   }
@@ -272,13 +269,12 @@ export function auditFixture({ fixture, contract, seedPlan, inventory }) {
     applyOwnershipMutation(plan, fixture);
     findings = auditOwnership(inventory, plan);
   } else {
-    const plan = boundaryFixturePlan(seedPlan);
+    const plan = fixture.mutation === 'acceptance-before-distribution'
+      ? structuredClone(seedPlan)
+      : boundaryFixturePlan(seedPlan);
     applyBoundaryMutation(plan, fixture);
     findings = [
-      ...auditPackageGraph(plan, contract),
-      ...auditCandidateOrder(plan),
-      ...auditMetalTrigger(plan),
-      ...auditBoundaries(plan, contract).filter((row) => row.id === 'PLAN_FORBIDDEN_CORE_IMPORT'),
+      ...auditBoundaries(plan, contract),
       ...auditEvidence(plan, contract)
     ].sort(compareFindings);
   }

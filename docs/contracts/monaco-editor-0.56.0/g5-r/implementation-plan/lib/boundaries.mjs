@@ -109,6 +109,41 @@ export function auditCandidateOrder(plan) {
   return findings.sort(compareFindings);
 }
 
+export function auditAcceptanceOrder(plan) {
+  const findings = [];
+  const tasks = plan.tasks ?? [];
+  const acceptanceTasks = tasks.filter((task) => (
+    task.phase === '09'
+    && (task.ownership ?? []).some((owner) => (
+      owner.startsWith('correctnessGate:')
+      || owner.startsWith('performanceWorkload:')
+      || owner.startsWith('acceptance:')
+      || owner === 'release:final-verdict'
+    ))
+  ));
+  if (acceptanceTasks.length === 0) return findings;
+  const joins = tasks.filter((task) => task.interfaces?.produces?.includes('MonaQualifiedCandidateSet'));
+  if (joins.length !== 1) {
+    findings.push(finding(
+      'PLAN_ACCEPTANCE_ORDER',
+      'MonaQualifiedCandidateSet',
+      `expected one qualified candidate join, found ${joins.length}`
+    ));
+    return findings;
+  }
+  const join = joins[0];
+  for (const task of acceptanceTasks) {
+    if (!transitivelyDepends(plan, task.id, join.id)) {
+      findings.push(finding(
+        'PLAN_ACCEPTANCE_ORDER',
+        task.id,
+        `acceptance task does not follow ${join.id}`
+      ));
+    }
+  }
+  return findings.sort(compareFindings);
+}
+
 export function auditMetalTrigger(plan) {
   const findings = [];
   const tasks = plan.tasks ?? [];
@@ -165,5 +200,7 @@ export function auditBoundaries(plan, contract) {
       }
     }
   }
-  return findings.concat(auditCandidateOrder(plan), auditMetalTrigger(plan)).sort(compareFindings);
+  return findings
+    .concat(auditCandidateOrder(plan), auditAcceptanceOrder(plan), auditMetalTrigger(plan))
+    .sort(compareFindings);
 }

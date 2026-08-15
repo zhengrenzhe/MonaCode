@@ -1,0 +1,10 @@
+{
+  "mutation": "acceptance-before-distribution",
+  "task": "P09-T010",
+  "value": [
+    "P00-T012"
+  ],
+  "expectedFindingIds": [
+    "PLAN_ACCEPTANCE_ORDER"
+  ]
+}
