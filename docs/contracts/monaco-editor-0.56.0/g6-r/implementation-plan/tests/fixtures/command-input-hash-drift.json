@@ -1,0 +1,49 @@
+{
+  "plan": {
+    "planID": "g6r-command-input-hash-drift",
+    "tasks": [
+      {
+        "taskID": "P00-T001",
+        "stages": [
+          {
+            "name": "red",
+            "steps": [
+              {
+                "kind": "verification-command",
+                "command": {
+                  "commandID": "P00-T001.RED.001",
+                  "kind": "process",
+                  "networkMode": "forbidden",
+                  "timeoutMs": 120000,
+                  "leaves": [
+                    { "leafID": "P00-T001.RED.001.PROC.001" }
+                  ],
+                  "inputs": [
+                    {
+                      "path": "baseline/file.swift",
+                      "availability": "baseline",
+                      "sha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "baselineRows": [
+    {
+      "path": "baseline/file.swift",
+      "sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+    }
+  ],
+  "expected": {
+    "id": "PLAN_COMMAND_INPUT_HASH_MISMATCH",
+    "category": "semantic",
+    "taskID": "P00-T001",
+    "path": "/tasks/0/stages/0/steps/0/command/inputs/0",
+    "message": "input path \"baseline/file.swift\" baseline sha256 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa != bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb; command=P00-T001.RED.001 leaves=[P00-T001.RED.001.PROC.001]"
+  }
+}

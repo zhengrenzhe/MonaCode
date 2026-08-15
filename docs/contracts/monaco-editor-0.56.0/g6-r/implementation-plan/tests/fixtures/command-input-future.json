@@ -1,0 +1,54 @@
+{
+  "plan": {
+    "planID": "g6r-command-input-future",
+    "tasks": [
+      {
+        "taskID": "P00-T001",
+        "stages": [
+          {
+            "name": "red",
+            "steps": [
+              {
+                "kind": "verification-command",
+                "command": {
+                  "commandID": "P00-T001.RED.001",
+                  "kind": "process",
+                  "networkMode": "forbidden",
+                  "timeoutMs": 120000,
+                  "leaves": [
+                    { "leafID": "P00-T001.RED.001.PROC.001" }
+                  ],
+                  "inputs": [
+                    { "path": "future/output.swift", "availability": "dependency" }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "taskID": "P00-T002",
+        "productCommit": {
+          "stagedProductPaths": ["future/output.swift"]
+        },
+        "stages": [
+          {
+            "name": "commit",
+            "steps": [
+              { "kind": "controller-action", "action": "commit-task" }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "baselineRows": [],
+  "expected": {
+    "id": "PLAN_COMMAND_INPUT_FROM_FUTURE",
+    "category": "semantic",
+    "taskID": "P00-T001",
+    "path": "/tasks/0/stages/0/steps/0/command/inputs/0",
+    "message": "input path \"future/output.swift\" produced only by a later task; command=P00-T001.RED.001 leaves=[P00-T001.RED.001.PROC.001]"
+  }
+}
