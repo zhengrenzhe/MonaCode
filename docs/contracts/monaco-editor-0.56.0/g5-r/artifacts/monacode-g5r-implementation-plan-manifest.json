@@ -1138,6 +1138,1062 @@
         "Package.swift",
         "Tests/PlanStructureTests/Phase00IntegrationTests.mjs"
       ]
+    },
+    {
+      "id": "P01-T001",
+      "phase": "01",
+      "title": "Implement raw UTF-16 positions and validation modes",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P00-T012"
+      ],
+      "contractRefs": [
+        "B1-R.Position",
+        "M1-R2.modelCoordinates",
+        "C01"
+      ],
+      "ownership": [
+        "base:MonaPosition",
+        "model:position-validation"
+      ],
+      "files": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Sources/MonaCode/Base/MonaPosition.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/Base/MonaPositionTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaDifferentialModelProvider"
+        ],
+        "produces": [
+          "MonaPosition",
+          "MonaPositionValidationMode"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaPositionTests/testIsolatedSurrogateOffsets",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "DIFFERENTIAL_MISMATCH fixture=position-isolated-surrogate"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Store one-based line and column values without grapheme conversion.",
+          "Implement strict, relaxed, and raw-offset validation as separate code paths.",
+          "Preserve comparator identity behavior for equal-value transformations."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaPositionTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "POSITION_PARITY fixtures=16 rawUTF16=pass"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-01/P01-T001.json"
+      ],
+      "completion": [
+        "All 16 frozen declaration fixtures match M0 and M1.",
+        "Offsets may represent isolated surrogate boundaries exactly."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCode/Base/MonaPosition.swift",
+        "Tests/MonaCodeTests/Base/MonaPositionTests.swift"
+      ]
+    },
+    {
+      "id": "P01-T002",
+      "phase": "01",
+      "title": "Implement ranges and oriented selections",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P01-T001"
+      ],
+      "contractRefs": [
+        "B1-R.Range",
+        "B1-R.Selection",
+        "C01"
+      ],
+      "ownership": [
+        "base:MonaRange",
+        "base:MonaSelection"
+      ],
+      "files": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Sources/MonaCode/Base/MonaRange.swift",
+          "Sources/MonaCode/Base/MonaSelection.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/Base/MonaRangeTests.swift",
+          "Tests/MonaCodeTests/Base/MonaSelectionTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaPosition",
+          "MonaPositionValidationMode"
+        ],
+        "produces": [
+          "MonaRange",
+          "MonaSelection",
+          "MonaSelectionDirection"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaRangeTests/testIntersectPredicateTruthTable",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "DIFFERENTIAL_MISMATCH fixture=range-intersection-truth-table"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Normalize reversed endpoints while preserving selection anchor and active orientation.",
+          "Port all three intersection predicates branch-for-branch from Monaco.",
+          "Expand non-folded ranges outward when validation lands inside a surrogate pair."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaRangeTests && swift test --filter MonaSelectionTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "RANGE_SELECTION_PARITY rangeDeclarations=43 selectionDeclarations=44"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-01/P01-T002.json"
+      ],
+      "completion": [
+        "Range and selection declaration fixtures are zero-diff.",
+        "Orientation survives normalization.",
+        "Touching and strict-intersection predicates remain distinct."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCode/Base/MonaRange.swift",
+        "Sources/MonaCode/Base/MonaSelection.swift",
+        "Tests/MonaCodeTests/Base/MonaRangeTests.swift",
+        "Tests/MonaCodeTests/Base/MonaSelectionTests.swift"
+      ]
+    },
+    {
+      "id": "P01-T003",
+      "phase": "01",
+      "title": "Implement cache-observable Monaco URI semantics",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P00-T012"
+      ],
+      "contractRefs": [
+        "B1-R.Uri",
+        "G5-R.explicitCuts.foundationURLSubstitution",
+        "C01"
+      ],
+      "ownership": [
+        "base:MonaURI"
+      ],
+      "files": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Sources/MonaCode/Base/MonaURI.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/Base/MonaURITests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [],
+        "produces": [
+          "MonaURI",
+          "MonaURIComponents",
+          "MonaURIError"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaURITests/testGracefulPercentDecodeRun",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "DIFFERENTIAL_MISMATCH fixture=uri-percent-run"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Parse and format scheme, authority, path, query, and fragment with the frozen comparator rules.",
+          "Preserve graceful percent-decoder failure by complete percent run.",
+          "Preserve cache-observable toString, fsPath, and toJSON behavior in a reference type.",
+          "Reject lone-surrogate formatting with the exact typed error."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaURITests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "URI_PARITY fixtures=27 cacheObservable=pass"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-01/P01-T003.json"
+      ],
+      "completion": [
+        "URI fixtures match raw comparator output.",
+        "No generic URL semantic substitution occurs.",
+        "Cache state remains observable."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCode/Base/MonaURI.swift",
+        "Tests/MonaCodeTests/Base/MonaURITests.swift"
+      ]
+    },
+    {
+      "id": "P01-T004",
+      "phase": "01",
+      "title": "Implement key, modifier, token, and marker value types",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P00-T012"
+      ],
+      "contractRefs": [
+        "B1-R.keyAndMarkerValues",
+        "F1-R5.nativeTypeSemantics",
+        "C01"
+      ],
+      "ownership": [
+        "base:key-codes",
+        "base:marker-enums"
+      ],
+      "files": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Sources/MonaCode/Base/MonaKeyCode.swift",
+          "Sources/MonaCode/Base/MonaKeyMod.swift",
+          "Sources/MonaCode/Base/MonaToken.swift",
+          "Sources/MonaCode/Base/MonaMarker.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/Base/MonaValueEnumTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [],
+        "produces": [
+          "MonaKeyCode",
+          "MonaKeyMod",
+          "MonaToken",
+          "MonaMarkerSeverity",
+          "MonaMarkerTag"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaValueEnumTests/testUnknownRawValuesRoundTrip",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "XCTAssertEqual failed: unknown-raw-value"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Use extensible raw-value wrappers where Monaco accepts unknown numeric values.",
+          "Preserve modifier bit composition and keybinding serialization.",
+          "Preserve token offsets and marker severity ordering."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaValueEnumTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "BASE_ENUM_PARITY unknownRawValues=preserved"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-01/P01-T004.json"
+      ],
+      "completion": [
+        "Known and unknown raw values round-trip.",
+        "Modifier composition matches comparator bit patterns."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCode/Base/MonaKeyCode.swift",
+        "Sources/MonaCode/Base/MonaKeyMod.swift",
+        "Sources/MonaCode/Base/MonaToken.swift",
+        "Sources/MonaCode/Base/MonaMarker.swift",
+        "Tests/MonaCodeTests/Base/MonaValueEnumTests.swift"
+      ]
+    },
+    {
+      "id": "P01-T005",
+      "phase": "01",
+      "title": "Implement deterministic events and idempotent disposal",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P00-T012"
+      ],
+      "contractRefs": [
+        "B1-R.Event",
+        "A+.reentrancy",
+        "H2-R.lifetime"
+      ],
+      "ownership": [
+        "base:MonaEmitter",
+        "base:MonaDisposable",
+        "base:MonaEvent"
+      ],
+      "files": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Sources/MonaCode/Base/MonaDisposable.swift",
+          "Sources/MonaCode/Base/MonaEvent.swift",
+          "Sources/MonaCode/Base/MonaEmitter.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/Base/MonaEmitterTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [],
+        "produces": [
+          "MonaDisposable",
+          "MonaEvent",
+          "MonaEmitter"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaEmitterTests/testReentrantDisposeOrder",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "XCTAssertEqual failed: emitter-reentrant-order"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Serialize listener insertion, removal, nested fire, and disposal in comparator order.",
+          "Make disposal idempotent and ensure additions during dispatch observe the next dispatch only.",
+          "Report listener failures through the declared error boundary without skipping later listeners."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaEmitterTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "EMITTER_PARITY reentrancyVectors=18 failures=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-01/P01-T005.json"
+      ],
+      "completion": [
+        "Dispatch order matches Monaco.",
+        "Nested fire and disposal preserve listener truth.",
+        "Repeated disposal has no effect."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCode/Base/MonaDisposable.swift",
+        "Sources/MonaCode/Base/MonaEvent.swift",
+        "Sources/MonaCode/Base/MonaEmitter.swift",
+        "Tests/MonaCodeTests/Base/MonaEmitterTests.swift"
+      ]
+    },
+    {
+      "id": "P01-T006",
+      "phase": "01",
+      "title": "Implement cancellation tokens and sources",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P01-T005"
+      ],
+      "contractRefs": [
+        "B1-R.Cancellation",
+        "R1.cancellationValidity"
+      ],
+      "ownership": [
+        "base:MonaCancellationToken",
+        "base:MonaCancellationTokenSource"
+      ],
+      "files": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Sources/MonaCode/Base/MonaCancellation.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/Base/MonaCancellationTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaEmitter",
+          "MonaDisposable"
+        ],
+        "produces": [
+          "MonaCancellationToken",
+          "MonaCancellationTokenSource"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaCancellationTests/testCancelThenSubscribe",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "XCTAssertEqual failed: late-cancellation-listener"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Provide immutable None and Cancelled token singletons.",
+          "Fire cancellation once and preserve comparator behavior for listeners registered after cancellation.",
+          "Dispose child sources without canceling unrelated parents."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaCancellationTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "CANCELLATION_PARITY vectors=12 failures=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-01/P01-T006.json"
+      ],
+      "completion": [
+        "Cancellation fires exactly once.",
+        "Late listeners observe the frozen behavior.",
+        "Source disposal is idempotent."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCode/Base/MonaCancellation.swift",
+        "Tests/MonaCodeTests/Base/MonaCancellationTests.swift"
+      ]
+    },
+    {
+      "id": "P01-T007",
+      "phase": "01",
+      "title": "Port the Piece Tree over raw UInt16 storage",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P01-T002",
+        "P01-T006"
+      ],
+      "contractRefs": [
+        "M1-R2.pieceTree",
+        "G5-R.equivalenceDomains.exact",
+        "C01",
+        "P01"
+      ],
+      "ownership": [
+        "model:piece-tree",
+        "model:raw-utf16-storage"
+      ],
+      "files": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Sources/MonaCode/Model/PieceTree/MonaPieceTree.swift",
+          "Sources/MonaCode/Model/PieceTree/MonaPieceTreeNode.swift",
+          "Sources/MonaCode/Model/PieceTree/MonaLineStarts.swift",
+          "Sources/MonaCode/Model/PieceTree/MonaTextSnapshot.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/Model/MonaPieceTreeDifferentialTests.swift",
+          "Tests/MonaCodeTests/Model/MonaPieceTreeComplexityTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaPosition",
+          "MonaRange",
+          "MonaCancellationToken"
+        ],
+        "produces": [
+          "MonaPieceTree",
+          "MonaTextSnapshot",
+          "MonaLineStarts"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaPieceTreeDifferentialTests/testIsolatedSurrogateEditTrace",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "DIFFERENTIAL_MISMATCH fixture=piece-tree-isolated-surrogate"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Port node balancing, buffer append, line-start metadata, insert, delete, offset, position, and snapshot algorithms.",
+          "Store raw UInt16 units and never repair isolated surrogates.",
+          "Instrument edit, search, offset, and position operation counts for later complexity gates.",
+          "Retain Monaco asymptotic upper bounds under adversarial edit sequences."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaPieceTreeDifferentialTests && swift test --filter MonaPieceTreeComplexityTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "PIECE_TREE_PARITY traces=10000 complexity=pass"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-01/P01-T007.json"
+      ],
+      "completion": [
+        "Differential traces are raw-unit zero-diff.",
+        "Snapshots remain immutable.",
+        "Operation counters retain the frozen growth class."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCode/Model/PieceTree/MonaPieceTree.swift",
+        "Sources/MonaCode/Model/PieceTree/MonaPieceTreeNode.swift",
+        "Sources/MonaCode/Model/PieceTree/MonaLineStarts.swift",
+        "Sources/MonaCode/Model/PieceTree/MonaTextSnapshot.swift",
+        "Tests/MonaCodeTests/Model/MonaPieceTreeDifferentialTests.swift",
+        "Tests/MonaCodeTests/Model/MonaPieceTreeComplexityTests.swift"
+      ]
+    },
+    {
+      "id": "P01-T008",
+      "phase": "01",
+      "title": "Implement all 70 retained text-model members on Piece Tree truth",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P01-T007"
+      ],
+      "contractRefs": [
+        "M1-R2.publicSurface",
+        "F1-R2.instanceSurface",
+        "C01"
+      ],
+      "ownership": [
+        "model:MonaCodeModel",
+        "model:70-retained-members"
+      ],
+      "files": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Sources/MonaCode/Model/MonaCodeModel.swift",
+          "Sources/MonaCode/Model/MonaModelOptions.swift",
+          "Sources/MonaCode/Model/MonaModelEvents.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/Model/MonaCodeModelSurfaceTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaPieceTree",
+          "MonaTextSnapshot",
+          "MonaURI",
+          "MonaEmitter"
+        ],
+        "produces": [
+          "MonaCodeModel",
+          "MonaModelOptions",
+          "MonaModelEventStream"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaCodeModelSurfaceTests/testRetainedMemberManifest",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "MODEL_MEMBER_MISSING member=getOffsetAt retained=70"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Expose all 70 retained M1-R2 members with the frozen value, error, and event semantics.",
+          "Delegate text truth exclusively to Piece Tree snapshots and raw-unit coordinates.",
+          "Leave undo, decorations, word, RegExp, and search behavior behind explicit Phase 02 interfaces."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaCodeModelSurfaceTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "MODEL_SURFACE retainedMembers=70 missing=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-01/P01-T008.json"
+      ],
+      "completion": [
+        "All retained model members are callable.",
+        "No Phase 02 behavior is silently stubbed as success.",
+        "Event payloads preserve raw-unit values."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCode/Model/MonaCodeModel.swift",
+        "Sources/MonaCode/Model/MonaModelOptions.swift",
+        "Sources/MonaCode/Model/MonaModelEvents.swift",
+        "Tests/MonaCodeTests/Model/MonaCodeModelSurfaceTests.swift"
+      ]
+    },
+    {
+      "id": "P01-T009",
+      "phase": "01",
+      "title": "Make one edit transaction gateway own mutation and version truth",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P01-T008"
+      ],
+      "contractRefs": [
+        "A+",
+        "A+-base",
+        "R1.transactionRecovery"
+      ],
+      "ownership": [
+        "transaction:MonaEditTransaction",
+        "transaction:version-truth"
+      ],
+      "files": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Sources/MonaCode/Transactions/MonaEditTransaction.swift",
+          "Sources/MonaCode/Transactions/MonaTransactionGateway.swift",
+          "Sources/MonaCode/Transactions/MonaReconciliationOutcome.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/Transactions/MonaTransactionGatewayTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaCodeModel",
+          "MonaCancellationToken"
+        ],
+        "produces": [
+          "MonaEditTransaction",
+          "MonaTransactionGateway",
+          "MonaReconciliationOutcome"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaTransactionGatewayTests/testInjectedCommitFailureRollsBack",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "TRANSACTION_INVARIANT_FAILED state=half-committed"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Prepare edits without mutating published model state.",
+          "Commit text, version, alternative version, events, selections, and undo metadata as one ordered unit.",
+          "Roll back every prepared component on cancellation, validation failure, allocation failure, or reentrant invalidation.",
+          "Emit typed applied, dropped, reconciled, and rolled-back outcomes."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaTransactionGatewayTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "TRANSACTION_GATEWAY commits=24 rollbacks=18 halfCommitted=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-01/P01-T009.json"
+      ],
+      "completion": [
+        "All model writes traverse one gateway.",
+        "Version and alternative version advance exactly once per committed transaction.",
+        "Failure leaves no published partial state."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCode/Transactions/MonaEditTransaction.swift",
+        "Sources/MonaCode/Transactions/MonaTransactionGateway.swift",
+        "Sources/MonaCode/Transactions/MonaReconciliationOutcome.swift",
+        "Tests/MonaCodeTests/Transactions/MonaTransactionGatewayTests.swift"
+      ]
+    },
+    {
+      "id": "P01-T010",
+      "phase": "01",
+      "title": "Gate asynchronous publication with validity tickets",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P01-T009"
+      ],
+      "contractRefs": [
+        "R1.asyncValidity",
+        "A+.ownership",
+        "C09"
+      ],
+      "ownership": [
+        "validity:MonaAsyncValidityTicket",
+        "validity:publication-gate"
+      ],
+      "files": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Sources/MonaCode/Transactions/MonaAsyncValidityTicket.swift",
+          "Sources/MonaCode/Transactions/MonaPublicationGate.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/Transactions/MonaAsyncValidityTicketTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaTransactionGateway",
+          "MonaCancellationToken"
+        ],
+        "produces": [
+          "MonaAsyncValidityTicket",
+          "MonaPublicationGate"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaAsyncValidityTicketTests/testLateResultAfterVersionChange",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "PUBLICATION_GATE_ACCEPTED_STALE_RESULT ticketVersion=1 currentVersion=2"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Capture model identity, version, alternative version, owner generation, and cancellation generation in an immutable ticket.",
+          "Validate the complete ticket immediately before publication.",
+          "Drop stale results without events, cache writes, decorations, or selection mutations."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaAsyncValidityTicketTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "ASYNC_VALIDITY stale=18 dropped=18 published=6"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-01/P01-T010.json"
+      ],
+      "completion": [
+        "Every asynchronous consumer uses the publication gate.",
+        "Stale and canceled results have zero side effects.",
+        "Valid results retain deterministic order."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCode/Transactions/MonaAsyncValidityTicket.swift",
+        "Sources/MonaCode/Transactions/MonaPublicationGate.swift",
+        "Tests/MonaCodeTests/Transactions/MonaAsyncValidityTicketTests.swift"
+      ]
+    },
+    {
+      "id": "P01-T011",
+      "phase": "01",
+      "title": "Implement model construction and large-model state",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P01-T008"
+      ],
+      "contractRefs": [
+        "H2-R.modelConstruction",
+        "M1-R2.largeModelPolicy",
+        "P01"
+      ],
+      "ownership": [
+        "runtime:model-construction",
+        "runtime:large-model-state"
+      ],
+      "files": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Sources/MonaCode/Model/MonaModelFactory.swift",
+          "Sources/MonaCode/Model/MonaLargeModelState.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/Model/MonaModelFactoryTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaCodeModel",
+          "MonaPieceTree"
+        ],
+        "produces": [
+          "MonaModelFactory",
+          "MonaLargeModelState"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaModelFactoryTests/testLargeModelThresholdBoundaries",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "DIFFERENTIAL_MISMATCH fixture=large-model-threshold-T"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Apply the exact large-file thresholds and one-way state transitions fixed by H2-R.",
+          "Construct model identity, URI, options, Piece Tree, and lifetime registration atomically.",
+          "Reject malformed creation inputs without publishing a partial model."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaModelFactoryTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "MODEL_FACTORY thresholds=6 rollback=pass"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-01/P01-T011.json"
+      ],
+      "completion": [
+        "T-1, T, and T+1 threshold fixtures match comparators.",
+        "Failed construction publishes no model.",
+        "Large-model state is explicit."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCode/Model/MonaModelFactory.swift",
+        "Sources/MonaCode/Model/MonaLargeModelState.swift",
+        "Tests/MonaCodeTests/Model/MonaModelFactoryTests.swift"
+      ]
+    },
+    {
+      "id": "P01-T012",
+      "phase": "01",
+      "title": "Implement application-global and per-editor lifetime registries",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P01-T005",
+        "P01-T011"
+      ],
+      "contractRefs": [
+        "H2-R.globalLifetime",
+        "H2-R.perEditorLifetime",
+        "C09"
+      ],
+      "ownership": [
+        "normativeLayer:runtime-lifetime-resource:H2-R",
+        "runtime:lifetime-registries"
+      ],
+      "files": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Sources/MonaCode/Runtime/MonaGlobalLifetime.swift",
+          "Sources/MonaCode/Runtime/MonaEditorLifetime.swift",
+          "Sources/MonaCode/Runtime/MonaInitialModelRegistry.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/Runtime/MonaLifetimeRegistryTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaDisposable",
+          "MonaModelFactory"
+        ],
+        "produces": [
+          "MonaGlobalLifetime",
+          "MonaEditorLifetime",
+          "MonaInitialModelRegistry"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaLifetimeRegistryTests/testDisposeOrderAndBaselineReturn",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "LIFETIME_BASELINE_LEAK registry=editor"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Separate application-global, per-editor, and initial-model state with explicit owners.",
+          "Dispose children in reverse acquisition order and make repeated teardown inert.",
+          "Expose weak accounting hooks for C09 and the 1000-cycle lifecycle gate."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaLifetimeRegistryTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "LIFETIME_REGISTRIES global=8 editor=7 initialModel=3 leak=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-01/P01-T012.json"
+      ],
+      "completion": [
+        "All 18 frozen state rows have an explicit lifetime owner.",
+        "Editor teardown returns to the warm baseline.",
+        "No global state is duplicated per editor."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCode/Runtime/MonaGlobalLifetime.swift",
+        "Sources/MonaCode/Runtime/MonaEditorLifetime.swift",
+        "Sources/MonaCode/Runtime/MonaInitialModelRegistry.swift",
+        "Tests/MonaCodeTests/Runtime/MonaLifetimeRegistryTests.swift"
+      ]
+    },
+    {
+      "id": "P01-T013",
+      "phase": "01",
+      "title": "Close Phase 01 with full model differential and failure matrices",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P01-T003",
+        "P01-T004",
+        "P01-T006",
+        "P01-T009",
+        "P01-T010",
+        "P01-T012"
+      ],
+      "contractRefs": [
+        "B1-R",
+        "M1-R2",
+        "A+",
+        "A+-base",
+        "R1",
+        "H2-R",
+        "C01"
+      ],
+      "ownership": [
+        "normativeLayer:base-values-events:B1-R",
+        "phase-gate:01"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [],
+        "modify": [],
+        "test": [
+          "Tests/ConformanceAndFailureInjection/Phase01ModelConformanceTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaPosition",
+          "MonaRange",
+          "MonaSelection",
+          "MonaURI",
+          "MonaCodeModel",
+          "MonaTransactionGateway",
+          "MonaPublicationGate",
+          "MonaGlobalLifetime"
+        ],
+        "produces": [
+          "Phase01ModelGate"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter Phase01ModelConformanceTests/testSeededRawUnitDrift",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "C01_MODEL_DIFFERENTIAL_FAILED fixture=seeded-raw-unit-drift"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Run raw UInt16 differential fixtures across base values, URI, Piece Tree, all retained model members, and edit transactions.",
+          "Inject cancellation, allocation, reentrancy, and stale-publication failures at every declared checkpoint.",
+          "Record zero-diff, invariant, operation-count, and lifetime results in the task evidence artifact."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter Phase01ModelConformanceTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "PHASE01_MODEL_GATE exactDiff=0 halfCommitted=0 staleSideEffects=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-01/P01-T013.json"
+      ],
+      "completion": [
+        "B1-R and Phase 01 M1-R2 fixtures are exact.",
+        "All injected recoverable failures preserve model invariants.",
+        "No later phase can bypass the transaction gateway."
+      ],
+      "commitBoundary": [
+        "Tests/ConformanceAndFailureInjection/Phase01ModelConformanceTests.swift"
+      ]
     }
   ],
   "ownership": [
@@ -1187,6 +2243,50 @@
     },
     {
       "kind": "normativeLayer",
+      "id": "base-values-events:B1-R",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P01-T013"
+      ],
+      "testOwners": [
+        "P01-T013"
+      ]
+    },
+    {
+      "kind": "normativeLayer",
+      "id": "concurrency-transactions-validity:A+",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P01-T009"
+      ],
+      "testOwners": [
+        "P01-T009"
+      ]
+    },
+    {
+      "kind": "normativeLayer",
+      "id": "concurrency-transactions-validity:A+-base",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P01-T009"
+      ],
+      "testOwners": [
+        "P01-T009"
+      ]
+    },
+    {
+      "kind": "normativeLayer",
+      "id": "concurrency-transactions-validity:R1",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P01-T010"
+      ],
+      "testOwners": [
+        "P01-T010"
+      ]
+    },
+    {
+      "kind": "normativeLayer",
       "id": "environment-intl-clock-entropy:E1-R",
       "disposition": "retained",
       "implementationOwners": [
@@ -1205,6 +2305,17 @@
       ],
       "testOwners": [
         "P00-T003"
+      ]
+    },
+    {
+      "kind": "normativeLayer",
+      "id": "runtime-lifetime-resource:H2-R",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P01-T012"
+      ],
+      "testOwners": [
+        "P01-T012"
       ]
     },
     {
@@ -1310,6 +2421,10 @@
     {
       "path": "implementation-plan/phase-00-scaffold-harness.md",
       "sha256": "4e3eec322dabb33d60395dc7925747d6b9fb5fdadf986c25bd1c9aba56e619d5"
+    },
+    {
+      "path": "implementation-plan/phase-01-base-model.md",
+      "sha256": "bb3807e30a57c65bd6ebbd550ce7ca909a39000a6802824fda079ad789fb3be4"
     }
   ],
   "audit": {
