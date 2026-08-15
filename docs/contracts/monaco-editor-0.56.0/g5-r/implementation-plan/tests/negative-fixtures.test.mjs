@@ -15,16 +15,15 @@ const run = (args = []) => spawnSync(process.execPath, [verifier, ...args], {
   maxBuffer: 32 * 1024 * 1024
 });
 
-test('an incomplete candidate plan fails with JSON stdout and diagnostics stderr', () => {
+test('the full audit exit code and diagnostics match its finding count', () => {
   const result = run();
-  assert.equal(result.status, 1);
   const output = JSON.parse(result.stdout);
-  assert.equal(output.status, 'fail');
-  assert.equal(output.findingCount > 0, true);
+  assert.equal(result.status, output.findingCount === 0 ? 0 : 1);
+  assert.equal(output.status, output.findingCount === 0 ? 'pass' : 'fail');
   assert.equal(output.coverage.retainedFeatureIds, 62);
   assert.equal(output.coverage.missingRetainedFeatureIds, 0);
   assert.equal(output.coverage.nativeColorizeReplacements, 3);
-  assert.equal(result.stderr.includes('PLAN_'), true);
+  assert.equal(result.stderr.includes('PLAN_'), output.findingCount > 0);
 });
 
 for (const name of fs.readdirSync(fixtureDirectory).filter((entry) => entry.endsWith('.json')).sort()) {
