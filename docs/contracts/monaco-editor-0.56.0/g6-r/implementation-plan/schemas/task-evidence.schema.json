@@ -1,0 +1,120 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://monacode.local/contracts/monaco-editor-0.56.0/g6-r/implementation-plan/schemas/task-evidence.schema.json",
+  "title": "MonaCode G6-R Task Evidence Record Schema",
+  "description": "Closed contract for the evidence JSON record written to a task's staged evidence path. The record grows across the lifecycle: it begins as `running` containing only the workspace token SHA-256 (published by beginTaskEvidence), accumulates canonical command/acquisition/assertion attempts as the task advances, and is finalized as `passed` by finalizeTaskEvidence. The passed record carries the product commit and selector mode `external-git` but MUST NOT embed its own blob hash (passedSha256) or its evidence commit ID. additionalProperties: false at every layer.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["taskID", "state", "tokenSha256"],
+  "properties": {
+    "taskID": { "type": "string", "pattern": "^P[0-9]{2}-T[0-9]{3}$" },
+    "state": { "enum": ["running", "failed", "passed"] },
+    "tokenSha256": { "type": "string", "pattern": "^[0-9a-f]{64}$", "description": "SHA-256 of the controller-generated 32-byte workspace token; the sole field in the initial running record." },
+    "planHash": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "taskHash": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+    "baseCommit": { "type": "string", "pattern": "^[0-9a-f]{40}$", "description": "The preflight base commit recorded at begin; must remain HEAD until product commit." },
+    "currentStage": { "enum": ["preflight", "test-authoring", "red", "implementation", "green", "commit", "evidence"] },
+    "lifecycleState": { "enum": ["idle", "running", "complete", "aborted"] },
+    "commandResults": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["leafID", "executorHash", "stdoutHash", "stderrHash"],
+        "properties": {
+          "leafID": { "type": "string", "pattern": "^P[0-9]{2}-T[0-9]{3}\\.(RED|GREEN)\\.[0-9]{3}\\.PROC\\.[0-9]{3}$" },
+          "executorHash": { "type": "string", "pattern": "^[0-9a-f]{64}$", "description": "Selected command-executor module hash; absence fails closed." },
+          "sandboxProfileHash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+          "parentCommandID": { "type": "string", "minLength": 1 },
+          "exitStatus": { "type": "integer" },
+          "stdoutHash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+          "stderrHash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+          "expectedResult": { "type": "boolean" }
+        }
+      }
+    },
+    "acquisitionResults": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["sourceContract"],
+        "properties": {
+          "sourceContract": { "type": "string", "minLength": 1, "description": "Selected source-acquisition contract identity; absence fails closed." },
+          "url": { "type": "string", "pattern": "^https://" },
+          "host": { "type": "string", "minLength": 1 },
+          "sha256": { "type": "string", "pattern": "^sha256:[0-9a-f]{64}$" },
+          "bytes": { "type": "integer", "minimum": 0 },
+          "license": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "assertionResults": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "result"],
+        "properties": {
+          "id": { "type": "string", "minLength": 1 },
+          "result": { "enum": ["passed", "failed"] }
+        }
+      }
+    },
+    "mutationResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["policy", "observedMutations"],
+      "properties": {
+        "policy": { "type": "object", "description": "The MutationPolicy the observed mutations were bounded by." },
+        "observedMutations": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "crashResidue": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "type"],
+        "properties": {
+          "path": { "type": "string", "minLength": 1 },
+          "type": { "enum": ["plan-part", "command-child"] },
+          "priorHash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+          "declaredAbsent": { "type": "boolean" }
+        }
+      }
+    },
+    "resumeRecords": { "type": "array", "items": { "type": "object" } },
+    "productCommit": { "type": "string", "pattern": "^[0-9a-f]{40}$", "description": "Present in the passed record after commit-task; never the evidence commit ID." },
+    "selectorMode": { "const": "external-git", "description": "Present in the passed record; the evidence commit is selected via external-git first-parent enumeration, never embedded." },
+    "completionAssertions": { "type": "array", "items": { "type": "string", "minLength": 1 }, "description": "Present in the passed record; the task's completion assertion IDs." },
+    "verifiedAssertions": { "type": "array", "items": { "type": "string", "minLength": 1 }, "description": "Present in the passed record; must equal the task evidenceCommit.verifiedAssertions." },
+    "fileHashes": {
+      "type": "array",
+      "description": "The controller-recorded sha256 of each product-boundary file after command execution. Required (non-empty) in a passed record for a task with product-boundary mutations; the lib validates structure + boundary membership (the hash-VALUE comparison is the controller's runtime job).",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "sha256"],
+        "properties": {
+          "path": { "type": "string", "minLength": 1, "pattern": "^[^/]", "description": "Repo-relative path (no leading slash); the lib additionally rejects leading ./ and any .. segment." },
+          "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": { "properties": { "state": { "const": "passed" } } },
+      "then": {
+        "required": ["taskID", "state", "tokenSha256", "planHash", "taskHash", "baseCommit", "productCommit", "selectorMode", "completionAssertions", "verifiedAssertions", "fileHashes"],
+        "not": { "anyOf": [
+          { "required": ["passedSha256"] },
+          { "required": ["evidenceCommit"] },
+          { "required": ["evidenceCommitId"] },
+          { "required": ["blobHash"] }
+        ] }
+      }
+    }
+  ]
+}

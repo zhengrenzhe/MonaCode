@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://monacode.local/contracts/monaco-editor-0.56.0/g6-r/implementation-plan/schemas/task-state.schema.json",
+  "title": "MonaCode G6-R Task State Machine Schema",
+  "description": "Closed contract for the G6-R fail-closed task-state machine and its lifecycle interfaces. Evidence states are exactly absent/running/failed/passed. The machine exposes nextTask (lexicographic topological selection), beginTaskEvidence (beginning-journal recovery protocol), resumeTaskEvidence (crash-residue recovery predicate), auditTaskEvidence (dependency + provenance audit), finalizeTaskEvidence (passed-byte construction + product commit proof), and selectEvidenceCommit (first-parent evidence selector). Every transition is fail-closed: an invariant failure moves the task to `failed` with exactly one stable finding ID. additionalProperties: false at every layer.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["evidenceStates", "lifecycle", "findingIDs"],
+  "properties": {
+    "evidenceStates": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "items": { "enum": ["absent", "running", "failed", "passed"] },
+      "description": "The closed evidence state set. `absent` is the implicit pre-begin state (no running file); the other three are record states."
+    },
+    "lifecycle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["transitions", "interfaces"],
+      "properties": {
+        "transitions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["from", "via", "to"],
+            "properties": {
+              "from": { "enum": ["absent", "running", "failed"] },
+              "via": { "enum": ["beginTaskEvidence", "resumeTaskEvidence", "finalizeTaskEvidence", "invariant-failure"] },
+              "to": { "enum": ["running", "failed", "passed"] }
+            }
+          },
+          "description": "beginTaskEvidence: absent -> running. resumeTaskEvidence: failed|running -> running (or failed on predicate violation). finalizeTaskEvidence: running -> passed (or failed on product-commit proof violation). An unexpected Red/Green attempt stays running; a toolchain/authority/workspace-token/mutation-policy/evidence-integrity finding moves to failed."
+        },
+        "interfaces": {
+          "type": "array",
+          "items": { "enum": ["nextTask", "beginTaskEvidence", "resumeTaskEvidence", "auditTaskEvidence", "finalizeTaskEvidence", "selectEvidenceCommit"] }
+        }
+      }
+    },
+    "beginningJournalProtocol": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["orderedOperations", "prefixStates", "deterministicRootName"],
+      "properties": {
+        "orderedOperations": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "items": { "enum": ["write-beginning-journal", "create-task-root-0700", "write-raw-token-marker-0600", "publish-running", "remove-raw-token-journal"] }
+        },
+        "prefixStates": {
+          "type": "integer",
+          "const": 5,
+          "description": "A retry accepts only the five non-empty prefix states of the five ordered operations and produces identical running bytes."
+        },
+        "deterministicRootName": {
+          "type": "string",
+          "pattern": "^monacode-g6-P[0-9]{2}-T[0-9]{3}-[0-9a-f]{16}$",
+          "description": "monacode-g6-<TASK_ID>-<first16-of-token-sha256>"
+        }
+      }
+    },
+    "evidenceCommitSelector": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["selectorMode", "firstParentAncestry", "immediateSuccessor", "rejectsLaterTouches"],
+      "properties": {
+        "selectorMode": { "const": "external-git" },
+        "firstParentAncestry": { "type": "boolean", "const": true, "description": "The product commit must be on repoHead's first-parent ancestry." },
+        "immediateSuccessor": { "type": "boolean", "const": true, "description": "Selects the first commit of productCommit..repoHead in first-parent chronological order; that commit must have the product commit as its sole parent, match the evidence identity/subject contract, and change exactly the declared evidence path to the bytes under validation." },
+        "rejectsLaterTouches": { "type": "boolean", "const": true, "description": "git rev-list --first-parent EVIDENCE_COMMIT..repoHead -- EVIDENCE_PATH must return no commit (rejects modification, deletion, and modify-then-restore)." }
+      }
+    },
+    "passedRecordProhibition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["selectorMode", "productCommit", "prohibitsSelfEmbedding"],
+      "properties": {
+        "selectorMode": { "const": "external-git" },
+        "productCommit": { "type": "boolean", "const": true, "description": "The passed JSON contains the product commit." },
+        "prohibitsSelfEmbedding": { "type": "boolean", "const": true, "description": "The passed JSON contains neither its own blob hash (passedSha256) nor its evidence commit ID." }
+      }
+    },
+    "findingIDs": {
+      "type": "array",
+      "description": "The stable evidence-truth finding IDs. Each mutation class yields its stable ID so evidence validation is deterministic across runs.",
+      "items": { "type": "string", "pattern": "^PLAN_EVIDENCE_[A-Z_]+$" }
+    }
+  }
+}
