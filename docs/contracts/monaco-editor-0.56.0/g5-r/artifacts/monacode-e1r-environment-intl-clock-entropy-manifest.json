@@ -1,0 +1,227 @@
+{
+  "schemaVersion": 1,
+  "identity": {
+    "product": "MonaCode",
+    "revision": "E1-R-environment-intl-clock-entropy-closure",
+    "date": "2026-08-14",
+    "baseline": "monaco-editor-core@0.56.0 final editor.main.js closure on Google Chrome 151.0.7922.109",
+    "status": "design-baseline-only"
+  },
+  "authorities": {
+    "coreTarSha256": "78e222c77e7ef6402ea0bfb20e02caad7b63156f5d2798bc3c398a8bb396f4ed",
+    "entry": {
+      "file": "esm/vs/editor/editor.main.js",
+      "sha256": "2b9a37b9c886162a724ac98dac24455a2bafb7e445dca37a1315f4afde14bad2"
+    },
+    "chrome": {
+      "version": "151.0.7922.109",
+      "chromiumTag": "refs/tags/151.0.7922.109",
+      "chromiumTagCommit": "28a7a6c409e03c701d3474ef9e3b1f0be6249039",
+      "icuSubmoduleCommit": "d578f2e8b7bd5938e21cfb6bf15c079e0aa5b738",
+      "icuVersion": "78.2",
+      "localIcuDataBytes": 10876560,
+      "localIcuDataSha256": "9f48c7f9c7c94d516a14870707e910ab94d75ae640ff6842c4af53276cd26ebe",
+      "icuReadmeSha256": "37bf2933cb60d27fbf6d813238fa799dd0b8bf86558b572b6b0750a982b72bf8",
+      "icuLicenseSha256": "e55522d81edc687a341a4411e0776e54ca654e90147f354a90458aaced4116af",
+      "timeSource": {
+        "file": "base/time/time_apple.mm",
+        "sha256": "0015cb2fa5ee082bb61f07e24c150d161b08a7148143914d43c58f4850c68134",
+        "timeTicks": "mach_absolute_time converted to integer microseconds"
+      }
+    },
+    "standards": {
+      "ecmascript": "ECMA-262 16th edition, June 2025",
+      "ecma402": "ECMA-402 12th edition, June 2025",
+      "unicode": "Unicode 17.0.0",
+      "ecmascriptUrl": "https://tc39.es/ecma262/2025/",
+      "ecma402Url": "https://tc39.es/ecma402/2025/"
+    },
+    "unicodeInputs": [
+      { "file": "UnicodeData.txt", "bytes": 2198209, "sha256": "2e1efc1dcb59c575eedf5ccae60f95229f706ee6d031835247d843c11d96470c" },
+      { "file": "SpecialCasing.txt", "bytes": 17049, "sha256": "efc25faf19de21b92c1194c111c932e03d2a5eaf18194e33f1156e96de4c9588" },
+      { "file": "CaseFolding.txt", "bytes": 87539, "sha256": "ff8d8fefbf123574205085d6714c36149eb946d717a0c585c27f0f4ef58c4183" },
+      { "file": "NormalizationTest.txt", "bytes": 2827429, "sha256": "5019ffd530751a741900c849c0e010332f142a3612234639bd200b82138a87db" },
+      { "file": "license.txt", "bytes": 1995, "sha256": "e7a93b009565cfce55919a381437ac4db883e9da2126fa28b91d12732bc53d96" }
+    ],
+    "sourceFiles": [
+      { "file": "esm/vs/base/common/platform.js", "sha256": "21bb096d6321015dacb27a22e907cf0e4123f538bd192647714043a75848c9ab" },
+      { "file": "esm/vs/nls.js", "sha256": "3b10738753e95a8561148d23f8a2deca339ad18b3d65ab6373118b79b7ed8e59" },
+      { "file": "esm/vs/base/common/comparers.js", "sha256": "d6f63e720cddab0c7bc8e8077e18ccfb7788eb0b6800bef17f54b9f084dfc037" },
+      { "file": "esm/vs/base/common/date.js", "sha256": "dc0fd046fa24138bd2384aab1b303a7a020c377f9adbb39b5fcdc6321fca87dd" },
+      { "file": "esm/vs/editor/contrib/linesOperations/browser/linesOperations.js", "sha256": "75849ad78c4a739727b94a57e90372e02f48147ae898e4f8dcb813226ff5c440" },
+      { "file": "esm/vs/editor/contrib/linesOperations/browser/sortLinesCommand.js", "sha256": "3ba57922d887c5a2230975d92e343a6f880ccf990c3475c59827bcaf022f2c47" },
+      { "file": "esm/vs/editor/contrib/unicodeHighlighter/browser/unicodeHighlighter.js", "sha256": "1902958f93972f6c23ad41a4ba99202dbb401f0d6879f3eb407c7d8de52634d2" },
+      { "file": "esm/vs/base/common/normalization.js", "sha256": "d5fef8ac7ad4c1f2ced7938ce51011e2c24f266763f39872c55d13486f56e381" },
+      { "file": "esm/vs/base/common/map.js", "sha256": "9d52a310d0e5394fa6fa5dd7957add9111a495643eaf7c69803a75949137decc" },
+      { "file": "esm/vs/base/common/arrays.js", "sha256": "8285463b9357a71385f92ee73e8db0c0f67df8d781780c6dd01c155e45fe26a2" },
+      { "file": "esm/vs/base/browser/ui/animations/animations.js", "sha256": "4af490f05f096a5ad2e34399473341188b61d87b7121a8da75a8f792199a5491" },
+      { "file": "esm/vs/editor/contrib/suggest/browser/suggestController.js", "sha256": "8b0d6ab70a366fea19c10d3eb0dbe4cd1bdec6acf8f903c0fe92b2c3e5d4fdbd" },
+      { "file": "esm/vs/editor/contrib/suggest/browser/suggestModel.js", "sha256": "bac6b7fd9fd4eed9fda0a34ad8f8f1e6a4fbb9db924fccb6cf36a91bdab080dc" },
+      { "file": "esm/vs/base/common/async.js", "sha256": "7da94c0ece5e1c20e78d7284277c3e85d5c68cf0164a9061b8d46c19c7511d55" },
+      { "file": "esm/vs/base/common/event.js", "sha256": "75abb13ffb04b10267ea8358f4d7181fb1dc43065a03aadbe9d59e2c49c6b56f" },
+      { "file": "esm/vs/base/browser/dom.js", "sha256": "030a408afb6bc698197bfe2711d21916b57c6ec67b882d9e4f6312d5e9f7a872" },
+      { "file": "esm/vs/base/common/network.js", "sha256": "5f1c7c6fe9e6d18bff7263237b92af0788b4c443389669c900d47b5b8cd71163" },
+      { "file": "esm/vs/base/common/stopwatch.js", "sha256": "7df79844ab1f2f63920e0bab096d87e1ae65a6916ce658f4bb939d481d52d5cb" },
+      { "file": "esm/vs/base/browser/performance.js", "sha256": "3536bcefd6d828732c658e4af84a0a9646b87d16005ade958f0ca41f5fbf441f" }
+    ]
+  },
+  "sourceEffectClosure": {
+    "reachabilityAlgorithm": "Parse ECMAScript modules, recursively resolve relative static import and export-from edges from editor.main.js within esm/vs, and classify non-JavaScript side-effect imports separately.",
+    "reachableJavaScriptFiles": 956,
+    "reachableJavaScriptSetSha256": "0dd3fb5c14287788b9d5e4ebc2b990005adf6761abc5c4d9903e790c24dcf8fb",
+    "reachableStyleResources": 98,
+    "reachableStyleResourceSetSha256": "0b63cc441918733ded80464c17b3fbde1a5ded5b9136ea371dca93a403887c74",
+    "totalImportedFiles": 1054,
+    "parsedImportEdges": 6275,
+    "externalStaticImports": 0,
+    "syntaxCounts": {
+      "toUpperCase": { "occurrences": 15, "files": 10 },
+      "toLowerCase": { "occurrences": 123, "files": 48 },
+      "toLocaleUpperCase": { "occurrences": 6, "files": 2 },
+      "toLocaleLowerCase": { "occurrences": 10, "files": 3 },
+      "localeCompare": { "occurrences": 11, "files": 8 },
+      "unicodeNormalize": { "occurrences": 1, "files": 1 },
+      "mathRandom": { "occurrences": 8, "files": 5 },
+      "dateNow": { "occurrences": 90, "files": 39 },
+      "newDate": { "occurrences": 14, "files": 8 },
+      "stopWatchConstructionSites": { "occurrences": 21, "retainedHighResolution": 13, "retainedWallClock": 6, "cutTreeSitterHighResolution": 2 },
+      "inputLatencyPerformanceApi": { "occurrences": 25, "files": 1 },
+      "directPerformanceNow": { "occurrences": 4, "files": 1, "disposition": "cut-tree-sitter" },
+      "timerCalls": { "occurrences": 94, "freeSetTimeout": 63, "freeClearTimeout": 25, "memberSetTimeout": 3, "memberClearTimeout": 1, "memberSetInterval": 1, "memberClearInterval": 1 },
+      "directAnimationFrameCalls": { "occurrences": 4, "files": 3 },
+      "idleCallbackCalls": { "occurrences": 4, "files": 2 },
+      "queueMicrotask": { "occurrences": 11, "files": 5 },
+      "matchMedia": { "occurrences": 7, "files": 4 },
+      "devicePixelRatio": { "occurrences": 35, "files": 13 },
+      "resizeObserver": { "occurrences": 6, "files": 6 },
+      "intersectionObserver": { "occurrences": 1, "files": 1 },
+      "mutationObserver": { "occurrences": 2, "files": 2 },
+      "remoteAuthorities": { "occurrences": 5, "files": 2 }
+    },
+    "requiredGeneratedAudit": "MonaEnvironmentManifest.json enumerates every matched source occurrence, its pinned source hash, native symbol, disposition and acceptance fixture; a count-only manifest fails C10."
+  },
+  "qualifiedRuntimeObservation": {
+    "observedDate": "2026-08-14",
+    "appleLocale": "zh_CN",
+    "appleLanguages": ["zh-Hans-CN"],
+    "swiftLocaleCurrent": "zh_CN",
+    "swiftTimeZoneCurrent": "Asia/Shanghai",
+    "chromeNavigatorLanguages": ["zh-CN", "zh"],
+    "chromeNavigatorLanguage": "zh-CN",
+    "chromeIntlResolvedLocale": "zh-CN",
+    "chromeCalendar": "gregory",
+    "chromeNumberingSystem": "latn",
+    "chromeTimeZone": "Asia/Shanghai",
+    "rule": "These fields qualify the current machine only and are recollected for every acceptance run; they contain no serial number, UUID, UDID or persistent display identifier."
+  },
+  "languageAndLocaleSeparation": {
+    "uiLanguage": "N1-R owns UI messages. MonaCodeEnvironment selects one immutable N1 profile before first access; the default profile is en and no system-locale mapping occurs implicitly.",
+    "runtimeLocale": "MonaRuntimeLocale is a separate immutable process-start snapshot used only where the fixed source asks JavaScript or Intl for the default runtime locale. On the current qualified run it is zh-CN.",
+    "unicodeHighlighter": "The _vscode locale is the selected N1 UI profile and the _os locale is MonaRuntimeLocale. They never alias unless their explicit values are equal.",
+    "snippetNames": "CURRENT_DAY_NAME, CURRENT_DAY_NAME_SHORT, CURRENT_MONTH_NAME and CURRENT_MONTH_NAME_SHORT remain N1 localized message identities; the fixed core default profile emits English names even when the runtime locale is zh-CN."
+  },
+  "textSemantics": {
+    "representation": "All operations accept and return raw UTF-16. Valid scalar subsequences are transformed according to the pinned tables; isolated high and low surrogates are copied unchanged; no implicit normalization occurs.",
+    "defaultCaseConversion": "Repository-owned Swift algorithms implement the Chrome 151 observable ECMA-262 default upper/lower conversion over the pinned Unicode data.",
+    "localeCaseConversion": "Repository-owned Swift algorithms implement the Chrome 151 observable ECMA-402 locale-sensitive conversion using MonaRuntimeLocale and generated immutable Chromium-ICU data. Foundation case conversion is not a semantic oracle.",
+    "caseActionFamilies": {
+      "lineOperations": ["uppercase", "lowercase", "titlecase", "snakecase", "camelcase", "pascalcase", "kebabcase"],
+      "snippetFormats": ["upcase", "downcase", "capitalize", "pascalcase", "camelcase", "kebabcase", "snakecase"],
+      "rule": "Each family ports its own pinned source algorithm; equal names do not authorize sharing a different algorithm."
+    },
+    "collationProfiles": [
+      { "id": "file-name-base-numeric", "options": { "numeric": true, "sensitivity": "base" }, "tieBreak": "When collation returns zero and strings differ, raw JavaScript relational ordering breaks the tie." },
+      { "id": "file-name-numeric", "options": { "numeric": true } },
+      { "id": "file-name-accent-numeric", "options": { "numeric": true, "sensitivity": "accent" } },
+      { "id": "sort-lines-default", "options": {}, "stable": true },
+      { "id": "string-locale-compare-default", "options": {}, "sourceOccurrences": 11, "sourceFiles": 8 }
+    ],
+    "collationData": "Generated immutable tables are derived from the exact Chrome 151 Chromium-ICU commit and local icudtl.dat hash for every locale supported by that baseline. The current release gate qualifies zh-CN; the product table set is not reduced to zh-CN.",
+    "normalization": {
+      "form": "NFD only",
+      "fastPath": "Empty strings and strings containing only U+0000 through U+0080 return without normalization.",
+      "nfdCache": { "type": "LRU", "capacity": 10000 },
+      "baseCache": { "type": "LRU", "capacity": 10000 },
+      "nfcCache": "Baseline-inert allocation; absent in native code.",
+      "tryNormalizeToBase": "Apply NFD, remove only U+0300 through U+036F, accept the deaccented value only when raw UTF-16 length is unchanged, then apply locale-insensitive lowercase."
+    },
+    "inactiveIntl": {
+      "segmenter": "The only retained word-segmenter activation requires wordSegmenterLocales, which is an explicit F1 member cut; the other consumer is WebGPU and is cut. No Intl.Segmenter runtime ships.",
+      "locale": "Intl.Locale is reachable only through the cut wordSegmenterLocales validation path and ships no runtime replacement.",
+      "numberFormat": "The active Unicode-highlighter call only resolves the default OS locale and is replaced by MonaRuntimeLocale; no number formatting runtime ships."
+    }
+  },
+  "entropy": {
+    "architecture": "MonaRandomDoubleSource and MonaCryptoRandomSource are process-global MainActor dependencies. Production sources use system entropy; conformance runs inject exact values and record every draw.",
+    "mathRandomDomain": "Each production draw returns one binary64 value x with 0 <= x < 1. The product does not promise the same seed or sequence as V8.",
+    "numberToString": "A repository-owned ECMA-262 Number::toString implementation for radix 10 and 16 produces the raw source string; snippet RANDOM and RANDOM_HEX then take the final six UTF-16 code units exactly as the pinned source does.",
+    "activeDrawOrder": [
+      "arrays quickSelect pivot selection",
+      "snippet RANDOM and RANDOM_HEX variable traversal",
+      "suggest-controller telemetry sampling draw even though S1 telemetry output is a no-op",
+      "suggest-model telemetry sampling draw even though S1 telemetry output is a no-op"
+    ],
+    "baselineInertDraw": "onClickAnimation has no registration in the fixed standalone graph, so its three Math.random calls never execute.",
+    "uuid": "Use system cryptographic random bytes, force RFC 4122 version-4 and variant bits, and emit the canonical lowercase 8-4-4-4-12 form. Conformance injects all 16 bytes.",
+    "snippetVectors": [
+      { "double": "0.123456789", "variable": "RANDOM", "output": "456789" },
+      { "double": "0.5", "variable": "RANDOM_HEX", "output": "0.8" },
+      { "double": "0.9999999999999999", "variable": "RANDOM", "output": "999999" },
+      { "double": "0.00000123456789", "variable": "RANDOM_HEX", "output": "15e19b" }
+    ]
+  },
+  "clocksAndScheduling": {
+    "wallClock": "Date.now maps to an injected signed integer Unix-epoch millisecond wall clock. Production uses CLOCK_REALTIME semantics already fixed by M1-R3; it is never replaced by a monotonic clock.",
+    "dateObject": "new Date maps to a value created from the same injected wall clock. Snippet calendar fields use the Gregorian calendar and the resolver's captured system time-zone snapshot.",
+    "highResolutionClock": "MonaHighResolutionClock uses mach_absolute_time and the Mach timebase, matching Chromium 151 TimeTicks on macOS. It is injected for conformance, increases monotonically while the machine is awake, and never substitutes for Date.now.",
+    "stopWatch": "The fixed graph has 21 StopWatch construction sites: 13 retained sites use MonaHighResolutionClock, six retained sites pass false and use the wall clock, and two high-resolution Tree-sitter sites are cut. Elapsed values retain their source roles in debounce adaptation, timeout decisions, diagnostics and measurement records.",
+    "inputLatency": "The retained input-latency recorder implements eight marks, four measures, one duration read, eight mark clears and four measure clears over MonaHighResolutionClock; keydown, beforeinput, input, render, keyup and selection-change ordering is retained.",
+    "directPerformanceNow": "The four direct performance.now calls belong to the cut Tree-sitter path and have no native implementation.",
+    "microtasks": "All eleven queueMicrotask sites use the repository MainActor microtask queue and preserve FIFO order after the current synchronous stack.",
+    "timers": "All retained setTimeout, clearTimeout, setInterval and clearInterval sites use one cancellable MainActor scheduler with the exact source delay and source reschedule rule; deterministic fixtures inject the clock and drain order.",
+    "animationFrames": "V1-R4 owns display-frame scheduling, priority order and cancellation. Native callbacks use the qualified display's actual cadence and the same immutable view generation gate.",
+    "idleWork": "Code-editor contribution construction and CodeLens old-key removal use a cancellable low-priority MainActor idle queue. Fixtures inject idle grants and assert source order; editor disposal cancels outstanding work.",
+    "timeoutRule": "A source timeout that reads Date.now observes wall-clock jumps exactly through the injected wall clock; no hidden monotonic substitution is permitted."
+  },
+  "systemEnvironmentMappings": {
+    "matchMedia": [
+      "backing-scale changes map to V1/I3 native window and screen events",
+      "forced-colors maps to T1/A2 native accessibility contrast state",
+      "reduced-motion and reduced-transparency map to A2 native accessibility state",
+      "browser display-mode has no retained native consumer"
+    ],
+    "domObservers": "ResizeObserver, IntersectionObserver and MutationObserver effects map to explicit NSView geometry, visibility, content and window event sources; no DOM observer implementation ships.",
+    "remoteAuthorities": "The fixed graph sets only a preferred web schema and never registers authority host, port or delegate values. MonaURI retains the logical vscode-remote identity and H1 opener routing; MonaCode performs no rewrite, fetch or network connection.",
+    "forbiddenImplicitSideEffects": [
+      "URLSession",
+      "NSWorkspace",
+      "filesystem reads",
+      "sockets",
+      "process launch",
+      "locale or time-zone change observers that mutate an initialized runtime snapshot"
+    ]
+  },
+  "productionDependencyRule": {
+    "allowed": "Generated immutable Unicode, normalization, case and collation tables with recorded Unicode and Chromium-ICU provenance and notices.",
+    "forbidden": "Bundled or dynamically linked ICU code/runtime, JavaScriptCore, V8, WebView, NSRegularExpression as semantic substitution, and Foundation case/collation/normalization output as unverified truth.",
+    "distribution": "MonaDistributionManifest records every generated table hash, generator revision, exact inputs, transformation recipe and the Unicode plus ICU license notices."
+  },
+  "acceptance": {
+    "C02": "Raw-UTF16 case, locale-case, normalization, collation and Number::toString fixtures match fixed Chrome 151 under injected runtime locale, time zone, wall clock and entropy traces.",
+    "C04": "MonaEnvironmentManifest classifies every environment-sensitive occurrence in the exact 956-JavaScript plus 98-style-resource closure and exposes no extra public host setting.",
+    "C05": "All seven line-action transforms, seven snippet transforms, four Collator constructions, eleven localeCompare call sites, 21 StopWatch construction sites and input-latency traces match.",
+    "C06": "Provider, command, snippet, suggestion and Unicode-highlighter paths retain raw UTF-16, default-locale separation and draw/order behavior.",
+    "C09": "The two active normalization LRUs each cap at 10000, all timers/idle/frame callbacks cancel on owner disposal, and no runtime locale or generated table leaks per editor.",
+    "C10": "Linked binary and resource scans prove no ICU runtime/code or JavaScript engine and verify all generated data hashes, provenance, notices and occurrence dispositions.",
+    "P08": "Search and transform workloads include locale/default case, NFD/base normalization and injected clock/entropy vectors without changing preregistered workload IDs.",
+    "P11": "Provider and UI-present workloads include collation, sort stability, snippet date/random, suggestion sampling draws, wall-versus-high-resolution StopWatch roles and input-latency traces against both baselines.",
+    "oracleRule": "Chrome 151 is the exact semantic oracle. ECMA-262, ECMA-402, Unicode 17 and Chromium-ICU sources define the clean-room implementation inputs; a disagreement with the fixed Chrome output fails the case."
+  },
+  "implementationStatus": {
+    "nativeEnvironmentSourceFiles": 0,
+    "generatedUnicodeIntlTables": 0,
+    "classifiedSensitiveOccurrences": 0,
+    "differentialFixturesRun": 0,
+    "verdict": "not-passed"
+  }
+}

@@ -1,0 +1,430 @@
+{
+  "schemaVersion": 1,
+  "identity": {
+    "revision": "M1-R3",
+    "title": "ECMAScript RegExp and Unicode profile closure",
+    "scope": "source and design contract; no product pass claim",
+    "supersedes": [
+      "M1-R search-only RegExp flag/cache contract",
+      "L2-R statement that every language-profile regexp uses the M1-R search profile",
+      "Q1-R5 C02 search-only coverage"
+    ],
+    "currentStatus": "product implementation absent; every affected gate is not-run"
+  },
+  "authorities": {
+    "monaco": {
+      "package": "monaco-editor@0.56.0",
+      "packageTarSha256": "b74bc4437205c194b779b0f21e5e7fcd3b4e9acbf3f7c8732a545d2059fb7412",
+      "corePackage": "monaco-editor-core@0.56.0",
+      "corePackageTarSha256": "78e222c77e7ef6402ea0bfb20e02caad7b63156f5d2798bc3c398a8bb396f4ed",
+      "publicDeclarationSha256": "fbbab04ba04224a04b2bc3243e536d1af6e26d14eb00fe8b3177bf3daef8d3f2",
+      "sourceTag": "13f0c872dcf352815cc28d92dfff496c9839ea5c",
+      "authorityRule": "runtime differential first, final core file hash second, public declaration hash third"
+    },
+    "browser": {
+      "product": "Google Chrome 151.0.7922.109",
+      "binarySha256": "ca6036a1ad80092a2817f0dfd986782736fa7d7977c4922d37a3853b7342408c",
+      "chromiumTag": "151.0.7922.109",
+      "chromiumDepsSha256": "1e670a093870835b77519e3fa78ab90dc46661b2768c9dd4ae8486e3e5e820da",
+      "v8Commit": "20ad8d002c17ccc7ccfbefc6c4dcf1242fe80921",
+      "v8Version": "15.1.206.16",
+      "v8VersionHeaderSha256": "5ac202a02657d2017e090c17ea30c707f0b29a4f5c42977765669f67ac5a5c2a",
+      "v8DepsSha256": "c6994304f4118e6e3a3925ec5748f0b0dfbf6acba4fd7bab4665f4ce2db4cf3c",
+      "icuCommit": "d578f2e8b7bd5938e21cfb6bf15c079e0aa5b738",
+      "icuVersion": "78.2",
+      "icuVersionHeaderSha256": "be53eaf56f3f03870639ec0b40d4c16f9b60fa5d44196b96ed3084717084882f",
+      "unicodeVersion": "17.0.0",
+      "icuPpucdSha256": "bccc5a5ca1baea3de767e8266d59ffa13ff99595bea37ca82415851386f57dbd"
+    },
+    "test262": {
+      "commit": "3655e7464de3d52643ecddd4b5f9f4f3e7f62398",
+      "tree": "a2954d0c",
+      "archiveSha256": "2d36d6affd4d527f5022c55c486a86ae499e02eb88182b76b5463958db49094d",
+      "regexpFileCount": 1879,
+      "regexpLiteralFileCount": 238,
+      "totalSourceFileCount": 2117,
+      "licenseFileSha256": "4dd9244dfe8197c75348c4b24ab53d29d3b1cfad143ac76b5a3d8942aa354ce0"
+    }
+  },
+  "monacoSourceFiles": [
+    {
+      "path": "monaco.d.ts",
+      "sha256": "fbbab04ba04224a04b2bc3243e536d1af6e26d14eb00fe8b3177bf3daef8d3f2"
+    },
+    {
+      "path": "esm/vs/editor/common/core/wordHelper.js",
+      "sha256": "4a48f3e97de1a13c8b4531581c550c1b5a529f957b99fb144b57fe71f01c4836"
+    },
+    {
+      "path": "esm/vs/editor/common/languages/languageConfigurationRegistry.js",
+      "sha256": "338ebe19554394e54354d22ab782a1890f2dc9482113fc86773e2bf85490e027"
+    },
+    {
+      "path": "esm/vs/editor/common/languages/supports/indentRules.js",
+      "sha256": "ce8be9d1aac022726b440953dff94114c51d340f2161a4be3b46ba11fc5dbdd4"
+    },
+    {
+      "path": "esm/vs/editor/common/languages/supports/onEnter.js",
+      "sha256": "84c2bb3bfb4dc2cfd0c27e6586f1f068bcd02f52d8d3bab7894c021f7c57b327"
+    },
+    {
+      "path": "esm/vs/editor/contrib/folding/browser/indentRangeProvider.js",
+      "sha256": "f10807c7fe2b7e0116b95c6a2b8ac9310b2ec9834f5999ff65cfa7091b7b94eb"
+    },
+    {
+      "path": "esm/vs/editor/contrib/folding/browser/folding.js",
+      "sha256": "5ce065914d8385d381d6c35bdf568fdd3738757e963c769c243a86204db927ad"
+    },
+    {
+      "path": "esm/vs/editor/contrib/folding/browser/foldingModel.js",
+      "sha256": "d64f594ff5684bab264566dcf92c5282b4015074ca6f64198f7655e445389ded"
+    },
+    {
+      "path": "esm/vs/editor/common/services/findSectionHeaders.js",
+      "sha256": "df4122dce3bc4e2a3dcd791846efef0402f0d8a24280efbcd5bafda411c47112"
+    },
+    {
+      "path": "esm/vs/editor/contrib/linkedEditing/browser/linkedEditing.js",
+      "sha256": "03ea7600a7778f4dd27cef4c283510a6c4161a5633e4d8fb577abcea17044d6f"
+    },
+    {
+      "path": "esm/vs/editor/contrib/inlineCompletions/browser/model/inlineCompletionsModel.js",
+      "sha256": "77571140fcbb6e50ec300c2f4b469de2f5a4983855c391941b668f0c545d821f"
+    },
+    {
+      "path": "esm/vs/editor/common/model/textModelSearch.js",
+      "sha256": "22e84ea9df611bd02571b4dd1bbe193a746a3ffd20b5db556429eace361e9fdd"
+    },
+    {
+      "path": "esm/vs/base/common/strings.js",
+      "sha256": "7943cb549f357e716a1f65a0cb1331ba699a3f52adbc3a80921bddf9d9370585"
+    }
+  ],
+  "publicRegExpReferences": {
+    "total": 14,
+    "retained": 11,
+    "cut": 3,
+    "retainedFields": [
+      "languages.LanguageConfiguration.wordPattern",
+      "languages.IndentationRule.decreaseIndentPattern",
+      "languages.IndentationRule.increaseIndentPattern",
+      "languages.IndentationRule.indentNextLinePattern",
+      "languages.IndentationRule.unIndentedLinePattern",
+      "languages.FoldingMarkers.start",
+      "languages.FoldingMarkers.end",
+      "languages.OnEnterRule.beforeText",
+      "languages.OnEnterRule.afterText",
+      "languages.OnEnterRule.previousLineText",
+      "languages.LinkedEditingRanges.wordPattern"
+    ],
+    "cutFields": [
+      "languages.IShortMonarchLanguageRule1[0]",
+      "languages.IShortMonarchLanguageRule2[0]",
+      "languages.IExpandedMonarchLanguageRule.regex"
+    ]
+  },
+  "nativeRegExpType": {
+    "swiftType": "@MainActor public final class MonaRegExp",
+    "ownership": "reference identity is retained by language profiles and provider results; the object is not Sendable",
+    "canonicalEncoding": "source, captures, input and replacement values use raw UTF-16 code units without normalization",
+    "publicState": [
+      "canonical RegExp.prototype.source value as MonaText",
+      "canonical flags string in dgimsuvy order",
+      "hasIndices, global, ignoreCase, multiline, dotAll, unicode, unicodeSets and sticky booleans",
+      "mutable numeric lastIndex represented as IEEE-754 binary64"
+    ],
+    "constructor": "parse the raw-UTF16 pattern under the supplied flags and throw MonaRegExpSyntaxError on the same standard syntax rejection as the pinned Chrome oracle",
+    "lastIndexRule": "execution applies ECMAScript ToLength to numeric lastIndex, including NaN, infinities, negatives and fractional values; global and sticky success/failure updates remain observable on the same reference object",
+    "engineScope": "standard ECMAScript pattern syntax, captures, named captures, backreferences, lookaround, Unicode property escapes, Unicode sets, string properties, canonical source, compile, exec, test, match and replacement behavior required by retained Monaco consumers",
+    "acceptedFlags": [
+      "d",
+      "g",
+      "i",
+      "m",
+      "s",
+      "u",
+      "v",
+      "y"
+    ],
+    "flagRules": [
+      "duplicate or unknown flags are syntax errors",
+      "u and v are mutually exclusive",
+      "flags are exposed in canonical dgimsuvy order"
+    ],
+    "explicitCuts": [
+      "RegExp subclass construction and overridden accessors",
+      "Proxy interception",
+      "Symbol.match, Symbol.replace, Symbol.species and other user-defined protocol hooks",
+      "property descriptor mutation and accessor side effects",
+      "object, string, BigInt or Symbol values assigned to lastIndex",
+      "a general-purpose public JavaScript runtime or public RegExp execution library"
+    ],
+    "cutBoundary": "the cuts remove JavaScript object metaprogramming; they do not remove any pattern syntax, flag or standard numeric matching state consumed by retained Monaco behavior"
+  },
+  "regexpProfiles": [
+    {
+      "id": "search",
+      "fields": "ITextModel find and replace inputs",
+      "construction": "g and u always; i only when matchCase is false; m only when Monaco detects multiline source",
+      "execution": "Monaco Searcher, raw captures, zero-length code-point advance, LF multiline view, CRLF compensation and word-separator post-check",
+      "state": "searcher sets numeric lastIndex before exec and exposes capture arrays through FindMatch when requested"
+    },
+    {
+      "id": "word-definition",
+      "fields": "LanguageConfiguration.wordPattern",
+      "construction": "a non-global input is cloned with g plus only its i, m and u flags; d, s, v and y are dropped; a global input object is reused",
+      "execution": "lastIndex is reset to zero, then assigned window offsets and consumed by exec",
+      "state": "default maxLen 1000, windowSize 15 and synchronous timeBudget 150 ms remain exact; a clone syntax failure caused by dropped v is not hidden"
+    },
+    {
+      "id": "indentation",
+      "fields": "four IndentationRule patterns",
+      "construction": "input objects are reused",
+      "execution": "lastIndex is reset only when global is true, then test is called",
+      "state": "a sticky non-global pattern carries lastIndex across calls exactly as Monaco"
+    },
+    {
+      "id": "on-enter",
+      "fields": "beforeText, afterText and previousLineText",
+      "construction": "input objects are reused",
+      "execution": "lastIndex is unconditionally set to zero immediately before test",
+      "state": "rules preserve source order and stop at the first complete match"
+    },
+    {
+      "id": "folding-range-equal-flags",
+      "fields": "FoldingMarkers.start and end",
+      "construction": "when canonical flags strings are equal, compile (start.source)|(noncapturing end.source) with those exact flags",
+      "execution": "reset combined lastIndex to zero on every line and use capture group 1 to distinguish start from end",
+      "state": "combined compile errors and capture numbering are observable"
+    },
+    {
+      "id": "folding-range-unequal-flags",
+      "fields": "FoldingMarkers.start and end",
+      "construction": "reuse both input objects",
+      "execution": "reset each object lastIndex to zero before test; skip end test after a start match",
+      "state": "start has priority on a line"
+    },
+    {
+      "id": "fold-all-regions",
+      "fields": "FoldingMarkers.start",
+      "construction": "clone with the ECMAScript new RegExp(existingRegExp) source and flags rule, resetting clone lastIndex",
+      "execution": "test each candidate line without a per-line reset",
+      "state": "g and y therefore carry clone lastIndex across different candidate-line strings"
+    },
+    {
+      "id": "section-headers",
+      "fields": "FoldingMarkers.start",
+      "construction": "reuse the input object",
+      "execution": "apply ECMAScript String.prototype.match semantics per line",
+      "state": "global and sticky lastIndex behavior follows the pinned standard oracle"
+    },
+    {
+      "id": "linked-editing",
+      "fields": "LinkedEditingRanges.wordPattern or language wordPattern fallback",
+      "construction": "reuse the selected input object",
+      "execution": "apply String.prototype.match to the reference value and compare match[0].length with the full raw-UTF16 reference length",
+      "state": "provider pattern takes priority over the language pattern"
+    },
+    {
+      "id": "inline-accept-next-word",
+      "fields": "resolved language wordDefinition",
+      "construction": "compile source with the canonical flags string after removing g and preserving every other flag",
+      "execution": "apply String.prototype.match to completion text and combine the first word match with whitespace exec",
+      "state": "the temporary clone starts at lastIndex zero"
+    }
+  ],
+  "clockAndBoundedWork": {
+    "wordHelperSourceFact": "getWordAtText samples Date.now() immediately before the loop and at the top of every loop iteration; it stops when sampled elapsed wall-clock milliseconds is greater than or equal to the configured 150 ms budget",
+    "productionClock": "MonaWallClock returns integer milliseconds from CLOCK_REALTIME, matching Date.now wall-clock rather than a monotonic or continuous clock",
+    "testClock": "differential fixtures inject and replay the same recorded integer-millisecond sample sequence into Monaco and MonaCode; elapsed-time-dependent result equality is claimed only under that identical clock trace",
+    "regexpExecution": "no custom regexp step counter, deadline or cancellation check is inserted inside synchronous exec, test, match or replace",
+    "boundaryConsequence": "a single regexp execution can exceed 150 ms; the word-helper budget is checked only before the next outer-loop execution, exactly as the pinned source",
+    "searchRule": "ITextModel synchronous find and replace keep no product-specific timeout or step cutoff; asynchronous UI work may discard an unpublished stale snapshot result but may not alter the synchronous matching semantics"
+  },
+  "chromeProbe": {
+    "probeSourceSha256": "8d946734a904831c387c2c4fcecf3a52fd1af71236965cb19fbaa4317591b06c",
+    "edgeProbeSourceSha256": "f731a0ae2fdb9c997a1b3a1096577536198a50ea0975febd27548219c49271db",
+    "acceptedFlags": "d g i m s u v y",
+    "canonicalCombinedFlags": "dgimsvy",
+    "uvCombination": "SyntaxError",
+    "unicode17ScriptResults": {
+      "Beria_Erfe": "accepted",
+      "Sidetic": "accepted",
+      "Tai_Yo": "accepted",
+      "Tolong_Siki": "accepted",
+      "Chisoi": "SyntaxError"
+    },
+    "stateResults": {
+      "newRegExpFromExisting": "source and flags copied; clone lastIndex is zero while original lastIndex remains unchanged",
+      "globalStringMatch": "ignores the incoming lastIndex and finishes with lastIndex zero",
+      "stickyNonGlobalStringMatch": "starts at incoming lastIndex and retains the success end index",
+      "globalStickyStringMatch": "starts its global collection at zero and resets to zero on failure",
+      "sequentialGlobalOrStickyTest": "success writes the end index and a later failure resets to zero",
+      "numericToLength": "negative and NaN become zero for execution; fractional 1.9 starts at index 1",
+      "vPatternCloneFailure": "[A--B] and [\\p{ASCII}--A] compile with v and throw SyntaxError when word-definition cloning drops v and adds g"
+    }
+  },
+  "regexpCorpusContract": {
+    "sourceFiles": 2117,
+    "sourcePaths": [
+      "test/built-ins/RegExp/**/*.js",
+      "test/language/literals/regexp/**/*.js"
+    ],
+    "requiredDispositionPerSourceFile": [
+      "native-behavior-vector",
+      "native-negative-syntax-vector",
+      "host-javascript-only"
+    ],
+    "hostJavascriptOnlyReasons": [
+      "subclass or species behavior",
+      "Proxy or accessor interception",
+      "property descriptor behavior",
+      "Symbol protocol override",
+      "nonnumeric JavaScript coercion outside the typed Swift boundary"
+    ],
+    "noSilentSkipRule": "every source file and every extracted vector records the source path, Test262 metadata, disposition, reason, Chrome result and native result",
+    "nativeCompletenessRule": "every assertion targeting accepted syntax, flags, numeric lastIndex, canonical source, captures, matching or replacement must produce a native vector even when its surrounding JavaScript harness is host-only",
+    "candidateArtifact": "MonaRegExpUnicodeManifest.json",
+    "candidateArtifactStatus": "absent"
+  },
+  "unicodeProfiles": [
+    {
+      "id": "regexp-unicode",
+      "version": "Unicode 17.0.0",
+      "authority": "Chrome 151 V8 commit 20ad8d0 with ICU 78.2 commit d578f2e8",
+      "use": "u/v Unicode property escapes, Unicode sets, string properties and ignore-case closure",
+      "distribution": "Swift-owned generated tables; no linked or embedded V8, ICU or JavaScript runtime"
+    },
+    {
+      "id": "grapheme-break",
+      "version": "Unicode 14.0.0",
+      "generatorCommit": "b64c0d03eb94ae6eb8417e2a69d82ce4537a4017",
+      "inputSha256": {
+        "GraphemeBreakProperty.txt": "97e79f1f8d9cd76d120f2420381a01abc00a7c78a2aa583fa3f9627264a99742",
+        "emoji-data.txt": "b597836124298b8f7fa076273802840cfc3271a25f5c397a082e120954b82c3c"
+      },
+      "generatorSha256": "8171a410253cb1be7a71b5b0e0ce8959ebc8af9bc87febf18a5d92367dd0c389",
+      "tupleCount": 1878,
+      "arrayLength": 5637,
+      "tableSha256": "34054fdb064f9de0438d132f4fd2c578c61e1859e61abc686c0af89dae6b249a",
+      "exactMonacoEquality": true
+    },
+    {
+      "id": "rtl",
+      "version": "Unicode 14.0.0",
+      "generatorCommit": "b64c0d03eb94ae6eb8417e2a69d82ce4537a4017",
+      "unicodeDataSha256": "36018e68657fdcb3485f636630ffe8c8532e01c977703d2803f5b89d6c5feafb",
+      "generatorSha256": "02060a1eca49731031e031d14e7c65103ae842da393d6958e3273c96388fc71a",
+      "generatedSourceSha256": "45cb56ad6af4bf6f06ce8d45fe3c76b69d75842d6144fd8f6be7e216bc98db88",
+      "patternSha256": "421cfe79b8a60ffd400a9fcd7fb9107d542f14ae2afcd355335496bfbb41c605",
+      "exactMonacoEquality": true
+    },
+    {
+      "id": "emoji-imprecise",
+      "version": "Unicode 14.0.0",
+      "generatorCommit": "b64c0d03eb94ae6eb8417e2a69d82ce4537a4017",
+      "inputsSha256": {
+        "UnicodeData.txt": "36018e68657fdcb3485f636630ffe8c8532e01c977703d2803f5b89d6c5feafb",
+        "Blocks.txt": "598870dddef7b34b5a972916528c456aff2765b79cd4f9647fb58ceb767e7f17",
+        "emoji-test.txt": "ec474be073670aa7ce6dc1de9025b9fbb9b875fc63df815c254a5d1686fc6109"
+      },
+      "generatorSha256": "09a6d3bc65f731197f9d9ba5f3ad13669bbb7a6f3c6ffb30464f012b71e98b5f",
+      "generatedSourceSha256": "958a400d02291c4180e3ad0022038d3b587076ffc02753f1e7c781595b3edda4",
+      "expressionSha256": "91a00c2b8eaeb177193ddf404ffb812a62f3648e9b0ab57e1eb7ff2c2b81ea3b",
+      "exactMonacoEquality": true
+    },
+    {
+      "id": "ambiguous-characters",
+      "version": "UTS #39 16.0.0 source plus pinned overrides and locale exceptions",
+      "normativeSource": "the exact JSON string embedded in Monaco 0.56.0 strings.js",
+      "nonNormativeProvenanceCommit": "f3d1aeb2cf538f5f44d89d2ae961df62e03ea0a1",
+      "confusablesSha256": "30dfdd681f079db627f99e71cc9c4bdfaa5f4401720f572df193c3bf16e23c07",
+      "overridesSha256": "206f9c3831609e179c2d2aafe8da6278591f196c8a3923cecc16e15fd07825f3",
+      "localeExceptionsSha256": "de341e2130e31e568eb4a5303491fa064c9a363818e3b2b1ce1494636707e248",
+      "localeKeyCount": 16,
+      "pairCountAcrossTables": 2143,
+      "innerJsonSha256": "a41c9ed2bcecb1fbf13312bae998055dbdfa6285a33177381964c300bd247010",
+      "exactCurrentUpstreamOutputEquality": true
+    },
+    {
+      "id": "invisible-characters",
+      "version": "Monaco 0.56.0 embedded snapshot",
+      "normativeSource": "the exact JSON string embedded in Monaco 0.56.0 strings.js",
+      "nonNormativeProvenanceCommit": "f3d1aeb2cf538f5f44d89d2ae961df62e03ea0a1",
+      "rawBrowserScanSha256": "44244031e744b57f5c2816557b26fa7fd6e5d1fe85e91e90c0e1a55ce7d7cbd6",
+      "localeExceptionsSha256": "de341e2130e31e568eb4a5303491fa064c9a363818e3b2b1ce1494636707e248",
+      "localeKeyCount": 15,
+      "listedCodePointCount": 500,
+      "uniqueCodePointCount": 465,
+      "innerJsonSha256": "98e6a24abf0a0535ac18fb75fd31a3b6302021c00e3b4c1e7d34196347215f01",
+      "exactCurrentUpstreamOutputEquality": true,
+      "regenerationRule": "regeneration is prohibited because the provenance repository records neither the Chromium build nor the serif font set used by its canvas scan"
+    }
+  ],
+  "unicodeVersionRule": "the six profiles remain independent; system Unicode, Swift Character, NSRegularExpression, ICU runtime or a newer UCD cannot replace a profile without a new versioned contract and full differential",
+  "implementationBoundary": {
+    "productionRuntime": "repository-owned Swift parser, compiler, executor and generated immutable tables plus Apple system frameworks",
+    "forbiddenProductionDependencies": [
+      "V8",
+      "ICU",
+      "JavaScriptCore",
+      "QuickJS",
+      "NSRegularExpression as semantic oracle",
+      "unicode-utils generator code",
+      "vscode-unicode-data generator code"
+    ],
+    "oracleOnlySources": {
+      "v8RegexpParserSha256": "f34576988cfdd9ed23672cffe8fa677770b3a77317fb18ecf8c7787e53d24984",
+      "v8RegexpCompilerToNodeSha256": "dabdb5727570a9a91ec1f35ad41b12d0030e4378652e969d5c74f1174a4a7221",
+      "v8UnicodeSha256": "ae7530c33f1356ce095bf2ecc6c64b13a18fd32a419e86c5602ac3c0b3248af4"
+    },
+    "cleanRoomRule": "V8 and ICU files define oracle behavior only and are not copied into production source; any copied or derived implementation code invalidates C10 until its provenance and license are added"
+  },
+  "licenseContract": {
+    "monaco": {
+      "license": "MIT",
+      "licenseSha256": "33e4ff1a06ef62ba21788ea162564ee8165269a24a9ce6ef301837447eab0ac6",
+      "thirdPartyNoticesSha256": "790537262fc78a764e121e6b92b959bcd3f5c310b47d9d9b9e92e17fe0af5336"
+    },
+    "unicode": {
+      "spdx": "Unicode-3.0",
+      "pinnedNoticeSha256": "e7a93b009565cfce55919a381437ac4db883e9da2126fa28b91d12732bc53d96",
+      "noticeCopyright": "Copyright 1991-2026 Unicode, Inc.",
+      "distributionRule": "the pinned notice is included with every binary or documentation set that carries the derived Unicode tables"
+    },
+    "test262": {
+      "license": "Test262 BSD License",
+      "licenseSha256": "4dd9244dfe8197c75348c4b24ab53d29d3b1cfad143ac76b5a3d8942aa354ce0",
+      "distributionRule": "the full license accompanies every redistributed source corpus, generated vector bundle or binary test artifact derived from Test262"
+    },
+    "unlicensedProvenanceRepositories": "the pinned vscode-unicode-data package declares no license; its code and repository outputs are not build or distribution inputs, and only hash-correlated provenance is recorded",
+    "generatorCodeRule": "unicode-utils and vscode-unicode-data code is not shipped; normative production tables come from the MIT-licensed Monaco source snapshot and pinned Unicode data obligations"
+  },
+  "acceptanceOverrides": {
+    "candidateGeneratedArtifact": {
+      "file": "MonaRegExpUnicodeManifest.json",
+      "producer": "linked native RegExp engine exporter plus embedded Unicode-table scanner and Test262 vector classifier",
+      "requiredFor": [
+        "C02",
+        "C06",
+        "C10",
+        "P08"
+      ],
+      "status": "absent"
+    },
+    "C02": "covers the search profile plus nine language/provider consumer profiles, all eight flags, numeric lastIndex, raw UTF-16, the 2117-source Test262 disposition closure and Chrome 151 differential",
+    "C06": "covers all eleven retained RegExp-valued language/provider fields and their exact clone, reset, test, exec and match consumer rules",
+    "C10": "covers the RegExp/Unicode manifest, Monaco MIT notice, Unicode-3.0 notice, Test262 test-artifact license and absence of every forbidden production dependency",
+    "P08": "retains workload ID P08 and adds compile, word-definition, indentation, on-enter, folding, linked-editing and inline-next-word cases across d/g/i/m/s/u/v/y; every metric remains subject to both M0 and M1 ratio upper-bound gates"
+  },
+  "passRule": "M1-R3 is empirically passed only when the candidate artifact exists, exact source/table sets match, C02/C06/C10 pass, every applicable P08 cell passes against both baselines, and no source file or vector has an unrecorded disposition",
+  "currentStatus": {
+    "productSourceFiles": 0,
+    "candidateArtifactPresent": false,
+    "C02": "not-run",
+    "C06": "not-run",
+    "C10": "not-run",
+    "P08": "not-run",
+    "verdict": "not-passed"
+  }
+}

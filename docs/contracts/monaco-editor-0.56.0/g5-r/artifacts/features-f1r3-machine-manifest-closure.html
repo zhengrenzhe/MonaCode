@@ -1,0 +1,71 @@
+<style>
+  :root{--ok:#059669;--warn:#d97706;--bad:#dc2626;--blue:#2563eb;--violet:#7c3aed;--cyan:#0891b2}
+  .hero{display:flex;gap:13px;align-items:flex-start;padding:14px;border:2px solid var(--ok);border-radius:14px;background:color-mix(in srgb,var(--ok) 6%,var(--surface));margin:12px 0 15px}.mark{width:66px;height:66px;flex:0 0 66px;display:grid;place-items:center;border-radius:13px;background:var(--ok);color:#fff;font-weight:900}.hero h3{margin:0 0 5px;font-size:14px}.hero p{margin:0;color:var(--muted);font-size:8.2px;line-height:1.5}
+  .section{margin-top:15px}.section h3{margin:0 0 8px;font-size:12px}.counts{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}.count{padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}.count strong{display:block;font-size:20px;color:var(--blue)}.count b{display:block;font-size:7.8px}.count span{display:block;margin-top:3px;color:var(--muted);font-size:6.5px;line-height:1.4}
+  .hits{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.hit{padding:9px;border:1px solid var(--warn);border-radius:10px;background:var(--surface)}.hit b{display:block;font-size:8.4px;margin-bottom:3px}.hit span{display:block;color:var(--muted);font-size:6.9px;line-height:1.43}.hit em{font-style:normal;color:#b45309;font-weight:800}
+  .matrix{border:1px solid var(--border);border-radius:11px;overflow:hidden}.row{display:grid;grid-template-columns:.82fr 1.32fr 1.5fr 1.06fr;border-top:1px solid var(--border)}.row:first-child{border-top:0;font-weight:800;background:color-mix(in srgb,var(--accent) 6%,var(--surface))}.cell{padding:7px 8px;border-left:1px solid var(--border);font-size:7px;line-height:1.45}.cell:first-child{border-left:0}.yes{color:#047857;font-weight:750}.no{color:#b91c1c;font-weight:750}
+  .cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.card{padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}.card h4{margin:0 0 5px;font-size:9px}.card ul{margin:0 0 0 14px;padding:0;font-size:7px;line-height:1.5}.artifact{padding:11px;border:1px solid var(--blue);border-radius:11px;background:color-mix(in srgb,var(--blue) 5%,var(--surface));font-size:7px;line-height:1.52}.artifact code{font-size:6.4px;word-break:break-all}.artifact a{font-weight:800;color:var(--blue)}.source{margin-top:12px;padding:9px 10px;border-left:3px solid var(--blue);background:color-mix(in srgb,var(--blue) 5%,var(--surface));color:var(--muted);font-size:7px;line-height:1.48}
+  @media(max-width:980px){.counts{grid-template-columns:1fr 1fr}.hits,.cards{grid-template-columns:1fr}.row{grid-template-columns:.65fr 1fr 1fr .85fr}.cell{padding:5px 4px;font-size:6.2px}}
+</style>
+
+<h2>完整功能面第八轮攻击：F1-R3 逐项 manifest 闭包</h2>
+<p class="subtitle">F1-R/F1-R2 的能力语义继续有效；本页修复“只有总数、没有机器可核对逐项清单”的范围漏洞。与旧页冲突时，registry、namespace、option 与 source-entry 身份以本页链接的 JSON 为准。</p>
+
+<div class="hero"><div class="mark">F1-R3</div><div><h3>总数不再是范围真相；534,217 字符的逐项 disposition manifest 才是</h3><p>每个 feature、action、command、contribution、keybinding、menu item、option、namespace key、language descriptor、color、icon 与 builtin theme 都有固定身份和处理状态。实现不得用“数量相同”替代 ID、顺序、条件、参数、默认值与结构差分。</p></div></div>
+
+<div class="section"><h3>本轮十个命中</h3><div class="hits">
+  <div class="hit"><b>39 · 63 个 feature 已完整</b><span>手写导入表漏掉仅承载资源注册的 <code>codicon</code>。<em>目录事实是 64；macOS retained 是 62。</em></span></div>
+  <div class="hit"><b>40 · option.name 是公开身份</b><span>8 个 runtime option 的内部 name 是 <code>_never_</code>，其中含 6 computed 与 2 cuts。<em>身份必须取 EditorOptions 对象键。</em></span></div>
+  <div class="hit"><b>41 · 174−11=163 retained input</b><span>6 项只允许作为计算结果读取。<em>准确分解是 157 input + 6 computed + 11 cut。</em></span></div>
+  <div class="hit"><b>42 · 18/121 已覆盖菜单</b><span>MenuRegistry 另有 21 个 command descriptors，负责 title/icon/precondition 等元数据。<em>21 项也进入 exact manifest。</em></span></div>
+  <div class="hit"><b>43 · 55 个 diff contributions</b><span>55 是 standalone diff interface 的唯一成员数；运行时 diff contribution registry 是 0。<em>API surface 与 registry count 分开验收。</em></span></div>
+  <div class="hit"><b>44 · action ID 集合足够</b><span>action 还携带 precondition、kb/menu options、metadata 与 inline-edit flag。<em>descriptor 一起冻结。</em></span></div>
+  <div class="hit"><b>45 · keybinding command 字符串足够</b><span>同一 ID 的行为取决于 chords、when、args、weight1/2 与排序序号。<em>379 条完整 descriptor 保留。</em></span></div>
+  <div class="hit"><b>46 · 91 descriptors 都是语言包</b><span><code>plaintext</code> 是核心 fallback metadata，不含 provider/content。<em>1 项保留；其余 90 项内置内容删除。</em></span></div>
+  <div class="hit"><b>47 · CSS 置空改变 registry</b><span>探针副本仅将 98 个 CSS 文件置空并改 MIME；全部 JS registry bytes 未改。<em>CSS 无可执行注册语义；结果仍绑定原包哈希。</em></span></div>
+  <div class="hit"><b>48 · 实例 API 只有总数</b><span>F1-R2 写入 133/55，但没有成员名声明序列、重载次数、继承与顺序清单。<em>instance manifest 逐项冻结 5 个接口；参数与返回 shape 由 F1-R4 覆盖。</em></span></div>
+</div></div>
+
+<div class="section"><h3>机器核对后的唯一数量口径</h3><div class="counts">
+  <div class="count"><strong>64→62</strong><b>feature entries</b><span>+1 later iPadOS；+1 WebGPU debug cut。</span></div>
+  <div class="count"><strong>167→166</strong><b>actions</b><span>pure-text oracle 127→126。</span></div>
+  <div class="count"><strong>454→453</strong><b>commands</b><span>唯一 cut 与 GPU debug action 同 ID。</span></div>
+  <div class="count"><strong>53→52</strong><b>contributions</b><span>唯一 later 项是 iPad keyboard contribution；diff registry=0。</span></div>
+  <div class="count"><strong>379</strong><b>keybindings</b><span>ordinal/chords/args/when/weights 全保留。</span></div>
+  <div class="count"><strong>18/121/21</strong><b>menus/items/commands</b><span>三个集合分别固定。</span></div>
+  <div class="count"><strong>174</strong><b>options</b><span>157 retained input / 6 computed / 11 cut。</span></div>
+  <div class="count"><strong>19/68/57/4</strong><b>namespace keys</b><span>top/editor/languages/lsp。</span></div>
+  <div class="count"><strong>81/91/4/0</strong><b>language content</b><span>entry dirs/descriptors/packs/shipped content。</span></div>
+  <div class="count"><strong>431/776/4</strong><b>theme identity</b><span>colors/icons/builtin themes。</span></div>
+  <div class="count"><strong>133/55</strong><b>editor instances</b><span>standalone code / standalone diff 唯一成员。</span></div>
+</div></div>
+
+<div class="section"><h3>Disposition 结果</h3><div class="matrix">
+  <div class="row"><div class="cell">集合</div><div class="cell">官方 0.56.0 source</div><div class="cell">本期 macOS target</div><div class="cell">长线 union / cut</div></div>
+  <div class="row"><div class="cell"><b>Feature graph</b></div><div class="cell">64 个 <code>vs/features/*</code> 目录</div><div class="cell">62 retained</div><div class="cell">iPadShowKeyboard later；gpu cut</div></div>
+  <div class="row"><div class="cell"><b>Registries</b></div><div class="cell">167 actions、454 commands、53 contributions</div><div class="cell">166 / 453 / 52</div><div class="cell">GPU action+command 永久 cut；iPad contribution later</div></div>
+  <div class="row"><div class="cell"><b>Top exports</b></div><div class="cell">19 runtime keys</div><div class="cell">14 native mappings + LSP retained/extended</div><div class="cell">css/html/json/typescript packs cut</div></div>
+  <div class="row"><div class="cell"><b>editor keys</b></div><div class="cell">68</div><div class="cell">63 direct native mappings + 4 native replacements</div><div class="cell">createWebWorker cut</div></div>
+  <div class="row"><div class="cell"><b>languages keys</b></div><div class="cell">57</div><div class="cell">56 retained native mappings</div><div class="cell">setMonarchTokensProvider cut</div></div>
+  <div class="row"><div class="cell"><b>Descriptors/content</b></div><div class="cell">81 definition entries、91 runtime descriptors、4 packs</div><div class="cell">plaintext fallback metadata only；production content=0</div><div class="cell">90 descriptors、81 entries、4 packs cut</div></div>
+  <div class="row"><div class="cell"><b>Theme graph</b></div><div class="cell">431 colors、776 icons、4 theme objects</div><div class="cell">IDs、default/alias graphs、theme rules 全保留</div><div class="cell">无删除</div></div>
+</div></div>
+
+<div class="section"><h3>签名设计工件</h3><div class="artifact">
+  <a href="./monaco-0.56.0-f1r3-scope-manifest.json">打开 monaco-0.56.0-f1r3-scope-manifest.json</a><br>
+  文件 SHA-256（含结尾 LF）：<code>31d79fd334a6e461e6ee03726a08a40e6f0f9978cbabe04d6096fcca1a79c1d5</code><br>
+  sections：counts <code>3e3df367a917371188baf5498bdf66da369c5a98b067ca7057911b251de19467</code>；sourceGraph <code>72c8958ed7cb2dbac8f28312692ba89cbd6399cff5dcf14a198fad229a2c46b8</code>；namespaces <code>7b83873c59d1e0cd97373122cd02c3d06e92f4606210d3cb5486291e0b7bb407</code>；registries <code>0f42553372965a11aedb7f9ea1ceda2265982f59bbc1f51e176ff072b530de76</code>。<br>
+  <a href="./monaco-0.56.0-f1r3-instance-surface-manifest.json">打开 monaco-0.56.0-f1r3-instance-surface-manifest.json</a><br>
+  文件 SHA-256（含结尾 LF）：<code>1163834f91fbf3f3ecaeb334e16160be25c7703ee6295b2bc82aad96d3c1ab5e</code>。它冻结 IEditor 43/40、ICodeEditor 137/130、IStandaloneCodeEditor 141/133、IDiffEditor 60/52、IStandaloneDiffEditor 65/55 的成员名声明序列、唯一成员、重载次数、继承与顺序；完整签名 text hash 由 F1-R4 冻结。<br>
+  两份 JSON 中的 <code>productStatus</code> 固定为 design baseline only；它们不是实现或验收结果。
+</div></div>
+
+<div class="section"><h3>C04 从计数检查升级为逐项检查</h3><div class="cards">
+  <div class="card"><h4>Build-time</h4><ul><li>生成同 schema 的 native manifest</li><li>集合按 ID 零缺失/零多余</li><li>cut symbol 在 Swift module 中不存在</li><li>later-ipados 不进入 macOS product</li><li>每次 baseline 变化产生新 revision</li></ul></div>
+  <div class="card"><h4>Runtime differential</h4><ul><li>action enabled/precondition/result/event</li><li>keybinding conflict/order/args/when</li><li>menu group/order/title/icon/visibility</li><li>option default/update/computed event</li><li>color/icon default resolution graph</li></ul></div>
+  <div class="card"><h4>Current status</h4><ul><li>scope 与 instance manifest 已生成并通过 invariant</li><li>两份机器工件 hash 已固定</li><li>native manifest 不存在</li><li>C04 产品 gate 未运行、未通过</li><li>禁止把 source probe 当产品验收</li></ul></div>
+</div></div>
+
+<div class="source"><b>事实索引：</b>锁定 npm tar SHA-256 <code>b74bc443…fb7412</code>、tag <code>13f0c872…ea5c</code>、d.ts SHA-256 <code>fbbab04b…d3f2</code>。Chrome 151 在仅去除 CSS 内容的临时副本上加载完全相同的 JS registration graph；静态目录扫描独立确认 64 feature directories 与 81 language-definition directories。导出后用 jq 重新验证：actions 166+1、pure text 126+1、commands 453+1、contributions 52+1、features 62+1+1、options 157+6+11；独立 d.ts parser 复核 5 个实例接口的声明数、唯一成员数、继承与顺序；各 manifest hash 与 JSON 重算一致。当前工作区没有 MonaCode 产品实现。</div>
+
+<div class="section"><div class="decision" data-choice="accept-f1r3" onclick="toggleSelect(this)"><h4>采纳 F1-R3</h4><span>用逐项 manifest 替代旧的计数式范围口径。</span></div></div>

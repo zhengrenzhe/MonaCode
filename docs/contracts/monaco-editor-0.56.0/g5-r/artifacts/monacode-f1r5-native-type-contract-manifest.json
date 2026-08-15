@@ -1,0 +1,281 @@
+{
+  "schemaVersion": 1,
+  "identity": {
+    "product": "MonaCode",
+    "revision": "F1-R5-native-type-semantics",
+    "date": "2026-08-14",
+    "status": "design-scope-only",
+    "inherits": "F1-R4 public declaration paths and dispositions except for the one explicit TokensProviderFactory member correction in this manifest"
+  },
+  "authorities": {
+    "publicDeclaration": {
+      "file": "monaco.d.ts",
+      "sha256": "fbbab04ba04224a04b2bc3243e536d1af6e26d14eb00fe8b3177bf3daef8d3f2"
+    },
+    "f1r4Manifest": {
+      "file": "monaco-0.56.0-f1r4-public-declaration-manifest.json",
+      "sha256": "b6cb6c73add7739821f1daafa12efc520561d6f7aaeafd841209394dbe990a34"
+    },
+    "typescriptParser": {
+      "version": "5.9.3",
+      "typescriptJsSha256": "3ae902c92cc44dace175c0e69e13a4b0899f6983c6121d76b9ab8dd5795e7675",
+      "packageJsonSha256": "822ef7ca6452205657b6288b066481ecf508bfbf43455d715cf7d3ec457561e6"
+    },
+    "runtimeSources": [
+      {
+        "path": "esm/vs/base/common/map.js",
+        "sha256": "0b23e37b7614a5c482734664e17fc3b782377798a181ce42fc2ed495e3acff6b"
+      },
+      {
+        "path": "esm/vs/editor/contrib/wordHighlighter/browser/wordHighlighter.js",
+        "sha256": "7f3f18f4e4077873c7537b07697b3f8d030db80f18150b9392dfa5fcddda67fc"
+      },
+      {
+        "path": "esm/vs/editor/contrib/semanticTokens/browser/documentSemanticTokens.js",
+        "sha256": "895ad1ab1edd611d50ccaf858a0a7db5dd6c3b2b4208ec32b8e7809bf3b2629e"
+      },
+      {
+        "path": "esm/vs/editor/common/services/semanticTokensDto.js",
+        "sha256": "b7fae6996f4c88423ba87b0fe4ead19b1695d86ab0beb84e901b3d3138001a8d"
+      }
+    ],
+    "chromeProbe": {
+      "browser": "Google Chrome 151.0.7922.109",
+      "binarySha256": "ca6036a1ad80092a2817f0dfd986782736fa7d7977c4922d37a3853b7342408c",
+      "sourceSha256": "b28145119d6fd1759c5607bfac7d995b402323dc9241c2b03e20c3353556861b",
+      "result": {
+        "mapSameIdentity": true,
+        "mapEqualContentDifferentIdentity": false,
+        "arrayMutationObservedAfterResolution": 7,
+        "typedArrayMutationObservedAfterResolution": 9,
+        "order": [
+          "sync-before-then",
+          "sync-after-queue",
+          "promise-reaction",
+          "queued-mutation",
+          "timer"
+        ]
+      }
+    }
+  },
+  "machineScan": {
+    "retainedDeclarationRows": 434,
+    "matchedRetainedAstNodes": 475,
+    "transitiveInternalDeclarationNodes": 728,
+    "directExternalNamedTypes": {
+      "count": 14,
+      "names": [
+        "Array",
+        "ClipboardEvent",
+        "HTMLElement",
+        "KeyboardEvent",
+        "Map",
+        "MouseEvent",
+        "Promise",
+        "PromiseLike",
+        "Readonly",
+        "ReadonlyArray",
+        "Record",
+        "RegExp",
+        "Required",
+        "Uint32Array"
+      ]
+    },
+    "transitiveExternalNamedTypes": {
+      "count": 18,
+      "names": [
+        "Array",
+        "ClipboardEvent",
+        "Error",
+        "HTMLElement",
+        "KeyboardEvent",
+        "Map",
+        "MouseEvent",
+        "NonNullable",
+        "Number",
+        "Object",
+        "Promise",
+        "PromiseLike",
+        "Readonly",
+        "ReadonlyArray",
+        "Record",
+        "RegExp",
+        "Required",
+        "Uint32Array"
+      ]
+    },
+    "unresolvedDirectTypeNames": 0,
+    "unresolvedTransitiveTypeNames": 0,
+    "arraySyntax": {
+      "occurrences": 159,
+      "mutable": 143,
+      "readonly": 16,
+      "retainedPathsWithMutable": 77,
+      "retainedPathsWithReadonly": 13
+    },
+    "tupleSyntax": {
+      "occurrences": 3,
+      "paths": [
+        "editor.IModelDecorationOptions",
+        "languages.CharacterPair",
+        "languages.ParameterInformation"
+      ]
+    },
+    "optionality": {
+      "questionTokenOccurrences": 788,
+      "propertySignatures": 665,
+      "parameters": 100,
+      "methodSignatures": 23,
+      "retainedPathCount": 154
+    },
+    "nullAndUndefined": {
+      "occurrences": 205,
+      "null": 148,
+      "undefined": 57,
+      "retainedPathCount": 62
+    },
+    "dynamicTypes": {
+      "occurrences": 28,
+      "any": 10,
+      "unknown": 18,
+      "retainedPathCount": 22
+    },
+    "directRetainedToCutEdges": {
+      "count": 4,
+      "typescriptHelperExpansionEdges": 3,
+      "featureContradictionEdges": 1,
+      "featureContradiction": {
+        "sourcePath": "languages.TokensProviderFactory",
+        "sourceLine": 6966,
+        "referencedPath": "languages.IMonarchLanguage",
+        "referencedDeclarationSha256": "8c42c7d4ac241849dc26132e91175a0846996e9a93056ddde5820fc75f2373ce"
+      }
+    }
+  },
+  "dispositionCorrection": {
+    "pathCountsUnchanged": {
+      "total": 555,
+      "retained": 434,
+      "cut": 121
+    },
+    "changedPath": "languages.TokensProviderFactory",
+    "oldDisposition": "retained-native-mapping",
+    "newDisposition": "retained-with-explicit-member-cuts",
+    "cutMember": "create() return union member IMonarchLanguage",
+    "retainedReturnMembers": [
+      "TokensProvider",
+      "EncodedTokensProvider"
+    ],
+    "dependentFunction": "languages.registerTokensProviderFactory remains retained and accepts the narrowed native TokensProviderFactory",
+    "reason": "Monarch is an accepted complete language-content cut; retaining this one union branch would make a cut type reachable from a retained factory",
+    "correctedDispositionCounts": {
+      "retained-native-mapping": 408,
+      "retained-with-explicit-member-cuts": 4,
+      "allOtherF1R4Dispositions": "unchanged"
+    },
+    "explicitMemberCuts": {
+      "total": 12,
+      "editorOptions": 11,
+      "tokensProviderFactory": 1
+    }
+  },
+  "nativePresenceTypes": {
+    "MonaPresence<T>": "absent or present(T); canonical mapping for optional properties, optional methods and explicit undefined where null is not present",
+    "MonaNullable<T>": "null or value(T); canonical mapping for explicit T | null where absence is not present",
+    "MonaNullish<T>": "undefined, null or value(T); canonical mapping when all three source states exist",
+    "rule": "Swift Optional convenience is allowed only when the source consumer cannot observe a distinction; the canonical declaration manifest always records absent, null and value separately",
+    "defaultArguments": "omitted optional parameters use MonaPresence.absent; an explicit null is never encoded as omission"
+  },
+  "nativeContainerTypes": {
+    "MonaArray<Element>": {
+      "mapping": "mutable T[] and Array<T>",
+      "ownership": "@MainActor final reference type; non-Sendable",
+      "semantics": "ordered integer-indexed mutable storage with shared alias identity; ordinary Swift Array is a copying convenience, not the canonical public type"
+    },
+    "MonaReadonlyArray<Element>": {
+      "mapping": "readonly T[] and ReadonlyArray<T>",
+      "ownership": "immutable ordered snapshot; conditionally Sendable when Element is Sendable",
+      "semantics": "no mutation API; bypassing the source readonly type through a JavaScript cast is outside the accepted typed Swift domain"
+    },
+    "MonaURIIdentityMap<Value>": {
+      "mapping": "the sole retained Map<Uri, Value> occurrence in MultiDocumentHighlightProvider",
+      "ownership": "@MainActor final mutable reference type; non-Sendable",
+      "keyEquality": "ObjectIdentifier of the exact MonaURI reference",
+      "iteration": "insertion order; replacement preserves the existing key position and original key reference",
+      "consumerFact": "wordHighlighter calls has and get with each editor model's URI; a different URI instance with equal components does not match a native JavaScript Map"
+    },
+    "MonaResourceMap<Value>": {
+      "visibility": "internal",
+      "keyEquality": "MonaURI.toString() raw result",
+      "use": "model registries, single-document highlight fallback and other Monaco ResourceMap ports",
+      "prohibition": "it cannot silently replace public MultiDocumentHighlightProvider Map semantics"
+    },
+    "MonaUInt32Buffer": {
+      "mapping": "Uint32Array in IEncodedLineTokens.tokens, SemanticTokens.data and SemanticTokensEdit.data",
+      "ownership": "@MainActor final mutable reference type; non-Sendable",
+      "semantics": "UInt32 length, indexed read and write, overlap-safe set and copy; shared alias mutation remains visible until the consumer releases the result",
+      "backgroundTransfer": "background LSP decoding produces an immutable Sendable UInt32 transfer snapshot and materializes the canonical buffer on MainActor",
+      "wireRule": "logical UInt32 values are encoded to the semantic-token DTO in explicit little-endian order"
+    },
+    "MonaStringRecord<Value>": {
+      "mapping": "Record<string, Value>",
+      "ownership": "@MainActor mutable reference type unless the source wraps it in Readonly",
+      "keyOrder": "canonical array-index keys 0 through 2^32-2 in numeric order, followed by other raw-UTF16 string keys in insertion order",
+      "semantics": "lookup, replacement, deletion and ordered enumeration; Swift Dictionary iteration is not an oracle"
+    },
+    "tuples": {
+      "editor.IModelDecorationOptions": "MonaFourEdgeInsets",
+      "languages.CharacterPair": "MonaCharacterPair",
+      "languages.ParameterInformation": "MonaParameterLabelRange",
+      "rule": "fixed arity and positional meaning are represented by dedicated native value types"
+    }
+  },
+  "dynamicValueMappings": {
+    "MonaJSONValue": "raw-UTF16 JSON null, boolean, IEEE-754 number, string, array and object; used by LSP, host commands, serializable view state and inline-completion change hints",
+    "MonaCommandValue": "native command payload union containing nullish scalars, MonaText, URI, Position, Range, Selection, ordered arrays, ordered records and a MainActor opaque box for in-process native commands",
+    "MonaOpaqueAttachment": "@MainActor reference box for InjectedTextOptions.attachedData; identity and typed unboxing are retained",
+    "MonaCodeEnvironmentOverrides": "typed first-access environment and host capability fields replace IEditorOverrideServices string-indexed unknown services",
+    "sourceSpecificRules": [
+      "IEvent listener return values are ignored and map to Void; JavaScript thisArg binding is absent from Swift closures",
+      "CancellationToken callbacks map to Void closures and an explicit MonaDisposableStore; JavaScript thisArgs is absent",
+      "Uri, Position, Range and Selection type guards accept native Any and never apply JavaScript coercion",
+      "createMultiFileDiffEditor remains the H1-R typed MonaMultiDiffEditorView replacement",
+      "EditorOptions any holes map to their already frozen native computed option types",
+      "IDiffEditor.revealFirstDiff maps to Void because the pinned implementation schedules waitForDiff().then and returns undefined",
+      "IInlineCompletionChangeHint.data maps to MonaJSONValue because its public declaration requires JSON serializability",
+      "languages.Command.arguments and the async MonaCommandHost boundary map to MonaJSONValue arrays",
+      "in-process registerCommand, action run, keybinding commandArgs and editor trigger payloads map to MonaCommandValue"
+    ],
+    "cutBoundary": "JavaScript prototypes, property descriptors, Symbol keys, arbitrary service decorators, function-valued data and source-level casts remain within the accepted JavaScript runtime and source-compatibility cuts; retained editor behavior receives one of the explicit native mappings above"
+  },
+  "providerExecutionContract": {
+    "directProviders": "all direct Swift language provider protocols are @MainActor; invocation receives the live Mona model and can synchronously reenter live model APIs before returning",
+    "providerResult": "MonaProviderResult<T> has value(T), null, undefined and thenable(MonaThenable<MonaNullish<T>>) cases",
+    "normalization": "the provider function is invoked synchronously; every immediate or deferred completion is processed through the repository-owned MainActor MonaMicrotaskQueue before consumer code continues",
+    "mutableResultAliasing": "MonaArray, MonaURIIdentityMap, MonaUInt32Buffer and MonaOpaqueAttachment preserve the same reference until the specific consumer releases or disposes it; a later queued mutation is observable in the same relative turn as the Chrome probe",
+    "lspAndHost": "LSP decoding and H1-R async host callbacks receive immutable Sendable request or transfer values, never a live model or a non-Sendable direct-provider container",
+    "publication": "every async completion reenters MainActor through the existing session, request, model-instance and version gate before UI or model publication",
+    "forbidden": [
+      "passing a live model, MonaArray, MonaURIIdentityMap, MonaUInt32Buffer or MonaOpaqueAttachment to a detached task",
+      "copying a mutable direct-provider result at completion and thereby erasing later same-turn alias mutation",
+      "processing an immediate ProviderResult inline in the provider's call stack"
+    ]
+  },
+  "acceptanceOverrides": {
+    "MonaNativeDeclarationManifest": "adds canonical presence/nullability, container/reference identity, dynamic payload and direct-provider actor/scheduling mappings for every retained declaration path",
+    "C04": "covers all 14 direct and 18 transitive external named types, 159 array forms, 3 tuples, 788 optional forms, 205 null-or-undefined forms, 28 any-or-unknown forms and the corrected 12 explicit member cuts",
+    "C06": "covers direct-provider synchronous invocation, reentry, null versus undefined, immediate versus thenable completion, microtask order, mutable result aliasing, URI identity-map lookup and Uint32 semantic-token reuse",
+    "C09": "strict-concurrency fixtures prove non-Sendable provider containers never cross actors and immutable LSP or host transfers always return through the complete validity gate",
+    "P11": "measures provider normalization and container overhead without deleting the MainActor alias semantics"
+  },
+  "passRule": "F1-R5 passes only when the candidate native declaration manifest is set-equal to all 434 corrected retained mappings, compile fixtures construct every presence and container shape, behavior traces match the pinned runtime cases, C04/C06/C09 and every applicable P11 cell pass, and no unresolved external type remains",
+  "currentStatus": {
+    "productSourceFiles": 0,
+    "candidateNativeDeclarationManifestPresent": false,
+    "C04": "not-run",
+    "C06": "not-run",
+    "C09": "not-run",
+    "P11": "not-run",
+    "verdict": "not-passed"
+  }
+}

@@ -1,0 +1,480 @@
+{
+  "schemaVersion": 1,
+  "identity": {
+    "product": "MonaCode",
+    "revision": "A2-R2-candidate",
+    "baseline": "monaco-editor@0.56.0 editor.main on macOS",
+    "tagCommit": "13f0c872dcf352815cc28d92dfff496c9839ea5c",
+    "npmTarSha256": "b74bc4437205c194b779b0f21e5e7fcd3b4e9acbf3f7c8732a545d2059fb7412",
+    "scopeManifestSha256": "31d79fd334a6e461e6ee03726a08a40e6f0f9978cbabe04d6096fcca1a79c1d5",
+    "target": "arm64 macOS 26+ AppKit",
+    "localProbeEnvironment": {
+      "macOS": "26.6 (25G72)",
+      "xcode": "26.6 (17F113)",
+      "sdk": "26.5",
+      "architecture": "arm64"
+    }
+  },
+  "sourceClosureScan": {
+    "entry": "esm/vs/editor/editor.main.js",
+    "reachableJavaScriptFiles": 1135,
+    "matchedAccessibilityFiles": 148,
+    "lexicalOccurrences": {
+      "explicitRole": 63,
+      "ariaAttribute": 225,
+      "focus": 266,
+      "announcementPattern": 39,
+      "accessibilityRegistryOrSignal": 90
+    },
+    "semanticElementOccurrences": {
+      "a": 18,
+      "ul": 1,
+      "li": 1,
+      "select": 2,
+      "option": 2,
+      "textarea": 4,
+      "button": 1,
+      "input": 2,
+      "h2": 1,
+      "table": 1,
+      "tbody": 1,
+      "tr": 5,
+      "td": 10,
+      "label": 2
+    },
+    "effectiveDirectAriaAnnouncementCallSites": 30,
+    "excludedAnnouncementPatternOccurrences": 9,
+    "method": "Recursive static import closure plus line scan for explicit role, aria properties, focus transitions, direct alert/status calls, accessibility registries/signals, and literal semantic element construction. Counts are lexical source facts, not runtime event counts."
+  },
+  "announcementCallSites": [
+    { "id": "aria-alert-declaration", "source": "vs/base/browser/ui/aria/aria.js:43", "channel": "none", "disposition": "declaration", "reason": "Function declaration, not a call site." },
+    { "id": "aria-status-declaration", "source": "vs/base/browser/ui/aria/aria.js:60", "channel": "none", "disposition": "declaration", "reason": "Function declaration, not a call site." },
+    { "id": "input-validation", "source": "vs/base/browser/ui/inputbox/inputBox.js:327", "channel": "alert", "disposition": "effective" },
+    { "id": "input-cleared-or-value", "source": "vs/base/browser/ui/inputbox/inputBox.js:505", "channel": "status", "disposition": "effective" },
+    { "id": "input-value", "source": "vs/base/browser/ui/inputbox/inputBox.js:517", "channel": "status", "disposition": "effective" },
+    { "id": "list-active-row-string", "source": "vs/base/browser/ui/list/listWidget.js:432", "channel": "alert", "disposition": "effective" },
+    { "id": "list-active-row-observable", "source": "vs/base/browser/ui/list/listWidget.js:435", "channel": "alert", "disposition": "effective" },
+    { "id": "tree-no-results", "source": "vs/base/browser/ui/tree/abstractTree.js:606", "channel": "alert", "disposition": "effective" },
+    { "id": "tree-result-count", "source": "vs/base/browser/ui/tree/abstractTree.js:609", "channel": "alert", "disposition": "effective" },
+    { "id": "tree-collapse-state", "source": "vs/base/browser/ui/tree/abstractTree.js:2046", "channel": "alert", "disposition": "effective" },
+    { "id": "removed-secondary-cursors", "source": "vs/editor/browser/coreCommands.js:1440", "channel": "status", "disposition": "effective" },
+    { "id": "anchor-set", "source": "vs/editor/contrib/anchorSelect/browser/anchorSelect.js:52", "channel": "alert", "disposition": "effective" },
+    { "id": "code-action-context", "source": "vs/editor/contrib/codeAction/browser/codeActionController.js:297", "channel": "status", "disposition": "effective" },
+    { "id": "find-no-results", "source": "vs/editor/contrib/find/browser/findController.js:603", "channel": "alert", "disposition": "effective" },
+    { "id": "find-current-match", "source": "vs/editor/contrib/find/browser/findWidget.js:353", "channel": "alert", "disposition": "effective" },
+    { "id": "problem-navigation", "source": "vs/editor/contrib/gotoError/browser/gotoErrorWidget.js:110", "channel": "status", "disposition": "effective" },
+    { "id": "goto-symbol-result-summary", "source": "vs/editor/contrib/gotoSymbol/browser/goToCommands.js:101", "channel": "alert", "disposition": "effective" },
+    { "id": "symbol-navigation-status", "source": "vs/editor/contrib/gotoSymbol/browser/symbolNavigation.js:116", "channel": "none", "disposition": "standalone-notification-no-op", "reason": "Routes through StandaloneNotificationService.status." },
+    { "id": "hover-copy", "source": "vs/editor/contrib/hover/browser/hoverCopyButton.js:45", "channel": "status", "disposition": "effective" },
+    { "id": "inline-completion", "source": "vs/editor/contrib/inlineCompletions/browser/controller/inlineCompletionsController.js:395", "channel": "alert", "disposition": "effective" },
+    { "id": "inline-message", "source": "vs/editor/contrib/message/browser/messageController.js:50", "channel": "alert", "disposition": "effective" },
+    { "id": "multicursor-count", "source": "vs/editor/contrib/multicursor/browser/multicursor.js:37", "channel": "status", "disposition": "effective" },
+    { "id": "parameter-hint", "source": "vs/editor/contrib/parameterHints/browser/parameterHintsWidget.js:218", "channel": "alert", "disposition": "effective" },
+    { "id": "quick-navigation-position", "source": "vs/editor/contrib/quickAccess/browser/editorNavigationQuickAccess.js:96", "channel": "status", "disposition": "effective" },
+    { "id": "rename-success", "source": "vs/editor/contrib/rename/browser/rename.js:260", "channel": "alert", "disposition": "effective" },
+    { "id": "rename-candidate-count", "source": "vs/editor/contrib/rename/browser/renameWidget.js:488", "channel": "status", "disposition": "effective" },
+    { "id": "suggest-item", "source": "vs/editor/contrib/suggest/browser/suggestController.js:472", "channel": "alert", "disposition": "effective" },
+    { "id": "suggest-loading", "source": "vs/editor/contrib/suggest/browser/suggestWidget.js:398", "channel": "status", "disposition": "effective" },
+    { "id": "suggest-empty", "source": "vs/editor/contrib/suggest/browser/suggestWidget.js:408", "channel": "status", "disposition": "effective" },
+    { "id": "tab-focus-navigation", "source": "vs/editor/contrib/toggleTabFocusMode/browser/toggleTabFocusMode.js:33", "channel": "alert", "disposition": "effective" },
+    { "id": "tab-focus-insertion", "source": "vs/editor/contrib/toggleTabFocusMode/browser/toggleTabFocusMode.js:36", "channel": "alert", "disposition": "effective" },
+    { "id": "word-highlight-next", "source": "vs/editor/contrib/wordHighlighter/browser/wordHighlighter.js:284", "channel": "alert", "disposition": "effective" },
+    { "id": "word-highlight-previous", "source": "vs/editor/contrib/wordHighlighter/browser/wordHighlighter.js:303", "channel": "alert", "disposition": "effective" },
+    { "id": "standalone-status-method", "source": "vs/editor/standalone/browser/standaloneServices.js:223", "channel": "none", "disposition": "method-declaration", "reason": "Method declaration, not a direct aria call." },
+    { "id": "platform-hover-accessible-view-hint", "source": "vs/platform/hover/browser/hoverWidget.js:295", "channel": "none", "disposition": "standalone-config-inert", "reason": "The reachable registry has no accessibility.verbosity.hover configuration property, so StandaloneConfigurationService returns undefined through the public editor.main surface." },
+    { "id": "chord-start", "source": "vs/platform/keybinding/common/abstractKeybindingService.js:96", "channel": "none", "disposition": "standalone-notification-no-op", "reason": "Routes through StandaloneNotificationService.status." },
+    { "id": "chord-continue", "source": "vs/platform/keybinding/common/abstractKeybindingService.js:100", "channel": "none", "disposition": "standalone-notification-no-op", "reason": "Routes through StandaloneNotificationService.status." },
+    { "id": "chord-invalid-two-part", "source": "vs/platform/keybinding/common/abstractKeybindingService.js:199", "channel": "none", "disposition": "standalone-notification-no-op", "reason": "Routes through StandaloneNotificationService.status." },
+    { "id": "chord-invalid-multipart", "source": "vs/platform/keybinding/common/abstractKeybindingService.js:218", "channel": "none", "disposition": "standalone-notification-no-op", "reason": "Routes through StandaloneNotificationService.status." }
+  ],
+  "baselineInertOrExcludedPaths": [
+    {
+      "id": "standalone-accessibility-signals",
+      "fact": "StandaloneAccessbilitySignalService.playSignal has an empty body.",
+      "disposition": "No native audio signal or signal setting is added for 0.56.0 parity."
+    },
+    {
+      "id": "audio-assets",
+      "fact": "The npm package contains zero mp3, wav, ogg, or aiff files.",
+      "disposition": "No audio asset ships in the native parity target."
+    },
+    {
+      "id": "accessible-view",
+      "fact": "Hover and inline-completion providers register AccessibleView entries, but editor.main registers neither editor.action.accessibleView nor editor.action.accessibilityHelp; the reachable configuration registry also has no accessibility.verbosity.hover property.",
+      "disposition": "Registry-only entries and hover Accessible View hints are inert through the public standalone surface; no native Accessible View product surface is added."
+    },
+    {
+      "id": "standalone-notification-status",
+      "fact": "StandaloneNotificationService.status returns only an empty close function.",
+      "disposition": "Symbol-navigation and chord status calls routed through this service produce no native announcement."
+    },
+    {
+      "id": "ipad-keyboard",
+      "fact": "iPadShowKeyboard is imported by editor.main but F1-R3 marks the contribution later-ipados.",
+      "disposition": "It is absent from the macOS product."
+    }
+  ],
+  "nativeRoleProbe": [
+    { "control": "NSButton", "observedRole": "AXButton via NSButtonCell", "use": "push actions" },
+    { "control": "NSButton checkbox", "observedRole": "AXCheckBox", "use": "boolean options" },
+    { "control": "NSButton push-on/push-off plus AXToggle", "observedRole": "AXCheckBox / AXToggle", "use": "toggle actions" },
+    { "control": "NSTextField", "observedRole": "AXTextField", "use": "find, replace, rename, filter" },
+    { "control": "NSSearchField", "observedRole": "AXTextField / AXSearchField", "use": "quick input search" },
+    { "control": "NSPopUpButton", "observedRole": "AXPopUpButton", "use": "select-box surfaces" },
+    { "control": "NSProgressIndicator", "observedRole": "AXProgressIndicator", "use": "busy and determinate progress" },
+    { "control": "NSSlider", "observedRole": "AXSlider", "use": "color component values" },
+    { "control": "NSColorWell", "observedRole": "AXColorWell", "use": "color value and NSColorPanel entry" },
+    { "control": "NSTableView with explicit list role", "observedRole": "AXList / AXSuggestion with AXRow children", "use": "suggestion, action, quick-input lists" },
+    { "control": "NSOutlineView", "observedRole": "AXOutline with AXOutlineRow children", "use": "references and quick trees" },
+    { "control": "NSTextView", "observedRole": "AXTextArea", "use": "A1-R2 text surface and rich read-only content" },
+    { "control": "NSBox", "observedRole": "AXGroup", "use": "labelled widget groups" },
+    { "control": "NSAccessibilityElement", "observedRole": "configured AXButton", "use": "canvas-owned interactive proxies" }
+  ],
+  "focusModes": [
+    {
+      "id": "editor-shared",
+      "firstResponder": "editor",
+      "rule": "Editor keeps keyboard input. accessibilitySharedFocusElements contains the visible composite and its selected row or active action. Selection changes post SelectedRowsChanged and LayoutChanged with the active element."
+    },
+    {
+      "id": "owned-input",
+      "firstResponder": "native text input",
+      "rule": "The input owns typing and IME. A controlled candidate list is exposed through shared focus. Commit, cancel, disposal, and model replacement restore the captured editor and selection token exactly once."
+    },
+    {
+      "id": "owned-collection",
+      "firstResponder": "NSTableView or NSOutlineView",
+      "rule": "Arrow navigation, selection, expand/collapse, Enter/Space, and Escape are handled by the collection state machine. Escape and terminal selection restore the captured owner."
+    },
+    {
+      "id": "explicit-popover",
+      "firstResponder": "popover content only after keyboard focus command, VoiceOver entry, or direct control activation",
+      "rule": "Pointer display alone does not steal focus. Closing restores the captured owner if that owner still exists."
+    },
+    {
+      "id": "native-control",
+      "firstResponder": "the active NSButton, NSPopUpButton, NSSlider, NSColorWell, NSMenuItem, link, or equivalent native control",
+      "rule": "The native control owns its standard keyboard behavior inside the composite key loop. Terminal action, cancel, removal, and model replacement restore the captured owner exactly once."
+    },
+    {
+      "id": "modal-dialog",
+      "firstResponder": "the native alert sheet and its controls",
+      "rule": "The editor-local dialog is the only interactive editor surface until resolution. Commit revalidates editor identity, model identity, model version, detector generation, and visible dialog identity; stale resolution performs zero mutation and reruns detection on the current model."
+    },
+    {
+      "id": "host-owned",
+      "firstResponder": "a host-provided content or overlay NSView",
+      "rule": "The host view owns its internal key loop while mounted. Removal preserves a still-valid external owner or restores the captured editor; the editor never rewrites the host AX subtree."
+    },
+    {
+      "id": "passive",
+      "firstResponder": "none",
+      "rule": "Pure rendering has no AX node and no tab stop. Equivalent commands remain available through the retained action/keybinding graph."
+    }
+  ],
+  "widgetContracts": [
+    {
+      "id": "main-text-surface",
+      "features": ["codeEditor", "placeholderText", "links", "semanticTokens"],
+      "native": "MonaAXTextArea from A1-R2",
+      "focusMode": "editor-shared",
+      "focusModeIds": ["editor-shared"],
+      "contract": "Raw UTF-16 model text remains the only AX text index. Markers, links, selections, geometry, setters, menu action, placeholder, and notifications follow A1-R2 without modification."
+    },
+    {
+      "id": "suggest",
+      "features": ["suggest"],
+      "native": "NSTableView AXList with NSAccessibilitySuggestionSubrole plus read-only details group and close button",
+      "focusMode": "editor-shared",
+      "focusModeIds": ["editor-shared", "native-control"],
+      "contract": "Widget label is Suggest. Row label preserves completion label, label detail/description, kind, and resolved documentation. Loading and no-suggestion statuses remain announcements. Editor owns typing; the selected row is shared focus."
+    },
+    {
+      "id": "quick-input-and-quick-tree",
+      "features": ["gotoLine", "gotoSymbol", "quickCommand", "quickHelp", "quickOutline", "documentSymbols"],
+      "native": "NSSearchField plus NSTableView AXList or NSOutlineView AXOutline, NSProgressIndicator, NSButton controls",
+      "focusMode": "owned-input or owned-collection as selected by the original quick-input state",
+      "focusModeIds": ["owned-input", "owned-collection", "native-control"],
+      "contract": "List rows preserve label, description, detail, separator label, keybinding, checked/mixed/disabled state, selected count, visible count, busy state, buttons, and symbol aria labels. Quick Tree preserves hierarchy, expanded state, check state, level, set size, and position."
+    },
+    {
+      "id": "action-widget",
+      "features": ["codeAction", "dropOrPasteInto", "format"],
+      "native": "NSTableView AXList with action rows, section rows, filter NSTextField, submenu NSMenu, and toolbar NSButtons",
+      "focusMode": "owned-collection",
+      "focusModeIds": ["owned-collection", "owned-input", "native-control"],
+      "contract": "Row labels preserve label, detail, ariaDescription or description, hover fallback, group title, disabled reason, and submenu instruction. Section expanded state, preview action, filter, nested submenu, selection, and Escape are retained."
+    },
+    {
+      "id": "find-replace",
+      "features": ["find"],
+      "native": "labelled AXGroup containing NSTextField inputs and native NSButton controls",
+      "focusMode": "owned-input",
+      "focusModeIds": ["owned-input", "native-control"],
+      "contract": "Find/replace values, validation, previous/next, replace/replace-all, close, selection-only, replace expansion, case, whole-word, regex, preserve-case, enabled states, match count, current match location, and exact focus restoration are retained."
+    },
+    {
+      "id": "rename",
+      "features": ["rename"],
+      "native": "NSTextField plus shared-focus NSTableView candidate list and generate/cancel NSButtons",
+      "focusMode": "owned-input",
+      "focusModeIds": ["owned-input", "native-control"],
+      "contract": "Input label, candidate names, selected candidate, received-count status, generating/cancel state, commit/cancel, provider cancellation, and successful-rename summary are retained."
+    },
+    {
+      "id": "hover",
+      "features": ["hover"],
+      "native": "AXPopover or labelled AXGroup containing read-only NSTextView content, AXLink children, copy and action NSButtons",
+      "focusMode": "explicit-popover",
+      "focusModeIds": ["explicit-popover", "native-control"],
+      "contract": "Markdown text, marker source/code/related links, verbosity controls, status actions, copy status, scrolling, resize, focus-in/focus-out, and close restoration are retained. Accessible View hints are absent because their standalone command is absent."
+    },
+    {
+      "id": "parameter-hints",
+      "features": ["parameterHints"],
+      "native": "labelled AXGroup with previous/next NSButtons, overload static text, signature and documentation text",
+      "focusMode": "editor-shared",
+      "focusModeIds": ["editor-shared", "native-control"],
+      "contract": "The active parameter plus parameter and signature documentation is announced only when that composed label changes. Overload navigation and exact editor focus retention are retained."
+    },
+    {
+      "id": "diagnostics-navigation",
+      "features": ["gotoError"],
+      "native": "labelled AXGroup with severity, message, source/code AXLink, related-information AXLinks, navigation and close NSButtons",
+      "focusMode": "editor-shared",
+      "focusModeIds": ["editor-shared", "native-control"],
+      "contract": "Label preserves source line, severity, message, line:column, file title, problem index/count, related links, action enabled states, and editor reveal/focus behavior."
+    },
+    {
+      "id": "references",
+      "features": ["gotoSymbol", "referenceSearch"],
+      "native": "NSOutlineView AXOutline plus read-only preview MonaAXTextArea and title/action controls",
+      "focusMode": "owned-collection",
+      "focusModeIds": ["owned-collection", "editor-shared", "native-control"],
+      "contract": "Widget label is References. File rows preserve symbol count, basename, and full path; reference rows preserve preview text, basename, line, and column. No-result/single/multi-result summaries, expand/collapse, open, preview focus, and Escape are retained."
+    },
+    {
+      "id": "codelens",
+      "features": ["codelens"],
+      "native": "viewport-bounded NSAccessibilityElement AXButton proxies",
+      "focusMode": "editor-shared",
+      "focusModeIds": ["editor-shared"],
+      "contract": "Each command proxy preserves rendered title, tooltip/help, enabled state, screen frame, and press action. Show CodeLens Commands for Current Line remains the keyboard collection entry. Proxies do not create a new Tab cycle."
+    },
+    {
+      "id": "inlay-and-inline-completion",
+      "features": ["inlayHints", "inlineCompletions"],
+      "native": "AXAnnotation for passive injected text and viewport-bounded AXButton or AXLink proxies for actionable parts",
+      "focusMode": "editor-shared",
+      "focusModeIds": ["editor-shared"],
+      "contract": "Injected text never changes model value or text ranges. Actionable label parts preserve tooltip, location, command, screen frame, and press validation. Inline completion preserves the direct screen-reader text announcement; audio signals and Accessible View are absent."
+    },
+    {
+      "id": "color-picker",
+      "features": ["colorPicker"],
+      "native": "NSColorWell and NSColorPanel with explicit presentation selector, component controls, insert/replace and close NSButtons",
+      "focusMode": "explicit-popover",
+      "focusModeIds": ["explicit-popover", "native-control"],
+      "contract": "Original color, current color, presentation choice, component values, live preview, insert/replace, cancel, provider edit, and editor focus restoration are retained. Native controls replace the original pointer-driven saturation and strip surfaces."
+    },
+    {
+      "id": "sticky-scroll",
+      "features": ["stickyScroll", "sectionHeaders"],
+      "native": "viewport-bounded AXList with AXRow proxies",
+      "focusMode": "owned-collection when the sticky-scroll focus action runs; otherwise passive",
+      "focusModeIds": ["passive", "owned-collection"],
+      "contract": "Visible sticky lines preserve source text, nesting order, row frames, click navigation, focus-next/focus-previous, select, and Escape-to-editor behavior. Line-number decoration remains hidden."
+    },
+    {
+      "id": "unicode-banner",
+      "features": ["unicodeHighlighter"],
+      "native": "labelled AXGroup with action NSButtons or AXLinks",
+      "focusMode": "explicit-popover",
+      "focusModeIds": ["explicit-popover", "native-control"],
+      "contract": "The computed banner aria label is the group label. Decorative icon and duplicate message remain hidden. Actions preserve label, enabled state, press behavior, and focus order."
+    },
+    {
+      "id": "post-edit-and-inline-progress",
+      "features": ["dropOrPasteInto", "inlineProgress"],
+      "native": "viewport-bounded AXButton proxies plus the shared action widget",
+      "focusMode": "editor-shared until selector opens",
+      "focusModeIds": ["editor-shared", "owned-collection"],
+      "contract": "Button title/help, screen frame, press action, active edit check state, alternate edit labels, cancellation, undo-before-switch, and editor focus restoration are retained."
+    },
+    {
+      "id": "diff-editor",
+      "features": ["diffEditor", "diffEditorBreadcrumbs"],
+      "native": "two MonaAXTextArea editors, AXButton proxies for unchanged-region controls, and a read-only AXList accessible diff viewer",
+      "focusMode": "owned-collection for accessible diff viewer",
+      "focusModeIds": ["editor-shared", "owned-collection", "native-control"],
+      "contract": "Original/modified labels, navigation tip disposition, changed-region headers, unchanged/added/deleted row labels, blank-line label, selected row, up/down, reveal on Enter/Space, close on Escape, reveal-more-above/below, show-all, and editor focus restoration are retained. Audio diff signals are absent."
+    },
+    {
+      "id": "multi-file-diff",
+      "features": ["diffEditor"],
+      "native": "native replacement with AXList of labelled file groups, disclosure NSButtons, actions, and contained diff editors",
+      "focusMode": "owned-collection",
+      "focusModeIds": ["owned-collection", "editor-shared", "native-control"],
+      "contract": "createMultiFileDiffEditor remains public. Each item preserves primary/secondary resource labels, status, action controls, collapsed/expanded value, Enter/Space toggle, contained diff semantics, scrolling, and focused-editor identity."
+    },
+    {
+      "id": "inspect-tokens",
+      "features": ["inspectTokens"],
+      "native": "AXGroup containing AXHeading and AXTable key/value rows",
+      "focusMode": "editor-shared",
+      "focusModeIds": ["editor-shared"],
+      "contract": "Token text, UTF-16 character count, language, token type, font style, foreground, background, lexical token type, cursor-following update, and Escape disposal are retained. The widget does not steal keyboard focus."
+    },
+    {
+      "id": "menus-toolbars-and-primitives",
+      "features": ["contextmenu", "floatingMenu", "toggleTabFocusMode"],
+      "native": "NSMenu/NSMenuItem, NSButton, NSPopUpButton, NSProgressIndicator, NSTextField, NSSearchField, and labelled AXToolbar groups",
+      "focusMode": "native control ownership",
+      "focusModeIds": ["native-control", "owned-input"],
+      "contract": "Labels, key equivalents, mnemonic-clean labels, checked/selected/pressed state, disabled state, submenu expanded state, set size/position, toolbar order, selector value, input invalid state, and menu return focus are retained."
+    },
+    {
+      "id": "host-content-and-overlay-widgets",
+      "features": ["codeEditor"],
+      "native": "host-provided NSView subtree",
+      "focusMode": "host-defined inside editor focus restoration boundary",
+      "focusModeIds": ["host-owned"],
+      "contract": "addContentWidget and addOverlayWidget preserve the host NSView accessibility subtree, identity, labels, children, actions, and first-responder behavior while the widget is rendered. Hidden or removed widgets leave the AX tree and restore an invalidated focus owner to the editor."
+    },
+    {
+      "id": "read-only-message",
+      "features": ["readOnlyMessage"],
+      "native": "viewport-positioned labelled AXGroup with read-only text and native AXLink children",
+      "focusMode": "editor-shared until a link or VoiceOver explicitly enters the message",
+      "focusModeIds": ["editor-shared", "explicit-popover", "native-control"],
+      "contract": "Every attempted edit in a read-only model posts the source alert and replaces the prior message at the current cursor. Plain text and trusted Markdown links are retained. Escape, cursor movement, model replacement, editor disposal, focus leaving both editor and message, or pointer movement outside the source range closes the message; link activation closes before opening through the retained opener path."
+    },
+    {
+      "id": "unusual-line-terminator-dialog",
+      "features": ["unusualLineTerminators"],
+      "native": "NSAlert sheet attached to the editor host window",
+      "focusMode": "modal-dialog",
+      "focusModeIds": ["modal-dialog", "native-control"],
+      "contract": "The native adaptation exposes the source title, message, detail, Remove Unusual Line Terminators action, and Ignore action instead of StandaloneDialogService discarding title and custom labels. One dialog per detector generation is visible. Resolution revalidates editor, model, version, detector generation, and dialog identity; valid Ignore stores ignore state, valid Remove executes the model operation with captured selections, and stale resolution mutates nothing before rerunning detection on the current model."
+    },
+    {
+      "id": "hidden-rendering-surfaces",
+      "features": ["folding", "bracketMatching", "codeEditor"],
+      "surfaces": ["viewZones", "margin", "glyphMargin", "minimap", "rulers", "overviewRuler", "cursors", "blockDecorations", "scrollDecoration"],
+      "native": "no AX nodes",
+      "focusMode": "passive",
+      "focusModeIds": ["passive"],
+      "contract": "View zones, margin, glyph margin, minimap, rulers, overview ruler, cursors, block decorations, scroll decoration, and purely visual folding controls stay AX-hidden exactly as their Monaco parent surfaces are aria-hidden or presentation-only. Retained commands remain the accessible operation path."
+    }
+  ],
+  "featureAccessibilityDisposition": [
+    { "id": "anchorSelect", "scopeDisposition": "retained-macos", "axDisposition": "text-state-with-announcement", "contracts": ["main-text-surface"], "announcementIds": ["anchor-set"] },
+    { "id": "bracketMatching", "scopeDisposition": "retained-macos", "axDisposition": "passive-rendering", "contracts": ["hidden-rendering-surfaces"] },
+    { "id": "caretOperations", "scopeDisposition": "retained-macos", "axDisposition": "text-selection-command", "contracts": ["main-text-surface"] },
+    { "id": "clipboard", "scopeDisposition": "retained-macos", "axDisposition": "text-and-native-transfer-command", "contracts": ["main-text-surface"] },
+    { "id": "codeAction", "scopeDisposition": "retained-macos", "axDisposition": "widget-contract", "contracts": ["action-widget"] },
+    { "id": "codeEditor", "scopeDisposition": "retained-macos", "axDisposition": "text-host-and-rendering-contracts", "contracts": ["main-text-surface", "host-content-and-overlay-widgets", "hidden-rendering-surfaces"] },
+    { "id": "codelens", "scopeDisposition": "retained-macos", "axDisposition": "canvas-action-proxy", "contracts": ["codelens"] },
+    { "id": "codicon", "scopeDisposition": "retained-macos", "axDisposition": "decorative-resource-no-independent-node", "contracts": [] },
+    { "id": "colorPicker", "scopeDisposition": "retained-macos", "axDisposition": "native-widget-replacement", "contracts": ["color-picker"] },
+    { "id": "comment", "scopeDisposition": "retained-macos", "axDisposition": "text-model-command", "contracts": ["main-text-surface"] },
+    { "id": "contextmenu", "scopeDisposition": "retained-macos", "axDisposition": "native-menu", "contracts": ["menus-toolbars-and-primitives"] },
+    { "id": "cursorUndo", "scopeDisposition": "retained-macos", "axDisposition": "text-selection-command", "contracts": ["main-text-surface"] },
+    { "id": "diffEditor", "scopeDisposition": "retained-macos", "axDisposition": "composite-widget-contract", "contracts": ["diff-editor", "multi-file-diff"] },
+    { "id": "diffEditorBreadcrumbs", "scopeDisposition": "retained-macos", "axDisposition": "diff-widget-contract", "contracts": ["diff-editor"] },
+    { "id": "dnd", "scopeDisposition": "retained-macos", "axDisposition": "pointer-model-path-no-independent-node", "contracts": ["main-text-surface"] },
+    { "id": "documentSymbols", "scopeDisposition": "retained-macos", "axDisposition": "quick-tree-contract", "contracts": ["quick-input-and-quick-tree"] },
+    { "id": "dropOrPasteInto", "scopeDisposition": "retained-macos", "axDisposition": "action-and-post-edit-contracts", "contracts": ["action-widget", "post-edit-and-inline-progress"] },
+    { "id": "find", "scopeDisposition": "retained-macos", "axDisposition": "native-widget-contract", "contracts": ["find-replace"] },
+    { "id": "floatingMenu", "scopeDisposition": "retained-macos", "axDisposition": "native-menu-toolbar", "contracts": ["menus-toolbars-and-primitives"] },
+    { "id": "folding", "scopeDisposition": "retained-macos", "axDisposition": "passive-rendering-with-command-path", "contracts": ["hidden-rendering-surfaces"] },
+    { "id": "fontZoom", "scopeDisposition": "retained-macos", "axDisposition": "command-option-state-no-independent-node", "contracts": ["menus-toolbars-and-primitives"] },
+    { "id": "format", "scopeDisposition": "retained-macos", "axDisposition": "action-widget-and-model-command", "contracts": ["action-widget", "main-text-surface"] },
+    { "id": "gotoError", "scopeDisposition": "retained-macos", "axDisposition": "diagnostics-widget-contract", "contracts": ["diagnostics-navigation"] },
+    { "id": "gotoLine", "scopeDisposition": "retained-macos", "axDisposition": "quick-input-contract", "contracts": ["quick-input-and-quick-tree"] },
+    { "id": "gotoSymbol", "scopeDisposition": "retained-macos", "axDisposition": "quick-input-and-reference-contracts", "contracts": ["quick-input-and-quick-tree", "references"] },
+    { "id": "gpu", "scopeDisposition": "cut-webgpu-debug", "axDisposition": "out-of-macos-product", "contracts": [] },
+    { "id": "hover", "scopeDisposition": "retained-macos", "axDisposition": "popover-widget-contract", "contracts": ["hover"] },
+    { "id": "iPadShowKeyboard", "scopeDisposition": "later-ipados", "axDisposition": "out-of-current-macos-product", "contracts": [] },
+    { "id": "inPlaceReplace", "scopeDisposition": "retained-macos", "axDisposition": "text-model-command", "contracts": ["main-text-surface"] },
+    { "id": "indentation", "scopeDisposition": "retained-macos", "axDisposition": "text-model-command", "contracts": ["main-text-surface"] },
+    { "id": "inlayHints", "scopeDisposition": "retained-macos", "axDisposition": "annotation-and-action-proxy", "contracts": ["inlay-and-inline-completion"] },
+    { "id": "inlineCompletions", "scopeDisposition": "retained-macos", "axDisposition": "annotation-action-and-announcement-contract", "contracts": ["inlay-and-inline-completion"] },
+    { "id": "inlineProgress", "scopeDisposition": "retained-macos", "axDisposition": "canvas-action-proxy", "contracts": ["post-edit-and-inline-progress"] },
+    { "id": "insertFinalNewLine", "scopeDisposition": "retained-macos", "axDisposition": "text-model-command", "contracts": ["main-text-surface"] },
+    { "id": "inspectTokens", "scopeDisposition": "retained-macos", "axDisposition": "semantic-table-widget", "contracts": ["inspect-tokens"] },
+    { "id": "lineSelection", "scopeDisposition": "retained-macos", "axDisposition": "text-selection-command", "contracts": ["main-text-surface"] },
+    { "id": "linesOperations", "scopeDisposition": "retained-macos", "axDisposition": "text-model-command", "contracts": ["main-text-surface"] },
+    { "id": "linkedEditing", "scopeDisposition": "retained-macos", "axDisposition": "text-model-and-decoration-path", "contracts": ["main-text-surface"] },
+    { "id": "links", "scopeDisposition": "retained-macos", "axDisposition": "text-link-contract", "contracts": ["main-text-surface"] },
+    { "id": "longLinesHelper", "scopeDisposition": "retained-macos", "axDisposition": "internal-render-option-controller-no-independent-node", "contracts": ["hidden-rendering-surfaces"] },
+    { "id": "middleScroll", "scopeDisposition": "retained-macos", "axDisposition": "pointer-only-visual-surface-no-independent-node", "contracts": ["hidden-rendering-surfaces"] },
+    { "id": "multicursor", "scopeDisposition": "retained-macos", "axDisposition": "text-selection-with-announcement", "contracts": ["main-text-surface"], "announcementIds": ["multicursor-count"] },
+    { "id": "parameterHints", "scopeDisposition": "retained-macos", "axDisposition": "widget-contract", "contracts": ["parameter-hints"] },
+    { "id": "placeholderText", "scopeDisposition": "retained-macos", "axDisposition": "text-surface-description", "contracts": ["main-text-surface"] },
+    { "id": "quickCommand", "scopeDisposition": "retained-macos", "axDisposition": "quick-input-contract", "contracts": ["quick-input-and-quick-tree"] },
+    { "id": "quickHelp", "scopeDisposition": "retained-macos", "axDisposition": "quick-input-contract", "contracts": ["quick-input-and-quick-tree"] },
+    { "id": "quickOutline", "scopeDisposition": "retained-macos", "axDisposition": "quick-tree-contract", "contracts": ["quick-input-and-quick-tree"] },
+    { "id": "readOnlyMessage", "scopeDisposition": "retained-macos", "axDisposition": "inline-message-and-announcement-contract", "contracts": ["read-only-message"], "announcementIds": ["inline-message"] },
+    { "id": "referenceSearch", "scopeDisposition": "retained-macos", "axDisposition": "outline-and-preview-contract", "contracts": ["references"] },
+    { "id": "rename", "scopeDisposition": "retained-macos", "axDisposition": "native-input-and-candidate-contract", "contracts": ["rename"] },
+    { "id": "sectionHeaders", "scopeDisposition": "retained-macos", "axDisposition": "sticky-row-contract", "contracts": ["sticky-scroll"] },
+    { "id": "semanticTokens", "scopeDisposition": "retained-macos", "axDisposition": "text-attribute-contract", "contracts": ["main-text-surface"] },
+    { "id": "smartSelect", "scopeDisposition": "retained-macos", "axDisposition": "text-selection-command", "contracts": ["main-text-surface"] },
+    { "id": "snippet", "scopeDisposition": "retained-macos", "axDisposition": "text-edit-and-suggest-contract", "contracts": ["main-text-surface", "suggest"] },
+    { "id": "stickyScroll", "scopeDisposition": "retained-macos", "axDisposition": "passive-or-owned-collection-contract", "contracts": ["sticky-scroll"] },
+    { "id": "suggest", "scopeDisposition": "retained-macos", "axDisposition": "shared-focus-list-contract", "contracts": ["suggest"] },
+    { "id": "toggleHighContrast", "scopeDisposition": "retained-macos", "axDisposition": "theme-command-no-independent-node", "contracts": ["menus-toolbars-and-primitives"] },
+    { "id": "toggleTabFocusMode", "scopeDisposition": "retained-macos", "axDisposition": "command-state-with-announcement", "contracts": ["menus-toolbars-and-primitives"], "announcementIds": ["tab-focus-navigation", "tab-focus-insertion"] },
+    { "id": "tokenization", "scopeDisposition": "retained-macos", "axDisposition": "model-decoration-pipeline-no-independent-node", "contracts": ["main-text-surface"] },
+    { "id": "unicodeHighlighter", "scopeDisposition": "retained-macos", "axDisposition": "banner-widget-contract", "contracts": ["unicode-banner"] },
+    { "id": "unusualLineTerminators", "scopeDisposition": "retained-macos", "axDisposition": "native-modal-dialog-contract", "contracts": ["unusual-line-terminator-dialog"] },
+    { "id": "wordHighlighter", "scopeDisposition": "retained-macos", "axDisposition": "text-decoration-with-announcement", "contracts": ["main-text-surface"], "announcementIds": ["word-highlight-next", "word-highlight-previous"] },
+    { "id": "wordOperations", "scopeDisposition": "retained-macos", "axDisposition": "text-model-command", "contracts": ["main-text-surface"] },
+    { "id": "wordPartOperations", "scopeDisposition": "retained-macos", "axDisposition": "text-model-command", "contracts": ["main-text-surface"] }
+  ],
+  "featureClosureRule": {
+    "baselineFeatureEntries": 64,
+    "retainedMacOS": 62,
+    "laterIPadOS": 1,
+    "cut": 1,
+    "rule": "The ordered IDs and scope dispositions must equal F1-R3 sourceGraph.featureEntries exactly. Every retained entry has at least one widget contract or an explicit no-independent-node disposition; every referenced contract and announcement ID must exist."
+  },
+  "announcementBridge": {
+    "sourceAlert": {
+      "notification": "NSAccessibilityAnnouncementRequestedNotification",
+      "priority": "high"
+    },
+    "sourceStatus": {
+      "notification": "NSAccessibilityAnnouncementRequestedNotification",
+      "priority": "medium"
+    },
+    "targets": "Two stable NSAccessibilityElement announcer targets per channel are alternated on consecutive events, mirroring Monaco's two alert containers and two status containers.",
+    "maxMessageLengthRawUtf16": 20000,
+    "emptyMessagePolicy": "An empty source message updates the logical channel to empty and posts no spoken native announcement.",
+    "duplicatePolicy": "Every non-empty committed source event posts on the alternate channel target; the broker never coalesces equal consecutive messages.",
+    "stalePolicy": "An async event announces only if its editor, model, request generation, widget identity, and visible state still match at the main-actor commit barrier.",
+    "ordering": "Within one barrier: state mutation, layout/AX tree update, selection/focus notification, then announcement. High announcements precede medium announcements from the same barrier."
+  },
+  "proxyLifecycle": {
+    "ownership": "The editor strongly owns every NSAccessibilityElement proxy while visible.",
+    "identity": "A proxy key is feature ID plus semantic item ID plus model identity. Frame-only layout reuses the same object.",
+    "bounds": "Only viewport-visible interactive items plus two viewport heights of overscan have proxies. There is no per-document-line AX object graph.",
+    "geometry": "Frames are computed from the committed layout generation, converted to screen coordinates, and clipped to the visible editor or overflow host.",
+    "actionValidation": "Press revalidates editor, model, semantic item, request generation, enabled state, and command precondition before executing the retained command path.",
+    "removal": "If a removed proxy is focused or shared-focused, focus returns to the captured editor before removal; LayoutChanged then reports the remaining elements."
+  },
+  "acceptanceGate": {
+    "sourceOracle": "The pinned package and scope manifest reproduce every scan count, all 39 announcement-pattern occurrences with their 30 effective and 9 excluded dispositions, every widget contract source path, and the ordered 64-entry feature disposition list.",
+    "featureClosureOracle": "Feature IDs and scope dispositions equal F1-R3 exactly: 62 retained macOS, one later iPadOS, and one cut. Every retained entry resolves to an existing widget contract or an explicit no-independent-node disposition.",
+    "focusClosureOracle": "Every widget contract references only the eight declared focus-mode IDs; every declared focus mode is exercised by at least one contract fixture.",
+    "structuralOracle": "Accessibility Inspector snapshots match required role family, subrole, label, help, value, enabled, selected, checked, expanded, hierarchy, order, and screen frame for every fixture.",
+    "interactionOracle": "Keyboard-only and VoiceOver runs reach every retained action, reproduce focus transitions, and produce the same model, selection, command, and cancellation traces as the Monaco fixture.",
+    "announcementOracle": "The native trace matches the 30 effective direct alert/status source sites by trigger, localized message, empty-message behavior, priority mapping, ordering, equal-message duplication, cancellation, and 20,000-UTF-16 truncation; all nine excluded lexical occurrences produce no announcement.",
+    "hostWidgetOracle": "Host content/overlay widgets preserve their test NSView AX subtree; view-zone and glyph-margin fixtures remain absent from the AX tree.",
+    "largeDocumentOracle": "AX element count and retained proxy count remain bounded by viewport-visible editor widgets, independent of model line count.",
+    "performanceOracle": "Q1-R4 M0 official and M1 matched gates run both with accessibility off and with VoiceOver on. Native must not lose any already-locked pass against Monaco on the same machine and refresh mode.",
+    "failureRule": "Any missing action, stale announcement, duplicate dead node, wrong focus owner, wrong semantic state, unbounded AX graph, or performance regression fails A2."
+  },
+  "productStatus": "Design baseline only. No MonaCode product accessibility implementation exists and no A2 acceptance gate has passed."
+}

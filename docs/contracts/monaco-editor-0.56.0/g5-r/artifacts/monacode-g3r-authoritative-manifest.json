@@ -1,0 +1,390 @@
+{
+  "schemaVersion": 1,
+  "identity": {
+    "product": "MonaCode",
+    "revision": "G3-R-candidate",
+    "date": "2026-08-14",
+    "target": "arm64 macOS 26.0+ native Swift editor component",
+    "behaviorBaseline": "monaco-editor@0.56.0",
+    "status": "design-baseline-only"
+  },
+  "authorityArtifacts": [
+    {
+      "id": "monaco-editor-npm",
+      "version": "0.56.0",
+      "sha256": "b74bc4437205c194b779b0f21e5e7fcd3b4e9acbf3f7c8732a545d2059fb7412",
+      "use": "runtime behavior, public package files, registry and fixture oracle"
+    },
+    {
+      "id": "monaco-editor-core-npm",
+      "version": "0.56.0",
+      "sha256": "78e222c77e7ef6402ea0bfb20e02caad7b63156f5d2798bc3c398a8bb396f4ed",
+      "use": "source-port behavior and per-file source oracle"
+    },
+    {
+      "id": "monaco-public-dts",
+      "path": "monaco.d.ts",
+      "sha256": "fbbab04ba04224a04b2bc3243e536d1af6e26d14eb00fe8b3177bf3daef8d3f2",
+      "use": "public member, overload, enum and type surface oracle"
+    },
+    {
+      "id": "monaco-source-tag",
+      "commit": "13f0c872dcf352815cc28d92dfff496c9839ea5c",
+      "use": "release context, package build scripts and source files absent from the npm behavior artifact"
+    },
+    {
+      "id": "lsp-3.18-snapshot",
+      "commit": "8b9fab8f0912b694c795d05c1d5e9d357bee0193",
+      "specificationSha256": "67e09b5458884dad63631a4cc7f4ea72b659b023e950eb0f7fa7311355cde3d7",
+      "use": "frozen LSP protocol profile"
+    },
+    {
+      "id": "chrome-m0-runtime",
+      "version": "151.0.7922.109",
+      "v8": "15.1.206.16",
+      "binarySha256": "ca6036a1ad80092a2817f0dfd986782736fa7d7977c4922d37a3853b7342408c",
+      "use": "official Monaco M0 and matched M1 browser runtime"
+    },
+    {
+      "id": "vscode-codicons-license",
+      "repositoryCommit": "9991679e3d421e05577745f4e37d5745294fa3bc",
+      "artworkLicenseSha256": "af5e030844efddbc7ab00dcfea8b019703753d4d9f5172d727c533a492aec665",
+      "codeLicenseSha256": "9906940f61b1f0b533fa7d99baf55178b2808fbe113ea51dfbfad8572ccd5f2b",
+      "bundledFontSha256": "cc2472e239e17062e7760af87f8f5997720cc0d94aa014a615c418baaf6333a8",
+      "bundledCssSha256": "1ce4b06d1e3b7f1a877c4ff2d2c7060deadda126be5b80f2417d6eddfed68417",
+      "use": "Codicon artwork, font, code and Git Logo attribution profile"
+    }
+  ],
+  "currentLocalEnvironment": {
+    "observedDate": "2026-08-14",
+    "macOS": "26.6",
+    "macOSBuild": "25G72",
+    "xcode": "26.6",
+    "xcodeBuild": "17F113",
+    "sdk": "26.5",
+    "swift": "6.3.3",
+    "architecture": "arm64",
+    "hardware": "Apple M4 Pro, 20-core GPU, 48 GiB memory",
+    "metalSupport": "Metal 4",
+    "onlineDisplays": [
+      {
+        "name": "Built-in Liquid Retina XDR Display",
+        "connection": "Internal",
+        "nativePixels": "3456x2234",
+        "currentLogicalPoints": "1728x1117",
+        "backingScale": 2,
+        "requiredRefreshCellsHz": [60, 120]
+      }
+    ],
+    "externalDisplayCount": 0,
+    "rule": "Every benchmark run recollects QEnvironmentID. This snapshot identifies the current validation machine and never substitutes for run-time preflight."
+  },
+  "normativeDomains": [
+    {
+      "domain": "provenance",
+      "layers": [
+        { "revision": "P1-R", "file": "provenance-p1r-final-artifact-closure.html", "sha256": "54c547bb3d8ef5979eaf17b9f1afd300346ef4b3c2894258215c2be2c9ea762f", "mode": "final artifact authority; replaces all dev-core provenance claims" }
+      ]
+    },
+    {
+      "domain": "model",
+      "layers": [
+        { "revision": "M1-R", "file": "model-m1r-regex-snapshot-closure.html", "sha256": "44e2071032046f374cef2df1757efd55fb079465e7374aa142fb76b9f6a1263d", "mode": "storage, raw UTF-16, regex, search and snapshot base" },
+        { "revision": "M1-R2", "file": "model-m1r2-public-surface-closure.html", "sha256": "eaaa4ed865d56b0eabc745a38af7ab4dde8598d079e6e7788d4f0b44eebf9666", "mode": "public-surface and actor overlay" }
+      ]
+    },
+    {
+      "domain": "base-values-events",
+      "layers": [
+        { "revision": "B1-R", "file": "base-b1r-value-event-uri-closure.html", "sha256": "c266ab70338d2e63ae05fde211bfb5ae700af43683c0fb5752116392be9c4e16", "mode": "final base runtime contract" }
+      ]
+    },
+    {
+      "domain": "concurrency-transactions-validity",
+      "layers": [
+        { "revision": "A+", "file": "concurrency-a-adversarial.html", "sha256": "2f568ea7e366b43dad4415e04e262e671d80af9a6b688a2618a238ab92d3c5d0", "mode": "MainActor live ownership; TextKit clauses are superseded by V1-R3/R4" },
+        { "revision": "A+-base", "file": "transactions-validity-recovery.html", "sha256": "580b9777cdf44d1d076ed032efa1967350681dea679b2e5c746863fd56588481", "mode": "transaction base only where R1 does not replace a clause" },
+        { "revision": "R1", "file": "transactions-validity-adversarial.html", "sha256": "eb9aeff963d20656c3041ccb101a580dae986c33199d89217f7f78925544d6db", "mode": "final DependencyStamp, reconciliation, cross-model event and recovery overlay" }
+      ]
+    },
+    {
+      "domain": "native-input",
+      "layers": [
+        { "revision": "I3-R", "file": "native-input-i3r-adversarial.html", "sha256": "f09e92080db991b34ee405f3ad71e2ebd20b26134cd2d770ac1ff7046bf3da41", "mode": "NSTextInputClient and input gateway base" },
+        { "revision": "I3-R2", "file": "native-input-i3r2-keybinding-closure.html", "sha256": "549ac32b0ea90ce6cb07b4abd6fdf17b604b0fc93edd44cf04ed11d7af0e6db3", "mode": "keybinding and chord overlay" },
+        { "revision": "I3-R3", "file": "native-input-i3r3-composition-arbitration-closure.html", "sha256": "aae7cd7e1399dee147216763b27df662e14d3545346d7aade0d72675d46fef2d", "mode": "composition arbitration overlay" },
+        { "revision": "I3-R4", "file": "native-input-i3r4-public-event-pointer-scroll-closure.html", "sha256": "2cea37deef73465c57d948a7ebc4b38f1c42c05699db3291a1ccc03218a29e3d", "mode": "public event, pointer, scroll and menu overlay" }
+      ]
+    },
+    {
+      "domain": "clipboard-drag-drop-services",
+      "layers": [
+        { "revision": "I4-R", "file": "transfer-i4r-adversarial.html", "sha256": "d0277b34b1f5169005dc204fde7f49b7342e360a9fcbad3f01f7dbbc7e0c7fac", "mode": "final three-layer transfer contract" }
+      ]
+    },
+    {
+      "domain": "layout-rendering",
+      "layers": [
+        { "revision": "V1-R3", "file": "layout-v1r3-final-closure.html", "sha256": "c40cfd6610a235468bc7537ec0df10318b53ddaa01e4ab711ed6ff7c4909965b", "mode": "Core Text projection, geometry and CG/Metal implementation base" },
+        { "revision": "V1-R4", "file": "layout-v1r4-cross-engine-closure.html", "sha256": "85c81faec54edc30c6a3e1457e01a0ddfdc2427d17cfacad5821a0f17d3b131a", "mode": "cross-engine equivalence and conditional-Metal overlay" }
+      ]
+    },
+    {
+      "domain": "language-lsp",
+      "layers": [
+        { "revision": "L2-R", "file": "language-l2r-provider-lsp-closure.html", "sha256": "1f3b77cb74fa4087d30d9467a6f483a27b9503fe8299ec0c8b6e145d970defb9", "mode": "30 language surfaces and LSP mapping base" },
+        { "revision": "L2-R2", "file": "language-l2r2-framing-closure.html", "sha256": "4a658106c23245b69b112afe84164d593b7c14714b94b99a023f88e902bfb5ee", "mode": "transport and framing overlay" },
+        { "revision": "L2-R3", "file": "language-l2r3-wire-error-closure.html", "sha256": "3b7e821d8e78831ddd709e886f9c1af530ab285b350d8611c3c8dbbfddd0bed2", "mode": "wire encoding and error-direction overlay" }
+      ]
+    },
+    {
+      "domain": "feature-public-surface",
+      "layers": [
+        { "revision": "F1-R", "file": "features-f1r-complete-surface-closure.html", "sha256": "13f40c3d33310272974c4f0e72cee81dcc0f2497629d3b8704fd4640c85e1cc6", "mode": "feature and registry semantic base" },
+        { "revision": "F1-R2", "file": "features-f1r2-instance-option-domain-closure.html", "sha256": "97c40763710d2be2bdc1c7d1a1c579277cccbd44745fdac5cc1d7fc60f7c2b32", "mode": "instance, options and native-domain overlay" },
+        { "revision": "F1-R3", "file": "features-f1r3-machine-manifest-closure.html", "sha256": "628cfa1b467f5215f0c32c7d8adb4cbf7c70773309c81b630684e8c3bcc1ac9c", "mode": "final item identity, disposition and instance-surface overlay" }
+      ]
+    },
+    {
+      "domain": "theme-token-icon",
+      "layers": [
+        { "revision": "T1-R", "file": "theme-t1r-registry-token-icon-closure.html", "sha256": "4ddbd09bd6c753de2f922918b42474e0150fd5cfcb35550caee1de27943369be", "mode": "final color, token, icon and builtin theme contract" }
+      ]
+    },
+    {
+      "domain": "accessibility",
+      "layers": [
+        { "revision": "A1-R", "file": "accessibility-a1r-native-text-contract-closure.html", "sha256": "6ffcae4edfd2d8d4fdcf864030c74ea3529ba7e61a30971eed4d198a05e73f4b", "mode": "native text surface base" },
+        { "revision": "A1-R2", "file": "accessibility-a1r2-selector-attribute-action-closure.html", "sha256": "03f2212135f5bc99105640f146595f34d404aed4436c865e5d79d22afbf473c5", "mode": "selector, attribute and action overlay" },
+        { "revision": "A2-R2", "file": "accessibility-a2r-native-widget-focus-closure.html", "sha256": "65e3736cad4e83f4b8b2e34f1cabea89d902fa399ab22cca3c76d2327f451145", "mode": "widget, focus, feature and announcement overlay" }
+      ]
+    },
+    {
+      "domain": "verification",
+      "layers": [
+        { "revision": "Q1-R", "file": "verification-q1r-differential-performance-closure.html", "sha256": "9f678412ff2dd4b704c040feade4f8a2067f95e051faa59c52bd89b718b21765", "mode": "C01-C08 and P00-P13 base" },
+        { "revision": "Q1-R2", "file": "verification-q1r2-measurement-closure.html", "sha256": "a44fec4d6b815191ff83fcb699508472e0e5cf5521f8087db32c61440fd5d2e0", "mode": "dual baselines, collectors and corpus overlay" },
+        { "revision": "Q1-R3", "file": "verification-q1r3-statistical-window-closure.html", "sha256": "4d771e96db02f595944fc4e0890d602585d25cd82f67694fc03bbaff97f48ffd", "mode": "intersection-union and deterministic paired-bootstrap overlay" },
+        { "revision": "Q1-R4", "file": "verification-q1r4-environment-font-cold-closure.html", "sha256": "c38cc2da35e360176d7137142274763e9ef5069418838a7c2b2c83a5802b9e22", "mode": "environment, font and cold-window overlay" }
+      ]
+    }
+  ],
+  "machineArtifacts": [
+    {
+      "id": "F1-R3-scope",
+      "file": "monaco-0.56.0-f1r3-scope-manifest.json",
+      "sha256": "31d79fd334a6e461e6ee03726a08a40e6f0f9978cbabe04d6096fcca1a79c1d5"
+    },
+    {
+      "id": "F1-R3-instance-surface",
+      "file": "monaco-0.56.0-f1r3-instance-surface-manifest.json",
+      "sha256": "1163834f91fbf3f3ecaeb334e16160be25c7703ee6295b2bc82aad96d3c1ab5e"
+    },
+    {
+      "id": "A2-R2-accessibility",
+      "file": "monaco-0.56.0-a2r-accessibility-manifest.json",
+      "sha256": "f8f8123c4c8d426106c40ea71ba64d08940d3961e57db0a0bbb276a87e2432da"
+    }
+  ],
+  "deliveryScope": {
+    "required": [
+      "Swift Package",
+      "AppKit code editor",
+      "AppKit diff editor",
+      "AppKit multi-file diff editor",
+      "SwiftUI wrapper",
+      "sample host",
+      "conformance fixtures",
+      "differential benchmark harness",
+      "failure-injection harness"
+    ],
+    "deployment": {
+      "architecture": ["arm64"],
+      "minimumOS": "macOS 26.0",
+      "swiftConcurrency": "Swift 6.3 strict concurrency",
+      "productionLinkedDependencies": "Apple system frameworks plus repository-owned MonaCode code and licensed Codicon assets"
+    },
+    "later": [
+      "iOS 26+ UIKit adapter",
+      "iPadOS 26+ UIKit adapter",
+      "touch and software-keyboard contracts",
+      "mobile clipboard, drag/drop, accessibility and device-performance baselines"
+    ]
+  },
+  "surfaceCounts": {
+    "model": { "declarations": 73, "uniqueMembers": 70, "cuts": 0 },
+    "editorInstances": {
+      "IEditor": { "declarations": 43, "uniqueMembers": 40 },
+      "ICodeEditor": { "declarations": 137, "uniqueMembers": 130 },
+      "IStandaloneCodeEditor": { "declarations": 141, "uniqueMembers": 133 },
+      "IDiffEditor": { "declarations": 60, "uniqueMembers": 52 },
+      "IStandaloneDiffEditor": { "declarations": 65, "uniqueMembers": 55 },
+      "cuts": 0
+    },
+    "features": { "baseline": 64, "retainedMacOS": 62, "laterIPadOS": 1, "cutWebGPUDebug": 1 },
+    "actions": { "baseline": 167, "retained": 166, "cut": 1 },
+    "pureTextActions": { "baseline": 127, "retained": 126, "cut": 1 },
+    "commands": { "baseline": 454, "retained": 453, "cut": 1 },
+    "contributions": { "baseline": 53, "retainedMacOS": 52, "laterIPadOS": 1 },
+    "keybindings": 379,
+    "menus": 18,
+    "menuItems": 121,
+    "menuCommandDescriptors": 21,
+    "options": { "baseline": 174, "retainedInput": 157, "computedOnly": 6, "cut": 11 },
+    "runtimeNamespaces": {
+      "topLevel": { "baseline": 19, "retainedNativeMapping": 14, "retainedAndExtendedLsp": 1, "cutBuiltinLanguagePack": 4 },
+      "editor": { "baseline": 68, "retainedNativeMapping": 63, "nativeReplacement": 4, "cutWebWorker": 1 },
+      "languages": { "baseline": 57, "retainedNativeMapping": 56, "cutMonarch": 1 },
+      "lsp": { "baseline": 4, "retainedNativeMapping": 4 }
+    },
+    "languageInfrastructure": { "surfaces": 30, "lspBacked": 25, "directOnly": 5 },
+    "languageContent": { "definitionEntriesCut": 81, "descriptorsCut": 90, "plainTextFallbackMetadataRetained": 1, "builtinPacksCut": 4, "shippedLanguageImplementations": 0 },
+    "theme": { "colors": 431, "productIcons": 776, "builtinThemes": 4 },
+    "accessibility": { "widgetContracts": 24, "focusModes": 8, "announcementPatternOccurrences": 39, "effectiveAnnouncementSites": 30, "excludedAnnouncementOccurrences": 9 },
+    "verification": { "correctnessGates": 8, "performanceMetrics": 14, "performanceBaselines": 2 }
+  },
+  "explicitCuts": {
+    "compatibility": [
+      "JavaScript runtime compatibility",
+      "DOM, CSS selector, WebWorker, NPM, AMD and global API compatibility",
+      "source-level TypeScript compatibility",
+      "non-Apple platforms",
+      "x86_64"
+    ],
+    "rendererAndEditor": [
+      "TextKit production layout or rendering backend",
+      "WebGPU renderer and WebGPU debug action",
+      "createWebWorker",
+      "SVG and DOM renderer selectors"
+    ],
+    "editorOptions": [
+      "disableLayerHinting",
+      "domReadOnly",
+      "editContext",
+      "experimentalGpuAcceleration",
+      "experimentalWhitespaceRendering",
+      "extraEditorClassName",
+      "selectionClipboard",
+      "useShadowDOM",
+      "wordSegmenterLocales",
+      "editorClassName",
+      "effectiveEditContextEnabled"
+    ],
+    "languageContent": [
+      "setMonarchTokensProvider",
+      "Monarch",
+      "Tree-sitter",
+      "81 builtin language definition entries",
+      "90 builtin language content descriptors",
+      "css, html, json and typescript language feature packs",
+      "bundled LSP servers"
+    ],
+    "product": [
+      "extension host",
+      "Workbench",
+      "file tree",
+      "source control",
+      "terminal",
+      "AI",
+      "collaboration",
+      "rich-text model"
+    ]
+  },
+  "nativeReplacements": [
+    "editor.colorize",
+    "editor.colorizeElement",
+    "editor.colorizeModelLine",
+    "editor.createMultiFileDiffEditor",
+    "AppKit controls and NSAccessibilityElement proxies for retained web widgets",
+    "NSAlert sheet for unusual line terminators",
+    "Core Text native geometry in place of Blink/HarfBuzz numeric geometry"
+  ],
+  "baselineInertPaths": [
+    "StandaloneAccessbilitySignalService audio output",
+    "StandaloneNotificationService status output",
+    "Accessible View providers without registered standalone entry actions",
+    "hover Accessible View hint without registered accessibility.verbosity.hover configuration"
+  ],
+  "architecture": {
+    "modelTruth": "Persistent raw-UTF16 Piece Tree on MainActor live state",
+    "mutation": "All live changes enter one transaction gateway. Commits touching open MonaCode models use prepare, validate, atomic apply and deterministic event delivery. Closed-file or resource operations execute only through a host capability that advertises the required atomicity; otherwise the whole operation aborts before mutation.",
+    "projection": "Synchronous ViewGraph and vertical indexes are the exact editor coordinate domain",
+    "typography": "Core Text is the only production shaping, line-layout and hit-test authority",
+    "rendering": "Core Graphics first; Metal is implemented only after a renderer-owned Q1 gate fails; both consume immutable LineLayoutRecord geometry",
+    "input": "Custom NSTextInputClient, keybinding resolver, pointer/scroll adapter and transfer pipeline; NSTextView never owns model truth",
+    "language": "Full provider registry and LSP 3.18 client infrastructure with plain-text fallback; host supplies server instances and byte transports",
+    "accessibility": "A1-R2 raw-UTF16 text surface plus A2-R2 native widgets, proxies, focus modes and announcement broker",
+    "dependencies": "No third-party production runtime"
+  },
+  "equivalenceDomains": {
+    "exact": [
+      "ITextModel observable semantics and public member coverage",
+      "base Position, Range, Selection, URI, event and cancellation semantics",
+      "projection, folding, injected-text and editor state semantics",
+      "commands, actions, keybindings, menus, options and retained feature behavior",
+      "language/provider registry architecture and the frozen LSP profile",
+      "theme color, token, icon and builtin-theme registry semantics",
+      "model, selection, command, cancellation and event traces for native input and widgets"
+    ],
+    "nativeAdapted": [
+      "Core Text geometry is internally self-consistent and Unicode-correct; it is not required to equal Blink/HarfBuzz numeric coordinates",
+      "AppKit control roles and focus behavior replace DOM/ARIA control mechanics while retaining observable actions and state",
+      "Core Graphics and conditional Metal pixels use native goldens and share one geometry record"
+    ],
+    "performance": "For every Q1-R4 environment cell, native N must pass the intersection-union verdict against both M0 official Monaco and M1 capability-matched Monaco. Refresh rate selects frame budget; it never lowers the relative no-regression rule."
+  },
+  "performanceDecision": {
+    "baselines": ["M0-official", "M1-capability-matched"],
+    "requiredRefreshCellsHz": [60, 120],
+    "frameBudgetsMilliseconds": { "60": 16.666666666666668, "120": 8.333333333333334 },
+    "metalTrigger": "Only a failed renderer-owned metric after a correct full Core Graphics implementation triggers Metal work.",
+    "metalNotTriggered": "When every renderer-owned gate passes with Core Graphics, Metal is N/A and absent from the product.",
+    "absoluteTimeout": "No product-specific absolute timeout. External abort invalidates the whole block, and missing required valid blocks prevents a release verdict."
+  },
+  "licensingProfile": {
+    "monacoCode": "MIT; retain copyright and license notice in copies or substantial portions",
+    "codiconArtworkAndFont": "CC BY 4.0; retain attribution, license reference and modification notice when distributed",
+    "codiconGitLogoException": "The upstream LICENSE identifies the Git Logo by Jason Long as CC BY 3.0; preserve that attribution and license when the glyph is distributed.",
+    "codiconGeneratorAndCode": "MIT",
+    "thirdPartyNotices": "Preserve notices for every copied test, specification or asset actually distributed"
+  },
+  "authorityRules": {
+    "global": "This manifest and its companion G3-R page replace G1-R and G2-R.",
+    "withinDomain": "Later layers in one normativeDomains entry replace only conflicting clauses from earlier layers; all non-conflicting earlier clauses remain active.",
+    "crossDomainOverrides": [
+      "P1-R replaces every dev-core identity or provenance claim in every domain.",
+      "F1-R3 and its scope and instance manifests own item identity, count, declaration multiplicity, inheritance, order and disposition for public editor instances, namespaces, options, registries, features and language content.",
+      "V1-R3/R4 replace every TextKit production backend, alternate typography backend and stale display-environment clause in architecture, transaction and input history.",
+      "I3-R4 owns public keyboard, pointer, scroll and context-menu event order; A1-R2 and A2-R2 call the same retained action paths.",
+      "L2-R3 owns LSP wire encoding, framing error direction and close policy.",
+      "A2-R2 owns retained feature accessibility disposition and must remain set-equal to F1-R3.",
+      "Q1-R4 owns benchmark environment identity, font provenance and cold-window handling; it retains the non-conflicting gates from Q1-R through Q1-R3."
+    ],
+    "sourceCounterexample": "A conflict with a pinned artifact, public SDK contract, protocol snapshot or reproducible local probe invalidates the affected G3-R clause and requires a new manifest revision; prose never silently overrides source fact.",
+    "hashMismatch": "A missing file or SHA-256 mismatch invalidates G3-R and blocks phase planning.",
+    "scopeChange": "Any added, removed or reclassified feature, option, namespace key, platform, language content item or acceptance gate creates a new global revision before phase planning resumes."
+  },
+  "empiricalStatus": {
+    "productSourceFiles": 0,
+    "productExecutables": 0,
+    "productGatesPassed": 0,
+    "correctness": "not-run",
+    "performance": "not-run",
+    "accessibility": "not-run",
+    "inputIme": "not-run",
+    "layoutCg": "not-run",
+    "layoutMetal": "not-triggered-and-not-implemented",
+    "languageLsp": "not-run",
+    "diff": "not-run",
+    "theme": "not-run"
+  },
+  "designClosure": {
+    "unresolvedScopeDecisions": [],
+    "phasePlanningAllowedWhen": [
+      "The user adopts G3-R",
+      "All normative file hashes and all three machine artifact hashes validate",
+      "No new source counterexample remains open"
+    ],
+    "phaseRule": "Phases may change implementation order only. They may not change this feature set, cuts, native adaptations, architecture decisions or acceptance thresholds."
+  }
+}

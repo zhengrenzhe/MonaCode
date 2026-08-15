@@ -1,0 +1,68 @@
+<style>
+  :root{--ok:#059669;--warn:#d97706;--bad:#dc2626;--blue:#2563eb;--violet:#7c3aed;--cyan:#0891b2}
+  .hero{display:flex;gap:13px;align-items:flex-start;padding:14px;border:2px solid var(--ok);border-radius:14px;background:color-mix(in srgb,var(--ok) 6%,var(--surface));margin:12px 0 15px}.mark{width:66px;height:66px;flex:0 0 66px;display:grid;place-items:center;border-radius:13px;background:var(--ok);color:#fff;font-weight:900}.hero h3{margin:0 0 5px;font-size:14px}.hero p{margin:0;color:var(--muted);font-size:8.2px;line-height:1.5}
+  .section{margin-top:15px}.section h3{margin:0 0 8px;font-size:12px}.hits{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.hit{padding:9px;border:1px solid var(--warn);border-radius:10px;background:var(--surface)}.hit b{display:block;font-size:8.4px;margin-bottom:3px}.hit span{display:block;color:var(--muted);font-size:6.9px;line-height:1.43}.hit em{font-style:normal;color:#b45309;font-weight:800}
+  .counts{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:7px}.count{padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}.count strong{display:block;font-size:19px;color:var(--blue)}.count b{display:block;font-size:7.5px}.count span{display:block;margin-top:3px;color:var(--muted);font-size:6.3px;line-height:1.4}
+  .matrix{border:1px solid var(--border);border-radius:11px;overflow:hidden}.row{display:grid;grid-template-columns:.9fr 1.05fr 1.6fr 1.05fr;border-top:1px solid var(--border)}.row:first-child{border-top:0;font-weight:800;background:color-mix(in srgb,var(--accent) 6%,var(--surface))}.cell{padding:7px 8px;border-left:1px solid var(--border);font-size:6.9px;line-height:1.45}.cell:first-child{border-left:0}.yes{color:#047857;font-weight:750}.no{color:#b91c1c;font-weight:750}
+  .cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.card{padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}.card h4{margin:0 0 5px;font-size:9px}.card ul{margin:0 0 0 14px;padding:0;font-size:7px;line-height:1.5}.artifact{padding:11px;border:1px solid var(--blue);border-radius:11px;background:color-mix(in srgb,var(--blue) 5%,var(--surface));font-size:7px;line-height:1.52}.artifact code{font-size:6.3px;word-break:break-all}.artifact a{font-weight:800;color:var(--blue)}.source{margin-top:12px;padding:9px 10px;border-left:3px solid var(--blue);background:color-mix(in srgb,var(--blue) 5%,var(--surface));color:var(--muted);font-size:7px;line-height:1.48}
+  @media(max-width:1050px){.hits{grid-template-columns:1fr 1fr}.counts{grid-template-columns:repeat(3,1fr)}.cards{grid-template-columns:1fr}.row{grid-template-columns:.65fr .9fr 1.15fr .8fr}.cell{padding:5px 4px;font-size:6.2px}}
+</style>
+
+<h2>完整功能面第九轮攻击：F1-R4 公开声明图闭包</h2>
+<p class="subtitle">F1-R3 的运行时 registry 与 disposition 继续有效；本页修复“运行时 key 集合等于完整 Swift 公共 API”的错误。与旧页冲突时，公开声明路径、类型裁剪和 LSP transport disposition 以 F1-R4 为准。</p>
+
+<div class="hero"><div class="mark">F1-R4</div><div><h3>148 个 runtime values 之外还有 407 个公开声明路径；总计 555 项全部有唯一处置</h3><p>锁定 monaco.d.ts 使用其构建版本 TypeScript 5.9.3 解析。434 个路径保留为 Swift native mapping/adaptation；121 个路径由既有 language-pack、Monarch、WebWorker/DOM/global policy、host-owned transport 与 TypeScript source-compatibility cuts 删除。实例 manifest 负责成员顺序，F1-R4 declaration hash 负责完整签名形状。</p></div></div>
+
+<div class="section"><h3>本轮十个确定命中</h3><div class="hits">
+  <div class="hit"><b>70 · 19/68/57/4 就是公开 API</b><span>这些数只覆盖 148 个 runtime values。<em>d.ts export graph 实际有 555 个声明路径。</em></span></div>
+  <div class="hit"><b>71 · 只数 export keyword</b><span>ambient editor namespace 有 4 个隐式公开 helper。<em>TypeChecker 读到 229，语法扫描初版只读到 225。</em></span></div>
+  <div class="hit"><b>72 · 删四个 pack 根节点已完整</b><span>css/html/json/typescript 下另有 82 个公开成员。<em>82 项逐路径标记 cut。</em></span></div>
+  <div class="hit"><b>73 · LSP 四个 key 全部 native retained</b><span>三个 key 是 iframe、Worker、具体 WebSocket 构造器。<em>与 L2-R2 host-owned transport 冲突；仅 client retained/extended。</em></span></div>
+  <div class="hit"><b>74 · worker 不在 runtime 就不存在</b><span>d.ts 根仍导出 worker namespace 与 3 个 mirror/context interfaces。<em>根与三成员全部显式 cut。</em></span></div>
+  <div class="hit"><b>75 · 133/55 名称清单冻结签名</b><span>成员名不含参数、返回、可选性与 overload shape。<em>F1-R4 对完整 interface declaration 固定 SHA。</em></span></div>
+  <div class="hit"><b>76 · 所有 type alias 都要翻成 Swift</b><span>5 个 option helper 只执行 keyof/mapped/conditional/infer/typeof 编译期计算。<em>消费者 API 保留类型语义，helper identity 删除。</em></span></div>
+  <div class="hit"><b>77 · 单一 parser 自证足够</b><span>AST 枚举与 TypeChecker exports 是两条独立路径。<em>十个 namespace set 全等，parse diagnostics=0。</em></span></div>
+  <div class="hit"><b>78 · global cut 无需枚举</b><span>d.ts 仍扩展 JsonRpcSerializerMapper、MonacoEnvironment 与 global monaco。<em>3 个 global paths 全部显式 cut。</em></span></div>
+  <div class="hit"><b>79 · B1 worker protocol 可继续保留</b><span>B1 把 3 个 worker types 写成 Swift protocols，与全局 WebWorker cut 冲突。<em>F1-R4 明确覆盖 B1 该行；四个 worker paths 全 cut。</em></span></div>
+</div></div>
+
+<div class="section"><h3>公开声明图唯一数量口径</h3><div class="counts">
+  <div class="count"><strong>555</strong><b>all declaration paths</b><span>148 runtime + 407 non-runtime。</span></div>
+  <div class="count"><strong>36</strong><b>top level</b><span>20 value + 16 type；含 type-only worker。</span></div>
+  <div class="count"><strong>229</strong><b>editor</b><span>33 function、140 interface、21 type、26 enum、6 class、3 const。</span></div>
+  <div class="count"><strong>198</strong><b>languages</b><span>含 4 个 deprecated pack aliases。</span></div>
+  <div class="count"><strong>3/4</strong><b>worker / LSP</b><span>worker 全 cut；LSP client 1 retained、transport 3 cut。</span></div>
+  <div class="count"><strong>19/22/21/20</strong><b>pack members</b><span>css/html/json/typescript；合计 82 cut。</span></div>
+  <div class="count"><strong>434</strong><b>retained paths</b><span>409 direct + 25 adaptation/replacement/overlay。</span></div>
+  <div class="count"><strong>121</strong><b>cut paths</b><span>每项由已接受的范围边界推出。</span></div>
+  <div class="count"><strong>5</strong><b>TS-only helpers</b><span>无独立运行时值或数据 shape。</span></div>
+  <div class="count"><strong>12/3/1</strong><b>native adapters</b><span>AppKit types / events / async。</span></div>
+  <div class="count"><strong>4</strong><b>native replacements</b><span>colorize×3 + multi-file diff。</span></div>
+  <div class="count"><strong>3</strong><b>global cuts</b><span>serializer mapper / environment / monaco alias。</span></div>
+</div></div>
+
+<div class="section"><h3>声明处置规则</h3><div class="matrix">
+  <div class="row"><div class="cell">类别</div><div class="cell">路径数</div><div class="cell">Swift 合同</div><div class="cell">失败条件</div></div>
+  <div class="row"><div class="cell"><b>Direct native mapping</b></div><div class="cell">409</div><div class="cell">baseline path 与稳定 Swift symbol 一对一记录；值域、字段、optional、callback、错误与 observable semantics 保留；TS syntax 换成 enum/struct/protocol/closure</div><div class="cell no">合并、缺路径或 silent no-op</div></div>
+  <div class="row"><div class="cell"><b>Native adaptation</b></div><div class="cell">25</div><div class="cell">12 AppKit type、3 immutable native event、1 async、4 native replacement、LSP umbrella/client 2、含 11 member cuts 的 declarations 3</div><div class="cell no">适配后丢行为</div></div>
+  <div class="row"><div class="cell"><b>Language content cuts</b></div><div class="cell">100</div><div class="cell">4 pack roots + 82 nested members + 4 deprecated aliases + 10 Monarch paths 全部不出现在 Swift module</div><div class="cell no">任一 symbol 泄漏</div></div>
+  <div class="row"><div class="cell"><b>Web / TS / global cuts</b></div><div class="cell">21</div><div class="cell">Web runtime policy 3、Web transport 3、WebWorker API/namespace 7、TypeScript-only helper 5、global augmentation 3；能力由已锁 native boundary 覆盖或明确删除</div><div class="cell no">重新引入 DOM/Worker/global/network ownership</div></div>
+  <div class="row"><div class="cell"><b>Runtime cross-check</b></div><div class="cell">19/68/57/4</div><div class="cell">d.ts runtime-value sets 与 F1-R3 四个 namespace sets 逐 ID 全等；F1-R4 只覆盖三项 LSP disposition</div><div class="cell no">任一 missing/extra/drift</div></div>
+</div></div>
+
+<div class="section"><h3>机器验收合同</h3><div class="cards">
+  <div class="card"><h4>Source graph</h4><ul><li>固定 d.ts 与 parser tar/runtime SHA</li><li>AST 与 TypeChecker 双枚举 namespace exports</li><li>alias export 解析到真实 class/interface/type declaration</li><li>完整声明 text hash 固定 overload/optional/return shape</li><li>runtime value set 独立与 F1-R3 比对</li></ul></div>
+  <div class="card"><h4>Native build</h4><ul><li>生成同 schema native declaration manifest</li><li>434 retained paths 全存在、121 cut paths 全缺席</li><li>member cuts 不得从 retained declaration 泄漏</li><li>每个 adaptation 指向一个 typed Swift symbol</li><li>每条 callable/DTO 进入 compile fixture 与 behavior trace</li></ul></div>
+  <div class="card"><h4>Current status</h4><ul><li>source public manifest 已生成</li><li>双 parser set equality 已通过</li><li>instance manifest 与独立 AST 全等</li><li>native declaration manifest 不存在</li><li>产品 compile/behavior gates 为 0</li></ul></div>
+</div></div>
+
+<div class="section"><h3>机器可核对工件</h3><div class="artifact">
+  <a href="./monaco-0.56.0-f1r4-public-declaration-manifest.json">打开 monaco-0.56.0-f1r4-public-declaration-manifest.json</a><br>
+  文件 SHA-256（含结尾 LF）：<code>b6cb6c73add7739821f1daafa12efc520561d6f7aaeafd841209394dbe990a34</code>。<br>
+  TypeScript parser：5.9.3；npm tar SHA-256 <code>10e108c9cf7d5f2879053dff18515fb405abf2ccef63eaaf017d9c571687a1d3</code>；typescript.js SHA-256 <code>3ae902c92cc44dace175c0e69e13a4b0899f6983c6121d76b9ab8dd5795e7675</code>。<br>
+  JSON 中 <code>productStatus</code> 固定为 design scope artifact only；它不是 native API 或 conformance 结果。
+</div></div>
+
+<div class="source"><b>事实索引：</b>锁定 monaco.d.ts SHA-256 <code>fbbab04b…d3f2</code>，其 package.json devDependency 指向 TypeScript ^5.9.3；本轮固定 5.9.3。语法树逐 namespace 枚举与 TypeChecker getExportsOfModule 独立得出 top 36、editor 229、languages 198、worker 3、LSP 4、四个 pack 19/22/21/20、global 3，十个 name sets 零差异且 parse diagnostics 为 0。独立 TypeScript AST 同时逐数组复核 IEditor、ICodeEditor、IStandaloneCodeEditor、IDiffEditor、IStandaloneDiffEditor，与 F1-R3 instance manifest 零差异。当前没有 MonaCode native public declarations 或产品 conformance 结果。</div>
+
+<div class="section"><div class="decision" data-choice="accept-f1r4"><h4>F1-R4 作为 G3 修订输入</h4><span>用完整公开声明图替代 runtime-key-only 的公共 API 口径；继续反向攻击后再提交全局合同。</span></div></div>

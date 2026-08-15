@@ -1,0 +1,47 @@
+<style>
+  :root{--ok:#059669;--warn:#d97706;--bad:#dc2626;--blue:#2563eb;--violet:#7c3aed}
+  .hero{display:flex;gap:13px;align-items:flex-start;padding:14px;border:2px solid var(--ok);border-radius:14px;background:color-mix(in srgb,var(--ok) 6%,var(--surface));margin:12px 0 15px}.mark{width:62px;height:62px;flex:0 0 62px;display:grid;place-items:center;border-radius:13px;background:var(--ok);color:#fff;font-weight:900}.hero h3{margin:0 0 5px;font-size:14px}.hero p{margin:0;color:var(--muted);font-size:8.3px;line-height:1.5}
+  .section{margin-top:15px}.section h3{margin:0 0 8px;font-size:12px}.hits,.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.hit,.card{padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}.hit{border-color:var(--warn)}.hit b,.card h4{display:block;margin:0 0 4px;font-size:8.8px}.hit span{display:block;color:var(--muted);font-size:7px;line-height:1.45}.hit em{font-style:normal;color:#b45309;font-weight:800}.card ul{margin:0 0 0 14px;padding:0;font-size:7px;line-height:1.5}
+  .flow{display:grid;grid-template-columns:1fr 20px 1fr 20px 1fr 20px 1fr;gap:4px;align-items:stretch;padding:11px;border:1px solid var(--border);border-radius:11px;background:var(--surface)}.node{padding:8px;border:1px solid var(--blue);border-radius:9px;font-size:7px;line-height:1.43}.node b{display:block;font-size:8.2px}.arrow{display:grid;place-items:center;color:var(--muted);font-size:14px}.matrix{border:1px solid var(--border);border-radius:11px;overflow:hidden}.row{display:grid;grid-template-columns:.65fr 1.2fr 1.5fr 1.05fr;border-top:1px solid var(--border)}.row:first-child{border-top:0;font-weight:800;background:color-mix(in srgb,var(--accent) 6%,var(--surface))}.cell{padding:7px 8px;border-left:1px solid var(--border);font-size:7px;line-height:1.44}.cell:first-child{border-left:0}.yes{color:#047857;font-weight:750}.no{color:#b91c1c;font-weight:750}.source{margin-top:12px;padding:9px 10px;border-left:3px solid var(--blue);background:color-mix(in srgb,var(--blue) 5%,var(--surface));color:var(--muted);font-size:7px;line-height:1.48}
+  @media(max-width:960px){.hits,.cards{grid-template-columns:1fr}.flow{grid-template-columns:1fr}.arrow{transform:rotate(90deg)}.row{grid-template-columns:.55fr 1fr 1fr .8fr}.cell{padding:5px 4px;font-size:6.3px}}
+</style>
+
+<h2>LSP 传输收敛：L2-R2 帧与生命周期合同</h2>
+<p class="subtitle">L2-R 的 30/25/5 provider 架构保持不变；本页补齐字节帧、JSON-RPC、transport ownership 与纯文本身份。发生冲突时以 L2-R2 为准。</p>
+
+<div class="hero"><div class="mark">L2-R2</div><div><h3>协议解析只读 bytes；model positions 只用 raw UTF-16；进程启动不是 LSP 前提</h3><p>FrameCodec、RawUTF16JSONCodec、JSONRPCSession、MonaMessageTransport 四层分离。macOS 宿主可注入 stdio process；in-memory、socket 或远端 transport 使用同一 byte contract；长期 iOS/iPadOS 不依赖 Process。</p></div></div>
+
+<div class="section"><h3>命中的六个协议反例</h3><div class="hits">
+  <div class="hit"><b>01 · 按换行读取 JSON</b><span>JSON body 可含空白和转义换行。<em>只按 ASCII header 中唯一 Content-Length 的 byte count 切 body。</em></span></div>
+  <div class="hit"><b>02 · Foundation JSON String 是透明容器</b><span>`\uD800` 属于合法 JSON escape，但 Swift String 不保存孤立 UTF-16 unit。<em>string token 使用 raw UInt16 parser/encoder。</em></span></div>
+  <div class="hit"><b>03 · JSON-RPC batch 属于兼容增强</b><span>LSP 3.18 明确不支持 batch。<em>顶层 array 直接返回 InvalidRequest 并关闭该 session。</em></span></div>
+  <div class="hit"><b>04 · response 按发送顺序匹配</b><span>LSP 允许无依赖请求乱序返回。<em>pending map 的 key 是 integer|string id；epoch 隔离重启前响应。</em></span></div>
+  <div class="hit"><b>05 · LSP 等于本地子进程</b><span>协议只定义消息，不定义 binary discovery。<em>process provider 是 macOS host adapter；核心只依赖 MonaMessageTransport。</em></span></div>
+  <div class="hit"><b>06 · plaintext 是首发语言包</b><span>纯文本无需 provider、tokenizer 或 profile。<em>`plaintext` 仅是保留 languageId/fallback metadata，不计入 0 个生产语言内容。</em></span></div>
+</div></div>
+
+<div class="section"><h3>字节到 provider 的唯一管线</h3><div class="flow">
+  <div class="node"><b>MonaMessageTransport</b>有序 ByteBuffer chunks；send/close；无 process 假设</div><div class="arrow">›</div>
+  <div class="node"><b>LSPFrameCodec</b>ASCII header；CRLFCRLF；长度边界；UTF-8 body</div><div class="arrow">›</div>
+  <div class="node"><b>RawUTF16JSONRPC</b>jsonrpc=2.0；integer|string id；禁止 batch</div><div class="arrow">›</div>
+  <div class="node"><b>Session / R1 gate</b>URI、modelVersion、epoch、owner、cancel/release 全匹配后提交</div>
+</div></div>
+
+<div class="section"><h3>FrameCodec 的完全判定表</h3><div class="matrix">
+  <div class="row"><div class="cell">输入</div><div class="cell">接受集合</div><div class="cell">拒绝集合</div><div class="cell">结果</div></div>
+  <div class="row"><div class="cell"><b>Header</b></div><div class="cell">ASCII；field name 大小写不敏感；严格 `Name: value\r\n`；只接受 Content-Length/Content-Type；空行结束</div><div class="cell">非 ASCII、裸 LF、obs-fold、未知/重复 field、单行或总长超过 8 KiB、缺终止空行</div><div class="cell no">typed frame error + close</div></div>
+  <div class="row"><div class="cell"><b>Content-Length</b></div><div class="cell">恰好一次；ASCII 十进制 digits；0…当前 body limit</div><div class="cell">缺失、重复、符号、小数、空值、溢出、超限</div><div class="cell no">typed frame error + close</div></div>
+  <div class="row"><div class="cell"><b>Content-Type</b></div><div class="cell">缺省；或大小写不敏感的 `application/vscode-jsonrpc`，charset 缺省、utf-8 或兼容别名 utf8</div><div class="cell">其它 media type、未知/重复 parameter、显式 charset 非 UTF-8</div><div class="cell no">typed encoding error + close</div></div>
+  <div class="row"><div class="cell"><b>Body</b></div><div class="cell">精确 Content-Length bytes；UTF-8 JSON object；jsonrpc=`2.0`</div><div class="cell">截断、非法 UTF-8、顶层 array、非法 JSON、错误 jsonrpc</div><div class="cell no">parse/invalid-request response 后 close</div></div>
+  <div class="row"><div class="cell"><b>JSON values</b></div><div class="cell">string 保存 raw UInt16 escape；number 按 IEEE-754 binary64；重复 object key 采用最后值，与 JS `JSON.parse` 一致</div><div class="cell">未转义 control、非法 surrogate escape syntax、NaN/Infinity；LSP integer 超出 −2³¹…2³¹−1</div><div class="cell no">parse/typed value error</div></div>
+  <div class="row"><div class="cell"><b>Message shape</b></div><div class="cell">request id=integer|string；notification 无 id；success 只含 result；failure 只含 error；params 只为 object/array</div><div class="cell">result+error 并存、method/id 类型错误、同方向 pending id 重复</div><div class="cell no">InvalidRequest + close</div></div>
+  <div class="row"><div class="cell"><b>Limits</b></div><div class="cell">默认 body 64 MiB；宿主只能下调；编译期硬上限 256 MiB；nesting 128；pending 4096</div><div class="cell">任何计数越界；继续缓存越界输入</div><div class="cell no">不分配超限 body；close</div></div>
+</div></div>
+
+<div class="section"><h3>生命周期与本期内容边界</h3><div class="cards">
+  <div class="card"><h4>Session identity</h4><ul><li>initialize 成功后进入 running；shutdown 后只接受 exit</li><li>请求 id 保留 integer/string 类型，不做字符串归一化</li><li>同方向未完成 id 重复：protocol error + close</li><li>乱序 response 通过 id 归并；未知/旧 epoch response 丢弃并记录</li><li>未知 request 返回 MethodNotFound；未知 notification 记录后忽略；cancel 后仍消费最终 response</li></ul></div>
+  <div class="card"><h4>Document identity</h4><ul><li>一个 URI/model/session 只发一次 didOpen</li><li>同步模式服从 server capability：none/full/incremental</li><li>positionEncoding 只广告 UTF-16</li><li>workspace/applyEdit 进入宿主授权的 R1 multi-model transaction</li><li>restart 创建新 epoch，并重建 open-document state</li></ul></div>
+  <div class="card"><h4>Shipped content</h4><ul><li>30 registry surfaces、25 LSP mappings、5 direct-only API 全部存在</li><li>确定性 direct fixture 30 面；in-memory LSP fixture 25 面</li><li>生产 language definition/profile/provider/server 数均为 0</li><li>`plaintext` 是核心 fallback metadata，不注册 provider</li><li>组件不发现、下载、更新或签名 LSP binary</li></ul></div>
+</div></div>
+
+<div class="source"><b>事实索引：</b>LSP 3.18 规范固定 gh-pages commit `8b9fab8f0912b694c795d05c1d5e9d357bee0193`，`specification.md` SHA-256 `67e09b5458884dad63631a4cc7f4ea72b659b023e950eb0f7fa7311355cde3d7`。Base Protocol 指定 ASCII header、CRLF、必需 Content-Length byte count、UTF-8 content；request id 是 integer|string；response 可乱序；协议明确不支持 JSON-RPC batch。Monaco model 与 LSP positions 均以 UTF-16 code units 对齐。8 KiB/64 MiB/256 MiB、nesting 128 与 pending 4096 是 MonaCode 已冻结的防御上限，不冒充 LSP 标准值。</div>

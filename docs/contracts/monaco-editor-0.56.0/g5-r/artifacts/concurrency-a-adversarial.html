@@ -1,0 +1,140 @@
+<style>
+  .verdict { display:flex; gap:13px; align-items:flex-start; padding:15px; border:1px solid #059669; border-radius:14px; background:color-mix(in srgb,#059669 8%,var(--surface)); margin:13px 0 17px; }
+  .mark { display:grid; place-items:center; width:36px; height:36px; flex:0 0 36px; border-radius:10px; background:#059669; color:#fff; font-weight:850; }
+  .verdict h3 { margin:0 0 4px; }
+  .verdict p { margin:0; color:var(--muted); font-size:12px; line-height:1.48; }
+  .attacks { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; }
+  .attack { border:1px solid var(--border); border-radius:12px; padding:12px; background:var(--surface); }
+  .head { display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .head h3 { margin:0; font-size:13px; }
+  .badge { padding:3px 7px; border-radius:999px; font-size:9px; font-weight:800; white-space:nowrap; }
+  .win { color:#047857; background:color-mix(in srgb,#10b981 16%,var(--surface)); }
+  .fix { color:#b45309; background:color-mix(in srgb,#f59e0b 17%,var(--surface)); }
+  .loss { color:#b91c1c; background:color-mix(in srgb,#ef4444 14%,var(--surface)); }
+  .attack p { margin:7px 0 0; font-size:11px; line-height:1.48; }
+  .fact { color:var(--muted); }
+  .result { border-left:3px solid var(--accent); padding-left:8px; }
+  .split { display:grid; grid-template-columns:1fr 1fr; gap:11px; margin-top:16px; }
+  .domain { border:1px solid var(--border); border-radius:13px; padding:13px; background:var(--surface); }
+  .domain h3 { margin:0 0 9px; font-size:14px; }
+  .main { border-color:#7c3aed; background:color-mix(in srgb,#7c3aed 6%,var(--surface)); }
+  .background { border-color:#2563eb; background:color-mix(in srgb,#2563eb 6%,var(--surface)); }
+  .domain ul { margin:0 0 0 17px; padding:0; font-size:12px; line-height:1.55; }
+  .bridge { margin-top:11px; display:flex; align-items:center; justify-content:center; gap:7px; flex-wrap:wrap; }
+  .step { padding:7px 8px; border:1px solid var(--border); border-radius:8px; font-size:10px; background:var(--surface); }
+  .arrow { color:var(--muted); }
+  .comparison { margin-top:15px; border:1px solid var(--border); border-radius:12px; overflow:hidden; }
+  .row { display:grid; grid-template-columns:1.35fr repeat(3,1fr); border-top:1px solid var(--border); }
+  .row:first-child { border-top:0; font-weight:750; background:color-mix(in srgb,var(--accent) 6%,var(--surface)); }
+  .cell { padding:8px 9px; border-left:1px solid var(--border); font-size:10px; line-height:1.35; }
+  .cell:first-child { border-left:0; }
+  .green { color:#047857; font-weight:700; }
+  .amber { color:#b45309; font-weight:700; }
+  .red { color:#b91c1c; font-weight:700; }
+  .gate { margin-top:14px; padding:11px 12px; border:1px solid #f59e0b; border-radius:10px; background:color-mix(in srgb,#f59e0b 7%,var(--surface)); font-size:11px; line-height:1.48; }
+  .actions { display:flex; gap:10px; margin-top:17px; }
+  .decision { flex:1; border:1px solid var(--border); border-radius:11px; padding:12px; cursor:pointer; background:var(--surface); }
+  .decision.selected { border-color:var(--accent); box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 18%,transparent); }
+  .decision h3 { margin:0 0 3px; }
+  @media(max-width:900px){.attacks,.split{grid-template-columns:1fr}.row{grid-template-columns:1.2fr repeat(3,1fr)}.cell{padding:6px 4px;font-size:9px}}
+</style>
+
+<h2>对抗式结论：选 A+，不选原始 A</h2>
+<p class="subtitle">A+ = MainActor 只拥有 live model 的最小同步核心；所有长任务和 TextKit 后台布局只消费 immutable snapshot。</p>
+
+<div class="verdict">
+  <div class="mark">A+</div>
+  <div>
+    <h3>在当前目标约束下，A+ 最合适</h3>
+    <p>它保留 Monaco 的同步 ITextModel 与同步事件，又不为每次输入增加锁或跨 executor 调度。原始 A 若把解析、全量构建、Diff、LSP 或后台 TextKit provider 一起放上 MainActor，则直接不通过。</p>
+  </div>
+</div>
+
+<div class="attacks">
+  <div class="attack">
+    <div class="head"><h3>攻击 1 · 是否破坏 Monaco 同步语义</h3><span class="badge win">A+ 胜出</span></div>
+    <p class="fact">Monaco 0.56 的 setValue、applyEdits、pushEditOperations、所有读取均为同步方法；createSnapshot 明确标注可异步消费。</p>
+    <p class="result">A+ 原样映射：live API 同步隔离，后台只拿 snapshot。C 将 live API 改成 await，直接不等价。</p>
+  </div>
+
+  <div class="attack">
+    <div class="head"><h3>攻击 2 · 是否真的“没有 actor hop”</h3><span class="badge win">语义通过</span></div>
+    <p class="fact">Swift 事实：MainActor 的 executor 等价于 main dispatch queue；同一 actor 内同步调用不使用 await，也不跨 isolation domain。</p>
+    <p class="result">UI 输入已处于 MainActor，因此不存在跨 executor hop。机器指令级成本不由 API 文档证明，仍进入基准验收。</p>
+  </div>
+
+  <div class="attack">
+    <div class="head"><h3>攻击 3 · 大文件和长任务阻塞 UI</h3><span class="badge fix">原始 A 失败</span></div>
+    <p class="fact">Apple 明确要求把长时间和资源密集型非 UI 工作移出 MainActor；在 MainActor 内创建 Task 仍继承该隔离域。</p>
+    <p class="result">A+ 只在 MainActor 做 preflight、Piece Tree 增量 commit、版本、事件和局部 invalidation。文件解码、buffer factory、Diff、LSP 与全量分析全部 nonisolated。</p>
+  </div>
+
+  <div class="attack">
+    <div class="head"><h3>攻击 4 · TextKit layoutQueue 冲突</h3><span class="badge fix">原始 A 失败</span></div>
+    <p class="fact">SDK 26.5 明确规定 NSTextLayoutManager / NSTextLayoutFragment 可把布局派发到指定 NSOperationQueue。</p>
+    <p class="result">后台 provider 禁止捕获 live model、EditorCore、Theme 或 Decoration Tree；它只持有 versioned LayoutSnapshot 与 RenderStyleSnapshot。</p>
+  </div>
+
+  <div class="attack">
+    <div class="head"><h3>攻击 5 · 无 UI / 后台调用是否受限</h3><span class="badge loss">A+ 的明确代价</span></div>
+    <p class="fact">后台调用方不能同步修改 MainActor-isolated live model；它必须提交 Sendable EditIntent 并 await MainActor。</p>
+    <p class="result">当前交付目标是 macOS 编辑器组件，后台同步写 live model 未进入已锁定能力。命令行测试在 MainActor 执行，快照计算仍并行。</p>
+  </div>
+
+  <div class="attack">
+    <div class="head"><h3>攻击 6 · 监听器重入与事件顺序</h3><span class="badge win">可完全对标</span></div>
+    <p class="fact">Monaco 的 Emitter 在重入 fire 时先完成当前 listener 队列，再投递下一事件，保证所有监听器按版本观察变更。</p>
+    <p class="result">A+ 在单一 MainActor 上实现同样的 delivery queue；B 还要解决跨线程提交、等待和重入的组合问题。</p>
+  </div>
+</div>
+
+<div class="split">
+  <div class="domain main">
+    <h3>MainActor：只保留同步最小核心</h3>
+    <ul>
+      <li>live Piece Tree、line index、Decoration Tree</li>
+      <li>EditTransaction preflight 与 atomic commit</li>
+      <li>version / alternativeVersion / undo stack</li>
+      <li>同步事件 delivery queue</li>
+      <li>Editor cursor、selection、view state</li>
+      <li>异步结果的 version gate 与 UI 应用</li>
+    </ul>
+  </div>
+  <div class="domain background">
+    <h3>Nonisolated：只处理不可变值</h3>
+    <ul>
+      <li>文件解码与 TextBufferFactory</li>
+      <li>MonaTextSnapshot 的遍历与索引</li>
+      <li>LSP transport / JSON-RPC / Provider 计算</li>
+      <li>Diff、搜索预计算、语义 token 转换</li>
+      <li>TextKit layoutQueue snapshot provider</li>
+      <li>基准采样与结果聚合</li>
+    </ul>
+  </div>
+</div>
+
+<div class="bridge">
+  <span class="step">MainActor snapshot(v42)</span><span class="arrow">›</span>
+  <span class="step">Sendable immutable value</span><span class="arrow">›</span>
+  <span class="step">background result(ticket v42)</span><span class="arrow">›</span>
+  <span class="step">MainActor version gate</span>
+</div>
+
+<div class="comparison">
+  <div class="row"><div class="cell">最终比较</div><div class="cell">A+ · Thin MainActor</div><div class="cell">B · Lock</div><div class="cell">C · Model Actor</div></div>
+  <div class="row"><div class="cell">Monaco 同步 API</div><div class="cell green">保留</div><div class="cell green">保留</div><div class="cell red">破坏</div></div>
+  <div class="row"><div class="cell">UI 输入锁 / hop</div><div class="cell green">无跨域 hop、无模型锁</div><div class="cell amber">模型锁</div><div class="cell red">actor hop</div></div>
+  <div class="row"><div class="cell">跨线程 live 写</div><div class="cell amber">提交 EditIntent</div><div class="cell green">直接同步调用</div><div class="cell amber">await</div></div>
+  <div class="row"><div class="cell">复杂度与可验证性</div><div class="cell green">单域 + 版本闸门</div><div class="cell red">锁 + 重入 + 事件排序</div><div class="cell amber">简单但 API 不等价</div></div>
+</div>
+
+<div class="gate"><b>性能结论边界：</b>A+ 是架构适配性结论，不是实测性能结论。当前没有 MonaCode 可执行切片，因此无法宣称 MainActor 标注、snapshot 构建或 commit 已经快于 Monaco 0.56；这些项目全部进入独立基准，任一指标落后即不通过。</div>
+
+<div class="actions">
+  <div class="decision" data-choice="accept-concurrency-a-plus" onclick="toggleSelect(this)">
+    <h3>采纳 A+</h3><small>继续锁定事务、版本闸门与错误恢复状态机。</small>
+  </div>
+  <div class="decision" data-choice="choose-concurrency-lock" onclick="toggleSelect(this)">
+    <h3>改选 B</h3><small>接受模型锁与跨线程事件排序复杂度，换取任意线程同步写。</small>
+  </div>
+</div>

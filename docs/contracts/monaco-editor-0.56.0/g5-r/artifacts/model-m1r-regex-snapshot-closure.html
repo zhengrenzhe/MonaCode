@@ -1,0 +1,56 @@
+<style>
+  :root{--ok:#059669;--warn:#d97706;--bad:#dc2626;--blue:#2563eb;--violet:#7c3aed;--cyan:#0891b2}
+  .hero{display:flex;gap:13px;align-items:flex-start;padding:14px;border:1px solid var(--ok);border-radius:14px;background:color-mix(in srgb,var(--ok) 6%,var(--surface));margin:12px 0 15px}.mark{width:58px;height:58px;flex:0 0 58px;display:grid;place-items:center;border-radius:13px;background:var(--ok);color:#fff;font-weight:900}.hero h3{margin:0 0 5px;font-size:14px}.hero p{margin:0;color:var(--muted);font-size:8.5px;line-height:1.5}
+  .section{margin-top:15px}.section h3{margin:0 0 8px;font-size:12px}.hits{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.hit{padding:9px;border:1px solid var(--warn);border-radius:10px;background:var(--surface)}.hit b{display:block;font-size:8.5px;margin-bottom:3px}.hit span{display:block;color:var(--muted);font-size:7px;line-height:1.43}.hit em{font-style:normal;color:#b45309;font-weight:800}
+  .matrix{border:1px solid var(--border);border-radius:11px;overflow:hidden}.row{display:grid;grid-template-columns:.8fr 1.15fr 1.25fr 1.1fr;border-top:1px solid var(--border)}.row:first-child{border-top:0;font-weight:800;background:color-mix(in srgb,var(--accent) 6%,var(--surface))}.cell{padding:7px 8px;border-left:1px solid var(--border);font-size:7.1px;line-height:1.43}.cell:first-child{border-left:0}.yes{color:#047857;font-weight:750}.fail{color:#b91c1c;font-weight:750}
+  .flow{display:grid;grid-template-columns:1fr 20px 1fr 20px 1fr 20px 1fr;gap:4px;align-items:stretch;padding:11px;border:1px solid var(--border);border-radius:11px;background:var(--surface)}.node{padding:8px;border:1px solid var(--border);border-radius:9px;font-size:7px;line-height:1.4}.node b{display:block;font-size:8.2px}.arrow{display:grid;place-items:center;color:var(--muted);font-size:14px}.blue{border-color:var(--blue)}.violet{border-color:var(--violet)}.green{border-color:var(--ok)}
+  .cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.card{padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}.card h4{margin:0 0 5px;font-size:9px}.card ul{margin:0 0 0 14px;padding:0;font-size:7.1px;line-height:1.5}.source{margin-top:12px;padding:9px 10px;border-left:3px solid var(--blue);background:color-mix(in srgb,var(--blue) 5%,var(--surface));color:var(--muted);font-size:7.1px;line-height:1.48}.status{display:grid;grid-template-columns:1fr 1fr;gap:8px}.box{padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}.box h4{margin:0 0 5px;font-size:9px}.box ul{margin:0 0 0 14px;padding:0;font-size:7.1px;line-height:1.5}.box.ok{border-color:var(--ok)}.box.bad{border-color:var(--bad)}
+  @media(max-width:950px){.hits,.cards{grid-template-columns:1fr 1fr}.row{grid-template-columns:.72fr 1fr 1fr 1fr}.cell{padding:5px 4px;font-size:6.5px}}
+</style>
+
+<h2>文本模型第三轮攻击：M1-R 可执行合同</h2>
+<p class="subtitle">目标仍是 MonaCodeModel 对 Monaco Editor 0.56.0 的 ITextModel 可观察语义等价；Swift 动态类型差异、DOM、JS 对象身份不属于等价域。</p>
+
+<div class="hero"><div class="mark">M1-R</div><div><h3>Persistent raw-UTF16 Piece Tree + Monaco event/undo semantics + ECMAScript search runtime</h3><p>MainActor 只交换 current root、版本、undo/decoration state；后台 snapshot 持有不可变 root。所有文本、搜索、捕获组、offset 和事件 payload 都以 UTF-16 code units 表达，Swift String 只作为“已验证为合法 Unicode”的便捷入口。</p></div></div>
+
+<div class="section"><h3>本轮命中的九个反例</h3><div class="hits">
+  <div class="hit"><b>01 · NSRegularExpression 等价</b><span>Monaco find 使用 JavaScript RegExp，固定 flags 为 global + unicode，按选项增加 ignoreCase/multiline。<em>ICU 语义被禁止作为真相；实现 raw-UTF16 ECMAScript regex。</em></span></div>
+  <div class="hit"><b>02 · Snapshot 直接共享 mutable RB tree</b><span>后台遍历期间 live edit 会修改 node、父指针与 metadata。<em>Piece nodes/buffers 发布后不可变；edit path-copy，snapshot O(1) retain root。</em></span></div>
+  <div class="hit"><b>03 · Swift String 可保留 model 全域</b><span>Swift String 无法表达孤立 surrogate；Monaco 可以。<em>MonaText/MonaTextSlice 保存 UInt16；禁止经 String 做 canonical round-trip。</em></span></div>
+  <div class="hit"><b>04 · 最新 UAX29 等于 Monaco</b><span>0.56 自带 GraphemeIterator 和生成表，并简化 GB11/GB12 状态。<em>光标、删除、visible-column 逐句移植该版本，不替换为系统 tokenizer。</em></span></div>
+  <div class="hit"><b>05 · 一事务固定 version +1</b><span>EOL、setValue、undo/redo 有各自增量与 alternativeVersion 恢复规则。<em>逐分支差分；不抽象成统一“事务号”。</em></span></div>
+  <div class="hit"><b>06 · Undo 可直接保存所有 old roots</b><span>root retention 会让删除的大文本长期存活，改变 Monaco 资源行为。<em>undo 保存 inverse edit elements；root 只由短生命周期 snapshot/transaction retain。</em></span></div>
+  <div class="hit"><b>07 · LSP JSON 可经 Codable String</b><span>escaped isolated surrogate 经 Swift String 会修复或拒绝。<em>JSON-RPC string value 使用 raw UTF-16 parser/encoder；Content-Length 仍按 UTF-8 bytes。</em></span></div>
+  <div class="hit"><b>08 · 全词边界交给 regex \b</b><span>ITextModel 另用 wordSeparators classifier 检查 match 两侧；零长度 match 还有 surrogate-aware 前进规则。<em>完整移植 Searcher/isValidMatch，不改成 ICU word boundary。</em></span></div>
+  <div class="hit"><b>09 · surrogate pair 中间对所有 API 都非法</b><span>`validatePosition` 会前移，但 `getOffsetAt` 使用 relaxed validation，`getPositionAt` 与 decoration range 能观察 pair 中间列。<em>严格/relaxed/range-expansion 三条路径逐 API 移植。</em></span></div>
+</div></div>
+
+<div class="section"><h3>存储、事务与 snapshot 的唯一数据流</h3><div class="flow">
+  <div class="node blue"><b>Raw edit intent</b>checked ranges + raw UInt16 + source + undo metadata</div><div class="arrow">›</div>
+  <div class="node violet"><b>Prepared persistent root</b>65,535-unit buffer policy；path-copy RB nodes；无 live mutation</div><div class="arrow">›</div>
+  <div class="node green"><b>MainActor root swap</b>Piece root + line metadata + decoration/undo/version state 一次提交</div><div class="arrow">›</div>
+  <div class="node blue"><b>Immutable observers</b>event batch 同步 drain；snapshot root Sendable；stale async result 过 R1 gate</div>
+</div></div>
+
+<div class="section"><h3>等价域与明确算法</h3><div class="matrix">
+  <div class="row"><div class="cell">表面</div><div class="cell">M1-R 实现</div><div class="cell">固定细节</div><div class="cell">验收 oracle</div></div>
+  <div class="row"><div class="cell"><b>Text/position</b></div><div class="cell">1-based line/column；offset 0-based；raw UTF-16；LF/CRLF/BOM 分离</div><div class="cell">`validatePosition`/`isValidPosition` 在 pair 内拒绝或前移；`getOffsetAt` relaxed，`getPositionAt` 可返回 pair 内列；折叠 `validateRange` 前移，非折叠 range 在命中 pair 时向外扩张；decoration range 使用 relaxed path；孤立 surrogate 是单 unit</div><div class="cell yes">每个 API 分支逐 raw unit / position / range / event 差分</div></div>
+  <div class="row"><div class="cell"><b>Piece Tree</b></div><div class="cell">Monaco red-black Piece Tree 行为与 65,535 average buffer size；Swift 使用 immutable published nodes</div><div class="cell">append slab seal-before-publish；snapshot O(1)；edit O(log pieces + inserted units)；无 model lock</div><div class="cell yes">官方 piece-tree tests + randomized edit/undo traces + complexity counters</div></div>
+  <div class="row"><div class="cell"><b>Search</b></div><div class="cell">literal fast path；ECMAScript RegExp 固定 g+u，matchCase=false 才加 i，检测到 multiline 才加 m；LF view；capture groups；默认 limit 999</div><div class="cell">zero-length exec 按 next code point 前进；CRLF offset compensation；whole-word 另走 Monaco classifier</div><div class="cell yes">Chrome 151 / V8 15.1 RegExp + Monaco TextModelSearch differential；相关 Test262 corpus</div></div>
+  <div class="row"><div class="cell"><b>Word/grapheme</b></div><div class="cell">默认 wordSeparators 与 Monaco GraphemeIterator 分离；非空 locale path 属于 F1-R 显式裁剪</div><div class="cell">默认 word 路径与 GraphemeIterator 逐代码移植；不调用 Swift Character 或系统 tokenizer 代替</div><div class="cell yes">默认 word/cursor/delete 与 grapheme corpus 逐结果比对</div></div>
+  <div class="row"><div class="cell"><b>Decorations</b></div><div class="cell">interval tree、owner、stickiness、injected text、font/line-height effects、overview/minimap lanes</div><div class="cell">Model 保存语义/范围；Editor 保存 view state；style 使用 native typed descriptor，不接受 CSS class 作为真相</div><div class="cell yes">delta + edit transform + owner filtering differential</div></div>
+  <div class="row"><div class="cell"><b>Undo/events</b></div><div class="cell">push/pop stack element、alternativeVersion、EOL、setValue、applyEdits inverse ops、GlobalModelEventHub</div><div class="cell">workspace batch 先全部 enqueue 再 drain；listener fault 不回滚 committed text；重入 append 到尾部</div><div class="cell yes">每一步 version/altVersion/event/selection/undo stack 观测全等</div></div>
+</div></div>
+
+<div class="section"><h3>模型边界与资源政策</h3><div class="cards">
+  <div class="card"><h4>Monaco thresholds 原值</h4><ul><li>large-file size：20 MiB</li><li>large-file line count：300,000</li><li>heap operation：256 Mi UTF-16 units</li><li>multi-cursor 默认 10,000、合法上限 100,000</li><li>阈值只触发同等功能策略，不删 model text</li></ul></div>
+  <div class="card"><h4>Swift public surface</h4><ul><li>MonaText 是 canonical raw-unit value</li><li>live mutable MonaCodeModel API 标注 `@MainActor`，在 MainActor 内保持同步返回/同步事件；后台只读使用 Sendable immutable snapshot</li><li>Swift String overload 只负责合法 Unicode convenience</li><li>JS NaN/Infinity/coercion 与跨 actor 同步调用不属于 Swift typed API 等价域</li><li>Position/Range validation 逐 API 移植；一个 URI 只允许一个 live registered model</li></ul></div>
+  <div class="card"><h4>ECMAScript runtime</h4><ul><li>不嵌入 JavaScriptCore/QuickJS/V8</li><li>不使用 NSRegularExpression 充当兼容层</li><li>parser、compiler、executor 直接消费 UInt16</li><li>compiled pattern cache key 含 source + 实际 g/u/i/m flags</li><li>同步 ITextModel.find* 不设自定义 timeout/step cutoff；异步 Find UI 只可丢弃尚未发布的 snapshot result</li></ul></div>
+</div></div>
+
+<div class="section"><h3>设计状态与实证状态严格分离</h3><div class="status">
+  <div class="box ok"><h4>设计已封闭</h4><ul><li>canonical encoding、snapshot ownership、Piece Tree publication</li><li>regex、word、grapheme oracle</li><li>undo/event/version transaction boundary</li><li>typed Swift API 的等价域与 DOM/CSS 排除项</li></ul></div>
+  <div class="box bad"><h4>当前未通过</h4><ul><li>仓库没有 MonaCodeModel 实现</li><li>ECMAScript regex、persistent Piece Tree、event differential 均无产品结果</li><li>所以当前不能宣称 ITextModel 已等价或性能不低于 Monaco</li><li>实现后任一 differential mismatch 即 M1-R 未验收</li></ul></div>
+</div></div>
+
+<div class="source"><b>事实索引：</b>Monaco Editor v0.56.0 tag 13f0c872，core dependency 0.56.0-dev-20260625；`pieceTreeBase` 的 AverageBufferSize=65535；`textModel` 的 20 MiB / 300K lines / 256M units thresholds；`validatePosition` 使用 SurrogatePairs validation，`getOffsetAt` 使用 Relaxed validation，`getPositionAt` 直接按 raw offset 返回，`validateRange` 对 pair 内 endpoint 执行前移/外扩，decoration tracked ranges 使用 relaxed validation；`textModelSearch` 固定 global+unicode、按 matchCase/multiline 条件增加 ignoreCase/multiline，默认 limit 999，并使用 LF multiline view、CRLF compensation、wordSeparators 与 zero-length surrogate recovery；`strings.GraphemeIterator` 的生成表与 GB11/GB12 简化。本机固定浏览器：Chrome 151.0.7922.109，V8 15.1.206.16。</div>

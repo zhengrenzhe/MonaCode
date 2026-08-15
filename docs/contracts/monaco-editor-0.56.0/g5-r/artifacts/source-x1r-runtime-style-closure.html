@@ -1,0 +1,79 @@
+<style>
+  :root{--ok:#059669;--warn:#d97706;--bad:#dc2626;--blue:#2563eb;--violet:#7c3aed;--cyan:#0891b2}
+  .hero{display:flex;gap:13px;align-items:flex-start;padding:14px;border:2px solid var(--cyan);border-radius:14px;background:color-mix(in srgb,var(--cyan) 6%,var(--surface));margin:12px 0 15px}.mark{width:66px;height:66px;flex:0 0 66px;display:grid;place-items:center;border-radius:13px;background:var(--cyan);color:#fff;font-weight:900}.hero h3{margin:0 0 5px;font-size:14px}.hero p{margin:0;color:var(--muted);font-size:8px;line-height:1.5}
+  .section{margin-top:15px}.section h3{margin:0 0 8px;font-size:12px}.counts{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:7px}.count{padding:9px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}.count strong{display:block;font-size:20px;color:var(--cyan)}.count b{display:block;font-size:7.7px}.count span{display:block;margin-top:3px;color:var(--muted);font-size:6.5px;line-height:1.4}
+  .hits{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.hit{padding:9px;border:1px solid var(--warn);border-radius:10px;background:var(--surface)}.hit b{display:block;font-size:8.2px;margin-bottom:3px}.hit span{display:block;color:var(--muted);font-size:6.7px;line-height:1.44}.hit em{font-style:normal;color:#b45309;font-weight:800}
+  .matrix{border:1px solid var(--border);border-radius:11px;overflow:hidden}.row{display:grid;grid-template-columns:.8fr 1.25fr 2fr 1.05fr;border-top:1px solid var(--border)}.row:first-child{border-top:0;font-weight:800;background:color-mix(in srgb,var(--accent) 6%,var(--surface))}.cell{padding:7px 8px;border-left:1px solid var(--border);font-size:6.8px;line-height:1.45}.cell:first-child{border-left:0}.yes{color:#047857;font-weight:750}.no{color:#b91c1c;font-weight:750}.warn{color:#b45309;font-weight:750}
+  .cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.card{padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}.card h4{margin:0 0 5px;font-size:8.7px}.card ul{margin:0 0 0 14px;padding:0;font-size:6.7px;line-height:1.5}.artifact{padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--surface);font-size:7px;line-height:1.55}.source{margin-top:12px;padding:9px 10px;border-left:3px solid var(--blue);background:color-mix(in srgb,var(--blue) 5%,var(--surface));color:var(--muted);font-size:6.8px;line-height:1.48}
+  @media(max-width:1050px){.counts{grid-template-columns:repeat(3,1fr)}.hits,.cards{grid-template-columns:1fr 1fr}.row{grid-template-columns:.6fr .9fr 1.3fr .8fr}.cell{padding:5px 4px;font-size:6.1px}}
+</style>
+
+<h2>全源码闭包攻击：X1-R runtime primitives 与 native style</h2>
+<p class="subtitle">用 ECMAScript AST 与 scope analysis 重建 editor.main.js 闭包，区分真正的全局依赖、注释命中、对象方法、CSS side-effect imports 与运行时动态加载。</p>
+
+<div class="hero"><div class="mark">X1-R</div><div><h3>1054 不是 1054 个 JavaScript：事实是 956 JS + 98 CSS</h3><p>AST 扫描解析 6275 条 import/export edges，静态外部模块为 0；闭包含 84 个 direct global identifiers、8221 个引用和一个 3099-row runtime visual-mutation omission overlay。每个 retained source、global、static style 与 runtime effect row 都必须进入候选 MonaSourceClosureManifest；当前候选工件不存在。</p></div></div>
+
+<div class="section"><h3>语法级闭包</h3><div class="counts">
+  <div class="count"><strong>956</strong><b>JavaScript modules</b><span>set hash 0dd3fb5c…8fb。</span></div>
+  <div class="count"><strong>98</strong><b>style resources</b><span>set hash 0b63cc44…c74。</span></div>
+  <div class="count"><strong>84</strong><b>direct globals</b><span>41 ECMAScript + 43 platform。</span></div>
+  <div class="count"><strong>8221</strong><b>global refs</b><span>7523 intrinsic + 698 platform。</span></div>
+  <div class="count"><strong>0</strong><b>static externals</b><span>唯一 runtime import 是 D1 external diff。</span></div>
+  <div class="count"><strong>0</strong><b>global network APIs</b><span>无 fetch/XHR/WebSocket/EventSource。</span></div>
+</div></div>
+
+<div class="section"><h3>本轮确定的九个旧结论错误</h3><div class="hits">
+  <div class="hit"><b>125 · 1054 全是 JS</b><span>side-effect import 把 98 个 CSS 纳入了旧计数。<em>规范改为 956 JS + 98 style，总数仍为 1054。</em></span></div>
+  <div class="hit"><b>126 · performance 只在 Tree-sitter</b><span>13 个 retained StopWatch 使用 high-resolution clock；输入延迟另有 25 个 Performance API 调用。<em>固定为 mach_absolute_time 域。</em></span></div>
+  <div class="hit"><b>127 · raw UTF-16 永不替换</b><span>model truth 不替换，但 StringBuilder/TextDecoder 会把孤立 surrogate 变成 U+FFFD，并吞掉开头 U+FEFF。<em>替换点按 utility 隔离。</em></span></div>
+  <div class="hit"><b>128 · CSS compatibility cut 等于样式 cut</b><span>98 个 sheet 仍编码 widget geometry、focus、motion 与 visibility。<em>CSS runtime 不存在，但 retained rule 必须映射 native state。</em></span></div>
+  <div class="hit"><b>129 · 每个 CSS variable 都有值</b><span>257 个引用名中有 17 个固定 standalone 无 provider、无 fallback；对应 48 个声明在 Chrome 基线中 inactive。<em>native 不得擅自补圆角、阴影或颜色。</em></span></div>
+  <div class="hit"><b>130 · static CSS 就是完整视觉面</b><span>源码另有 73 个 runtime rule-construction sites、14 个 theming registrations 和 724 个 inline style assignments。<em>全部进入逐行 native effect closure。</em></span></div>
+  <div class="hit"><b>131 · editor.main closure 等于 npm 包</b><span>固定包有 2112 files / 1008 JS；vs 下 994 JS 中 38 个不在入口闭包，另有 14 个 NLS tables。<em>38 个逐文件排除，14 个归 N1 数据所有。</em></span></div>
+  <div class="hit"><b>132 · 无 fetch 就等于无外部 effect</b><span>源码还有 window open/location、Markdown src/href、worker object URL 与 browser-location read。<em>14 个隐式位点逐项归 H1、MD1、worker cut、N1/E1 或纯 parser value。</em></span></div>
+  <div class="hit"><b>133 · URI icon 路径要求新增 loader</b><span>10 个 asCSSUrl 位点存在，但固定 standalone 的 retained URI-backed producer=0；121 个 menu rows 只有 ThemeIcon/undefined。<em>保持 inert，不增加第 8 个 host group。</em></span></div>
+</div></div>
+
+<div class="section"><h3>package inventory 与 runtime closure 分层</h3><div class="matrix">
+  <div class="row"><div class="cell">Layer</div><div class="cell">Fixed evidence</div><div class="cell">Disposition</div><div class="cell">Candidate duty</div></div>
+  <div class="row"><div class="cell"><b>Core package</b></div><div class="cell">2112 files；1008 JS、101 CSS、992 maps、2 declarations、1 TTF；WASM files=0。</div><div class="cell">包清单只定义权威输入，不等于 native distribution。</div><div class="cell yes">full inventory hash</div></div>
+  <div class="row"><div class="cell"><b>Reachable runtime</b></div><div class="cell">editor.main → 956 JS + 98 CSS；6275 import/export edges。</div><div class="cell">闭世界 exact-by-default；只能引用既有 G4 cut/adaptation/inert/later disposition。</div><div class="cell yes">1054 rows</div></div>
+  <div class="row"><div class="cell"><b>Unreachable vs</b></div><div class="cell">38 JS；reachable→unreachable static edges=0；set hash 1cf6ed3e…a54a。</div><div class="cell">逐文件 package-exclusion row；internal ESM deep import 不是 native public contract。</div><div class="cell yes">38 exclusions</div></div>
+  <div class="row"><div class="cell"><b>NLS tables</b></div><div class="cell">14 JavaScript-form localization tables；set hash 181406e4…070e。</div><div class="cell">N1-owned data authority；生成 Swift tables，JS 文件不进入产品。</div><div class="cell yes">N1 cross-ref</div></div>
+</div></div>
+
+<div class="section"><h3>运行时视觉 mutation omission overlay</h3><div class="counts">
+  <div class="count"><strong>3099</strong><b>targeted sites</b><span>217 files；row-set hash b2b36a48…8600。</span></div>
+  <div class="count"><strong>556</strong><b>rule / registry calls</b><span>73 rule + 14 theming + 432 registerColor + 37 registerIcon sites。</span></div>
+  <div class="count"><strong>724</strong><b>inline style</b><span>95 files；direct CSSStyleDeclaration writes。</span></div>
+  <div class="count"><strong>28</strong><b>property calls</b><span>24 setProperty + 4 removeProperty。</span></div>
+  <div class="count"><strong>409</strong><b>classList calls</b><span>203 add + 93 remove + 113 toggle。</span></div>
+  <div class="count"><strong>287</strong><b>content / class</b><span>含 10 innerHTML、111 textContent writes。</span></div>
+  <div class="count"><strong>326</strong><b>attribute calls</b><span>281 setAttribute；其余 remove/NS/toggle。</span></div>
+  <div class="count"><strong>769</strong><b>tree-name matches</b><span>保守上界；non-DOM collection rows 也必须显式标记。</span></div>
+</div></div>
+
+<div class="source"><b>Registry count reconciliation：</b>432 个 <code>registerColor</code> 语法位点 = 431 个唯一 literal color IDs + <code>colorUtils</code> 内 1 个 forwarding call，因此 T1 runtime registry 仍是 431 identities。37 个 <code>registerIcon</code> 位点 = 35 个 literal IDs + 2 个 helper calls；它不是完整 icon identity 计数，完整运行时 registry 仍以 Chrome probe 的 776 IDs 为准。</div>
+
+<div class="section"><h3>运行时 primitive disposition</h3><div class="matrix">
+  <div class="row"><div class="cell">Domain</div><div class="cell">Fixed evidence</div><div class="cell">Native contract</div><div class="cell">Gate</div></div>
+  <div class="row"><div class="cell"><b>Intrinsics</b></div><div class="cell">41 names / 7523 refs；Math 1099、Object 638、Reflect 618、Promise 192。</div><div class="cell">不造通用 JS runtime；按 retained source row 实现有限 operation profiles，Chrome 151 raw-bit/trace 为 oracle。</div><div class="cell yes">C02/C04/C05</div></div>
+  <div class="row"><div class="cell"><b>Clock</b></div><div class="cell">21 StopWatch：13 retained high-res、6 retained wall、2 Tree-sitter cut；input-latency calls=25。</div><div class="cell">high-res=mach_absolute_time；wall=epoch ms；两域不互换，debounce/timeout/measurement 保留原角色。</div><div class="cell yes">clock trace</div></div>
+  <div class="row"><div class="cell"><b>Encoding</b></div><div class="cell">3 TextDecoder constructions；1 TextEncoder 只在 inert hashAsync；StringSHA1 active。</div><div class="cell">model 保持 raw units；StringBuilder、text-change decoder 与 reversed bracket decoder 精确复制 replacement/BOM 规则。</div><div class="cell yes">UInt16 vectors</div></div>
+  <div class="row"><div class="cell"><b>Effects</b></div><div class="cell">无 Fetch/storage globals，但另有 14 个隐式 DOM/URL/value sites；Worker/Blob/importScripts 属 WebWorker。</div><div class="cell">H1 是唯一外部副作用边界；MD1 media load cut；worker URL cut；N1/E1 不读取 browser location；parser token.src 不执行 I/O。</div><div class="cell yes">C10 scan</div></div>
+  <div class="row"><div class="cell"><b>Styles</b></div><div class="cell">98 sheets / 224570 bytes / 1281 rules / 3120 declarations / 257 variable names；另有 3099-row runtime overlay。</div><div class="cell">逐 static rule/declaration 与 runtime effect 映射 geometry/color/type/icon/motion/focus/hit-test/visibility 或既有 cut/later target；17 个 unprovided variables 保持 inactive。</div><div class="cell yes">native goldens</div></div>
+</div></div>
+
+<div class="section"><h3>Encoding 的 Chrome 151 固定向量</h3><div class="cards">
+  <div class="card"><h4>UTF-16 decoder</h4><ul><li>D800 → FFFD</li><li>DC00 → FFFD</li><li>D83D DCA9 → 原 pair</li><li>DCA9 D83D → FFFD FFFD</li></ul></div>
+  <div class="card"><h4>BOM</h4><ul><li>default FEFF → empty</li><li>default FFFE → FFFE</li><li>decodeUTF16LE 首位 FEFF → 保留</li><li>该 branch 逐 UInt16 复制</li></ul></div>
+  <div class="card"><h4>StringSHA1</h4><ul><li>empty = da39a3ee…0709</li><li>D800 = 9bdb7727…4024</li><li>💩 = 82ab1e5b…5cbd</li><li>split surrogate pair 与 whole pair 相等</li></ul></div>
+  <div class="card"><h4>No hidden runtime</h4><ul><li>eval=0 / Function constructor=0</li><li>WebAssembly global=0</li><li>WebCrypto digest path inert</li><li>JS engine / WebView / CSS runtime absent</li></ul></div>
+</div></div>
+
+<div class="section"><h3>机器可核对工件</h3><div class="artifact">
+  <a href="./monacode-x1r-source-runtime-style-manifest.json">打开 monacode-x1r-source-runtime-style-manifest.json</a><br>
+  文件 SHA-256（含结尾 LF）：<code>516c91d905532e9c54e2b3691e74024c81f5887203e6b1cb9184e2c981aaa280</code>。候选实现必须生成 <code>MonaSourceClosureManifest.json</code>；当前 classified native rows=0，runtime visual rows=0，verdict=<code>not-passed</code>。
+</div></div>
+
+<div class="source"><b>事实索引：</b>JS AST parser=Acorn 8.18.0，scope analyzer=eslint-scope 9.1.2；CSS source parser=PostCSS 8.5.26，Lightning CSS 1.33.0 开启 nesting transform 后验证 98/98 files，errors=0、warnings=0。固定 Chrome standalone probe 验证 17 个 unprovided variable names 在 root/host/editor 均为空。固定 Chromium tag 的 <code>base/time/time_apple.mm</code> SHA-256 为 <code>0015cb2f…134</code>，TimeTicks 使用 mach_absolute_time；固定 Chrome 运行了 TextDecoder、StringBuilder、decodeUTF16LE 与 StringSHA1 raw-unit vectors。当前没有 MonaCode 产品源码或验收结果。</div>

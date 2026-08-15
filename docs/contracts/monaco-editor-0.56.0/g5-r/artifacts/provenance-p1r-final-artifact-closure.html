@@ -1,0 +1,45 @@
+<style>
+  :root{--ok:#059669;--warn:#d97706;--bad:#dc2626;--blue:#2563eb;--violet:#7c3aed}
+  .hero{display:flex;gap:13px;align-items:flex-start;padding:14px;border:2px solid var(--ok);border-radius:14px;background:color-mix(in srgb,var(--ok) 6%,var(--surface));margin:12px 0 15px}.mark{width:62px;height:62px;flex:0 0 62px;display:grid;place-items:center;border-radius:13px;background:var(--ok);color:#fff;font-weight:900}.hero h3{margin:0 0 5px;font-size:14px}.hero p{margin:0;color:var(--muted);font-size:8.2px;line-height:1.5}
+  .section{margin-top:15px}.section h3{margin:0 0 8px;font-size:12px}.counts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.count{padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}.count strong{display:block;font-size:22px;color:var(--blue)}.count b{display:block;font-size:7.8px}.count span{display:block;margin-top:3px;color:var(--muted);font-size:6.5px;line-height:1.4}
+  .hits{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.hit{padding:9px;border:1px solid var(--warn);border-radius:10px;background:var(--surface)}.hit b{display:block;font-size:8.4px;margin-bottom:3px}.hit span{display:block;color:var(--muted);font-size:6.9px;line-height:1.43}.hit em{font-style:normal;color:#b45309;font-weight:800}
+  .matrix{border:1px solid var(--border);border-radius:11px;overflow:hidden}.row{display:grid;grid-template-columns:.75fr 1.35fr 1.55fr 1.05fr;border-top:1px solid var(--border)}.row:first-child{border-top:0;font-weight:800;background:color-mix(in srgb,var(--accent) 6%,var(--surface))}.cell{padding:7px 8px;border-left:1px solid var(--border);font-size:7px;line-height:1.45}.cell:first-child{border-left:0}.yes{color:#047857;font-weight:750}.no{color:#b91c1c;font-weight:750}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.card{padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}.card h4{margin:0 0 5px;font-size:9px}.card ul{margin:0 0 0 14px;padding:0;font-size:7px;line-height:1.5}.source{margin-top:12px;padding:9px 10px;border-left:3px solid var(--blue);background:color-mix(in srgb,var(--blue) 5%,var(--surface));color:var(--muted);font-size:7px;line-height:1.48}
+  @media(max-width:980px){.counts,.hits{grid-template-columns:1fr 1fr}.cards{grid-template-columns:1fr}.row{grid-template-columns:.55fr 1fr 1fr .8fr}.cell{padding:5px 4px;font-size:6.2px}}
+</style>
+
+<h2>来源基线攻击：P1-R 正式产物权威闭包</h2>
+<p class="subtitle">覆盖 M1-R2 对 dev-core commit 的表述。正式 npm 产物、source tag 与 core metadata 存在可观测冲突；本页给出唯一权威顺序。</p>
+
+<div class="hero"><div class="mark">P1-R</div><div><h3>正式 npm tarball 是行为基线；commit metadata 只作来源线索</h3><p>产品差分一律运行 monaco-editor@0.56.0 正式包。源码移植一律引用 monaco-editor-core@0.56.0 正式 tarball及逐文件 hash。无法由公开 commit 重建的字段不再进入等价声明。</p></div></div>
+
+<div class="section"><h3>重新核对后的产物事实</h3><div class="counts">
+  <div class="count"><strong>0.56.0</strong><b>monaco-editor</b><span>tar SHA-256 b74bc443…fb7412。</span></div>
+  <div class="count"><strong>0.56.0</strong><b>editor core final</b><span>tar SHA-256 78e222c7…96f4ed。</span></div>
+  <div class="count"><strong>2106</strong><b>core ESM files</b><span>final 与 dev path 集完全相同。</span></div>
+  <div class="count"><strong>13</strong><b>dev/final diffs</b><span>全部是 nls.messages 的 13 个 locale 文件。</span></div>
+</div></div>
+
+<div class="section"><h3>本轮五个命中</h3><div class="hits">
+  <div class="hit"><b>39 · dev-20260625 就是正式 core</b><span>正式 monaco package 声明 core 0.56.0；旧页固定的是 dev 版。<em>规范引用全部切换到 final 0.56.0。</em></span></div>
+  <div class="hit"><b>40 · 切换 final 会推翻模型结论</b><span>两版 2106 个 ESM 路径相同，仅 13 个翻译消息文件不同。<em>所有模型、布局、URI、event 与 undo code byte-identical。</em></span></div>
+  <div class="hit"><b>41 · vscodeCommitId 可唯一重建 core</b><span>package.json 写 f487add；final version.txt 却写 vscode/tree/13f0c872，后者实际是 monaco tag。<em>冲突 metadata 不作行为权威。</em></span></div>
+  <div class="hit"><b>42 · d8c9ff 是可引用的固定 core commit</b><span>它只出现在 dev version.txt；公开 VS Code commit URL 返回 404。<em>删除“固定 core commit”措辞，改为 final tar + file hash。</em></span></div>
+  <div class="hit"><b>43 · 测试可引用任意附近 VS Code checkout</b><span>无法证明 checkout tests 与发布 tar逐文件同源。<em>发布包/Chrome differential 是主 oracle；外部 tests 逐 commit、逐 path、逐 license 固定。</em></span></div>
+</div></div>
+
+<div class="section"><h3>唯一权威顺序</h3><div class="matrix">
+  <div class="row"><div class="cell">优先级</div><div class="cell">Artifact</div><div class="cell">允许支持的结论</div><div class="cell">禁止外推</div></div>
+  <div class="row"><div class="cell"><b>1 · runtime</b></div><div class="cell">monaco-editor@0.56.0 tar + Chrome 151 binary + signed M0/M1 bundles</div><div class="cell">公开 API、实际 registry、事件/布局/性能差分结果</div><div class="cell no">不由 source comment 覆盖 runtime observation</div></div>
+  <div class="row"><div class="cell"><b>2 · source</b></div><div class="cell">monaco-editor-core@0.56.0 final tar，2106-file hash manifest</div><div class="cell">内部算法分支、常量、错误与数据结构移植依据</div><div class="cell no">不称为可重建的 Git commit snapshot</div></div>
+  <div class="row"><div class="cell"><b>3 · public type</b></div><div class="cell">发布 monaco.d.ts SHA-256 fbbab04…8d3f2；core editor.api.d.ts SHA-256 8350c433…4ba2</div><div class="cell">成员、重载、enum 与 type-only namespace 数量</div><div class="cell no">type-only export 不计运行时值</div></div>
+  <div class="row"><div class="cell"><b>4 · source repo</b></div><div class="cell">monaco tag 13f0c872；只用于 package build scripts、language definitions 与 release context</div><div class="cell">tag 内实际存在且 hash 固定的文件</div><div class="cell no">不代表 core ESM 的唯一 Git provenance</div></div>
+  <div class="row"><div class="cell"><b>5 · supplementary</b></div><div class="cell">Test262 3655e746；LSP gh-pages 8b9fab8f；Apple/Chromium official docs</div><div class="cell">对应明确 test/spec/platform contract</div><div class="cell no">不覆盖 Monaco runtime differential</div></div>
+</div></div>
+
+<div class="section"><h3>模型关键文件重新固定</h3><div class="cards">
+  <div class="card"><h4>Final core hashes</h4><ul><li>pieceTreeTextBuffer 2eda10b7…d3d3e</li><li>builder d76cad39…ccde7</li><li>textModel 18b3c152…1adcf8</li><li>undoRedoService 733e6eb7…a424b5</li><li>editor.api.d.ts 8350c433…4ba2</li></ul></div>
+  <div class="card"><h4>Provenance record</h4><ul><li>保存 npm integrity 与 tar SHA-256</li><li>保存全部 relative path + size + SHA-256</li><li>保存 package.json/version.txt 原文及 hash</li><li>记录 metadata conflict，不静默选边</li><li>每个 fixture 记录 authority artifact/path/hash</li></ul></div>
+  <div class="card"><h4>Current status</h4><ul><li>final tar 与 dev tar 已逐文件比较</li><li>旧模型语义结论未因 final 切换而改变</li><li>正式 provenance 表述已修正</li><li>仓库尚无 checked-in artifact manifest</li><li>P1-R 产品/fixture gates 仍未通过</li></ul></div>
+</div></div>
+
+<div class="source"><b>事实索引：</b>正式 monaco-editor@0.56.0 package.json 同时包含 monacoCommitId 13f0c872、vscodeRef/vscodeCommitId f487add，并声明 monaco-editor-core 0.56.0；正式 core tar SHA-256 78e222c77e7ef6402ea0bfb20e02caad7b63156f5d2798bc3c398a8bb396f4ed。final core package.json 写 f487add，version.txt 却指向 vscode/tree/13f0c872；旧 dev version.txt 指向 d8c9ff06。final/dev ESM 各 2106 files、路径集相同、仅 13 个 nls.messages locale files hash 不同。此页用正式产物消除了来源歧义，但当前尚无 MonaCode 实现或差分结果。</div>

@@ -1,0 +1,116 @@
+<style>
+  .verdict { display:flex; align-items:flex-start; gap:14px; padding:16px; border:1px solid #059669; border-radius:14px; background:color-mix(in srgb,#059669 8%,var(--surface)); margin:14px 0 18px; }
+  .verdict .mark { display:grid; place-items:center; width:32px; height:32px; flex:0 0 32px; border-radius:50%; background:#059669; color:#fff; font-weight:800; }
+  .verdict h3 { margin:0 0 4px; }
+  .verdict p { margin:0; color:var(--muted); line-height:1.45; }
+  .matrix { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:11px; }
+  .attack { border:1px solid var(--border); border-radius:13px; padding:13px; background:var(--surface); }
+  .attack-head { display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:8px; }
+  .attack h3 { margin:0; font-size:14px; }
+  .badge { border-radius:999px; padding:4px 8px; font-size:10px; font-weight:800; letter-spacing:.03em; white-space:nowrap; }
+  .pass { color:#047857; background:color-mix(in srgb,#10b981 15%,var(--surface)); }
+  .guard { color:#b45309; background:color-mix(in srgb,#f59e0b 16%,var(--surface)); }
+  .fix { color:#b91c1c; background:color-mix(in srgb,#ef4444 14%,var(--surface)); }
+  .attack p { margin:6px 0; font-size:12px; line-height:1.48; }
+  .fact { color:var(--muted); }
+  .change { border-left:3px solid var(--accent); padding-left:9px; }
+  .diagram { border:1px solid var(--border); border-radius:14px; padding:15px; margin-top:16px; background:var(--surface); }
+  .diagram h3 { margin:0 0 11px; }
+  .flow { display:grid; grid-template-columns:1fr auto 1.1fr auto 1.1fr; gap:7px; align-items:stretch; }
+  .node { border:1px solid var(--border); border-radius:10px; padding:10px; font-size:12px; line-height:1.4; background:color-mix(in srgb,var(--accent) 5%,var(--surface)); }
+  .node strong { display:block; font-size:13px; margin-bottom:3px; }
+  .arrow { align-self:center; color:var(--muted); }
+  .model { border-color:#2563eb; background:color-mix(in srgb,#2563eb 8%,var(--surface)); }
+  .editor { border-color:#7c3aed; background:color-mix(in srgb,#7c3aed 7%,var(--surface)); }
+  .backend { border-color:#059669; background:color-mix(in srgb,#059669 7%,var(--surface)); }
+  .graphs { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-top:10px; }
+  .graph { border:1px dashed #059669; border-radius:10px; padding:10px; font-size:12px; }
+  .graph b { display:block; margin-bottom:4px; }
+  .rules { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:9px; margin-top:14px; }
+  .rule { padding:10px; border:1px solid var(--border); border-radius:10px; font-size:12px; line-height:1.42; }
+  .gate { margin-top:15px; padding:12px; border:1px solid #f59e0b; border-radius:11px; background:color-mix(in srgb,#f59e0b 7%,var(--surface)); font-size:12px; line-height:1.48; }
+  .actions { display:flex; gap:10px; margin-top:18px; }
+  .decision { flex:1; border:1px solid var(--border); border-radius:11px; padding:12px; cursor:pointer; background:var(--surface); }
+  .decision.selected { border-color:var(--accent); box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 18%,transparent); }
+  .decision h3 { margin:0 0 3px; }
+  @media(max-width:900px){.matrix,.graphs,.rules{grid-template-columns:1fr}.flow{grid-template-columns:1fr}.arrow{text-align:center;transform:rotate(90deg)}}
+</style>
+
+<h2>方案 A：对抗式验证结果</h2>
+<p class="subtitle">目标不是证明方案正确，而是用 Apple SDK 26.5 公共头文件与 Monaco 0.56 源码寻找能推翻它的反例。</p>
+
+<div class="verdict">
+  <div class="mark">A</div>
+  <div>
+    <h3>总架构保留，收紧 3 条边界</h3>
+    <p>唯一文本真源、TextKit 2 首选、可替换后端均成立。输入层不得依赖 NSTextView 的编辑语义；每个 Editor 必须拥有独立 TextKit graph；后端 SPI 必须覆盖布局与渲染，而非只覆盖绘制。</p>
+  </div>
+</div>
+
+<div class="matrix">
+  <div class="attack">
+    <div class="attack-head"><h3>攻击 1 · 直接复用 NSTextView</h3><span class="badge fix">反例命中</span></div>
+    <p class="fact">SDK 事实：NSTextView 的 selectedRanges 在多范围时禁止零长度范围；Monaco 的 CompositionOperation 对全部 selections 执行 map，包括多个空光标。</p>
+    <p class="change"><b>修正：</b>MonaCodeEditorView 是自定义 NSView + NSTextInputClient。系统只感知主光标，EditorCore 将输入、IME composition 与命令复制到 Monaco 等价的全部 selection。</p>
+  </div>
+
+  <div class="attack">
+    <div class="attack-head"><h3>攻击 2 · 多编辑器共享 TextKit graph</h3><span class="badge fix">反例命中</span></div>
+    <p class="fact">SDK 事实：textSelections 属于 NSTextLayoutManager；NSTextContentManager 只有一个 primaryTextLayoutManager，编辑事务期间非 primary 的访问会阻塞或失败。</p>
+    <p class="change"><b>修正：</b>一个 MonaCodeModel 可被多个 Editor 共享；每个 Editor 独占 ContentManager、LayoutManager、ViewportController、selection 与渲染缓存。</p>
+  </div>
+
+  <div class="attack">
+    <div class="attack-head"><h3>攻击 3 · 自有模型无法接入 TextKit 2</h3><span class="badge pass">未推翻</span></div>
+    <p class="fact">SDK 事实：NSTextContentManager 明确支持自定义 backing store、自定义 NSTextLocation、按需枚举元素、编辑范围调整与 recordEditAction；ViewportController 明确允许自定义 layer/view surface。</p>
+    <p class="change"><b>保留：</b>MonaCodeModel 仍是唯一真源，TextKit adapter 只生成视口所需的瞬态 paragraph/layout fragment，不保留第二份可编辑全文。</p>
+  </div>
+
+  <div class="attack">
+    <div class="attack-head"><h3>攻击 4 · 后台布局直接读取 Piece Tree</h3><span class="badge guard">强制护栏</span></div>
+    <p class="fact">Monaco 源码事实：PieceTreeSnapshot 自己注明真实多线程读取要求 piece 不可变，且读取期间不得执行 TreeNode/Buffer normalization。</p>
+    <p class="change"><b>修正：</b>TextKit layoutQueue、Diff、Provider 与 LSP 只能读取带 version 的 immutable snapshot；任何后台路径都禁止读取 live mutable Piece Tree。</p>
+  </div>
+
+  <div class="attack">
+    <div class="attack-head"><h3>攻击 5 · 超长单行仍是“视口增量”</h3><span class="badge guard">性能关口</span></div>
+    <p class="fact">SDK 事实：NSTextParagraph 是以完整 NSAttributedString 为内容的单个段落；Monaco 0.56 默认 stopRenderingLineAfter = 10,000。</p>
+    <p class="change"><b>修正：</b>TextKit backend 必须实现 10,000 UTF-16 单元后的隐藏尾段语义。配置为 -1 或超长行基准落后时，切换 Layout + Render backend。</p>
+  </div>
+
+  <div class="attack">
+    <div class="attack-head"><h3>攻击 6 · TextKit 2 已满足性能目标</h3><span class="badge guard">尚未验收</span></div>
+    <p class="fact">当前事实仅证明公共 API 能承载架构；当前仓库没有可执行切片，因此没有 MonaCode 与 Monaco 0.56 的延迟、内存、CPU、GPU、能耗对照数据。</p>
+    <p class="change"><b>结论：</b>TextKit 2 保持首选后端，但不获得性能豁免。任一独立指标落后即判定该后端未通过，并进入下一后端。</p>
+  </div>
+</div>
+
+<div class="diagram">
+  <h3>修正版不可替换核心与可替换边界</h3>
+  <div class="flow">
+    <div class="node editor"><strong>NS Input / Accessibility</strong>主光标协议、IME、VoiceOver</div>
+    <div class="arrow">›</div>
+    <div class="node editor"><strong>EditorCore</strong>全部 cursor / selection / command</div>
+    <div class="arrow">›</div>
+    <div class="node model"><strong>MonaCodeModel</strong>唯一 EditTransaction 与版本</div>
+  </div>
+  <div class="graphs">
+    <div class="graph"><b>Editor A 独立 graph</b>Versioned adapter → NSTextLayoutManager → viewport surfaces</div>
+    <div class="graph"><b>Editor B 独立 graph</b>Versioned adapter → NSTextLayoutManager → viewport surfaces</div>
+  </div>
+  <div class="rules">
+    <div class="rule"><b>输入规则</b><br>TextKit 或系统回调只能提交 EditIntent，不能绕过 Model。</div>
+    <div class="rule"><b>并发规则</b><br>主线程使用 live model；后台只使用 immutable versioned snapshot。</div>
+    <div class="rule"><b>替换规则</b><br>SPI 覆盖 layout + geometry + render；Model、Input、Features 不随后端变化。</div>
+  </div>
+  <div class="gate"><b>明确状态：</b>API 适配性通过；架构反例已封堵；性能尚未验收。性能结论只能由当前 M4 Pro 上的 60 Hz / 120 Hz 差分基准产生。</div>
+</div>
+
+<div class="actions">
+  <div class="decision" data-choice="accept-adversarial-revision" onclick="toggleSelect(this)">
+    <h3>采纳修正版</h3><small>将这 3 条收紧项写入正式架构，继续并发与一致性设计。</small>
+  </div>
+  <div class="decision" data-choice="continue-adversarial-review" onclick="toggleSelect(this)">
+    <h3>继续攻击本节</h3><small>在终端指定需要继续验证的反例或场景。</small>
+  </div>
+</div>

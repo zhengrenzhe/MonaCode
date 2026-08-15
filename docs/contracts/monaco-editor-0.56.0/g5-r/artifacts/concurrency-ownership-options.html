@@ -1,0 +1,94 @@
+<style>
+  .summary { padding:13px 14px; border:1px solid #2563eb; border-radius:13px; background:color-mix(in srgb,#2563eb 7%,var(--surface)); margin:13px 0 17px; font-size:13px; line-height:1.5; }
+  .options { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:11px; }
+  .option { border:1px solid var(--border); border-radius:14px; padding:14px; background:var(--surface); cursor:pointer; position:relative; }
+  .option.selected { border-color:var(--accent); box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 18%,transparent); }
+  .option.recommended { border-color:#059669; background:color-mix(in srgb,#059669 6%,var(--surface)); }
+  .tag { position:absolute; top:10px; right:10px; padding:3px 7px; border-radius:999px; font-size:9px; font-weight:800; color:#047857; background:color-mix(in srgb,#10b981 17%,var(--surface)); }
+  .option h3 { margin:0 0 5px; font-size:15px; }
+  .option .sub { color:var(--muted); font-size:11px; min-height:32px; line-height:1.4; }
+  .option ul { margin:10px 0 0 17px; padding:0; font-size:12px; line-height:1.52; }
+  .table { margin-top:16px; border:1px solid var(--border); border-radius:13px; overflow:hidden; }
+  .row { display:grid; grid-template-columns:1.4fr repeat(3,1fr); border-top:1px solid var(--border); }
+  .row:first-child { border-top:0; background:color-mix(in srgb,var(--accent) 6%,var(--surface)); font-weight:750; }
+  .cell { padding:9px 10px; font-size:11px; line-height:1.35; border-left:1px solid var(--border); }
+  .cell:first-child { border-left:0; }
+  .yes { color:#047857; font-weight:700; }
+  .warn { color:#b45309; font-weight:700; }
+  .no { color:#b91c1c; font-weight:700; }
+  .flow-panel { margin-top:16px; border:1px solid var(--border); border-radius:13px; padding:14px; background:var(--surface); }
+  .flow-panel h3 { margin:0 0 11px; }
+  .lanes { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .lane { border:1px solid var(--border); border-radius:10px; padding:11px; }
+  .lane strong { display:block; margin-bottom:7px; font-size:12px; }
+  .steps { display:flex; align-items:center; gap:5px; flex-wrap:wrap; }
+  .step { padding:6px 7px; border:1px solid color-mix(in srgb,var(--accent) 28%,var(--border)); border-radius:7px; font-size:10px; background:color-mix(in srgb,var(--accent) 7%,var(--surface)); }
+  .arrow { color:var(--muted); }
+  .rule { margin-top:12px; padding:10px 11px; border-left:3px solid #7c3aed; background:color-mix(in srgb,#7c3aed 6%,var(--surface)); font-size:12px; line-height:1.45; }
+  @media(max-width:900px){.options,.lanes{grid-template-columns:1fr}.row{grid-template-columns:1.2fr repeat(3,1fr)}.cell{padding:7px 5px;font-size:9px}}
+</style>
+
+<h2>并发所有权：live model 放在哪里？</h2>
+<p class="subtitle">三种方案都允许后台 LSP、Diff 和布局；区别是 live model 的修改入口，以及同步事件能否保持 Monaco 语义。</p>
+
+<div class="summary"><b>已锁定前提：</b>ITextModel 等价 API 是同步 API；输入事务在返回前完成版本递增与事件投递；后台代码只能读取 immutable versioned snapshot。</div>
+
+<div class="options">
+  <div class="option recommended" data-choice="concurrency-main-actor" onclick="toggleSelect(this)">
+    <span class="tag">推荐 A</span>
+    <h3>A · MainActor live model</h3>
+    <div class="sub">Model 不依赖 AppKit，但 live state 与 EditorCore 统一归属 MainActor。</div>
+    <ul>
+      <li>UI 输入热路径没有锁、没有 executor hop。</li>
+      <li>同步 API 与同步事件保持 Monaco 顺序。</li>
+      <li>后台拿 Sendable snapshot；结果回 MainActor 过版本闸门。</li>
+      <li>后台发起修改必须切回 MainActor。</li>
+    </ul>
+  </div>
+
+  <div class="option" data-choice="concurrency-lock" onclick="toggleSelect(this)">
+    <h3>B · 内部锁保护</h3>
+    <div class="sub">任意线程都能同步读写同一个 live model。</div>
+    <ul>
+      <li>每次输入都进入锁。</li>
+      <li>必须额外实现跨线程事件排序、重入和等待。</li>
+      <li>监听器可再次编辑时存在锁与投递队列耦合。</li>
+      <li>调用方自由度最高，核心复杂度最高。</li>
+    </ul>
+  </div>
+
+  <div class="option" data-choice="concurrency-actor" onclick="toggleSelect(this)">
+    <h3>C · 独立 Model Actor</h3>
+    <div class="sub">所有 live model 操作经 Swift actor 串行化。</div>
+    <ul>
+      <li>数据竞争由 actor 隔离。</li>
+      <li>编辑与读取 API 变为 await。</li>
+      <li>输入路径增加 actor hop。</li>
+      <li>不再等价于 Monaco 的同步 ITextModel API。</li>
+    </ul>
+  </div>
+</div>
+
+<div class="table">
+  <div class="row"><div class="cell">验收维度</div><div class="cell">A · MainActor</div><div class="cell">B · Lock</div><div class="cell">C · Actor</div></div>
+  <div class="row"><div class="cell">同步 ITextModel 语义</div><div class="cell yes">完全保留</div><div class="cell warn">可实现，需自建投递器</div><div class="cell no">API 变为异步</div></div>
+  <div class="row"><div class="cell">UI 输入额外同步成本</div><div class="cell yes">无锁、无 hop</div><div class="cell warn">每次加锁</div><div class="cell no">每次 actor hop</div></div>
+  <div class="row"><div class="cell">事件顺序与监听器重入</div><div class="cell yes">单执行域内确定</div><div class="cell warn">自行处理跨线程</div><div class="cell yes">actor 内确定</div></div>
+  <div class="row"><div class="cell">后台随机读取</div><div class="cell yes">Snapshot</div><div class="cell yes">Snapshot</div><div class="cell yes">Snapshot</div></div>
+  <div class="row"><div class="cell">无 UI 的命令行宿主</div><div class="cell">运行在 MainActor</div><div class="cell">任意线程</div><div class="cell">异步调用</div></div>
+</div>
+
+<div class="flow-panel">
+  <h3>推荐 A 的两条互不交叉的数据通道</h3>
+  <div class="lanes">
+    <div class="lane">
+      <strong>同步 MainActor 热路径</strong>
+      <div class="steps"><span class="step">Input</span><span class="arrow">›</span><span class="step">Preflight</span><span class="arrow">›</span><span class="step">Atomic Commit</span><span class="arrow">›</span><span class="step">Version + Event</span><span class="arrow">›</span><span class="step">Viewport Invalidate</span></div>
+    </div>
+    <div class="lane">
+      <strong>异步只读路径</strong>
+      <div class="steps"><span class="step">Snapshot(v42)</span><span class="arrow">›</span><span class="step">LSP / Diff / Layout</span><span class="arrow">›</span><span class="step">Result(v42)</span><span class="arrow">›</span><span class="step">Version Gate</span></div>
+    </div>
+  </div>
+  <div class="rule"><b>效果：</b>用户输入永远不等待 LSP、Diff 或后台布局；后台任务永远不能直接修改 live Piece Tree。MainActor 是执行域，不是平台依赖，MonaCodeModel 仍位于平台无关模块。</div>
+</div>

@@ -1,0 +1,62 @@
+<style>
+  :root{--ok:#059669;--warn:#d97706;--bad:#dc2626;--blue:#2563eb;--violet:#7c3aed;--cyan:#0891b2}
+  .hero{display:flex;gap:13px;align-items:flex-start;padding:14px;border:2px solid var(--ok);border-radius:14px;background:color-mix(in srgb,var(--ok) 6%,var(--surface));margin:12px 0 15px}.mark{width:66px;height:66px;flex:0 0 66px;display:grid;place-items:center;border-radius:13px;background:var(--ok);color:#fff;font-weight:900}.hero h3{margin:0 0 5px;font-size:14px}.hero p{margin:0;color:var(--muted);font-size:8.2px;line-height:1.5}
+  .section{margin-top:15px}.section h3{margin:0 0 8px;font-size:12px}.hits{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.hit{padding:9px;border:1px solid var(--warn);border-radius:10px;background:var(--surface)}.hit b{display:block;font-size:8.2px;margin-bottom:3px}.hit span{display:block;color:var(--muted);font-size:6.75px;line-height:1.43}.hit em{font-style:normal;color:#b45309;font-weight:800}
+  .matrix{border:1px solid var(--border);border-radius:11px;overflow:hidden}.row{display:grid;grid-template-columns:.55fr 1.05fr 2fr 1.1fr;border-top:1px solid var(--border)}.row:first-child{border-top:0;font-weight:800;background:color-mix(in srgb,var(--accent) 6%,var(--surface))}.cell{padding:7px 8px;border-left:1px solid var(--border);font-size:6.75px;line-height:1.43}.cell:first-child{border-left:0}.yes{color:#047857;font-weight:750}.no{color:#b91c1c;font-weight:750}
+  .cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.card{padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}.card h4{margin:0 0 5px;font-size:9px}.card ul{margin:0 0 0 14px;padding:0;font-size:6.8px;line-height:1.5}.artifact{padding:11px;border:1px solid var(--blue);border-radius:11px;background:color-mix(in srgb,var(--blue) 5%,var(--surface));font-size:7px;line-height:1.52}.artifact code{font-size:6.3px;word-break:break-all}.artifact a{font-weight:800;color:var(--blue)}.source{margin-top:12px;padding:9px 10px;border-left:3px solid var(--blue);background:color-mix(in srgb,var(--blue) 5%,var(--surface));color:var(--muted);font-size:7px;line-height:1.48}.statement{padding:12px;border:2px solid var(--violet);border-radius:12px;background:color-mix(in srgb,var(--violet) 5%,var(--surface));font-size:8px;line-height:1.5}
+  @media(max-width:1080px){.hits,.cards{grid-template-columns:1fr 1fr}.row{grid-template-columns:.5fr .8fr 1.3fr .85fr}.cell{padding:5px 4px;font-size:6.1px}}
+</style>
+
+<h2>验收协议第十一轮攻击：Q1-R5 全范围可执行闭包</h2>
+<p class="subtitle">Q1-R5 替换旧 C01–C08 摘要，保留 Q1-R 至 R4 的非冲突 corpus、双基线、collectors、统计与环境合同。P00–P13 不增不减；correctness 改为 C01–C10。</p>
+
+<div class="hero"><div class="mark">Q1-R5</div><div><h3>10 个 correctness gates 覆盖完整产品；14 个 performance workloads 与双基线门槛原样保留</h3><p>C04 现在验证 555 条 source declarations 到 Swift symbol graph 的一对一闭包；C09 验证 package/host/global lifetime/cache；C10 验证 distribution/dependency/license。任何缺 artifact、权限、输入源、样本或 comparator 结果都保持 not-passed。</p></div></div>
+
+<div class="section"><h3>本轮十二个确定命中</h3><div class="hits">
+  <div class="hit"><b>100 · C04 的 runtime keys 等于公共 API</b><span>148 runtime values 之外还有 407 条声明。<em>C04 改验 555=434 retained+121 cut。</em></span></div>
+  <div class="hit"><b>101 · 八个 correctness gate 已覆盖产品</b><span>旧分区没有 package、host、global lifetime、cache 与 distribution。<em>新增 C09/C10，不新增功能。</em></span></div>
+  <div class="hit"><b>102 · source manifest 存在即 native API 通过</b><span>当前没有 Swift symbols。<em>candidate 必须由 symbol graph 生成 native declaration manifest。</em></span></div>
+  <div class="hit"><b>103 · compile fixture 能证明 non-no-op</b><span>空实现同样可编译。<em>每个 callable 同时进入 compile fixture 与 behavior trace。</em></span></div>
+  <div class="hit"><b>104 · “100 MiB model”单位明确</b><span>JS model threshold 使用 code units，footprint 使用 bytes。<em>文档统一 MiU16；资源继续 MiB。</em></span></div>
+  <div class="hit"><b>105 · 大文件只属于 performance</b><span>阈值边界与 sticky 会改变公开操作和 retained features。<em>C01 加入四阈值 T−1/T/T+1。</em></span></div>
+  <div class="hit"><b>106 · LSP 四个 runtime key 都应可调用</b><span>F1-R4 已 cut 三个 web transport constructor。<em>C06 固定 client 1 retained、transport 3 absent。</em></span></div>
+  <div class="hit"><b>107 · SwiftPM build 证明 package 边界</b><span>额外 product、依赖、re-export 和 dylib 仍可混入。<em>C10 同查 package JSON、symbol graph、linked image 与 resources。</em></span></div>
+  <div class="hit"><b>108 · license notice 可人工发布时再看</b><span>bundled Codicon full font 含单列 Git Logo license。<em>notice、attribution、modification 与 artifact hash 成为 C10 hard gate。</em></span></div>
+  <div class="hit"><b>109 · cache plateau 看 footprint 即可</b><span>总 footprint 无法定位未登记 retention。<em>C09 要求 linked cache registry 与 manifest set-equal。</em></span></div>
+  <div class="hit"><b>110 · 模拟 allocator denial 可宣称 OOM-safe</b><span>测试 checkpoint 不等于 Swift fatal heap exhaustion。<em>Q1-R5 明确排除 fatal OOM claim。</em></span></div>
+  <div class="hit"><b>111 · 缺物理设备的 case 标为 N/A 即全过</b><span>numpad mapping 仍可由 immutable event 输入完整覆盖。<em>合成 NSEvent 是硬 gate；实体 HID 结论只覆盖 QEnvironmentID。</em></span></div>
+</div></div>
+
+<div class="section"><h3>C01–C10 唯一最终分区</h3><div class="matrix">
+  <div class="row"><div class="cell">Gate</div><div class="cell">域</div><div class="cell">硬覆盖</div><div class="cell">通过条件</div></div>
+  <div class="row"><div class="cell"><b>C01</b></div><div class="cell">Model / Piece Tree / large model</div><div class="cell">73/70 public model；256×10K trace；20/300K/50/256 阈值、sticky、optimization=false</div><div class="cell yes">exact observation 零差异</div></div>
+  <div class="row"><div class="cell"><b>C02</b></div><div class="cell">ECMAScript RegExp</div><div class="cell">Chrome 151；g/u/i/m、literal/word/capture/replace/zero-length/CRLF/surrogate</div><div class="cell yes">raw-unit trace 零差异</div></div>
+  <div class="row"><div class="cell"><b>C03</b></div><div class="cell">Projection / geometry</div><div class="cell">projection exact domain；Core Text property oracle；完整 Unicode/layout corpus</div><div class="cell yes">exact equal + native invariants</div></div>
+  <div class="row"><div class="cell"><b>C04</b></div><div class="cell">Public API / registries</div><div class="cell">555 declarations、434/121 dispositions、四 runtime sets、feature/registry counts、五实例 interfaces</div><div class="cell yes">symbol/compile/behavior 全闭包</div></div>
+  <div class="row"><div class="cell"><b>C05</b></div><div class="cell">Options / Diff / MultiDiff</div><div class="cell">174=157+6+11；diff option groups；legacy/advanced；stable item identity</div><div class="cell yes">retained exact；cuts absent</div></div>
+  <div class="row"><div class="cell"><b>C06</b></div><div class="cell">Language / LSP</div><div class="cell">30 direct、25 LSP、5 direct-only；client 1 retained；web transports 3 absent；plain text</div><div class="cell yes">registry/protocol/lifecycle 全过</div></div>
+  <div class="row"><div class="cell"><b>C07</b></div><div class="cell">Input / AX / Transfer</div><div class="cell">ABC/拼音真实输入；合成 numpad；VoiceOver/dictation；IME、clipboard、drag/drop</div><div class="cell yes">state/model/AX contract 全过</div></div>
+  <div class="row"><div class="cell"><b>C08</b></div><div class="cell">Renderer</div><div class="cell">CG goldens；generation/failure；Metal 存在时与同一 LineLayoutRecord parity</div><div class="cell yes">CG pass；Metal=N/A 或 ≤1/255</div></div>
+  <div class="row"><div class="cell"><b>C09</b></div><div class="cell">Embedding / Lifetime / Resource</div><div class="cell">3 products/3 views/4 wrappers/7 hosts；WorkspaceEdit 四态；8 global/7 editor/3 model states；cache/fault</div><div class="cell yes">compile/isolation/atomicity/bounds 全过</div></div>
+  <div class="row"><div class="cell"><b>C10</b></div><div class="cell">Distribution / License</div><div class="cell">package graph、release binaries、symbol/API、dylibs/resources/hashes、MIT/CC notices</div><div class="cell yes">distribution manifest exact-set</div></div>
+</div></div>
+
+<div class="section"><h3>四份 candidate 工件与既有性能合同</h3><div class="cards">
+  <div class="card"><h4>Native declarations</h4><ul><li>Swift symbol graph + mapper</li><li>434 retained 全存在</li><li>121 cuts 全缺席</li><li>member cuts 不泄漏</li><li>C04 之前不得手填 pass</li></ul></div>
+  <div class="card"><h4>Cache manifest</h4><ul><li>linked registry 导出</li><li>ID exact-set</li><li>owner/key/bound/eviction/epoch/counter</li><li>100-cycle plateau</li><li>24h soak 不越界</li></ul></div>
+  <div class="card"><h4>Distribution manifest</h4><ul><li>3-product graph</li><li>symbol/API digester</li><li>linked dependencies/resources</li><li>artifact SHA-256</li><li>licenses/notices exact</li></ul></div>
+  <div class="card"><h4>P00–P13 unchanged</h4><ul><li>M0 official + M1 matched</li><li>60/120 Hz cells</li><li>total + component cost</li><li>paired one-sided 95% upper ≤1</li><li>任一 cell fail 即不通过</li></ul></div>
+</div></div>
+
+<div class="section"><div class="statement"><b>唯一发布判定：</b><br>C01–C10、P00–P13 的每个预注册 baseline/metric/refresh cell，以及 reliability、failure-injection、complexity 全部通过，且所有工件属于同一 revision，才可声明当前 arm64 macOS/QEnvironmentID 验收通过。缺文件、权限、输入源、有效样本、comparator 或任何跳过项，统一为 <b>not-passed</b>。该结论不外推到 iOS、iPadOS、x86_64、外接显示器或 run manifest 中不存在的 HID。</div></div>
+
+<div class="section"><h3>机器可核对工件</h3><div class="artifact">
+  <a href="./monacode-q1r5-acceptance-manifest.json">打开 monacode-q1r5-acceptance-manifest.json</a><br>
+  文件 SHA-256（含结尾 LF）：<code>b695a29f52fde3311c4b9ebcd282877a61de6cf071112458363d89fb32f6f720</code>。<br>
+  JSON 固定 C01–C10、4 个 candidate-generated artifacts、P00–P13、M0/M1、60/120 Hz、reliability/failure/complexity 与唯一 release verdict。<br>
+  当前状态：product source=0、executable=0、candidate artifacts=0、passed gates=0、release verdict=not-passed。
+</div></div>
+
+<div class="source"><b>事实索引：</b>F1-R4 source manifest 固定 555=434+121；H1-R/H2-R 固定 package/host/global/instance/resource 边界；本机 Xcode 26.6 已提供 <code>swift package dump-package/describe/show-dependencies</code>、<code>swift-symbolgraph-extract</code>、<code>swift-api-digester</code>、<code>nm</code> 与 <code>otool</code>，因此 C04/C10 的采集路径在当前目标机存在。Q1-R 至 R4 已固定 M0/M1、P00–P13、paired intersection–union、environment/font/cold handling；Q1-R5 未修改这些门槛。当前目录没有 Package.swift 或产品实现，所有产品 gate 均未运行。</div>
+
+<div class="section"><div class="decision" data-choice="accept-q1r5"><h4>Q1-R5 作为最终验收层</h4><span>用 C01–C10 覆盖全量已锁范围；继续做全局哈希与交叉矛盾扫描。</span></div></div>
