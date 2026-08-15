@@ -1,0 +1,27 @@
+{
+  "task": {
+    "taskID": "P00-T001",
+    "stages": [
+      { "name": "preflight", "steps": [{ "kind": "controller-action", "action": "begin-task" }] },
+      { "name": "test-authoring", "steps": [{ "kind": "authoring-operation", "operation": "author-tests" }] },
+      { "name": "red", "steps": [{ "kind": "verification-command", "command": { "commandID": "P00-T001.RED.001", "kind": "process", "networkMode": "forbidden", "timeoutMs": 120000, "leaves": [{ "leafID": "P00-T001.RED.001.PROC.001" }] } }] },
+      { "name": "implementation", "steps": [{ "kind": "implementation-operation", "operation": "implement", "creates": ["Sources/Foo.swift"] }] },
+      { "name": "green", "steps": [{ "kind": "verification-command", "command": { "commandID": "P00-T001.GREEN.001", "kind": "process", "networkMode": "forbidden", "timeoutMs": 120000, "leaves": [{ "leafID": "P00-T001.GREEN.001.PROC.001" }] } }] },
+      { "name": "commit", "steps": [{ "kind": "controller-action", "action": "commit-task" }] },
+      { "name": "evidence", "steps": [{ "kind": "controller-action", "action": "finalize-evidence" }] }
+    ],
+    "testContract": { "contractID": "TC-P00-T001", "cases": [{ "caseID": "C1", "file": { "path": "Tests/Foo.test.swift", "availability": "task-step" }, "checker": "swift-test", "target": "Tests", "testSymbol": "testFoo", "fixtures": { "kind": "inline", "values": {} }, "assertions": [{ "id": "A1", "operand": "exit" }], "redLeafID": "P00-T001.RED.001.PROC.001", "greenLeafID": "P00-T001.GREEN.001.PROC.001", "inheritedOutput": false, "failureClass": "behavioral", "authoringOperation": "author-tests", "source": "baseline" }] },
+    "workspace": { "ownershipToken": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef", "taskRoot": "/tmp/monacode-planctl/task-root-P00-T001", "planHash": "0123456789abcdef0123456789abcdef01234567", "taskHash": "fedcba9876543210fedcba9876543210fedcba98", "baseHash": "757d1c3660dc80e2756e35bbd52580688011c67a", "currentStage": "red", "lifecycleState": "running" },
+    "productCommit": { "stagedProductPaths": ["Sources/Foo.swift"] },
+    "evidenceCommit": { "stagedEvidencePath": "evidence/P00-T001.json" }
+  },
+  "stage": "red",
+  "observedPaths": ["/tmp/monacode-planctl/P00-T001.RED.001.PROC.001/out.txt", "/tmp/monacode-planctl/OUTSIDE/leak"],
+  "expected": {
+    "id": "PLAN_TEMPORARY_MUTATION_OUTSIDE_ROOT",
+    "category": "semantic",
+    "taskID": "P00-T001",
+    "path": "/tmp/monacode-planctl/OUTSIDE/leak",
+    "message": "observed temporary path \"/tmp/monacode-planctl/OUTSIDE/leak\" is outside the command temporary root for stage red"
+  }
+}
