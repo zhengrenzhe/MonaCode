@@ -13,6 +13,33 @@ const FORBIDDEN_CORE_TOKENS = [
   'Process'
 ];
 
+const EXPECTED_GLOBAL_CONSTRAINTS = [
+  'G4-R remains byte-immutable and independently verifiable.',
+  'G5-R changes qualification environment and plan governance only.',
+  'MonaCode imports Foundation only.',
+  'MonaCodeAppKit owns AppKit, Core Text, Core Graphics, Metal, Process, and native UI types.',
+  'MonaCodeSwiftUI depends explicitly on MonaCode and MonaCodeAppKit and owns lifecycle wrappers only.',
+  'Core Graphics is complete before the Phase 03 renderer-owned decision gate.',
+  'Metal product work exists only after a failed renderer-owned gate and closes inside Phase 03.',
+  'No built-in language implementation, grammar pack, snippet catalog, LSP server, JavaScript runtime, ICU runtime, WebView, DOM runtime, CSS runtime, or TextKit backend ships.',
+  'Formal C/P runs require the built-in display and externalDisplayCount equal to zero.',
+  'C01-C10, P00-P13, M0/M1, 60/120 Hz, and native/comparator at most 1.00 remain frozen.',
+  'Plan evidence states are planned, mapped, and structurally-verified only.',
+  'Product implementation and release acceptance remain not-started and not-passed during G5-R plan construction.'
+];
+
+const FORBIDDEN_PRODUCT_PATHS = [
+  ['builtin-language-content', /(?:Builtin[^/]*Language|LanguagePack|GrammarPack|SnippetCatalog)/i],
+  ['lsp-server', /LSPServer/i],
+  ['javascript-runtime', /JavaScript(?:Runtime|Engine|Core)/i],
+  ['icu-runtime', /(?:ICU(?:Runtime|Engine)|icudtl\.dat)/i],
+  ['webview-runtime', /(?:WebView|WKWebView|WebKit)/i],
+  ['dom-css-runtime', /(?:DOM(?:Runtime|Backend)|CSS(?:Runtime|Backend))/i],
+  ['textkit-backend', /(?:TextKit|NSTextStorage|NSLayoutManager)/i],
+  ['persistence-backend', /(?:Persistent(?:State|Store|Backend)|Persistence)/i],
+  ['telemetry-ui', /(?:Telemetry(?:Panel|UI|View)|Notification(?:Progress|Panel)|SignalAudio)/i]
+];
+
 const sorted = (values) => [...values].sort((left, right) => left.localeCompare(right, 'en'));
 const equalStrings = (left, right) => JSON.stringify(sorted(left ?? [])) === JSON.stringify(sorted(right ?? []));
 
@@ -64,6 +91,31 @@ export function auditPackageGraph(plan, contract) {
   const fixtures = (plan.packageGraph?.resources ?? []).find((row) => row.name === 'DifferentialFixtures');
   if (!fixtures || fixtures.path !== 'Tests/Fixtures/DifferentialFixtures' || fixtures.isTarget !== false) {
     findings.push(finding('PLAN_PACKAGE_GRAPH_MISMATCH', 'DifferentialFixtures', 'fixture resource mapping differs from contract'));
+  }
+  return findings.sort(compareFindings);
+}
+
+export function auditGlobalConstraints(plan) {
+  if (JSON.stringify(plan.globalConstraints) === JSON.stringify(EXPECTED_GLOBAL_CONSTRAINTS)) return [];
+  return [finding(
+    'PLAN_GLOBAL_CONSTRAINT_MISMATCH',
+    '$.globalConstraints',
+    'global constraints differ from the frozen G5-R plan contract'
+  )];
+}
+
+export function auditForbiddenProductPaths(plan) {
+  const findings = [];
+  for (const task of plan.tasks ?? []) {
+    const sourcePaths = [...(task.files?.create ?? []), ...(task.files?.modify ?? [])]
+      .filter((sourcePath) => sourcePath.startsWith('Sources/'));
+    for (const sourcePath of sourcePaths) {
+      for (const [profile, pattern] of FORBIDDEN_PRODUCT_PATHS) {
+        if (pattern.test(sourcePath)) {
+          findings.push(finding('PLAN_FORBIDDEN_PRODUCT_PATH', task.id, `${profile}:${sourcePath}`));
+        }
+      }
+    }
   }
   return findings.sort(compareFindings);
 }
@@ -176,6 +228,12 @@ export function auditMetalTrigger(plan) {
   ) {
     findings.push(finding('PLAN_METAL_TRIGGER_SCOPE', gate.id, triggerOwners.join(',')));
   }
+  for (const task of tasks) {
+    const sourcePaths = [...(task.files?.create ?? []), ...(task.files?.modify ?? [])];
+    if (task.id !== metal.id && sourcePaths.some((sourcePath) => /metal/i.test(sourcePath))) {
+      findings.push(finding('PLAN_METAL_TRIGGER_SCOPE', task.id, 'Metal source exists outside the conditional Phase 03 task'));
+    }
+  }
   for (const task of tasks.filter((candidate) => Number(candidate.phase) > 3 && candidate.files?.productTarget !== null)) {
     const sourcePaths = [...(task.files?.create ?? []), ...(task.files?.modify ?? [])];
     if (sourcePaths.some((sourcePath) => /metal/i.test(sourcePath))) {
@@ -186,7 +244,11 @@ export function auditMetalTrigger(plan) {
 }
 
 export function auditBoundaries(plan, contract) {
-  const findings = auditPackageGraph(plan, contract);
+  const findings = [
+    ...auditPackageGraph(plan, contract),
+    ...auditGlobalConstraints(plan),
+    ...auditForbiddenProductPaths(plan)
+  ];
   for (const task of (plan.tasks ?? []).filter((candidate) => candidate.files?.productTarget === 'MonaCode')) {
     const productionText = JSON.stringify({
       create: task.files.create,

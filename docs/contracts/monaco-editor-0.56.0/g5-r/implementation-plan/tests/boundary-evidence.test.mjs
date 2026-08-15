@@ -87,6 +87,11 @@ function mutate(plan, row) {
     plan.tasks.find((candidate) => candidate.id === row.task).ownership.push(row.value);
   } else if (row.mutation === 'acceptance-before-distribution') {
     plan.tasks.find((candidate) => candidate.id === row.task).dependencies = row.value;
+  } else if (row.mutation === 'add-source-path') {
+    plan.tasks.find((candidate) => candidate.id === row.task).files.create.push(row.value);
+  } else if (row.mutation === 'replace-global-constraint') {
+    const index = plan.globalConstraints.findIndex((value) => value.includes(row.match));
+    plan.globalConstraints[index] = plan.globalConstraints[index].replace(row.match, row.value);
   } else {
     throw new Error(`unknown mutation: ${row.mutation}`);
   }
@@ -121,3 +126,23 @@ test('rejects acceptance-before-distribution.json against the complete candidate
   mutate(plan, row);
   assert.deepEqual(auditBoundaries(plan, contract).map((finding) => finding.id), row.expectedFindingIds);
 });
+
+for (const name of [
+  'bundled-language-path.json',
+  'lsp-server-path.json',
+  'javascript-runtime-path.json',
+  'icu-runtime-path.json',
+  'webview-path.json',
+  'textkit-path.json',
+  'persistence-path.json',
+  'telemetry-ui-path.json',
+  'eager-metal-path.json',
+  'relaxed-performance-threshold.json'
+]) {
+  test(`rejects ${name} against the complete candidate graph`, () => {
+    const row = fixture(name);
+    const plan = structuredClone(seedManifest);
+    mutate(plan, row);
+    assert.deepEqual(auditBoundaries(plan, contract).map((finding) => finding.id), row.expectedFindingIds);
+  });
+}

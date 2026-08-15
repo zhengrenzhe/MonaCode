@@ -239,6 +239,12 @@ function applyBoundaryMutation(plan, row) {
     plan.tasks.find((task) => task.id === row.task).ownership.push(row.value);
   } else if (row.mutation === 'acceptance-before-distribution') {
     plan.tasks.find((task) => task.id === row.task).dependencies = row.value;
+  } else if (row.mutation === 'add-source-path') {
+    plan.tasks.find((task) => task.id === row.task).files.create.push(row.value);
+  } else if (row.mutation === 'replace-global-constraint') {
+    const index = plan.globalConstraints.findIndex((value) => value.includes(row.match));
+    if (index === -1) throw new Error(`global constraint fixture match absent: ${row.match}`);
+    plan.globalConstraints[index] = plan.globalConstraints[index].replace(row.match, row.value);
   } else {
     throw new Error(`unknown boundary fixture mutation: ${row.mutation}`);
   }
@@ -269,7 +275,11 @@ export function auditFixture({ fixture, contract, seedPlan, inventory }) {
     applyOwnershipMutation(plan, fixture);
     findings = auditOwnership(inventory, plan);
   } else {
-    const plan = fixture.mutation === 'acceptance-before-distribution'
+    const plan = [
+      'acceptance-before-distribution',
+      'add-source-path',
+      'replace-global-constraint'
+    ].includes(fixture.mutation)
       ? structuredClone(seedPlan)
       : boundaryFixturePlan(seedPlan);
     applyBoundaryMutation(plan, fixture);

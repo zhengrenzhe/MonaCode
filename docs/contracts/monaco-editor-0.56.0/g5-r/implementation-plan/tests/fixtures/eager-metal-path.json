@@ -1,0 +1,6 @@
+{
+  "mutation": "add-source-path",
+  "task": "P02-T008",
+  "value": "Sources/MonaCodeAppKit/Rendering/MonaMetalWarmup.swift",
+  "expectedFindingIds": ["PLAN_METAL_TRIGGER_SCOPE"]
+}
