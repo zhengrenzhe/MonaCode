@@ -6,7 +6,7 @@
     "revision": "G5-R-full-scope-candidate"
   },
   "adoptionState": "candidate",
-  "planState": "planned",
+  "planState": "mapped",
   "platformScope": [
     "arm64 macOS"
   ],
@@ -177,9 +177,1141 @@
       ]
     }
   ],
-  "tasks": [],
-  "ownership": [],
-  "documents": [],
+  "tasks": [
+    {
+      "id": "P00-T001",
+      "phase": "00",
+      "title": "Create the exact SwiftPM product, target, and fixture-resource graph",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [],
+      "contractRefs": [
+        "G5-R.deliveryScope",
+        "G5-R.validationScope.packageDeploymentTarget",
+        "Architecture-A.dependencies"
+      ],
+      "ownership": [
+        "package-graph:three-products",
+        "target-graph:three-non-product-targets"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [
+          "Package.swift",
+          "Sources/MonaCode/Scaffold.swift",
+          "Sources/MonaCodeAppKit/Scaffold.swift",
+          "Sources/MonaCodeSwiftUI/Scaffold.swift",
+          "Sources/MonaCodeSample/main.swift",
+          "Tests/MonaCodeTests/ScaffoldTests.swift",
+          "Tests/MonaCodeAppKitTests/ScaffoldTests.swift",
+          "Tests/ConformanceAndFailureInjection/FailureInjectionScaffoldTests.swift",
+          "Tests/BenchmarkHarness/BenchmarkScaffoldTests.swift",
+          "Tests/Fixtures/DifferentialFixtures/.gitkeep"
+        ],
+        "modify": [],
+        "test": []
+      },
+      "interfaces": {
+        "consumes": [],
+        "produces": [
+          "SwiftPMGraph",
+          "DifferentialFixturesResource"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift package dump-package | node Tools/PlanChecks/assert-package-graph.mjs",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "PLAN_PACKAGE_GRAPH_MISSING"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Declare MonaCode, MonaCodeAppKit, and MonaCodeSwiftUI as the only public products.",
+          "Declare sample-macOS-host, conformance-and-failure-injection, and benchmark-harness as the required non-product targets.",
+          "Map Tests/Fixtures/DifferentialFixtures as a resource and never as a target.",
+          "Pin macOS 26.0 and Swift language mode 6."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift package dump-package | node Tools/PlanChecks/assert-package-graph.mjs",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "PACKAGE_GRAPH products=3 nonProductTargets=3 fixtureTargets=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-00/P00-T001.json"
+      ],
+      "completion": [
+        "Exact three-product graph exists.",
+        "Exact three required non-product targets exist.",
+        "DifferentialFixtures is a resource only."
+      ],
+      "commitBoundary": [
+        "Package.swift",
+        "Sources/MonaCode/Scaffold.swift",
+        "Sources/MonaCodeAppKit/Scaffold.swift",
+        "Sources/MonaCodeSwiftUI/Scaffold.swift",
+        "Sources/MonaCodeSample/main.swift",
+        "Tests/MonaCodeTests/ScaffoldTests.swift",
+        "Tests/MonaCodeAppKitTests/ScaffoldTests.swift",
+        "Tests/ConformanceAndFailureInjection/FailureInjectionScaffoldTests.swift",
+        "Tests/BenchmarkHarness/BenchmarkScaffoldTests.swift",
+        "Tests/Fixtures/DifferentialFixtures/.gitkeep"
+      ]
+    },
+    {
+      "id": "P00-T002",
+      "phase": "00",
+      "title": "Enforce the Foundation-only MonaCode boundary",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P00-T001"
+      ],
+      "contractRefs": [
+        "Architecture-A.boundaries",
+        "G5-R.explicitCuts.platformAndCompatibility"
+      ],
+      "ownership": [
+        "module-boundary:MonaCode"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [
+          "Tools/PlanChecks/forbidden-core-imports.sh"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/PlanStructureTests/ForbiddenCoreImportsTests.mjs"
+        ]
+      },
+      "interfaces": {
+        "consumes": [],
+        "produces": [
+          "ForbiddenCoreImportGate"
+        ]
+      },
+      "red": [
+        {
+          "run": "node --test Tests/PlanStructureTests/ForbiddenCoreImportsTests.mjs",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "PLAN_FORBIDDEN_CORE_IMPORT fixture=seeded-violation"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Scan every Swift source assigned to the MonaCode target.",
+          "Reject platform UI, graphics, rendering, pasteboard, web runtime, JavaScript runtime, and semantic-substitution imports.",
+          "Run one seeded violation and one clean-tree case."
+        ]
+      },
+      "green": [
+        {
+          "run": "node --test Tests/PlanStructureTests/ForbiddenCoreImportsTests.mjs",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "FORBIDDEN_CORE_IMPORTS seeded=detected clean=pass"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-00/P00-T002.json"
+      ],
+      "completion": [
+        "A seeded prohibited import fails.",
+        "A clean Foundation-only Core tree passes."
+      ],
+      "commitBoundary": [
+        "Tools/PlanChecks/forbidden-core-imports.sh",
+        "Tests/PlanStructureTests/ForbiddenCoreImportsTests.mjs"
+      ]
+    },
+    {
+      "id": "P00-T003",
+      "phase": "00",
+      "title": "Pin Monaco 0.56.0 M0 and M1 comparator provenance",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P00-T001"
+      ],
+      "contractRefs": [
+        "P1-R",
+        "Q1-R2",
+        "G5-R.authorityArtifacts"
+      ],
+      "ownership": [
+        "normativeLayer:provenance:P1-R",
+        "comparator:M0",
+        "comparator:M1"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [
+          "Comparators/package.json",
+          "Comparators/package-lock.json",
+          "Comparators/provenance-lock.json",
+          "Comparators/build-m1.mjs",
+          "Tools/PlanChecks/verify-provenance.mjs"
+        ],
+        "modify": [],
+        "test": []
+      },
+      "interfaces": {
+        "consumes": [],
+        "produces": [
+          "M0Comparator",
+          "M1Comparator",
+          "ComparatorProvenanceLock"
+        ]
+      },
+      "red": [
+        {
+          "run": "node Tools/PlanChecks/verify-provenance.mjs --fixture tampered-lock",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "PROVENANCE_HASH_MISMATCH artifact=monaco-editor-0.56.0"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Lock the Monaco npm archives, monaco.d.ts, source tag, esbuild version, and M1 cut definition.",
+          "Build M1 only from the locked sources and record its complete SHA-256.",
+          "Keep all comparator dependencies outside production targets."
+        ]
+      },
+      "green": [
+        {
+          "run": "node Tools/PlanChecks/verify-provenance.mjs",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "PROVENANCE_OK monaco=0.56.0 comparators=2"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-00/P00-T003.json"
+      ],
+      "completion": [
+        "M0 and M1 inputs are hash-verified.",
+        "Production targets do not link comparator dependencies."
+      ],
+      "commitBoundary": [
+        "Comparators/package.json",
+        "Comparators/package-lock.json",
+        "Comparators/provenance-lock.json",
+        "Comparators/build-m1.mjs",
+        "Tools/PlanChecks/verify-provenance.mjs"
+      ]
+    },
+    {
+      "id": "P00-T004",
+      "phase": "00",
+      "title": "Reproduce frozen scope, declaration, and instance-surface manifests",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P00-T003"
+      ],
+      "contractRefs": [
+        "F1-R3",
+        "F1-R4",
+        "G5-R.surfaceCounts"
+      ],
+      "ownership": [
+        "machineArtifact:F1-R3-scope",
+        "machineArtifact:F1-R3-instance"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [
+          "Comparators/probes/scope-probe.mjs",
+          "Comparators/probes/instance-surface-probe.mjs",
+          "Comparators/probes/public-declaration-probe.mjs"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/PlanStructureTests/ScopeProbeTests.mjs"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "M0Comparator",
+          "M1Comparator",
+          "ComparatorProvenanceLock"
+        ],
+        "produces": [
+          "ScopeProbe",
+          "InstanceSurfaceProbe",
+          "PublicDeclarationProbe"
+        ]
+      },
+      "red": [
+        {
+          "run": "node --test Tests/PlanStructureTests/ScopeProbeTests.mjs --test-name-pattern tampered",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "SCOPE_MANIFEST_COUNT_MISMATCH registry=features"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Probe the exact registries and public declaration graph from both locked comparators.",
+          "Compare every count and identity against the copied F1-R3 and F1-R4 manifests.",
+          "Reject identity drift even when aggregate counts remain equal."
+        ]
+      },
+      "green": [
+        {
+          "run": "node --test Tests/PlanStructureTests/ScopeProbeTests.mjs",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "SCOPE_PROBES_OK features=64 publicPaths=555"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-00/P00-T004.json"
+      ],
+      "completion": [
+        "All frozen registry counts reproduce.",
+        "All 555 public declaration paths reproduce by identity."
+      ],
+      "commitBoundary": [
+        "Comparators/probes/scope-probe.mjs",
+        "Comparators/probes/instance-surface-probe.mjs",
+        "Comparators/probes/public-declaration-probe.mjs",
+        "Tests/PlanStructureTests/ScopeProbeTests.mjs"
+      ]
+    },
+    {
+      "id": "P00-T005",
+      "phase": "00",
+      "title": "Implement separate wall and high-resolution clock domains",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P00-T001"
+      ],
+      "contractRefs": [
+        "E1-R.clockDomains",
+        "X1-R.clockAndPerformanceCorrection"
+      ],
+      "ownership": [
+        "environment:clock-domains"
+      ],
+      "files": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Sources/MonaCode/Environment/MonaClock.swift",
+          "Sources/MonaCode/Environment/MonaWallClock.swift",
+          "Sources/MonaCode/Environment/MonaHighResolutionClock.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/Environment/MonaClockTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [],
+        "produces": [
+          "MonaClock",
+          "MonaWallClock",
+          "MonaHighResolutionClock"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaClockTests/testClockDomainsNeverInterchange",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "XCTAssertEqual failed: clock-domain-classification"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Represent wall-clock milliseconds and monotonic high-resolution time as separate injected protocols.",
+          "Preserve injected binary64 traces exactly.",
+          "Classify all frozen timing occurrences without substituting one domain for another."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaClockTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "Executed 4 tests, with 0 failures"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-00/P00-T005.json"
+      ],
+      "completion": [
+        "Wall-clock jumps remain observable.",
+        "High-resolution readings remain monotonic.",
+        "Injected traces replay byte-identically."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCode/Environment/MonaClock.swift",
+        "Sources/MonaCode/Environment/MonaWallClock.swift",
+        "Sources/MonaCode/Environment/MonaHighResolutionClock.swift",
+        "Tests/MonaCodeTests/Environment/MonaClockTests.swift"
+      ]
+    },
+    {
+      "id": "P00-T006",
+      "phase": "00",
+      "title": "Implement deterministic random, cryptographic random, and Number-to-string sources",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P00-T001"
+      ],
+      "contractRefs": [
+        "E1-R.entropy",
+        "SN1-R.variables",
+        "C02"
+      ],
+      "ownership": [
+        "environment:entropy",
+        "environment:number-to-string"
+      ],
+      "files": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Sources/MonaCode/Environment/MonaRandomDoubleSource.swift",
+          "Sources/MonaCode/Environment/MonaCryptoRandomSource.swift",
+          "Sources/MonaCode/Environment/MonaNumberToString.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/Environment/MonaEntropyTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [],
+        "produces": [
+          "MonaRandomDoubleSource",
+          "MonaCryptoRandomSource",
+          "MonaNumberToString"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaEntropyTests/testInjectedDrawOrder",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "XCTAssertEqual failed: entropy-draw-order"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Expose one injectable shared random sequence for every retained consumer.",
+          "Produce canonical lowercase UUID version 4 values from injected bytes.",
+          "Implement the finite radix-10 and radix-16 conversion profile required by frozen vectors."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaEntropyTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "Executed 6 tests, with 0 failures"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-00/P00-T006.json"
+      ],
+      "completion": [
+        "RANDOM and RANDOM_HEX vectors match M0/M1.",
+        "UUID version and variant bits match.",
+        "Draw order is deterministic."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCode/Environment/MonaRandomDoubleSource.swift",
+        "Sources/MonaCode/Environment/MonaCryptoRandomSource.swift",
+        "Sources/MonaCode/Environment/MonaNumberToString.swift",
+        "Tests/MonaCodeTests/Environment/MonaEntropyTests.swift"
+      ]
+    },
+    {
+      "id": "P00-T007",
+      "phase": "00",
+      "title": "Separate immutable UI localization profile from runtime locale",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P00-T001"
+      ],
+      "contractRefs": [
+        "E1-R.localeBoundary",
+        "N1-R.profileSelection",
+        "G5-R.currentLocalEnvironment"
+      ],
+      "ownership": [
+        "normativeLayer:environment-intl-clock-entropy:E1-R",
+        "machineArtifact:E1-R-environment-intl"
+      ],
+      "files": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Sources/MonaCode/Environment/MonaRuntimeLocale.swift",
+          "Sources/MonaCode/Environment/MonaCodeEnvironment.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/Environment/MonaLocaleBoundaryTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [],
+        "produces": [
+          "MonaRuntimeLocaleSnapshot",
+          "MonaCodeEnvironment"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaLocaleBoundaryTests/testRuntimeLocaleCannotSelectUIProfile",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "XCTAssertEqual failed: localization-profile-boundary"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Capture runtime locale, calendar, numbering system, and time zone once at startup.",
+          "Select UI message profile only from the explicit environment option.",
+          "Reject unsupported profile identifiers with a typed error."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaLocaleBoundaryTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "Executed 5 tests, with 0 failures"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-00/P00-T007.json"
+      ],
+      "completion": [
+        "Runtime locale never mutates the UI profile.",
+        "Current zh-CN runtime values reproduce.",
+        "Profile state is immutable."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCode/Environment/MonaRuntimeLocale.swift",
+        "Sources/MonaCode/Environment/MonaCodeEnvironment.swift",
+        "Tests/MonaCodeTests/Environment/MonaLocaleBoundaryTests.swift"
+      ]
+    },
+    {
+      "id": "P00-T008",
+      "phase": "00",
+      "title": "Build the differential fixture and comparator harness",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P00-T004",
+        "P00-T005",
+        "P00-T006",
+        "P00-T007"
+      ],
+      "contractRefs": [
+        "Q1-R.differentialHarness",
+        "G5-R.equivalenceDomains"
+      ],
+      "ownership": [
+        "verification:differential-harness"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [
+          "Tools/Differential/runner.mjs",
+          "Tools/Differential/fixture-schema.json",
+          "Tests/MonaCodeTests/Differential/MonaDifferentialModelProvider.swift",
+          "Tests/MonaCodeTests/Differential/DifferentialHarnessTests.swift"
+        ],
+        "modify": [],
+        "test": []
+      },
+      "interfaces": {
+        "consumes": [
+          "M0Comparator",
+          "M1Comparator",
+          "MonaClock",
+          "MonaRandomDoubleSource",
+          "MonaRuntimeLocaleSnapshot"
+        ],
+        "produces": [
+          "DifferentialFixtureV1",
+          "DifferentialRunner",
+          "MonaDifferentialModelProvider"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter DifferentialHarnessTests/testSeededMismatchIsBlocking",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "DIFFERENTIAL_MISMATCH fixture=seeded-mismatch domain=exact"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Run M0, M1, and native subjects with one identical injected environment trace.",
+          "Persist raw UTF-16 inputs and outputs without Unicode repair.",
+          "Distinguish exact and native-adapted comparison domains in every fixture."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter DifferentialHarnessTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "DIFFERENTIAL_HARNESS fixtures=2 seededMismatch=detected"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-00/P00-T008.json"
+      ],
+      "completion": [
+        "Fixture schema round-trips.",
+        "Seeded exact-domain drift blocks.",
+        "Comparator and native traces share one environment input."
+      ],
+      "commitBoundary": [
+        "Tools/Differential/runner.mjs",
+        "Tools/Differential/fixture-schema.json",
+        "Tests/MonaCodeTests/Differential/MonaDifferentialModelProvider.swift",
+        "Tests/MonaCodeTests/Differential/DifferentialHarnessTests.swift"
+      ]
+    },
+    {
+      "id": "P00-T009",
+      "phase": "00",
+      "title": "Implement the complete Q1-R3 statistical verdict engine",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P00-T008"
+      ],
+      "contractRefs": [
+        "Q1-R2",
+        "Q1-R3",
+        "G5-R.performanceDecision.sampleProtocol"
+      ],
+      "ownership": [
+        "normativeLayer:verification:Q1-R",
+        "normativeLayer:verification:Q1-R2",
+        "normativeLayer:verification:Q1-R3"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [
+          "Tests/BenchmarkHarness/BenchmarkRunner.swift",
+          "Tests/BenchmarkHarness/BootstrapStatistics.swift",
+          "Tests/BenchmarkHarness/CellManifest.swift",
+          "Tests/BenchmarkHarness/BootstrapStatisticsTests.swift"
+        ],
+        "modify": [],
+        "test": []
+      },
+      "interfaces": {
+        "consumes": [
+          "DifferentialFixtureV1"
+        ],
+        "produces": [
+          "BootstrapVerdict",
+          "BenchmarkCellManifest"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter BootstrapStatisticsTests/testRejectsInvalidComponentDelta",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "BENCHMARK_PAIR_INVALID reason=component-below-resolution"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Implement whole-balanced-block resampling with exactly 1000000 deterministic bootstrap draws.",
+          "Implement positive-ratio, manifest-declared near-zero difference, and discrete-zero verdict forms.",
+          "Reject non-finite, non-positive, negative, zero, and below-resolution component inputs exactly as Q1-R3 defines.",
+          "Evaluate the intersection-union test on unrounded binary64 values."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter BootstrapStatisticsTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "BOOTSTRAP_STATISTICS B=1000000 verdictForms=3 failures=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-00/P00-T009.json"
+      ],
+      "completion": [
+        "All three verdict forms pass locked vectors.",
+        "Bootstrap seed is reproducible.",
+        "No outlier deletion or clamping exists."
+      ],
+      "commitBoundary": [
+        "Tests/BenchmarkHarness/BenchmarkRunner.swift",
+        "Tests/BenchmarkHarness/BootstrapStatistics.swift",
+        "Tests/BenchmarkHarness/CellManifest.swift",
+        "Tests/BenchmarkHarness/BootstrapStatisticsTests.swift"
+      ]
+    },
+    {
+      "id": "P00-T010",
+      "phase": "00",
+      "title": "Enforce font provenance, cold launch, display isolation, and refresh cells",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P00-T009"
+      ],
+      "contractRefs": [
+        "Q1-R4",
+        "G5-R.currentLocalEnvironment.onlineDisplaySlots"
+      ],
+      "ownership": [
+        "normativeLayer:verification:Q1-R4",
+        "qualification:font-cold-display"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [
+          "Tests/BenchmarkHarness/Q1R4FontProvenance.swift",
+          "Tests/BenchmarkHarness/ColdLaunchManager.swift",
+          "Tests/BenchmarkHarness/DisplayModeEnforcer.swift",
+          "Tests/BenchmarkHarness/Q1R4ControlsTests.swift"
+        ],
+        "modify": [],
+        "test": []
+      },
+      "interfaces": {
+        "consumes": [
+          "BenchmarkCellManifest"
+        ],
+        "produces": [
+          "FontProvenanceRecord",
+          "ColdLaunchBlock",
+          "DisplayCellLock"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter Q1R4ControlsTests/testRejectsMixedRefreshBlock",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "Q1R4_BLOCK_INVALID reason=display-refresh-changed"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Hash every used font file and table and record variation axes plus run coverage.",
+          "Run each cold sample with a fresh profile and fresh process tree.",
+          "Lock every measurement block to the built-in display and one exact refresh cell.",
+          "Keep 60 Hz and 120 Hz deadlines separate without changing the relative no-regression threshold."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter Q1R4ControlsTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "Q1R4_CONTROLS font=locked cold=isolated refreshCells=2"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-00/P00-T010.json"
+      ],
+      "completion": [
+        "Unmanifested font runs fail.",
+        "Cold launches are process-isolated.",
+        "59.94 Hz never enters the 60 Hz cell.",
+        "External displays invalidate formal runs."
+      ],
+      "commitBoundary": [
+        "Tests/BenchmarkHarness/Q1R4FontProvenance.swift",
+        "Tests/BenchmarkHarness/ColdLaunchManager.swift",
+        "Tests/BenchmarkHarness/DisplayModeEnforcer.swift",
+        "Tests/BenchmarkHarness/Q1R4ControlsTests.swift"
+      ]
+    },
+    {
+      "id": "P00-T011",
+      "phase": "00",
+      "title": "Collect a privacy-filtered QEnvironmentID and enforce formal preflight",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P00-T007",
+        "P00-T010"
+      ],
+      "contractRefs": [
+        "G5-R.currentLocalEnvironment",
+        "G5-R.validationScope.privacy",
+        "Q1-R5.environmentPreflight"
+      ],
+      "ownership": [
+        "qualification:QEnvironmentID-preflight"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [
+          "Tools/Qualification/QEnvironmentCollector.swift",
+          "Tools/Qualification/qenvironment-schema.json",
+          "Tests/PlanStructureTests/QEnvironmentCollectorTests.mjs"
+        ],
+        "modify": [],
+        "test": []
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaRuntimeLocaleSnapshot",
+          "DisplayCellLock"
+        ],
+        "produces": [
+          "QEnvironmentIDPreflight"
+        ]
+      },
+      "red": [
+        {
+          "run": "node --test Tests/PlanStructureTests/QEnvironmentCollectorTests.mjs --test-name-pattern forbidden-identity",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "QENVIRONMENT_PRIVACY_VIOLATION path=$.hardwareUUID"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Collect the exact OS, toolchain, architecture, display, input-source, runtime-locale, Chrome, and ICU fields fixed by G5-R.",
+          "Reject serial, account, user, UUID, UDID, and UUID-shaped values recursively.",
+          "Require externalDisplayCount equal to zero for every formal correctness or performance run."
+        ]
+      },
+      "green": [
+        {
+          "run": "node --test Tests/PlanStructureTests/QEnvironmentCollectorTests.mjs",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "QENVIRONMENT_PREFLIGHT build=25G76 chrome=151.0.7922.138 externalDisplays=0 privacy=pass"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-00/P00-T011.json"
+      ],
+      "completion": [
+        "Collector output matches the qualification schema.",
+        "Forbidden identity fields and values are absent.",
+        "Formal display predicate is enforced."
+      ],
+      "commitBoundary": [
+        "Tools/Qualification/QEnvironmentCollector.swift",
+        "Tools/Qualification/qenvironment-schema.json",
+        "Tests/PlanStructureTests/QEnvironmentCollectorTests.mjs"
+      ]
+    },
+    {
+      "id": "P00-T012",
+      "phase": "00",
+      "title": "Integrate Phase 00 gates without claiming product evidence",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P00-T002",
+        "P00-T004",
+        "P00-T008",
+        "P00-T009",
+        "P00-T010",
+        "P00-T011"
+      ],
+      "contractRefs": [
+        "Q1-R5",
+        "G5-R.designClosure.planGovernance",
+        "G5-R.empiricalStatus"
+      ],
+      "ownership": [
+        "normativeLayer:verification:Q1-R5",
+        "machineArtifact:Q1-R5-acceptance"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [],
+        "modify": [
+          "Package.swift"
+        ],
+        "test": [
+          "Tests/PlanStructureTests/Phase00IntegrationTests.mjs"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "SwiftPMGraph",
+          "ForbiddenCoreImportGate",
+          "ComparatorProvenanceLock",
+          "DifferentialRunner",
+          "BootstrapVerdict",
+          "QEnvironmentIDPreflight"
+        ],
+        "produces": [
+          "Phase00InfrastructureGate"
+        ]
+      },
+      "red": [
+        {
+          "run": "node --test Tests/PlanStructureTests/Phase00IntegrationTests.mjs --test-name-pattern missing-gate",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "PHASE00_GATE_MISSING gate=QEnvironmentIDPreflight"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Wire every Phase 00 test and preflight into one structural gate.",
+          "Keep every output state planned or structurally verified until future product execution supplies empirical evidence.",
+          "Fail when any comparator, scope, privacy, statistics, font, cold-launch, display, or module-boundary gate is absent."
+        ]
+      },
+      "green": [
+        {
+          "run": "node --test Tests/PlanStructureTests/Phase00IntegrationTests.mjs",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "PHASE00_INFRASTRUCTURE gates=8 evidenceState=structurally-verified"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-00/P00-T012.json"
+      ],
+      "completion": [
+        "All Phase 00 structural gates are wired.",
+        "No C/P gate is marked passed.",
+        "No release verdict is emitted."
+      ],
+      "commitBoundary": [
+        "Package.swift",
+        "Tests/PlanStructureTests/Phase00IntegrationTests.mjs"
+      ]
+    }
+  ],
+  "ownership": [
+    {
+      "kind": "machineArtifact",
+      "id": "E1-R-environment-intl",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P00-T007"
+      ],
+      "testOwners": [
+        "P00-T007"
+      ]
+    },
+    {
+      "kind": "machineArtifact",
+      "id": "F1-R3-instance",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P00-T004"
+      ],
+      "testOwners": [
+        "P00-T004"
+      ]
+    },
+    {
+      "kind": "machineArtifact",
+      "id": "F1-R3-scope",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P00-T004"
+      ],
+      "testOwners": [
+        "P00-T004"
+      ]
+    },
+    {
+      "kind": "machineArtifact",
+      "id": "Q1-R5-acceptance",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P00-T012"
+      ],
+      "testOwners": [
+        "P00-T012"
+      ]
+    },
+    {
+      "kind": "normativeLayer",
+      "id": "environment-intl-clock-entropy:E1-R",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P00-T007"
+      ],
+      "testOwners": [
+        "P00-T007"
+      ]
+    },
+    {
+      "kind": "normativeLayer",
+      "id": "provenance:P1-R",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P00-T003"
+      ],
+      "testOwners": [
+        "P00-T003"
+      ]
+    },
+    {
+      "kind": "normativeLayer",
+      "id": "verification:Q1-R",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P00-T009"
+      ],
+      "testOwners": [
+        "P00-T009"
+      ]
+    },
+    {
+      "kind": "normativeLayer",
+      "id": "verification:Q1-R2",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P00-T009"
+      ],
+      "testOwners": [
+        "P00-T009"
+      ]
+    },
+    {
+      "kind": "normativeLayer",
+      "id": "verification:Q1-R3",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P00-T009"
+      ],
+      "testOwners": [
+        "P00-T009"
+      ]
+    },
+    {
+      "kind": "normativeLayer",
+      "id": "verification:Q1-R4",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P00-T010"
+      ],
+      "testOwners": [
+        "P00-T010"
+      ]
+    },
+    {
+      "kind": "normativeLayer",
+      "id": "verification:Q1-R5",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P00-T012"
+      ],
+      "testOwners": [
+        "P00-T012"
+      ]
+    },
+    {
+      "kind": "planArtifact",
+      "id": "adversarialReview",
+      "disposition": "structural-plan-governance",
+      "implementationOwners": [],
+      "testOwners": []
+    },
+    {
+      "kind": "planArtifact",
+      "id": "audit",
+      "disposition": "structural-plan-governance",
+      "implementationOwners": [],
+      "testOwners": []
+    },
+    {
+      "kind": "planArtifact",
+      "id": "manifest",
+      "disposition": "structural-plan-governance",
+      "implementationOwners": [],
+      "testOwners": []
+    },
+    {
+      "kind": "planArtifact",
+      "id": "schema",
+      "disposition": "structural-plan-governance",
+      "implementationOwners": [],
+      "testOwners": []
+    },
+    {
+      "kind": "planArtifact",
+      "id": "verifier",
+      "disposition": "structural-plan-governance",
+      "implementationOwners": [],
+      "testOwners": []
+    }
+  ],
+  "documents": [
+    {
+      "path": "implementation-plan/README.md",
+      "sha256": "88a0867503fdd0908f4ccad5306863edf4f8ee69a620a5ba4e636d69a9d5a73e"
+    },
+    {
+      "path": "implementation-plan/00-master-plan.md",
+      "sha256": "74b15c4c64bc2cf6cf3f5dca23dd0006f2559323b13b92ced6a8db853aa7451b"
+    },
+    {
+      "path": "implementation-plan/phase-00-scaffold-harness.md",
+      "sha256": "4e3eec322dabb33d60395dc7925747d6b9fb5fdadf986c25bd1c9aba56e619d5"
+    }
+  ],
   "audit": {
     "status": "not-run",
     "findingCount": null,
