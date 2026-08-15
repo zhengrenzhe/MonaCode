@@ -1,6 +1,6 @@
 # G5-R implementation-plan adversarial review
 
-Status: rounds 1 and 2 complete; round 3 pending.
+Status: all three adversarial rounds complete.
 
 All mutations run against in-memory copies of the canonical plan. No attack rewrites a canonical contract, plan, or phase document. A detection counts only when the targeted audit emits the invariant-specific finding; incidental Markdown hash drift is excluded.
 
@@ -82,3 +82,50 @@ Canonical revalidation after correction:
 - Persisted `verification/plan-audit.json` remains byte-identical to fresh verifier output.
 
 Round 2 blocking condition: cleared. `unresolvedFindings=0`.
+
+## Round 3 — evidence, environment, and executability attacks
+
+Initial run: 16 attacks, 10 detected, 6 missed. The missed attacks reused a plan-review artifact as product evidence, inserted a forbidden qualification UUID, modified a source with no create owner, consumed an undefined interface, replaced an executable command with prose, and removed the dependency ordering an interface after its producer. This blocked the round.
+
+The new executability audit was also run against the unmutated canonical plan. It found 131 real interface-order failures: one missing `MonaURI` predecessor on `P01-T008`, 124 missing command/feature-registry predecessor relationships across the 62 retained-feature tasks, and six missing registry relationships propagated through `P05-T190`, `P05-T200`, `P07-T003`, and `P07-T005`.
+
+Correction: commit `5559b2a1d36faeaa0a32498b18ae2850bd996c17` added product-evidence path normalization, qualification privacy composition, file provenance, interface definition/uniqueness/order, and executable-command checks; added six permanent negative fixtures and focused tests; and added the exact missing task dependencies. The corrected canonical scan has zero undefined interfaces, duplicate interface producers, interface-order failures, duplicate file producers, file-provenance failures, and prose commands. No product scope changed.
+
+Final command: `node /tmp/monacode-g5r-round3.mjs /Users/bytedance/Documents/ChatGPT/MonaCode`
+
+Final result: `attacks=16`, `detected=16`, `missed=0`, `unresolvedFindings=0`.
+
+| attackId | Input | Invariant | Command | Expected rejection | Observed result | Disposition | Changed paths | Verification commit |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| `R3-E01-implemented-state` | Change `planState` to `implemented` | Plan evidence never claims implementation | Round 3 runner, schema and evidence audits | `PLAN_FALSE_EVIDENCE_STATE` | target finding plus schema rejection, non-zero attack verdict | detected | temporary in-memory plan only | `5559b2a` |
+| `R3-E02-review-as-product-evidence` | Use implementation-plan verification output as acceptance evidence | Plan-review output is not product evidence | Round 3 runner, evidence audit | `PLAN_FALSE_EVIDENCE_STATE` | target finding plus marker drift, non-zero attack verdict | detected after blocking correction | permanent fixture added; attack remains in-memory | `5559b2a` |
+| `R3-E03-remove-red-result` | Remove expected output from a red command | Every red command declares its exact rejection evidence | Round 3 runner, schema audit | `PLAN_SCHEMA_INVALID` | target finding plus marker drift, non-zero attack verdict | detected | temporary in-memory plan only | `5559b2a` |
+| `R3-E04-remove-green-command` | Remove every green command from a task | Every task has an executable green proof | Round 3 runner, schema audit | `PLAN_SCHEMA_INVALID` | target finding plus marker drift, non-zero attack verdict | detected | temporary in-memory plan only | `5559b2a` |
+| `R3-E05-forbidden-uuid-key` | Insert a forbidden UUID key and value into `qualificationEnvironment` | Qualification data contains no persistent identity | Round 3 runner, privacy audit | `PLAN_ENVIRONMENT_PRIVACY` | exact target finding, non-zero attack verdict | detected after blocking correction | permanent fixture added; attack remains in-memory | `5559b2a` |
+| `R3-E06-stale-macos-build` | Restore stale macOS build `25G72` | Qualified macOS build is exact | Round 3 runner, environment audit | `PLAN_ENVIRONMENT_MISMATCH` | exact target finding, non-zero attack verdict | detected | temporary in-memory plan only | `5559b2a` |
+| `R3-E07-stale-chrome` | Restore stale Chrome `151.0.7922.109` | Comparator version is exact | Round 3 runner, environment audit | `PLAN_ENVIRONMENT_MISMATCH` | exact target finding, non-zero attack verdict | detected | temporary in-memory plan only | `5559b2a` |
+| `R3-E08-external-display` | Allow one external display in formal qualification | Formal qualification requires zero external displays | Round 3 runner, environment audit | `PLAN_ENVIRONMENT_MISMATCH` | exact target finding, non-zero attack verdict | detected | temporary in-memory plan only | `5559b2a` |
+| `R3-E09-remove-refresh-cell` | Remove the required 120 Hz refresh cell | The 60/120 Hz matrix is frozen | Round 3 runner, global-constraint audit | `PLAN_GLOBAL_CONSTRAINT_MISMATCH` | exact target finding, non-zero attack verdict | detected | temporary in-memory plan only | `5559b2a` |
+| `R3-X01-remove-interfaces` | Remove an interface signature object | Every task declares consumed or produced interfaces | Round 3 runner, schema audit | `PLAN_SCHEMA_INVALID` | target finding plus undefined-interface and marker findings, non-zero attack verdict | detected | temporary in-memory plan only | `5559b2a` |
+| `R3-X02-nonexistent-source` | Modify a nonexistent source file with no producer | Every modified file has one predecessor create owner | Round 3 runner, executability audit | `PLAN_FILE_PROVENANCE` | target finding plus marker drift, non-zero attack verdict | detected after blocking correction | permanent fixture added; attack remains in-memory | `5559b2a` |
+| `R3-X03-undefined-type` | Consume an undefined interface type | Every consumed interface has one producer | Round 3 runner, executability audit | `PLAN_INTERFACE_UNDEFINED` | target finding plus marker drift, non-zero attack verdict | detected after blocking correction | permanent fixture added; attack remains in-memory | `5559b2a` |
+| `R3-X04-broad-commit-boundary` | Add a commit path outside declared task files | Commit boundary is a subset of declared files | Round 3 runner, schema audit | `PLAN_SCHEMA_INVALID` | target finding plus marker drift, non-zero attack verdict | detected | temporary in-memory plan only | `5559b2a` |
+| `R3-X05-markdown-hash-drift` | Change a task record without changing its Markdown marker | Markdown task marker equals canonical record hash | Round 3 runner, Markdown audit | `PLAN_MARKDOWN_DRIFT` | exact target finding, non-zero attack verdict | detected | temporary in-memory plan only | `5559b2a` |
+| `R3-X06-prose-command` | Replace an exact command with prose | Red and green steps are executable commands | Round 3 runner, executability audit | `PLAN_COMMAND_NOT_EXECUTABLE` | target finding plus marker drift, non-zero attack verdict | detected after blocking correction | permanent fixture added; attack remains in-memory | `5559b2a` |
+| `R3-X07-interface-before-producer` | Remove the dependency ordering a consumed interface after its producer | Every consumer transitively follows its producer | Round 3 runner, executability audit | `PLAN_INTERFACE_ORDER` | target finding plus marker drift, non-zero attack verdict | detected after blocking correction | permanent fixture added; attack remains in-memory | `5559b2a` |
+
+Canonical revalidation after correction:
+
+- `node --test docs/contracts/monaco-editor-0.56.0/g5-r/implementation-plan/tests/*.test.mjs` — 77 passed, 0 failed.
+- `node docs/contracts/monaco-editor-0.56.0/g5-r/implementation-plan/verify-plan.mjs` — `status=pass`, `findingCount=0`, `executabilityFailures=0`.
+- Persisted `verification/plan-audit.json` is byte-identical to fresh verifier output.
+
+Round 3 blocking condition: cleared. `unresolvedFindings=0`.
+
+## Final summary
+
+- `rounds: 3`
+- `attacks: 53`
+- `detected: 53`
+- `missed: 0`
+- `unresolvedFindings: 0`
