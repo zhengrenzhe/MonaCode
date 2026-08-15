@@ -1,0 +1,188 @@
+{
+  "schemaVersion": 1,
+  "planRevision": "G5-R-full-scope-plan-candidate",
+  "contract": {
+    "path": "artifacts/monacode-g5r-authoritative-manifest.json",
+    "revision": "G5-R-full-scope-candidate"
+  },
+  "adoptionState": "candidate",
+  "planState": "planned",
+  "platformScope": [
+    "arm64 macOS"
+  ],
+  "globalConstraints": [
+    "G4-R remains byte-immutable and independently verifiable.",
+    "G5-R changes qualification environment and plan governance only.",
+    "MonaCode imports Foundation only.",
+    "MonaCodeAppKit owns AppKit, Core Text, Core Graphics, Metal, Process, and native UI types.",
+    "MonaCodeSwiftUI depends explicitly on MonaCode and MonaCodeAppKit and owns lifecycle wrappers only.",
+    "Core Graphics is complete before the Phase 03 renderer-owned decision gate.",
+    "Metal product work exists only after a failed renderer-owned gate and closes inside Phase 03.",
+    "No built-in language implementation, grammar pack, snippet catalog, LSP server, JavaScript runtime, ICU runtime, WebView, DOM runtime, CSS runtime, or TextKit backend ships.",
+    "Formal C/P runs require the built-in display and externalDisplayCount equal to zero.",
+    "C01-C10, P00-P13, M0/M1, 60/120 Hz, and native/comparator at most 1.00 remain frozen.",
+    "Plan evidence states are planned, mapped, and structurally-verified only.",
+    "Product implementation and release acceptance remain not-started and not-passed during G5-R plan construction."
+  ],
+  "packageGraph": {
+    "products": [
+      {
+        "name": "MonaCode",
+        "dependencies": []
+      },
+      {
+        "name": "MonaCodeAppKit",
+        "dependencies": [
+          "MonaCode"
+        ]
+      },
+      {
+        "name": "MonaCodeSwiftUI",
+        "dependencies": [
+          "MonaCode",
+          "MonaCodeAppKit"
+        ]
+      }
+    ],
+    "nonProductTargets": [
+      {
+        "name": "sample-macOS-host",
+        "dependencies": [
+          "MonaCode",
+          "MonaCodeAppKit",
+          "MonaCodeSwiftUI"
+        ]
+      },
+      {
+        "name": "conformance-and-failure-injection",
+        "dependencies": [
+          "MonaCode",
+          "MonaCodeAppKit"
+        ]
+      },
+      {
+        "name": "benchmark-harness",
+        "dependencies": [
+          "MonaCode",
+          "MonaCodeAppKit"
+        ]
+      }
+    ],
+    "resources": [
+      {
+        "name": "DifferentialFixtures",
+        "path": "Tests/Fixtures/DifferentialFixtures",
+        "isTarget": false
+      }
+    ]
+  },
+  "qualificationEnvironment": {
+    "manifest": "artifacts/monacode-g5r-qualification-environment-manifest.json",
+    "macOSBuild": "25G76",
+    "chromeVersion": "151.0.7922.138",
+    "externalDisplayCountRequired": 0,
+    "formalDisplayScope": "built-in-display-only"
+  },
+  "evidenceStates": [
+    "planned",
+    "mapped",
+    "structurally-verified"
+  ],
+  "candidateArtifacts": [
+    "MonaNativeDeclarationManifest.json",
+    "MonaRegExpUnicodeManifest.json",
+    "MonaEnvironmentManifest.json",
+    "MonaSourceClosureManifest.json",
+    "MonaCacheManifest.json",
+    "MonaDistributionManifest.json",
+    "QEnvironmentID.json"
+  ],
+  "phases": [
+    {
+      "id": "00",
+      "title": "Scaffold and harness",
+      "document": "implementation-plan/phase-00-scaffold-harness.md",
+      "dependencies": []
+    },
+    {
+      "id": "01",
+      "title": "Base model and transaction truth",
+      "document": "implementation-plan/phase-01-base-model.md",
+      "dependencies": [
+        "00"
+      ]
+    },
+    {
+      "id": "02",
+      "title": "Model semantics and environment behavior",
+      "document": "implementation-plan/phase-02-model-semantics.md",
+      "dependencies": [
+        "01"
+      ]
+    },
+    {
+      "id": "03",
+      "title": "Projection, layout, and rendering",
+      "document": "implementation-plan/phase-03-projection-layout-rendering.md",
+      "dependencies": [
+        "02"
+      ]
+    },
+    {
+      "id": "04",
+      "title": "Input, transfer, accessibility, and embedding",
+      "document": "implementation-plan/phase-04-input-transfer-accessibility.md",
+      "dependencies": [
+        "03"
+      ]
+    },
+    {
+      "id": "05",
+      "title": "Public surface and retained features",
+      "document": "implementation-plan/phase-05-public-surface-features.md",
+      "dependencies": [
+        "04"
+      ]
+    },
+    {
+      "id": "06",
+      "title": "Language, LSP, snippet, and Markdown",
+      "document": "implementation-plan/phase-06-language-lsp-snippet-markdown.md",
+      "dependencies": [
+        "05"
+      ]
+    },
+    {
+      "id": "07",
+      "title": "Diff, services, host, and source closure",
+      "document": "implementation-plan/phase-07-diff-services-host-source-closure.md",
+      "dependencies": [
+        "06"
+      ]
+    },
+    {
+      "id": "08",
+      "title": "Release candidate and distribution",
+      "document": "implementation-plan/phase-08-release-candidate-distribution.md",
+      "dependencies": [
+        "07"
+      ]
+    },
+    {
+      "id": "09",
+      "title": "Acceptance and release verdict",
+      "document": "implementation-plan/phase-09-acceptance-release-verdict.md",
+      "dependencies": [
+        "08"
+      ]
+    }
+  ],
+  "tasks": [],
+  "ownership": [],
+  "documents": [],
+  "audit": {
+    "status": "not-run",
+    "findingCount": null,
+    "findings": []
+  }
+}
