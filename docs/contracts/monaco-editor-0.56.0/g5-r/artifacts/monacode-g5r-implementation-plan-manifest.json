@@ -2194,6 +2194,776 @@
       "commitBoundary": [
         "Tests/ConformanceAndFailureInjection/Phase01ModelConformanceTests.swift"
       ]
+    },
+    {
+      "id": "P02-T001",
+      "phase": "02",
+      "title": "Implement undo and redo elements on transaction truth",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P01-T013"
+      ],
+      "contractRefs": [
+        "M1-R2.undoRedo",
+        "A+.transactions",
+        "C01",
+        "P02"
+      ],
+      "ownership": [
+        "model:undo-redo",
+        "transaction:undo-elements"
+      ],
+      "files": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Sources/MonaCode/Model/Undo/MonaUndoRedoElement.swift",
+          "Sources/MonaCode/Model/Undo/MonaUndoRedoStack.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/Model/MonaUndoRedoTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaTransactionGateway",
+          "MonaSelection"
+        ],
+        "produces": [
+          "MonaUndoRedoElement",
+          "MonaUndoRedoStack"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaUndoRedoTests/testAlternativeVersionTrace",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "DIFFERENTIAL_MISMATCH fixture=undo-alternative-version"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Port edit grouping, stack elements, EOL changes, selection recovery, and alternative-version transitions.",
+          "Route undo and redo mutations through the same transaction gateway as direct edits.",
+          "Roll back stack position when a replay transaction fails."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaUndoRedoTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "UNDO_REDO_PARITY traces=420 rollback=pass"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-02/P02-T001.json"
+      ],
+      "completion": [
+        "Undo and redo traces match M0/M1.",
+        "Selection and version restoration are exact.",
+        "Failed replay does not move the stack cursor."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCode/Model/Undo/MonaUndoRedoElement.swift",
+        "Sources/MonaCode/Model/Undo/MonaUndoRedoStack.swift",
+        "Tests/MonaCodeTests/Model/MonaUndoRedoTests.swift"
+      ]
+    },
+    {
+      "id": "P02-T002",
+      "phase": "02",
+      "title": "Port decoration interval trees and stickiness semantics",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P02-T001"
+      ],
+      "contractRefs": [
+        "M1-R2.decorations",
+        "F1-R2.modelSurface",
+        "C01",
+        "P07"
+      ],
+      "ownership": [
+        "model:decoration-tree",
+        "model:decoration-stickiness"
+      ],
+      "files": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Sources/MonaCode/Model/Decorations/MonaDecoration.swift",
+          "Sources/MonaCode/Model/Decorations/MonaDecorationTree.swift",
+          "Sources/MonaCode/Model/Decorations/MonaDecorationCollection.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/Model/MonaDecorationTreeDifferentialTests.swift",
+          "Tests/MonaCodeTests/Model/MonaDecorationTreeComplexityTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaRange",
+          "MonaTransactionGateway"
+        ],
+        "produces": [
+          "MonaDecoration",
+          "MonaDecorationTree",
+          "MonaDecorationCollection"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaDecorationTreeDifferentialTests/testStickinessBoundaryMatrix",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "DIFFERENTIAL_MISMATCH fixture=decoration-stickiness-boundary"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Port interval augmentation, owner filtering, range movement, overview data, and stickiness updates.",
+          "Update decoration positions inside transaction commit before public change events.",
+          "Instrument insert, delete, interval query, and owner query operation counts."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaDecorationTreeDifferentialTests && swift test --filter MonaDecorationTreeComplexityTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "DECORATION_TREE_PARITY traces=10000 complexity=pass"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-02/P02-T002.json"
+      ],
+      "completion": [
+        "Boundary stickiness is zero-diff.",
+        "Owner and range queries preserve order.",
+        "Complexity retains the frozen upper bounds."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCode/Model/Decorations/MonaDecoration.swift",
+        "Sources/MonaCode/Model/Decorations/MonaDecorationTree.swift",
+        "Sources/MonaCode/Model/Decorations/MonaDecorationCollection.swift",
+        "Tests/MonaCodeTests/Model/MonaDecorationTreeDifferentialTests.swift",
+        "Tests/MonaCodeTests/Model/MonaDecorationTreeComplexityTests.swift"
+      ]
+    },
+    {
+      "id": "P02-T003",
+      "phase": "02",
+      "title": "Implement word, grapheme, literal search, and replacement primitives",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P02-T002"
+      ],
+      "contractRefs": [
+        "M1-R.wordAndSearch",
+        "E1-R.segmentation",
+        "C01",
+        "P08"
+      ],
+      "ownership": [
+        "model:word-boundaries",
+        "model:grapheme-profile",
+        "model:search-base"
+      ],
+      "files": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Sources/MonaCode/Model/Search/MonaWordClassifier.swift",
+          "Sources/MonaCode/Model/Search/MonaGraphemeSegmenter.swift",
+          "Sources/MonaCode/Model/Search/MonaLiteralSearch.swift",
+          "Sources/MonaCode/Model/Search/MonaReplacePattern.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/Model/MonaWordSearchTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaCodeModel",
+          "MonaRange"
+        ],
+        "produces": [
+          "MonaWordClassifier",
+          "MonaGraphemeSegmenter",
+          "MonaLiteralSearch",
+          "MonaReplacePattern"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaWordSearchTests/testIsolatedSurrogateWordBoundary",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "DIFFERENTIAL_MISMATCH fixture=word-boundary-isolated-surrogate"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Implement the frozen word-separator and grapheme profiles over raw UTF-16.",
+          "Port forward and backward literal search, zero-length progression, match limits, and replacement capture syntax.",
+          "Keep case conversion and RegExp execution behind the explicit Phase 02 providers."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaWordSearchTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "WORD_SEARCH_PARITY fixtures=180 zeroLength=pass"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-02/P02-T003.json"
+      ],
+      "completion": [
+        "Word and grapheme boundaries match fixed profiles.",
+        "Literal and zero-length searches terminate and match comparators.",
+        "Replacement parsing preserves raw units."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCode/Model/Search/MonaWordClassifier.swift",
+        "Sources/MonaCode/Model/Search/MonaGraphemeSegmenter.swift",
+        "Sources/MonaCode/Model/Search/MonaLiteralSearch.swift",
+        "Sources/MonaCode/Model/Search/MonaReplacePattern.swift",
+        "Tests/MonaCodeTests/Model/MonaWordSearchTests.swift"
+      ]
+    },
+    {
+      "id": "P02-T004",
+      "phase": "02",
+      "title": "Implement the finite ECMAScript RegExp parser and compiler",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P02-T003"
+      ],
+      "contractRefs": [
+        "M1-R.regexpEngine",
+        "M1-R3.provenance",
+        "C01",
+        "P08"
+      ],
+      "ownership": [
+        "regexp:parser",
+        "regexp:compiler",
+        "regexp:executor"
+      ],
+      "files": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Sources/MonaCode/RegExp/MonaRegExpAST.swift",
+          "Sources/MonaCode/RegExp/MonaRegExpParser.swift",
+          "Sources/MonaCode/RegExp/MonaRegExpCompiler.swift",
+          "Sources/MonaCode/RegExp/MonaRegExpProgram.swift",
+          "Sources/MonaCode/RegExp/MonaRegExpExecutor.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/RegExp/MonaRegExpParserCompilerTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaLiteralSearch",
+          "MonaCancellationToken"
+        ],
+        "produces": [
+          "MonaRegExpAST",
+          "MonaRegExpProgram",
+          "MonaRegExpExecutor"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaRegExpParserCompilerTests/testUnicodeBackreferenceTrace",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "REGEXP_DIFFERENTIAL_MISMATCH fixture=unicode-backreference"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Parse the exact grammar, flags, assertions, classes, quantifiers, groups, named captures, and backreferences retained by M1-R.",
+          "Compile deterministic bytecode with explicit step, stack, and capture bounds.",
+          "Execute over raw UInt16 input with frozen lastIndex and zero-length progression behavior.",
+          "Return typed syntax and resource errors with exact source offsets."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaRegExpParserCompilerTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "REGEXP_CORE parserVectors=860 executorVectors=2200 failures=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-02/P02-T004.json"
+      ],
+      "completion": [
+        "Parser acceptance and rejection match the frozen oracle.",
+        "Capture and lastIndex traces are exact.",
+        "Execution is bounded and cancellation-aware."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCode/RegExp/MonaRegExpAST.swift",
+        "Sources/MonaCode/RegExp/MonaRegExpParser.swift",
+        "Sources/MonaCode/RegExp/MonaRegExpCompiler.swift",
+        "Sources/MonaCode/RegExp/MonaRegExpProgram.swift",
+        "Sources/MonaCode/RegExp/MonaRegExpExecutor.swift",
+        "Tests/MonaCodeTests/RegExp/MonaRegExpParserCompilerTests.swift"
+      ]
+    },
+    {
+      "id": "P02-T005",
+      "phase": "02",
+      "title": "Generate six non-mergeable RegExp Unicode profiles",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P02-T004"
+      ],
+      "contractRefs": [
+        "M1-R3.unicodeProfiles",
+        "G5-R.licensingProfile.unicodeTables",
+        "C01"
+      ],
+      "ownership": [
+        "regexp:unicode-profiles-six",
+        "provenance:unicode-tables"
+      ],
+      "files": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Tools/Generators/generate-regexp-unicode.mjs",
+          "Sources/MonaCode/Generated/RegExp/MonaRegExpUnicodeTables.swift",
+          "Sources/MonaCode/Generated/RegExp/UNICODE-LICENSE.txt"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/RegExp/MonaRegExpUnicodeProfileTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaRegExpProgram"
+        ],
+        "produces": [
+          "MonaRegExpUnicodeProfileSet",
+          "ProvisionalMonaRegExpUnicodeManifest"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaRegExpUnicodeProfileTests/testProfileSetIdentity",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "REGEXP_UNICODE_PROFILE_MERGED expected=6 actual=5"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Generate exactly six separately identified Unicode table profiles from the pinned licensed inputs.",
+          "Record source version, input hash, generator hash, output hash, property set, and consumer set.",
+          "Reject profile merging even when generated ranges happen to compare equal."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaRegExpUnicodeProfileTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "REGEXP_UNICODE_PROFILES count=6 hashes=verified"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-02/P02-T005.json"
+      ],
+      "completion": [
+        "All six profiles remain distinct.",
+        "Generated bytes reproduce from pinned inputs.",
+        "Unicode license and provenance accompany outputs."
+      ],
+      "commitBoundary": [
+        "Tools/Generators/generate-regexp-unicode.mjs",
+        "Sources/MonaCode/Generated/RegExp/MonaRegExpUnicodeTables.swift",
+        "Sources/MonaCode/Generated/RegExp/UNICODE-LICENSE.txt",
+        "Tests/MonaCodeTests/RegExp/MonaRegExpUnicodeProfileTests.swift"
+      ]
+    },
+    {
+      "id": "P02-T006",
+      "phase": "02",
+      "title": "Close ten RegExp consumer profiles with pinned Test262 vectors",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P02-T005"
+      ],
+      "contractRefs": [
+        "M1-R3.consumerProfiles",
+        "M1-R3.test262",
+        "C01",
+        "P08"
+      ],
+      "ownership": [
+        "regexp:consumer-profiles-ten",
+        "verification:test262-regexp"
+      ],
+      "files": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Sources/MonaCode/RegExp/MonaRegExpConsumerProfile.swift",
+          "Tests/Fixtures/DifferentialFixtures/regexp/test262-manifest.json",
+          "Tests/MonaCodeTests/RegExp/MonaRegExpConsumerProfileTests.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/RegExp/MonaRegExpTest262Tests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaRegExpExecutor",
+          "MonaRegExpUnicodeProfileSet",
+          "MonaReplacePattern"
+        ],
+        "produces": [
+          "MonaRegExpConsumerProfileSet",
+          "RegExpTest262Evidence"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaRegExpConsumerProfileTests/testWrongProfileAtOccurrence",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "REGEXP_CONSUMER_PROFILE_MISMATCH occurrence=findModel"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Bind each frozen RegExp occurrence to one of ten named consumer profiles.",
+          "Run the exact pinned Test262 inclusion and exclusion manifest.",
+          "Exercise find, replace, word, transform, filter, and configuration consumers at T-1, T, and T+1 bounds."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaRegExpConsumerProfileTests && swift test --filter MonaRegExpTest262Tests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "REGEXP_CONSUMERS profiles=10 test262=exact"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-02/P02-T006.json"
+      ],
+      "completion": [
+        "Every retained occurrence has one profile.",
+        "Test262 selection matches the frozen manifest.",
+        "No host regex substitution enters the semantic path."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCode/RegExp/MonaRegExpConsumerProfile.swift",
+        "Tests/Fixtures/DifferentialFixtures/regexp/test262-manifest.json",
+        "Tests/MonaCodeTests/RegExp/MonaRegExpConsumerProfileTests.swift",
+        "Tests/MonaCodeTests/RegExp/MonaRegExpTest262Tests.swift"
+      ]
+    },
+    {
+      "id": "P02-T007",
+      "phase": "02",
+      "title": "Implement fixed case conversion, collation, and normalization profiles",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P02-T003"
+      ],
+      "contractRefs": [
+        "E1-R.caseCollationNormalization",
+        "X1-R.environmentConsumers",
+        "C02",
+        "P08"
+      ],
+      "ownership": [
+        "environment:case-conversion",
+        "environment:collation",
+        "environment:normalization"
+      ],
+      "files": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Tools/Generators/generate-environment-tables.mjs",
+          "Sources/MonaCode/Generated/Environment/MonaCaseTables.swift",
+          "Sources/MonaCode/Generated/Environment/MonaCollationTables.swift",
+          "Sources/MonaCode/Environment/MonaCaseConverter.swift",
+          "Sources/MonaCode/Environment/MonaCollator.swift",
+          "Sources/MonaCode/Environment/MonaNormalizer.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/Environment/MonaEnvironmentSemanticsTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaRuntimeLocaleSnapshot"
+        ],
+        "produces": [
+          "MonaCaseConverter",
+          "MonaCollator",
+          "MonaNormalizer",
+          "ProvisionalMonaEnvironmentManifest"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaEnvironmentSemanticsTests/testPinnedCollationBoundary",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "ENVIRONMENT_DIFFERENTIAL_MISMATCH fixture=collation-T"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Generate finite case and collation data from the pinned Chromium ICU input and record exact provenance.",
+          "Implement only the normalization forms and locale-sensitive behaviors enumerated by E1-R.",
+          "Maintain the two fixed 10000-entry normalization caches with explicit bounds and counters."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaEnvironmentSemanticsTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "ENVIRONMENT_SEMANTICS case=exact collation=exact normalization=exact"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-02/P02-T007.json"
+      ],
+      "completion": [
+        "Case and collation vectors match Chrome 151.",
+        "Normalization forms and error cases match.",
+        "Generated data is reproducible and licensed."
+      ],
+      "commitBoundary": [
+        "Tools/Generators/generate-environment-tables.mjs",
+        "Sources/MonaCode/Generated/Environment/MonaCaseTables.swift",
+        "Sources/MonaCode/Generated/Environment/MonaCollationTables.swift",
+        "Sources/MonaCode/Environment/MonaCaseConverter.swift",
+        "Sources/MonaCode/Environment/MonaCollator.swift",
+        "Sources/MonaCode/Environment/MonaNormalizer.swift",
+        "Tests/MonaCodeTests/Environment/MonaEnvironmentSemanticsTests.swift"
+      ]
+    },
+    {
+      "id": "P02-T008",
+      "phase": "02",
+      "title": "Implement finite ECMAScript intrinsics, codecs, and String SHA-1",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P02-T006",
+        "P02-T007"
+      ],
+      "contractRefs": [
+        "X1-R.runtimeProfiles",
+        "E1-R.numberFormatting",
+        "C02",
+        "C04"
+      ],
+      "ownership": [
+        "runtime:finite-intrinsics",
+        "runtime:codecs",
+        "runtime:string-sha1"
+      ],
+      "files": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Sources/MonaCode/Runtime/MonaFiniteIntrinsics.swift",
+          "Sources/MonaCode/Runtime/MonaBinary64.swift",
+          "Sources/MonaCode/Runtime/MonaTextCodec.swift",
+          "Sources/MonaCode/Runtime/MonaStringSHA1.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/Runtime/MonaFiniteIntrinsicTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaNumberToString",
+          "MonaCaseConverter",
+          "MonaNormalizer"
+        ],
+        "produces": [
+          "MonaFiniteIntrinsics",
+          "MonaBinary64",
+          "MonaTextCodec",
+          "MonaStringSHA1"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaFiniteIntrinsicTests/testBinary64BoundaryVectors",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "INTRINSIC_DIFFERENTIAL_MISMATCH fixture=binary64-boundary"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Implement only the exact intrinsic occurrences listed by X1-R.",
+          "Preserve binary64 rounding, signed zero, NaN classification, graceful decoding, UTF-8 encoding, and SHA-1 input-unit behavior.",
+          "Reject any request outside the finite profile with a typed unsupported-operation error."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaFiniteIntrinsicTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "FINITE_INTRINSICS occurrences=closed unsupported=typed"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-02/P02-T008.json"
+      ],
+      "completion": [
+        "All frozen intrinsic occurrences are exact.",
+        "Out-of-profile calls fail explicitly.",
+        "No general scripting runtime is present."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCode/Runtime/MonaFiniteIntrinsics.swift",
+        "Sources/MonaCode/Runtime/MonaBinary64.swift",
+        "Sources/MonaCode/Runtime/MonaTextCodec.swift",
+        "Sources/MonaCode/Runtime/MonaStringSHA1.swift",
+        "Tests/MonaCodeTests/Runtime/MonaFiniteIntrinsicTests.swift"
+      ]
+    },
+    {
+      "id": "P02-T009",
+      "phase": "02",
+      "title": "Validate provisional RegExp and environment candidate inputs",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P02-T001",
+        "P02-T002",
+        "P02-T006",
+        "P02-T008"
+      ],
+      "contractRefs": [
+        "M1-R",
+        "M1-R2",
+        "M1-R3",
+        "E1-R",
+        "G5-R.candidateGeneratedArtifacts"
+      ],
+      "ownership": [
+        "normativeLayer:model-regexp-unicode:M1-R",
+        "normativeLayer:model-regexp-unicode:M1-R2",
+        "normativeLayer:model-regexp-unicode:M1-R3",
+        "machineArtifact:M1-R3-regexp-unicode"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [],
+        "modify": [],
+        "test": [
+          "Tests/ConformanceAndFailureInjection/Phase02SemanticConformanceTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaUndoRedoStack",
+          "MonaDecorationTree",
+          "MonaRegExpConsumerProfileSet",
+          "RegExpTest262Evidence",
+          "MonaFiniteIntrinsics",
+          "ProvisionalMonaRegExpUnicodeManifest",
+          "ProvisionalMonaEnvironmentManifest"
+        ],
+        "produces": [
+          "Phase02SemanticGate",
+          "RegExpCandidateInputSet",
+          "EnvironmentCandidateInputSet"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter Phase02SemanticConformanceTests/testSeededConsumerProfileDrift",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "PHASE02_SEMANTIC_GATE_FAILED profile=findModel"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Join undo, decoration, word, search, RegExp, Unicode, environment, and intrinsic evidence by exact source revision.",
+          "Validate provisional candidate inputs without marking either candidate finalized or present.",
+          "Record the last known downstream consumers that Phase 08 must follow before regeneration."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter Phase02SemanticConformanceTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "PHASE02_SEMANTIC_GATE profiles=10 unicode=6 candidateState=provisional"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-02/P02-T009.json"
+      ],
+      "completion": [
+        "Phase 02 exact-domain suites are zero-diff.",
+        "Candidate inputs are complete but explicitly provisional.",
+        "No final candidate artifact is claimed."
+      ],
+      "commitBoundary": [
+        "Tests/ConformanceAndFailureInjection/Phase02SemanticConformanceTests.swift"
+      ]
     }
   ],
   "ownership": [
@@ -2228,6 +2998,17 @@
       ],
       "testOwners": [
         "P00-T004"
+      ]
+    },
+    {
+      "kind": "machineArtifact",
+      "id": "M1-R3-regexp-unicode",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P02-T009"
+      ],
+      "testOwners": [
+        "P02-T009"
       ]
     },
     {
@@ -2294,6 +3075,39 @@
       ],
       "testOwners": [
         "P00-T007"
+      ]
+    },
+    {
+      "kind": "normativeLayer",
+      "id": "model-regexp-unicode:M1-R",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P02-T009"
+      ],
+      "testOwners": [
+        "P02-T009"
+      ]
+    },
+    {
+      "kind": "normativeLayer",
+      "id": "model-regexp-unicode:M1-R2",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P02-T009"
+      ],
+      "testOwners": [
+        "P02-T009"
+      ]
+    },
+    {
+      "kind": "normativeLayer",
+      "id": "model-regexp-unicode:M1-R3",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P02-T009"
+      ],
+      "testOwners": [
+        "P02-T009"
       ]
     },
     {
@@ -2425,6 +3239,10 @@
     {
       "path": "implementation-plan/phase-01-base-model.md",
       "sha256": "bb3807e30a57c65bd6ebbd550ce7ca909a39000a6802824fda079ad789fb3be4"
+    },
+    {
+      "path": "implementation-plan/phase-02-model-semantics.md",
+      "sha256": "60bdb2d1658cee00520b73367cfc028cbf17948073ca3e4e75589152640d318c"
     }
   ],
   "audit": {
