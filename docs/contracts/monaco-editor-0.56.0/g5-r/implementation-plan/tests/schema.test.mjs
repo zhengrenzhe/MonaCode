@@ -70,7 +70,7 @@ const assertOnlySchemaFindings = (manifest) => {
   assert.deepEqual([...new Set(findings.map((finding) => finding.id))], ['PLAN_SCHEMA_INVALID']);
 };
 
-test('accepts the candidate seed manifest', () => {
+test('accepts the adopted structurally verified manifest', () => {
   assert.deepEqual(validatePlanSchema(seed()), []);
 });
 
@@ -114,5 +114,6 @@ test('rejects an unbounded commit path', () => {
 test('requires populated, zero-finding evidence before adoption', () => {
   const manifest = seed();
   manifest.adoptionState = 'adopted';
+  manifest.audit = { status: 'not-run', findingCount: null, findings: [] };
   assertOnlySchemaFindings(manifest);
 });

@@ -7,7 +7,7 @@
     "component": "native Swift code-editor component for Apple platforms",
     "currentRelease": "arm64 macOS",
     "behaviorBaseline": "monaco-editor@0.56.0",
-    "status": "design-and-plan-candidate"
+    "status": "design-and-plan-adopted"
   },
   "authorityArtifacts": [
     {
@@ -522,7 +522,7 @@
         {
           "revision": "G5-R-plan-governance",
           "file": "../implementation-plan/00-master-plan.md",
-          "sha256": null,
+          "sha256": "74b15c4c64bc2cf6cf3f5dca23dd0006f2559323b13b92ced6a8db853aa7451b",
           "mode": "complete task graph, identity ownership, executable red-green commands, evidence boundaries and phase order"
         }
       ]
@@ -617,14 +617,14 @@
     {
       "id": "implementationPlan",
       "schemaFile": "monacode-g5r-implementation-plan-schema.json",
-      "schemaSha256": null,
+      "schemaSha256": "3d2403c1ba3f7fecdb330cdbc8c0103ee646b76b5de2a5c4fba7b967deb3ba90",
       "planFile": "monacode-g5r-implementation-plan-manifest.json",
-      "planSha256": null,
+      "planSha256": "114979c5faf1369d1f74a8a3905981c1cbef85b9dd93b6a12f8fc48460e64b5c",
       "planAuditFile": "../implementation-plan/verification/plan-audit.json",
-      "planAuditSha256": null,
+      "planAuditSha256": "78e7bcd33f53fd888a56d69357ded5d2c86bade11f76f3be4f3cc58a670474d0",
       "adversarialReviewFile": "../implementation-plan/verification/adversarial-plan-review.md",
-      "adversarialReviewSha256": null,
-      "adoptionState": "candidate"
+      "adversarialReviewSha256": "04e9f1af6b3c6127654bdae69b41c8667fe788fb0e3be97efd9cd42fbac61c90",
+      "adoptionState": "adopted"
     }
   ],
   "verificationTools": [
@@ -637,7 +637,7 @@
     {
       "id": "planVerifier",
       "file": "../implementation-plan/verify-plan.mjs",
-      "sha256": null,
+      "sha256": "bca3e995083ba440b53041d94ff02549925bc236542facca009538571d2500cf",
       "use": "schema, graph, Markdown equivalence, ownership, boundary, evidence, environment and negative-fixture audit"
     }
   ],
@@ -1504,7 +1504,7 @@
     "phaseRule": "phases can change implementation order only; they cannot change the locked feature set, cuts, native adaptations, architecture, host groups, validation scope or acceptance thresholds",
     "planGovernance": {
       "revision": "G5-R-plan-governance",
-      "status": "candidate",
+      "status": "adopted",
       "authorityOverride": "After adoption, the G5-R adoption record and this manifest supersede the G4 labels retained inside frozen authorityRules.global and authorityRules.companion; those inherited clauses remain byte-semantic evidence for product scope only.",
       "contractManifest": "monacode-g5r-authoritative-manifest.json",
       "contractCompanion": "global-g5r-authoritative-contract.html",
@@ -1516,11 +1516,11 @@
       "adversarialReview": "../implementation-plan/verification/adversarial-plan-review.md",
       "selectedHashes": {
         "contractManifestSha256": null,
-        "contractCompanionSha256": null,
-        "planSchemaSha256": null,
-        "planManifestSha256": null,
-        "planAuditSha256": null,
-        "adversarialReviewSha256": null
+        "contractCompanionSha256": "43bdbab55322db98683b6aa42ac4b4296a4c2384740911bcd7db8e3c8931fbb5",
+        "planSchemaSha256": "3d2403c1ba3f7fecdb330cdbc8c0103ee646b76b5de2a5c4fba7b967deb3ba90",
+        "planManifestSha256": "114979c5faf1369d1f74a8a3905981c1cbef85b9dd93b6a12f8fc48460e64b5c",
+        "planAuditSha256": "78e7bcd33f53fd888a56d69357ded5d2c86bade11f76f3be4f3cc58a670474d0",
+        "adversarialReviewSha256": "04e9f1af6b3c6127654bdae69b41c8667fe788fb0e3be97efd9cd42fbac61c90"
       },
       "adoptionRequires": {
         "contractVerifierFailures": 0,
@@ -1529,7 +1529,7 @@
         "adversarialMissedAttacks": 0,
         "unresolvedPlanFindings": 0
       },
-      "evidenceState": "planned"
+      "evidenceState": "structurally-verified"
     }
   }
 }

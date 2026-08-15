@@ -5,8 +5,8 @@
     "path": "artifacts/monacode-g5r-authoritative-manifest.json",
     "revision": "G5-R-full-scope-candidate"
   },
-  "adoptionState": "candidate",
-  "planState": "mapped",
+  "adoptionState": "adopted",
+  "planState": "structurally-verified",
   "platformScope": [
     "arm64 macOS"
   ],
@@ -55024,8 +55024,8 @@
     }
   ],
   "audit": {
-    "status": "not-run",
-    "findingCount": null,
+    "status": "pass",
+    "findingCount": 0,
     "findings": []
   }
 }

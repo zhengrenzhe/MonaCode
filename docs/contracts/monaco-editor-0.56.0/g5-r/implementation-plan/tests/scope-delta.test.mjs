@@ -12,7 +12,7 @@ const g4ManifestPath = path.resolve(
 );
 const g5ManifestPath = path.join(artifactDirectory, 'monacode-g5r-authoritative-manifest.json');
 
-test('the G5-R contract candidate exists before scope comparison', () => {
+test('the adopted G5-R contract exists before scope comparison', () => {
   assert.equal(
     fs.existsSync(g5ManifestPath),
     true,
@@ -38,7 +38,9 @@ test('accepts only the declared G4-R to G5-R delta set', async () => {
   assert.equal(g5.empiricalStatus.productSourceFiles, 0);
   assert.equal(g5.empiricalStatus.releaseVerdict, 'not-passed');
   assert.equal(g5.machineArtifacts.at(-1).id, 'implementationPlan');
-  assert.equal(g5.machineArtifacts.at(-1).planSha256, null);
+  assert.match(g5.machineArtifacts.at(-1).planSha256, /^[0-9a-f]{64}$/);
+  assert.equal(g5.machineArtifacts.at(-1).adoptionState, 'adopted');
+  assert.equal(g5.designClosure.planGovernance.status, 'adopted');
 });
 
 test('rejects a frozen product-scope mutation', async () => {

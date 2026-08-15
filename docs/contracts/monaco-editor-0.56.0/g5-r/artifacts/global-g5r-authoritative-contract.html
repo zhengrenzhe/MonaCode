@@ -3,24 +3,24 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MonaCode G5-R authoritative contract candidate</title>
+  <title>MonaCode G5-R authoritative contract</title>
   <style>
     :root { color-scheme: light dark; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
     body { max-width: 1040px; margin: 0 auto; padding: 40px 24px 80px; line-height: 1.55; }
     h1, h2 { line-height: 1.2; }
-    .candidate { border: 1px solid #d97706; border-radius: 10px; padding: 14px 16px; background: color-mix(in srgb, #d97706 12%, transparent); }
+    .adopted { border: 1px solid #15803d; border-radius: 10px; padding: 14px 16px; background: color-mix(in srgb, #15803d 12%, transparent); }
     table { width: 100%; border-collapse: collapse; }
     th, td { border-bottom: 1px solid #8886; padding: 8px; text-align: left; vertical-align: top; }
     code { font-family: ui-monospace, SFMono-Regular, monospace; }
   </style>
 </head>
 <body>
-  <h1>MonaCode G5-R authoritative contract candidate</h1>
-  <p class="candidate"><strong>Status:</strong> candidate, not adopted. Product implementation has not started and release acceptance has not passed.</p>
+  <h1>MonaCode G5-R authoritative contract</h1>
+  <p class="adopted"><strong>Status:</strong> adopted. The design scope and complete implementation plan are frozen; product implementation has not started and release acceptance has not passed.</p>
 
   <h2>Authority</h2>
   <ol>
-    <li>The future <code>adoption-record.json</code> selects exact G5-R bytes.</li>
+    <li><code>adoption-record.json</code> selects the exact adopted G5-R bytes.</li>
     <li><code>monacode-g5r-authoritative-manifest.json</code> is the normative product and acceptance contract.</li>
     <li><code>monacode-g5r-implementation-plan-manifest.json</code> is the normative task, ownership, command, evidence, and dependency graph.</li>
     <li>This HTML file is explanatory and never overrides either machine manifest.</li>
@@ -56,7 +56,7 @@
   <p>The dated 2026-08-15 observation contains one privacy-filtered, unqualified LG external-display slot. Every formal C/P run requires <code>externalDisplayCount == 0</code>. External-display behavior is excluded from the release verdict.</p>
 
   <h2>Plan governance added by G5-R</h2>
-  <p>The plan schema, plan manifest, plan verifier, plan audit, and three-round adversarial review are part of the G5-R authority graph. Candidate hash fields remain <code>null</code> until finalization. Adoption requires zero contract failures, zero plan findings, three completed adversarial rounds, zero missed attacks, and zero unresolved findings.</p>
+  <p>The plan schema, plan manifest, plan verifier, plan audit, and three-round adversarial review are part of the adopted G5-R authority graph. The final review contains 53 attacks, 53 detections, zero misses, and zero unresolved findings. Structural verification does not claim product implementation or release acceptance.</p>
 
   <h2>Empirical boundary</h2>
   <p>This revision creates documentation, machine contracts, verification tools, and the complete product execution plan only. It creates no product Swift source, generated product table, release package, C01-C10 result, or P00-P13 result.</p>

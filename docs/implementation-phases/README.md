@@ -8,8 +8,8 @@ This directory is an index. It does not contain the current normative product im
 
 The historical draft records prior planning work only. It does not supersede the adopted G4-R contract and is not product implementation evidence.
 
-## Current G5-R candidate
+## Current adopted G5-R plan
 
-The G5-R implementation-plan candidate is being constructed under [`../contracts/monaco-editor-0.56.0/g5-r/implementation-plan/`](../contracts/monaco-editor-0.56.0/g5-r/implementation-plan/).
+The complete normative G5-R implementation plan is under [`../contracts/monaco-editor-0.56.0/g5-r/implementation-plan/`](../contracts/monaco-editor-0.56.0/g5-r/implementation-plan/).
 
-Until the G5-R adoption record exists and its archive verifier passes, the candidate is not adopted and cannot be used as release authority. The frozen G4-R contract remains the current adopted authority at [`../contracts/monaco-editor-0.56.0/g4-r/`](../contracts/monaco-editor-0.56.0/g4-r/).
+G5-R was adopted on 2026-08-15 as `G5-R-full-scope-final`. Its archive verifier, plan verifier, and three-round adversarial review define the structural start gate. This adoption does not claim product implementation or release acceptance. The frozen parent remains independently verifiable at [`../contracts/monaco-editor-0.56.0/g4-r/`](../contracts/monaco-editor-0.56.0/g4-r/).

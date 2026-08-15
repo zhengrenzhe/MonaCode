@@ -87,6 +87,11 @@ function promoteTemporaryArchive(contractDirectory) {
   governance.status = 'adopted';
   governance.evidenceState = 'structurally-verified';
   const machinePlan = contract.machineArtifacts.find((artifact) => artifact.id === 'implementationPlan');
+  contract.normativeDomains
+    .find((domain) => domain.domain === 'implementationPlan')
+    .layers.find((layer) => layer.revision === 'G5-R-plan-governance').sha256 = sha256(
+      path.join(planDirectory, '00-master-plan.md')
+    );
   const selected = {
     planSchemaSha256: sha256(path.join(artifactDirectory, machinePlan.schemaFile)),
     planManifestSha256: sha256(planPath),
@@ -188,7 +193,7 @@ test('candidate verifier accepts the complete structurally verified archive', (t
   assert.deepEqual(JSON.parse(result.stdout), {
     status: 'candidate-pass',
     adopted: false,
-    artifactHashesVerified: 72,
+    artifactHashesVerified: 144,
     planFindingCount: 0,
     unresolvedPlanFindings: 0
   });

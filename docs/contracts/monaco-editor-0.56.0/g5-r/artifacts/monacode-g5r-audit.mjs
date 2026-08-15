@@ -186,12 +186,21 @@ check('environment-privacy', privacyPaths(qualification), []);
 const governance = contract.designClosure?.planGovernance;
 const machinePlan = contract.machineArtifacts?.find((artifact) => artifact.id === 'implementationPlan');
 const planVerifier = contract.verificationTools?.find((tool) => tool.id === 'planVerifier');
+const planLayer = contract.normativeDomains
+  ?.find((domain) => domain.domain === 'implementationPlan')
+  ?.layers?.find((layer) => layer.revision === 'G5-R-plan-governance');
 const adopted = governance?.status === 'adopted';
 check('governance-status', governance?.status, adopted ? 'adopted' : 'candidate');
 check('governance-evidence-state', governance?.evidenceState, adopted ? 'structurally-verified' : 'planned');
 check('plan-adoption-state', plan.adoptionState, adopted ? 'adopted' : 'candidate');
 check('plan-state', plan.planState, adopted ? 'structurally-verified' : 'mapped');
 check('machine-plan-adoption-state', machinePlan?.adoptionState, adopted ? 'adopted' : 'candidate');
+check('plan-layer-file', planLayer?.file, '../implementation-plan/00-master-plan.md');
+check(
+  'plan-layer-hash',
+  planLayer?.sha256,
+  adopted ? sha256File(path.join(artifactDirectory, planLayer.file)) : null
+);
 check(
   'companion-title',
   companionContents.includes(`<title>MonaCode G5-R authoritative contract${adopted ? '' : ' candidate'}</title>`),
