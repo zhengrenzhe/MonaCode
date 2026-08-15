@@ -1,0 +1,10 @@
+{
+  "mutation": "replace-product-dependencies",
+  "product": "MonaCodeSwiftUI",
+  "value": [
+    "MonaCodeAppKit"
+  ],
+  "expectedFindingIds": [
+    "PLAN_PACKAGE_GRAPH_MISMATCH"
+  ]
+}
