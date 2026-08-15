@@ -1,4 +1,5 @@
 import { compareFindings, finding } from './findings.mjs';
+import { auditEnvironment } from '../tools/collect-environment.mjs';
 
 const PLAN_STATES = new Set(['planned', 'mapped', 'structurally-verified']);
 
@@ -14,7 +15,7 @@ export function auditEvidence(plan, contract) {
   }
   for (const task of plan.tasks ?? []) {
     for (const evidencePath of task.evidence ?? []) {
-      if (evidencePath.includes('/implementation-plan/verification/')) {
+      if (evidencePath.includes('implementation-plan/verification/')) {
         findings.push(finding(
           'PLAN_FALSE_EVIDENCE_STATE',
           task.id,
@@ -37,5 +38,6 @@ export function auditEvidence(plan, contract) {
       findings.push(finding('PLAN_ENVIRONMENT_MISMATCH', `$.qualificationEnvironment.${key}`, `${actual} != ${expected}`));
     }
   }
+  findings.push(...auditEnvironment(plan.qualificationEnvironment ?? {}));
   return findings.sort(compareFindings);
 }

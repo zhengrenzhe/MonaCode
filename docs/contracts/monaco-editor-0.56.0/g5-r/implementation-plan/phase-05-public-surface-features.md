@@ -801,12 +801,13 @@ Commit boundary:
 - `Sources/MonaCode/Runtime/MonaMicrotaskQueue.swift`
 - `Tests/MonaCodeTests/Language/MonaProviderExecutorTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T100","recordSha256":"a8a14eabb8b34759a2789e822061dc763439c15f7a5175bd388ee4c69699c13e"} -->
+<!-- monacode-plan-task:{"id":"P05-T100","recordSha256":"518c4a7428fff1c33ab7827c7354dd5b39a81e0fe638635891f65b1d7fdab0ea"} -->
 ## P05-T100 — Implement retained feature anchorSelect
 
 Contract: `F1-R.retainedFeatures`, `feature:anchorSelect`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -858,12 +859,13 @@ Commit boundary:
 - `Sources/MonaCode/Features/MonaAnchorSelectFeature.swift`
 - `Tests/MonaCodeTests/Features/MonaAnchorSelectFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T101","recordSha256":"25a16b39d4e81a017fae4cb82febbb4e91a6ba81820887e82eaa58bbce385a66"} -->
+<!-- monacode-plan-task:{"id":"P05-T101","recordSha256":"500b6c2f1685222986406768c002c06a4849b33151192225b20d7b9679ef78cc"} -->
 ## P05-T101 — Implement retained feature bracketMatching
 
 Contract: `F1-R.retainedFeatures`, `feature:bracketMatching`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -915,12 +917,13 @@ Commit boundary:
 - `Sources/MonaCode/Features/MonaBracketMatchingFeature.swift`
 - `Tests/MonaCodeTests/Features/MonaBracketMatchingFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T102","recordSha256":"de33be867ccdccdaa867f2f9f15ab256cfde5c86bd7aa5edf9521ff5ab7f66ca"} -->
+<!-- monacode-plan-task:{"id":"P05-T102","recordSha256":"03cbf4b32dfaef44856cd4649bdd5b0f8e3e44db4c6461e5ff352db3080b3bab"} -->
 ## P05-T102 — Implement retained feature caretOperations
 
 Contract: `F1-R.retainedFeatures`, `feature:caretOperations`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -972,12 +975,13 @@ Commit boundary:
 - `Sources/MonaCode/Features/MonaCaretOperationsFeature.swift`
 - `Tests/MonaCodeTests/Features/MonaCaretOperationsFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T103","recordSha256":"e567d5bab510e6345ec423eda4071360906f2ba660ebaa853b80e339b641cfe6"} -->
+<!-- monacode-plan-task:{"id":"P05-T103","recordSha256":"5abcd7ce36b052be057baf30d0cb2dd3618199032e51d462763ceb556e28756a"} -->
 ## P05-T103 — Implement retained feature clipboard
 
 Contract: `F1-R.retainedFeatures`, `feature:clipboard`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -1029,12 +1033,13 @@ Commit boundary:
 - `Sources/MonaCodeAppKit/Features/MonaClipboardFeature.swift`
 - `Tests/MonaCodeAppKitTests/Features/MonaClipboardFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T104","recordSha256":"93839b043561175f715a303e7a95c902c89f0d4b49cc2d62374151ffd20a1d7f"} -->
+<!-- monacode-plan-task:{"id":"P05-T104","recordSha256":"908166d67e6ebf1c72b54710744bf1082fa570c9f5804181e55b51ccb2ccba6a"} -->
 ## P05-T104 — Implement retained feature codeAction
 
 Contract: `F1-R.retainedFeatures`, `feature:codeAction`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -1086,12 +1091,13 @@ Commit boundary:
 - `Sources/MonaCode/Features/MonaCodeActionFeature.swift`
 - `Tests/MonaCodeTests/Features/MonaCodeActionFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T105","recordSha256":"9733f933a169324fd641ffadb807a5f9eed41e3fe8438349318bbd79e308cfca"} -->
+<!-- monacode-plan-task:{"id":"P05-T105","recordSha256":"aa0a3db7f1326f206e083f1bdfcef43998439db2775ba26f017338ca0ecb3073"} -->
 ## P05-T105 — Implement retained feature codeEditor
 
 Contract: `F1-R.retainedFeatures`, `feature:codeEditor`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -1143,12 +1149,13 @@ Commit boundary:
 - `Sources/MonaCode/Features/MonaCodeEditorFeature.swift`
 - `Tests/MonaCodeTests/Features/MonaCodeEditorFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T106","recordSha256":"2e5bf4d5cd6b2a18977c55c94deeb01024d0f09d65ca810fa24346f0fbe911ed"} -->
+<!-- monacode-plan-task:{"id":"P05-T106","recordSha256":"5eb42f198560ef5e56453a034acbe701d6916b87a6491f705beae17f036c0a33"} -->
 ## P05-T106 — Implement retained feature codelens
 
 Contract: `F1-R.retainedFeatures`, `feature:codelens`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -1200,12 +1207,13 @@ Commit boundary:
 - `Sources/MonaCode/Features/MonaCodelensFeature.swift`
 - `Tests/MonaCodeTests/Features/MonaCodelensFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T107","recordSha256":"0afab61fdaacd1e079862f6f6333277c2e4f239abaa290d8da84c0a9fddea659"} -->
+<!-- monacode-plan-task:{"id":"P05-T107","recordSha256":"204227ccb164e97841e70c5b2c03e82b4a1be1a359fb61f9d0bea9d9c3eb37df"} -->
 ## P05-T107 — Implement retained feature codicon
 
 Contract: `F1-R.retainedFeatures`, `feature:codicon`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -1257,12 +1265,13 @@ Commit boundary:
 - `Sources/MonaCodeAppKit/Features/MonaCodiconFeature.swift`
 - `Tests/MonaCodeAppKitTests/Features/MonaCodiconFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T108","recordSha256":"2f19ee29af93cebd80a3b5f883ad26ab6ad87cac92163373dce65ed0cfcb2bef"} -->
+<!-- monacode-plan-task:{"id":"P05-T108","recordSha256":"a7309612ab778dd0ce7759180a5d45d7f516db7ba966a889f931bb47adc5a22c"} -->
 ## P05-T108 — Implement retained feature colorPicker
 
 Contract: `F1-R.retainedFeatures`, `feature:colorPicker`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -1314,12 +1323,13 @@ Commit boundary:
 - `Sources/MonaCodeAppKit/Features/MonaColorPickerFeature.swift`
 - `Tests/MonaCodeAppKitTests/Features/MonaColorPickerFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T109","recordSha256":"bdd51eb497877f66c8ebdfb0937a84a958bb481d7c063ebc40c254d72dac72ca"} -->
+<!-- monacode-plan-task:{"id":"P05-T109","recordSha256":"b0dc3c7ed388a6060810ec5f4b98254853195444d87797b25415ed973a780f39"} -->
 ## P05-T109 — Implement retained feature comment
 
 Contract: `F1-R.retainedFeatures`, `feature:comment`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -1371,12 +1381,13 @@ Commit boundary:
 - `Sources/MonaCode/Features/MonaCommentFeature.swift`
 - `Tests/MonaCodeTests/Features/MonaCommentFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T110","recordSha256":"d317d6788b18d4eb78b6ea11fac7757f2676b8fa6146fe4e112c5ce128f1c15b"} -->
+<!-- monacode-plan-task:{"id":"P05-T110","recordSha256":"bbc39ab46988da4f338d9704ff09f883ebc945bb3043608c3beec9c18dc26d4e"} -->
 ## P05-T110 — Implement retained feature contextmenu
 
 Contract: `F1-R.retainedFeatures`, `feature:contextmenu`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -1428,12 +1439,13 @@ Commit boundary:
 - `Sources/MonaCodeAppKit/Features/MonaContextmenuFeature.swift`
 - `Tests/MonaCodeAppKitTests/Features/MonaContextmenuFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T111","recordSha256":"371e25092402e20300b0a5090ca4815a27660d71d6bc2f352216783dfab80ef3"} -->
+<!-- monacode-plan-task:{"id":"P05-T111","recordSha256":"55214a9bf48c0631bc0c946e2e9b3312f4ebfb2d53ca3ef3713b4463ed62d56e"} -->
 ## P05-T111 — Implement retained feature cursorUndo
 
 Contract: `F1-R.retainedFeatures`, `feature:cursorUndo`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -1485,12 +1497,13 @@ Commit boundary:
 - `Sources/MonaCode/Features/MonaCursorUndoFeature.swift`
 - `Tests/MonaCodeTests/Features/MonaCursorUndoFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T112","recordSha256":"2a81e5a34bad24a2c3455262ca7803d56e4c1ec0de7f234faadf438afa11f6b4"} -->
+<!-- monacode-plan-task:{"id":"P05-T112","recordSha256":"a7eed050dee52cc87eb111e84bfc8cfbc924a7584a46e2873b9f7999ed7d232e"} -->
 ## P05-T112 — Implement retained feature diffEditor
 
 Contract: `F1-R.retainedFeatures`, `feature:diffEditor`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -1542,12 +1555,13 @@ Commit boundary:
 - `Sources/MonaCode/Features/MonaDiffEditorFeature.swift`
 - `Tests/MonaCodeTests/Features/MonaDiffEditorFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T113","recordSha256":"1efb6353c205751bdbc621e72b602d6db099e40663180e9db4295c33f5f7d22f"} -->
+<!-- monacode-plan-task:{"id":"P05-T113","recordSha256":"ee305e27f680b9a3502bfb34e2eb2ce03fa19d8f839b9e364e2f5229308e56da"} -->
 ## P05-T113 — Implement retained feature diffEditorBreadcrumbs
 
 Contract: `F1-R.retainedFeatures`, `feature:diffEditorBreadcrumbs`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -1599,12 +1613,13 @@ Commit boundary:
 - `Sources/MonaCodeAppKit/Features/MonaDiffEditorBreadcrumbsFeature.swift`
 - `Tests/MonaCodeAppKitTests/Features/MonaDiffEditorBreadcrumbsFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T114","recordSha256":"b08a9fa42213a06bc9ccf0adb56a67d7a8d0dbb39e34926e401106c04148ab46"} -->
+<!-- monacode-plan-task:{"id":"P05-T114","recordSha256":"20a6a57d776eb58b79f501a6f56bda110e80a220b170f750c8b04a1dd484e4be"} -->
 ## P05-T114 — Implement retained feature dnd
 
 Contract: `F1-R.retainedFeatures`, `feature:dnd`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -1656,12 +1671,13 @@ Commit boundary:
 - `Sources/MonaCodeAppKit/Features/MonaDndFeature.swift`
 - `Tests/MonaCodeAppKitTests/Features/MonaDndFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T115","recordSha256":"dc818ee902b90729a873b8c4dc02ec8b36869b156af46bffca09365a40df81fd"} -->
+<!-- monacode-plan-task:{"id":"P05-T115","recordSha256":"2a8c84335cc0cea8c8a882b08f5bce05b4387c43c7f150fd1347f4f97e584a7f"} -->
 ## P05-T115 — Implement retained feature documentSymbols
 
 Contract: `F1-R.retainedFeatures`, `feature:documentSymbols`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -1713,12 +1729,13 @@ Commit boundary:
 - `Sources/MonaCode/Features/MonaDocumentSymbolsFeature.swift`
 - `Tests/MonaCodeTests/Features/MonaDocumentSymbolsFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T116","recordSha256":"d216a0c61a794749f9d0910a2f125b5933f8e1fde697b297785a02a1cb980b69"} -->
+<!-- monacode-plan-task:{"id":"P05-T116","recordSha256":"c3ace186ec83d8dd8a7a1c98655f312376bbb294fefac3888c1f91499c448b17"} -->
 ## P05-T116 — Implement retained feature dropOrPasteInto
 
 Contract: `F1-R.retainedFeatures`, `feature:dropOrPasteInto`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -1770,12 +1787,13 @@ Commit boundary:
 - `Sources/MonaCodeAppKit/Features/MonaDropOrPasteIntoFeature.swift`
 - `Tests/MonaCodeAppKitTests/Features/MonaDropOrPasteIntoFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T117","recordSha256":"7fa07a454eaf8b3d79bbb1d13e6780ddb5cd2015f4d65b1253d398caf9f90c62"} -->
+<!-- monacode-plan-task:{"id":"P05-T117","recordSha256":"9acfbb78c28ff16e27bcc66bc623822f557153fd7fb792752160291271e2b35f"} -->
 ## P05-T117 — Implement retained feature find
 
 Contract: `F1-R.retainedFeatures`, `feature:find`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -1827,12 +1845,13 @@ Commit boundary:
 - `Sources/MonaCode/Features/MonaFindFeature.swift`
 - `Tests/MonaCodeTests/Features/MonaFindFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T118","recordSha256":"f074cba64af38b2c36da09b58b6349c4d195a5e6c735abd5f5e6d361319bc928"} -->
+<!-- monacode-plan-task:{"id":"P05-T118","recordSha256":"4c727337bff6690cde96a853ad7628dd8c372157727e5b11ee394da504ba4e86"} -->
 ## P05-T118 — Implement retained feature floatingMenu
 
 Contract: `F1-R.retainedFeatures`, `feature:floatingMenu`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -1884,12 +1903,13 @@ Commit boundary:
 - `Sources/MonaCodeAppKit/Features/MonaFloatingMenuFeature.swift`
 - `Tests/MonaCodeAppKitTests/Features/MonaFloatingMenuFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T119","recordSha256":"9b92c7d8b3f08342986e20a9fd05d93213cf7e26efb85e834fdd63d708a65a76"} -->
+<!-- monacode-plan-task:{"id":"P05-T119","recordSha256":"6d6f294d117fc6ad4fe84c521c76ecb638b263d01e776f006b5b35ddd9681d2f"} -->
 ## P05-T119 — Implement retained feature folding
 
 Contract: `F1-R.retainedFeatures`, `feature:folding`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -1941,12 +1961,13 @@ Commit boundary:
 - `Sources/MonaCode/Features/MonaFoldingFeature.swift`
 - `Tests/MonaCodeTests/Features/MonaFoldingFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T120","recordSha256":"800e7f4b58be94e4bff014ac9a9ceb93dad198cebd1981efec899476a7d25c5b"} -->
+<!-- monacode-plan-task:{"id":"P05-T120","recordSha256":"94614626e7cb6bf352ded5899cd05ab7abfb2c63a414b7e468aa3034462bed48"} -->
 ## P05-T120 — Implement retained feature fontZoom
 
 Contract: `F1-R.retainedFeatures`, `feature:fontZoom`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -1998,12 +2019,13 @@ Commit boundary:
 - `Sources/MonaCodeAppKit/Features/MonaFontZoomFeature.swift`
 - `Tests/MonaCodeAppKitTests/Features/MonaFontZoomFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T121","recordSha256":"5f24d116f13b24c45c453332f8b35ad8d5aff04fa9be1645488e99ccfae7fccd"} -->
+<!-- monacode-plan-task:{"id":"P05-T121","recordSha256":"8ce8a889cdf1dbdeba794d5ca211a43031167c668f977e3153f0a3a5a6c32d83"} -->
 ## P05-T121 — Implement retained feature format
 
 Contract: `F1-R.retainedFeatures`, `feature:format`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -2055,12 +2077,13 @@ Commit boundary:
 - `Sources/MonaCode/Features/MonaFormatFeature.swift`
 - `Tests/MonaCodeTests/Features/MonaFormatFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T122","recordSha256":"b1a678192bea37d00bd6c246573521ee833852b53525fecd5dc4b5290bf73be9"} -->
+<!-- monacode-plan-task:{"id":"P05-T122","recordSha256":"59573b92ea4dfebf3d55fc3bc6bb2a3a8f18b3961898a93c45c827f838377f6d"} -->
 ## P05-T122 — Implement retained feature gotoError
 
 Contract: `F1-R.retainedFeatures`, `feature:gotoError`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -2112,12 +2135,13 @@ Commit boundary:
 - `Sources/MonaCodeAppKit/Features/MonaGotoErrorFeature.swift`
 - `Tests/MonaCodeAppKitTests/Features/MonaGotoErrorFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T123","recordSha256":"2c83da3ba8967ae2b8eda8c14449bc6e3bd8f190bd15725b8dc35eb80d39557f"} -->
+<!-- monacode-plan-task:{"id":"P05-T123","recordSha256":"b1e4fc2d1159ce45eb11cc55e87bf0178481ba13bc9a39eedc2a0ddd6105de32"} -->
 ## P05-T123 — Implement retained feature gotoLine
 
 Contract: `F1-R.retainedFeatures`, `feature:gotoLine`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -2169,12 +2193,13 @@ Commit boundary:
 - `Sources/MonaCode/Features/MonaGotoLineFeature.swift`
 - `Tests/MonaCodeTests/Features/MonaGotoLineFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T124","recordSha256":"9f32a9c8ed97de32aa8ce5a400e5b60c90a44a5372ebf6debe1520e3b863938b"} -->
+<!-- monacode-plan-task:{"id":"P05-T124","recordSha256":"f0905fbb9896c6bc419144407dad46b87964c11d268092915fe6b04b6083ecfd"} -->
 ## P05-T124 — Implement retained feature gotoSymbol
 
 Contract: `F1-R.retainedFeatures`, `feature:gotoSymbol`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -2226,12 +2251,13 @@ Commit boundary:
 - `Sources/MonaCode/Features/MonaGotoSymbolFeature.swift`
 - `Tests/MonaCodeTests/Features/MonaGotoSymbolFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T125","recordSha256":"cefe3bba777b5795ad06cdcacbc30828f6180876204945695bbd4dba578ef54a"} -->
+<!-- monacode-plan-task:{"id":"P05-T125","recordSha256":"35854461fcce7017f39e26083bc850799a06f378cc9d3eeeaf6fc0d3190a787e"} -->
 ## P05-T125 — Implement retained feature hover
 
 Contract: `F1-R.retainedFeatures`, `feature:hover`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -2283,12 +2309,13 @@ Commit boundary:
 - `Sources/MonaCodeAppKit/Features/MonaHoverFeature.swift`
 - `Tests/MonaCodeAppKitTests/Features/MonaHoverFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T126","recordSha256":"f9ba2833aec13902da8c2ac0d31a49496d797867a7a409b13acf3cffa82bdcd2"} -->
+<!-- monacode-plan-task:{"id":"P05-T126","recordSha256":"d3e19b684320aca878e2febc9e35b5b5c97e336bd8a6981b0eec4748497ed88f"} -->
 ## P05-T126 — Implement retained feature indentation
 
 Contract: `F1-R.retainedFeatures`, `feature:indentation`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -2340,12 +2367,13 @@ Commit boundary:
 - `Sources/MonaCode/Features/MonaIndentationFeature.swift`
 - `Tests/MonaCodeTests/Features/MonaIndentationFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T127","recordSha256":"1b5d853e9efd9e15bf15986d98802b915af753eebd01f7b36559a743ef7471a1"} -->
+<!-- monacode-plan-task:{"id":"P05-T127","recordSha256":"d5e537db1821d1c62d570e984e2d712af96d28bc97ae6b9428b1520c6eecc1a1"} -->
 ## P05-T127 — Implement retained feature inlayHints
 
 Contract: `F1-R.retainedFeatures`, `feature:inlayHints`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -2397,12 +2425,13 @@ Commit boundary:
 - `Sources/MonaCode/Features/MonaInlayHintsFeature.swift`
 - `Tests/MonaCodeTests/Features/MonaInlayHintsFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T128","recordSha256":"9a7834436f4cbf3befe9ee265b169f6a5a936341286bfcd9c3fe6c6f70f7cb44"} -->
+<!-- monacode-plan-task:{"id":"P05-T128","recordSha256":"b3bb86f640f14f945223533603e6f8d0adcf6b610812a5eb9d475fa98e6415bd"} -->
 ## P05-T128 — Implement retained feature inlineCompletions
 
 Contract: `F1-R.retainedFeatures`, `feature:inlineCompletions`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -2454,12 +2483,13 @@ Commit boundary:
 - `Sources/MonaCode/Features/MonaInlineCompletionsFeature.swift`
 - `Tests/MonaCodeTests/Features/MonaInlineCompletionsFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T129","recordSha256":"15e95c8e0c2d2cbf95a1149a0660585cec29f83fa78b116b5db3809600f9b7d1"} -->
+<!-- monacode-plan-task:{"id":"P05-T129","recordSha256":"6c763334829a9a17c5c25751ea1c4d4bc5f9611023b6241deb90996e492ff1ba"} -->
 ## P05-T129 — Implement retained feature inlineProgress
 
 Contract: `F1-R.retainedFeatures`, `feature:inlineProgress`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -2511,12 +2541,13 @@ Commit boundary:
 - `Sources/MonaCodeAppKit/Features/MonaInlineProgressFeature.swift`
 - `Tests/MonaCodeAppKitTests/Features/MonaInlineProgressFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T130","recordSha256":"3362e26793bff20c8f9b89193d70bc69b32b0d43a7ffa10a843a2c7f5b2d832e"} -->
+<!-- monacode-plan-task:{"id":"P05-T130","recordSha256":"e6982438507d3db44a5a255d0f1dd61f0e3719455b3cb03d927c032d44c7e1e8"} -->
 ## P05-T130 — Implement retained feature inPlaceReplace
 
 Contract: `F1-R.retainedFeatures`, `feature:inPlaceReplace`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -2568,12 +2599,13 @@ Commit boundary:
 - `Sources/MonaCode/Features/MonaInPlaceReplaceFeature.swift`
 - `Tests/MonaCodeTests/Features/MonaInPlaceReplaceFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T131","recordSha256":"b3dcc4f4509a29686951bf7aebde57d07c83c28db6495940bf001781bb97667d"} -->
+<!-- monacode-plan-task:{"id":"P05-T131","recordSha256":"0f82689d6df7fd6ef1b6ba96caf67144656980895321bb93f8580b5a234fcc27"} -->
 ## P05-T131 — Implement retained feature insertFinalNewLine
 
 Contract: `F1-R.retainedFeatures`, `feature:insertFinalNewLine`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -2625,12 +2657,13 @@ Commit boundary:
 - `Sources/MonaCode/Features/MonaInsertFinalNewLineFeature.swift`
 - `Tests/MonaCodeTests/Features/MonaInsertFinalNewLineFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T132","recordSha256":"bac47dd3092b15b6cf1df5c330ac4618f238f45e8b9a25475228cc33d9fa5c0e"} -->
+<!-- monacode-plan-task:{"id":"P05-T132","recordSha256":"3a3079ad7aeea689a3a16762ea375b1a3fc42f47cd259fd7a14868302362c552"} -->
 ## P05-T132 — Implement retained feature inspectTokens
 
 Contract: `F1-R.retainedFeatures`, `feature:inspectTokens`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -2682,12 +2715,13 @@ Commit boundary:
 - `Sources/MonaCode/Features/MonaInspectTokensFeature.swift`
 - `Tests/MonaCodeTests/Features/MonaInspectTokensFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T133","recordSha256":"5462ee563a1b1358e4b4c67549ca29c46d339be191c49baa93cae4c678292e6c"} -->
+<!-- monacode-plan-task:{"id":"P05-T133","recordSha256":"98a49bbd0508c224a002aeb6d5b2a6b02e583f67a0b0b44aadacbfe0a25bfc34"} -->
 ## P05-T133 — Implement retained feature lineSelection
 
 Contract: `F1-R.retainedFeatures`, `feature:lineSelection`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -2739,12 +2773,13 @@ Commit boundary:
 - `Sources/MonaCode/Features/MonaLineSelectionFeature.swift`
 - `Tests/MonaCodeTests/Features/MonaLineSelectionFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T134","recordSha256":"b5c37064fef03c5938e33f10f285eabf4b87913ae93affc3be51a3cbf1dff6df"} -->
+<!-- monacode-plan-task:{"id":"P05-T134","recordSha256":"388ce3dbc2b130d92cdcd2c9231cd45ace8451e617d051c81cd45d013b5e6080"} -->
 ## P05-T134 — Implement retained feature linesOperations
 
 Contract: `F1-R.retainedFeatures`, `feature:linesOperations`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -2796,12 +2831,13 @@ Commit boundary:
 - `Sources/MonaCode/Features/MonaLinesOperationsFeature.swift`
 - `Tests/MonaCodeTests/Features/MonaLinesOperationsFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T135","recordSha256":"daa6b797f3e39d3dc62138e1953c9636561f2dc53d3f15fce5ff0ce9782fee4c"} -->
+<!-- monacode-plan-task:{"id":"P05-T135","recordSha256":"96a32b52738122e0ca5dee340fbc27ad50b0b483f5a6f8838f1bdc21070da28f"} -->
 ## P05-T135 — Implement retained feature linkedEditing
 
 Contract: `F1-R.retainedFeatures`, `feature:linkedEditing`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -2853,12 +2889,13 @@ Commit boundary:
 - `Sources/MonaCode/Features/MonaLinkedEditingFeature.swift`
 - `Tests/MonaCodeTests/Features/MonaLinkedEditingFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T136","recordSha256":"b342b4c8b5928e15cfda6704c2c3299501c294f4d138fcfa50fd0868ff59f8e8"} -->
+<!-- monacode-plan-task:{"id":"P05-T136","recordSha256":"016f5407dd16bede1d85f95116a5e364ac244e5d186917e609a0d8a8a2aa8931"} -->
 ## P05-T136 — Implement retained feature links
 
 Contract: `F1-R.retainedFeatures`, `feature:links`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -2910,12 +2947,13 @@ Commit boundary:
 - `Sources/MonaCodeAppKit/Features/MonaLinksFeature.swift`
 - `Tests/MonaCodeAppKitTests/Features/MonaLinksFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T137","recordSha256":"6c8b1ee8dbc6ea02f9c2fd53f4baa75b78897bf1f484ecc85774cb063bd9f6fb"} -->
+<!-- monacode-plan-task:{"id":"P05-T137","recordSha256":"86c8a2fd3f6f1ce44bf731cf812d1d7254c5c212a3c0b1cdc7d4d0ab4f5c4517"} -->
 ## P05-T137 — Implement retained feature longLinesHelper
 
 Contract: `F1-R.retainedFeatures`, `feature:longLinesHelper`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -2967,12 +3005,13 @@ Commit boundary:
 - `Sources/MonaCode/Features/MonaLongLinesHelperFeature.swift`
 - `Tests/MonaCodeTests/Features/MonaLongLinesHelperFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T138","recordSha256":"48ad5b95b616ad68ac394be7a3fb6ffcd9a459f2c1d6bfd4f46f592c515ba8fb"} -->
+<!-- monacode-plan-task:{"id":"P05-T138","recordSha256":"cf872a471429d0f9ab689cf13bd1ad666792eb53f6b677df403fa05775f25b2c"} -->
 ## P05-T138 — Implement retained feature middleScroll
 
 Contract: `F1-R.retainedFeatures`, `feature:middleScroll`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -3024,12 +3063,13 @@ Commit boundary:
 - `Sources/MonaCodeAppKit/Features/MonaMiddleScrollFeature.swift`
 - `Tests/MonaCodeAppKitTests/Features/MonaMiddleScrollFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T139","recordSha256":"70c99c35eb9ca5e999f9329796d4c4aa027d7d9de1d02c9f31d396eeda2154fb"} -->
+<!-- monacode-plan-task:{"id":"P05-T139","recordSha256":"d9511ae5238a89af40cf0393df8058cf6e35eaa69a391caecba9776b48039fef"} -->
 ## P05-T139 — Implement retained feature multicursor
 
 Contract: `F1-R.retainedFeatures`, `feature:multicursor`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -3081,12 +3121,13 @@ Commit boundary:
 - `Sources/MonaCode/Features/MonaMulticursorFeature.swift`
 - `Tests/MonaCodeTests/Features/MonaMulticursorFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T140","recordSha256":"983a40032febcf6b929de12ee4bc92c6fa15570f098c05f87e26dcfd6fe36cf6"} -->
+<!-- monacode-plan-task:{"id":"P05-T140","recordSha256":"5290ada1ddcbcf67d78ef7d703fd04e1a6e56eaf1e13324878576e3dff6d19ca"} -->
 ## P05-T140 — Implement retained feature parameterHints
 
 Contract: `F1-R.retainedFeatures`, `feature:parameterHints`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -3138,12 +3179,13 @@ Commit boundary:
 - `Sources/MonaCode/Features/MonaParameterHintsFeature.swift`
 - `Tests/MonaCodeTests/Features/MonaParameterHintsFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T141","recordSha256":"088eb7714c7efdd2d59281e290dc49b7f591f9cda947ad67e31f5d19dd62f77d"} -->
+<!-- monacode-plan-task:{"id":"P05-T141","recordSha256":"381d6f5780192af206fa5ffa184b982525242b9c55373585a90d2b99ff054a33"} -->
 ## P05-T141 — Implement retained feature placeholderText
 
 Contract: `F1-R.retainedFeatures`, `feature:placeholderText`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -3195,12 +3237,13 @@ Commit boundary:
 - `Sources/MonaCodeAppKit/Features/MonaPlaceholderTextFeature.swift`
 - `Tests/MonaCodeAppKitTests/Features/MonaPlaceholderTextFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T142","recordSha256":"dd796986d884cfd2101b28323bf1741f5651c8a00d4c3182f686a73ba6a16870"} -->
+<!-- monacode-plan-task:{"id":"P05-T142","recordSha256":"ae9ec5a090e38f32cd201235d11b5a7fd917afeb43283b15bf3ff93e2dd1b417"} -->
 ## P05-T142 — Implement retained feature quickCommand
 
 Contract: `F1-R.retainedFeatures`, `feature:quickCommand`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -3252,12 +3295,13 @@ Commit boundary:
 - `Sources/MonaCodeAppKit/Features/MonaQuickCommandFeature.swift`
 - `Tests/MonaCodeAppKitTests/Features/MonaQuickCommandFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T143","recordSha256":"769c446c1ba4c948b57db8729a42449bb9e4de4da000c99b2240c87d153e422c"} -->
+<!-- monacode-plan-task:{"id":"P05-T143","recordSha256":"cba258b1739ddaf384e9a062e5f04dd8979196fe6616cca7d555d2d9c39575e1"} -->
 ## P05-T143 — Implement retained feature quickHelp
 
 Contract: `F1-R.retainedFeatures`, `feature:quickHelp`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -3309,12 +3353,13 @@ Commit boundary:
 - `Sources/MonaCodeAppKit/Features/MonaQuickHelpFeature.swift`
 - `Tests/MonaCodeAppKitTests/Features/MonaQuickHelpFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T144","recordSha256":"09dac9afd2cfb178010159502f8c6e227aa5bfa9f122ca1348357f583ac5b5f8"} -->
+<!-- monacode-plan-task:{"id":"P05-T144","recordSha256":"aeaee6f2439616c19730e67a14069d785ad629ab92489e15fe8f9084f5507002"} -->
 ## P05-T144 — Implement retained feature quickOutline
 
 Contract: `F1-R.retainedFeatures`, `feature:quickOutline`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -3366,12 +3411,13 @@ Commit boundary:
 - `Sources/MonaCodeAppKit/Features/MonaQuickOutlineFeature.swift`
 - `Tests/MonaCodeAppKitTests/Features/MonaQuickOutlineFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T145","recordSha256":"32147676e43cb24e5845b98ec2377a98d5d1c91dd72e7b7d032fef6069a68bc6"} -->
+<!-- monacode-plan-task:{"id":"P05-T145","recordSha256":"7855e1c6612a5036a29872c4ac02ee8328dcd46a7b198f50010a6f33ed872955"} -->
 ## P05-T145 — Implement retained feature readOnlyMessage
 
 Contract: `F1-R.retainedFeatures`, `feature:readOnlyMessage`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -3423,12 +3469,13 @@ Commit boundary:
 - `Sources/MonaCodeAppKit/Features/MonaReadOnlyMessageFeature.swift`
 - `Tests/MonaCodeAppKitTests/Features/MonaReadOnlyMessageFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T146","recordSha256":"0aee25fb80b7768c360a4672a1f575e296df34b57384ab019041f61dbf972982"} -->
+<!-- monacode-plan-task:{"id":"P05-T146","recordSha256":"e7f125a756a82fd6d148b09ef48ef1513f59d61233468f37c3a78e671a04ee08"} -->
 ## P05-T146 — Implement retained feature referenceSearch
 
 Contract: `F1-R.retainedFeatures`, `feature:referenceSearch`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -3480,12 +3527,13 @@ Commit boundary:
 - `Sources/MonaCode/Features/MonaReferenceSearchFeature.swift`
 - `Tests/MonaCodeTests/Features/MonaReferenceSearchFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T147","recordSha256":"73fc7de88a171be548b8b9f0813307452459a60e50a5745dca255fc0e2a6339c"} -->
+<!-- monacode-plan-task:{"id":"P05-T147","recordSha256":"830b4d9de82adca952af96a4c226273e6b88e73786aa05966fb4fe11974950f0"} -->
 ## P05-T147 — Implement retained feature rename
 
 Contract: `F1-R.retainedFeatures`, `feature:rename`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -3537,12 +3585,13 @@ Commit boundary:
 - `Sources/MonaCode/Features/MonaRenameFeature.swift`
 - `Tests/MonaCodeTests/Features/MonaRenameFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T148","recordSha256":"660176143d4c61ad18413547fafe3b926dab458ba6698b031c882f01845e4a64"} -->
+<!-- monacode-plan-task:{"id":"P05-T148","recordSha256":"465bd88171bce9f25f8f5c3fd3c0e332a4365fc2f9a997613850a111e2727fb8"} -->
 ## P05-T148 — Implement retained feature sectionHeaders
 
 Contract: `F1-R.retainedFeatures`, `feature:sectionHeaders`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -3594,12 +3643,13 @@ Commit boundary:
 - `Sources/MonaCodeAppKit/Features/MonaSectionHeadersFeature.swift`
 - `Tests/MonaCodeAppKitTests/Features/MonaSectionHeadersFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T149","recordSha256":"1b90c24615c43338701b9477f9001af04e613eb2044e179cdba07b2127bcc3c5"} -->
+<!-- monacode-plan-task:{"id":"P05-T149","recordSha256":"6104df1d03fad3f2b9ff930884f73cf65d087fec3da734aa8f10a5202f0f1492"} -->
 ## P05-T149 — Implement retained feature semanticTokens
 
 Contract: `F1-R.retainedFeatures`, `feature:semanticTokens`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -3651,12 +3701,13 @@ Commit boundary:
 - `Sources/MonaCode/Features/MonaSemanticTokensFeature.swift`
 - `Tests/MonaCodeTests/Features/MonaSemanticTokensFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T150","recordSha256":"7940836879eb92c4ff6acf52f5e50079e9d5a559678222d799f3f8c3a48f31fd"} -->
+<!-- monacode-plan-task:{"id":"P05-T150","recordSha256":"f291ae5426789f59c3972e4952c413e9cd37d25d0fff958461a2bd011874272c"} -->
 ## P05-T150 — Implement retained feature smartSelect
 
 Contract: `F1-R.retainedFeatures`, `feature:smartSelect`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -3708,12 +3759,13 @@ Commit boundary:
 - `Sources/MonaCode/Features/MonaSmartSelectFeature.swift`
 - `Tests/MonaCodeTests/Features/MonaSmartSelectFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T151","recordSha256":"df74107fd8998165275fee116ca5b14244b26d1b50225a00743df6b4791d4a4c"} -->
+<!-- monacode-plan-task:{"id":"P05-T151","recordSha256":"242505f612ac1d47af1b76455b0e67633a3b25ca963fc7af85a0d6c1ef6d17f3"} -->
 ## P05-T151 — Implement retained feature snippet
 
 Contract: `F1-R.retainedFeatures`, `feature:snippet`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -3765,12 +3817,13 @@ Commit boundary:
 - `Sources/MonaCode/Features/MonaSnippetFeature.swift`
 - `Tests/MonaCodeTests/Features/MonaSnippetFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T152","recordSha256":"f567b7bb2cc8a84f47504d34fa0c8e0899525e96ffdc931568587259d0a1efca"} -->
+<!-- monacode-plan-task:{"id":"P05-T152","recordSha256":"207196abc4e33a878e6b42aef6414b4d9e4a10151c6841c9144800291953f841"} -->
 ## P05-T152 — Implement retained feature stickyScroll
 
 Contract: `F1-R.retainedFeatures`, `feature:stickyScroll`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -3822,12 +3875,13 @@ Commit boundary:
 - `Sources/MonaCodeAppKit/Features/MonaStickyScrollFeature.swift`
 - `Tests/MonaCodeAppKitTests/Features/MonaStickyScrollFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T153","recordSha256":"eee6ec2d2d11e73c10cb1677ee3b92c7e1c413b482dab5d4d351487c7d23289b"} -->
+<!-- monacode-plan-task:{"id":"P05-T153","recordSha256":"5467b293326982805320a0b4d863b63c18c9f25acaee85f9626159d1c3d77f06"} -->
 ## P05-T153 — Implement retained feature suggest
 
 Contract: `F1-R.retainedFeatures`, `feature:suggest`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -3879,12 +3933,13 @@ Commit boundary:
 - `Sources/MonaCode/Features/MonaSuggestFeature.swift`
 - `Tests/MonaCodeTests/Features/MonaSuggestFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T154","recordSha256":"4b89684cb39724a9948d01eb21ebfc2267645ee3049fbe4dde415c19169865e8"} -->
+<!-- monacode-plan-task:{"id":"P05-T154","recordSha256":"3299c1452be6e48c6a97ea74c0458c3c434d6050339610c1d5a9509cacd585aa"} -->
 ## P05-T154 — Implement retained feature toggleHighContrast
 
 Contract: `F1-R.retainedFeatures`, `feature:toggleHighContrast`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -3936,12 +3991,13 @@ Commit boundary:
 - `Sources/MonaCodeAppKit/Features/MonaToggleHighContrastFeature.swift`
 - `Tests/MonaCodeAppKitTests/Features/MonaToggleHighContrastFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T155","recordSha256":"dd35e6e8d1b07dd4b98187af6a56c047676fef146410a1d7479d6162c4f28072"} -->
+<!-- monacode-plan-task:{"id":"P05-T155","recordSha256":"46aa50b26e585f0f440a2caea72e5d282dab1387929871e67188da101c0e7614"} -->
 ## P05-T155 — Implement retained feature toggleTabFocusMode
 
 Contract: `F1-R.retainedFeatures`, `feature:toggleTabFocusMode`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -3993,12 +4049,13 @@ Commit boundary:
 - `Sources/MonaCodeAppKit/Features/MonaToggleTabFocusModeFeature.swift`
 - `Tests/MonaCodeAppKitTests/Features/MonaToggleTabFocusModeFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T156","recordSha256":"e1ebc2820c9f36318c43c347ac50903564ba612155157632df28a165fd239be4"} -->
+<!-- monacode-plan-task:{"id":"P05-T156","recordSha256":"08bd9df0bd59d22891c090eee985b3ac8271438407d562041a079cb679994b95"} -->
 ## P05-T156 — Implement retained feature tokenization
 
 Contract: `F1-R.retainedFeatures`, `feature:tokenization`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -4050,12 +4107,13 @@ Commit boundary:
 - `Sources/MonaCode/Features/MonaTokenizationFeature.swift`
 - `Tests/MonaCodeTests/Features/MonaTokenizationFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T157","recordSha256":"ab7226ded20e83165d1c4a145d593364896e55c326a7f3e95e3c2ad57e7cafae"} -->
+<!-- monacode-plan-task:{"id":"P05-T157","recordSha256":"8151fb7305d9695a59f2afb5cbabab8fed9688c7496aa43851218bb411572859"} -->
 ## P05-T157 — Implement retained feature unicodeHighlighter
 
 Contract: `F1-R.retainedFeatures`, `feature:unicodeHighlighter`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -4107,12 +4165,13 @@ Commit boundary:
 - `Sources/MonaCode/Features/MonaUnicodeHighlighterFeature.swift`
 - `Tests/MonaCodeTests/Features/MonaUnicodeHighlighterFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T158","recordSha256":"d7660d1cc238f5a472bc3f2c8ec1911896f53ea5524a9d306404a4e9411c5c43"} -->
+<!-- monacode-plan-task:{"id":"P05-T158","recordSha256":"51de9ce615a9a20d41e43d4886a5aa9b25f32450c0695267e6f0fd6075c0c39c"} -->
 ## P05-T158 — Implement retained feature unusualLineTerminators
 
 Contract: `F1-R.retainedFeatures`, `feature:unusualLineTerminators`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -4164,12 +4223,13 @@ Commit boundary:
 - `Sources/MonaCode/Features/MonaUnusualLineTerminatorsFeature.swift`
 - `Tests/MonaCodeTests/Features/MonaUnusualLineTerminatorsFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T159","recordSha256":"8bed1e25b2ade71447b185bf5a9386ae1e1c2c05b0076ad054d42476983d6575"} -->
+<!-- monacode-plan-task:{"id":"P05-T159","recordSha256":"66b730c894b35e71b95609a9dc24b59f4b5b1e2f3d28bdb7f67f4b874feeab6b"} -->
 ## P05-T159 — Implement retained feature wordHighlighter
 
 Contract: `F1-R.retainedFeatures`, `feature:wordHighlighter`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -4221,12 +4281,13 @@ Commit boundary:
 - `Sources/MonaCode/Features/MonaWordHighlighterFeature.swift`
 - `Tests/MonaCodeTests/Features/MonaWordHighlighterFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T160","recordSha256":"bd1ff3325cdb1345f2893529056eb1a8eb0153348dbbad7874037db77ed34e4a"} -->
+<!-- monacode-plan-task:{"id":"P05-T160","recordSha256":"8fe421848e0e05f0e26c9bda76f77b9762ef15421ab635a42ce80c2ee23d2d2c"} -->
 ## P05-T160 — Implement retained feature wordOperations
 
 Contract: `F1-R.retainedFeatures`, `feature:wordOperations`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -4278,12 +4339,13 @@ Commit boundary:
 - `Sources/MonaCode/Features/MonaWordOperationsFeature.swift`
 - `Tests/MonaCodeTests/Features/MonaWordOperationsFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T161","recordSha256":"b07c3c9b00558f2d775b2149888f959a9656a55308bae67c3fb605e06b9984d9"} -->
+<!-- monacode-plan-task:{"id":"P05-T161","recordSha256":"284bc2647ec29996d72e1d72d66e7517bd9d501cd4dbd9b6dbe9590fd884e13b"} -->
 ## P05-T161 — Implement retained feature wordPartOperations
 
 Contract: `F1-R.retainedFeatures`, `feature:wordPartOperations`, `C05`
 
 Dependencies:
+- `P05-T002`
 - `P05-T012`
 - `P05-T013`
 
@@ -4335,12 +4397,15 @@ Commit boundary:
 - `Sources/MonaCode/Features/MonaWordPartOperationsFeature.swift`
 - `Tests/MonaCodeTests/Features/MonaWordPartOperationsFeatureTests.swift`
 
-<!-- monacode-plan-task:{"id":"P05-T190","recordSha256":"14c461807ec9ac81f9d2069c54e0872d6634991e32e32134fe8f555439e04971"} -->
+<!-- monacode-plan-task:{"id":"P05-T190","recordSha256":"67c3a4a164fbfe1de26be402fe64c9aa749698635152357a31e35e4032d366df"} -->
 ## P05-T190 — Produce and validate the provisional native declaration manifest
 
 Contract: `F1-R`, `F1-R2`, `F1-R3`, `F1-R4`, `F1-R5`, `G5-R.candidateGeneratedArtifacts`
 
 Dependencies:
+- `P05-T002`
+- `P05-T004`
+- `P05-T007`
 - `P05-T009`
 - `P05-T010`
 - `P05-T011`

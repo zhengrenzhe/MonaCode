@@ -6,6 +6,7 @@ import path from 'node:path';
 import { auditBoundaries } from './boundaries.mjs';
 import { auditOwnership } from './coverage.mjs';
 import { auditEvidence } from './evidence.mjs';
+import { auditExecutability } from './executability.mjs';
 import { compareFindings } from './findings.mjs';
 import { auditTaskGraph, topologicalOrder } from './graph.mjs';
 import { auditMarkdown } from './markdown.mjs';
@@ -73,7 +74,8 @@ function resultFromGroups({
   markdownFindings,
   coverageFindings,
   boundaryFindings,
-  evidenceFindings
+  evidenceFindings,
+  executabilityFindings
 }) {
   const findings = [
     ...schemaFindings,
@@ -81,7 +83,8 @@ function resultFromGroups({
     ...markdownFindings,
     ...coverageFindings,
     ...boundaryFindings,
-    ...evidenceFindings
+    ...evidenceFindings,
+    ...executabilityFindings
   ].sort(compareFindings);
   const environmentFailures = evidenceFindings.filter((row) => row.id === 'PLAN_ENVIRONMENT_MISMATCH').length;
   const dependencyFailures = graphFindings.length;
@@ -113,7 +116,8 @@ function resultFromGroups({
       coverageFailures: coverageFindings.length,
       boundaryFailures: boundaryFindings.length,
       evidenceFailures: evidenceFindings.length - environmentFailures,
-      environmentFailures
+      environmentFailures,
+      executabilityFailures: executabilityFindings.length
     },
     coverage: {
       contractIdentities: inventory.identities.length,
@@ -137,6 +141,7 @@ export function auditPlan({ contract, plan, inventory, planDirectory, mode = {} 
   const coverageFindings = auditOwnership(selectedInventory(inventory, plan, phaseID), plan);
   const boundaryFindings = phaseBoundaryFindings(plan, contract, phaseID);
   const evidenceFindings = auditEvidence(plan, contract);
+  const executabilityFindings = auditExecutability(plan);
   return resultFromGroups({
     plan,
     inventory,
@@ -147,7 +152,8 @@ export function auditPlan({ contract, plan, inventory, planDirectory, mode = {} 
     markdownFindings,
     coverageFindings,
     boundaryFindings,
-    evidenceFindings
+    evidenceFindings,
+    executabilityFindings
   });
 }
 
@@ -250,6 +256,26 @@ function applyBoundaryMutation(plan, row) {
   }
 }
 
+function applyExecutabilityMutation(plan, row) {
+  const task = plan.tasks.find((candidate) => candidate.id === row.task);
+  if (row.mutation === 'evidence-path') {
+    task.evidence[0] = row.value;
+  } else if (row.mutation === 'qualification-property') {
+    plan.qualificationEnvironment[row.key] = row.value;
+  } else if (row.mutation === 'add-modify-path') {
+    task.files.modify.push(row.value);
+    task.commitBoundary.push(row.value);
+  } else if (row.mutation === 'add-interface-consume') {
+    task.interfaces.consumes.push(row.value);
+  } else if (row.mutation === 'replace-command') {
+    task[row.stage][row.index].run = row.value;
+  } else if (row.mutation === 'remove-dependency') {
+    task.dependencies = task.dependencies.filter((dependency) => dependency !== row.value);
+  } else {
+    throw new Error(`unknown executability fixture mutation: ${row.mutation}`);
+  }
+}
+
 function markdownFixtureFindings(fixture) {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'monacode-plan-fixture-'));
   try {
@@ -274,6 +300,20 @@ export function auditFixture({ fixture, contract, seedPlan, inventory }) {
     const plan = ownershipFixturePlan(inventory);
     applyOwnershipMutation(plan, fixture);
     findings = auditOwnership(inventory, plan);
+  } else if ([
+    'evidence-path',
+    'qualification-property',
+    'add-modify-path',
+    'add-interface-consume',
+    'replace-command',
+    'remove-dependency'
+  ].includes(fixture.mutation)) {
+    const plan = structuredClone(seedPlan);
+    applyExecutabilityMutation(plan, fixture);
+    findings = [
+      ...auditEvidence(plan, contract),
+      ...auditExecutability(plan)
+    ].sort(compareFindings);
   } else {
     const plan = [
       'acceptance-before-distribution',

@@ -1,0 +1,8 @@
+{
+  "mutation": "evidence-path",
+  "task": "P00-T001",
+  "value": "implementation-plan/verification/plan-audit.json",
+  "expectedFindingIds": [
+    "PLAN_FALSE_EVIDENCE_STATE"
+  ]
+}

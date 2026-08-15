@@ -427,12 +427,13 @@ Commit boundary:
 - `Tests/MonaCodeTests/Model/MonaPieceTreeDifferentialTests.swift`
 - `Tests/MonaCodeTests/Model/MonaPieceTreeComplexityTests.swift`
 
-<!-- monacode-plan-task:{"id":"P01-T008","recordSha256":"447542a2e7c6d1ce53ed39c95be14d97ccca0e8db0ff088157fce27a940360f3"} -->
+<!-- monacode-plan-task:{"id":"P01-T008","recordSha256":"0bf2595b7fb817737c44c4a6b70d18bee2fac51a0e35ad43472eda6bd590332a"} -->
 ## P01-T008 — Implement all 70 retained text-model members on Piece Tree truth
 
 Contract: `M1-R2.publicSurface`, `F1-R2.instanceSurface`, `C01`
 
 Dependencies:
+- `P01-T003`
 - `P01-T007`
 
 Ownership selectors:

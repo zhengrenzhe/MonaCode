@@ -10,7 +10,8 @@
     "coverageFailures": 0,
     "boundaryFailures": 0,
     "evidenceFailures": 0,
-    "environmentFailures": 0
+    "environmentFailures": 0,
+    "executabilityFailures": 0
   },
   "coverage": {
     "contractIdentities": 3582,
@@ -230,7 +231,7 @@
     },
     {
       "path": "implementation-plan/phase-01-base-model.md",
-      "sha256": "bb3807e30a57c65bd6ebbd550ce7ca909a39000a6802824fda079ad789fb3be4"
+      "sha256": "ea4c959f21a3d3dd80b535d01b41731598cb5822dfa7c89cd73a76fbbe5c3eb6"
     },
     {
       "path": "implementation-plan/phase-02-model-semantics.md",
@@ -246,7 +247,7 @@
     },
     {
       "path": "implementation-plan/phase-05-public-surface-features.md",
-      "sha256": "dd44b86bda2d998e8e087f7836b987c3c09c8d991ad9d8961242680c0675d853"
+      "sha256": "f13d9a4253f08ea5c90b6fe20cb43d9d3bf74dc229250af567b7b6ce69155bb4"
     },
     {
       "path": "implementation-plan/phase-06-language-lsp-snippet-markdown.md",
