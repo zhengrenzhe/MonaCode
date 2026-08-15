@@ -1,0 +1,31 @@
+{
+  "plan": {
+    "planID": "g6r-red-scaffold-unreplaced",
+    "tasks": [
+      {
+        "taskID": "P00-T001",
+        "stages": [
+          { "name": "preflight", "steps": [{ "kind": "controller-action", "action": "begin-task" }] },
+          { "name": "test-authoring", "steps": [{ "kind": "authoring-operation", "operation": "author-tests" }] },
+          { "name": "red", "steps": [{ "kind": "verification-command", "command": { "commandID": "P00-T001.RED.001", "kind": "process", "networkMode": "forbidden", "timeoutMs": 120000, "leaves": [{ "leafID": "P00-T001.RED.001.PROC.001" }], "inputs": [] } }] },
+          { "name": "implementation", "steps": [{ "kind": "implementation-operation", "operation": "no-op" }] },
+          { "name": "green", "steps": [{ "kind": "verification-command", "command": { "commandID": "P00-T001.GREEN.001", "kind": "process", "networkMode": "forbidden", "timeoutMs": 120000, "leaves": [{ "leafID": "P00-T001.GREEN.001.PROC.001" }], "inputs": [] } }] },
+          { "name": "commit", "steps": [{ "kind": "controller-action", "action": "commit-task" }] },
+          { "name": "evidence", "steps": [{ "kind": "controller-action", "action": "finalize-evidence" }] }
+        ],
+        "testContract": { "contractID": "TC-P00-T001", "cases": [{ "caseID": "C1", "file": { "path": "Tests/Foo.test.swift", "availability": "baseline" }, "checker": "swift-test", "target": "Tests", "testSymbol": "testFoo", "fixtures": { "kind": "inline", "values": {} }, "assertions": [{ "id": "A1", "operand": "exit" }], "redLeafID": "P00-T001.RED.001.PROC.001", "greenLeafID": "P00-T001.GREEN.001.PROC.001", "inheritedOutput": false, "failureClass": "behavioral", "authoringOperation": "author-tests", "source": "baseline" }] },
+        "redScaffold": { "sourcePath": "Sources/Foo.swift", "declarationText": "scaffold", "declarationHash": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", "sentinelBehavior": "compile-fail", "createOwner": "test-authoring", "replacementOwner": "implementation", "redAssertionID": "RA1", "finalAbsenceAssertion": "FAA1" },
+        "productCommit": { "stagedProductPaths": ["Sources/Foo.swift"] },
+        "evidenceCommit": { "stagedEvidencePath": "evidence/P00-T001.json" }
+      }
+    ]
+  },
+  "baselineRows": [],
+  "expected": {
+    "id": "PLAN_RED_SCAFFOLD_UNREPLACED",
+    "category": "semantic",
+    "taskID": "P00-T001",
+    "path": "/tasks/0/redScaffold",
+    "message": "red scaffold at \"Sources/Foo.swift\" was not replaced by implementation"
+  }
+}
