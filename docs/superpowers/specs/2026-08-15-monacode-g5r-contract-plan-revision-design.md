@@ -21,7 +21,7 @@ The adopted G4-R archive remains immutable at `docs/contracts/monaco-editor-0.56
 - seven required candidate-generated artifacts; and
 - zero unresolved product-scope decisions.
 
-The current `docs/implementation-phases/` draft contains 24 Markdown files, 2,181 lines, 135 task headings, and 135 bulk completion checkboxes. It is not tracked by Git. It contains these confirmed defects:
+The current `docs/implementation-phases/` draft contains 24 Markdown files, 2,181 lines, 99 unique task headings, and 125 completion checkboxes. It is not tracked by Git. It contains these confirmed defects:
 
 - dependency cycles `9.3 -> 9.1 -> 8.9 -> 9.3` and `8.2 -> 9.3 -> 9.1 -> 8.9 -> 8.2`;
 - 47 of the 62 retained macOS feature IDs absent as exact plan identities;
