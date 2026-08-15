@@ -1,0 +1,8 @@
+{
+  "mutation": "remove-row",
+  "kind": "feature",
+  "id": "anchorSelect",
+  "expectedFindingIds": [
+    "PLAN_RETAINED_IDENTITY_UNMAPPED"
+  ]
+}
