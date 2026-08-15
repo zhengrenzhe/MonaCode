@@ -13168,6 +13168,814 @@
       "commitBoundary": [
         "Tests/PlanStructureTests/PublicAPIClosureTests.mjs"
       ]
+    },
+    {
+      "id": "P08-T001",
+      "phase": "08",
+      "title": "Build the frozen three-product release package",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P07-T011"
+      ],
+      "contractRefs": [
+        "G5-R.deliveryScope",
+        "G5-R.validationScope.packageDeploymentTarget",
+        "C10"
+      ],
+      "ownership": [
+        "release:three-product-build",
+        "release:arm64-macos26"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [
+          "Tools/Release/build-release.sh"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/PlanStructureTests/ReleaseBuildTests.mjs"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaPublicAPIClosure",
+          "Phase07HostAndDiffGate"
+        ],
+        "produces": [
+          "MonaReleasePackage"
+        ]
+      },
+      "red": [
+        {
+          "run": "node --test Tests/PlanStructureTests/ReleaseBuildTests.mjs --test-name-pattern wrong-product-set",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "RELEASE_PRODUCT_SET_MISMATCH expected=3"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Build arm64 macOS 26.0-or-newer release artifacts for MonaCode, MonaCodeAppKit, and MonaCodeSwiftUI plus the sample host.",
+          "Record compiler, SDK, deployment target, architecture, binary UUID-independent hashes, and complete artifact paths.",
+          "Reject debug-only, unsigned-input, stale-source, extra-product, or missing-target output."
+        ]
+      },
+      "green": [
+        {
+          "run": "node --test Tests/PlanStructureTests/ReleaseBuildTests.mjs",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "RELEASE_BUILD products=3 nonProductTargets=3 architecture=arm64 deployment=macOS26.0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-08/P08-T001.json"
+      ],
+      "completion": [
+        "Exactly three public products build in release mode.",
+        "All three non-product targets remain declared.",
+        "Artifacts bind to one frozen source revision."
+      ],
+      "commitBoundary": [
+        "Tools/Release/build-release.sh",
+        "Tests/PlanStructureTests/ReleaseBuildTests.mjs"
+      ]
+    },
+    {
+      "id": "P08-T002",
+      "phase": "08",
+      "title": "Scan package graph, symbols, links, resources, and forbidden runtimes",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P08-T001"
+      ],
+      "contractRefs": [
+        "G5-R.deliveryScope.productionLinkedDependencies",
+        "G5-R.explicitCuts",
+        "C10"
+      ],
+      "ownership": [
+        "release:dependency-scan",
+        "release:symbol-resource-scan"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [
+          "Tools/Release/scan-distribution.swift",
+          "Tools/Release/scan-symbol-graphs.mjs"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/PlanStructureTests/DistributionScanTests.mjs"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaReleasePackage",
+          "MonaPublicAPIClosure"
+        ],
+        "produces": [
+          "MonaDistributionScan",
+          "MonaReleaseSymbolGraphs"
+        ]
+      },
+      "red": [
+        {
+          "run": "node --test Tests/PlanStructureTests/DistributionScanTests.mjs --test-name-pattern forbidden-runtime",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "FORBIDDEN_RUNTIME_LINKED name=JavaScriptCore"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Run package dump, describe, and dependency scans for exact products and targets.",
+          "Generate and compare symbol graphs plus API digester output for all three products.",
+          "Enumerate linked dylibs, embedded resources, exported symbols, source maps, scripts, WASM, language content, and third-party runtime classes.",
+          "Reject every linked or bundled item outside the contract allowlist."
+        ]
+      },
+      "green": [
+        {
+          "run": "node --test Tests/PlanStructureTests/DistributionScanTests.mjs",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "DISTRIBUTION_SCAN products=3 publicAPIDrift=0 forbiddenRuntime=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-08/P08-T002.json"
+      ],
+      "completion": [
+        "Package and public API sets are exact.",
+        "Production links only allowed system frameworks and repository code.",
+        "Forbidden runtime and resource classes are absent."
+      ],
+      "commitBoundary": [
+        "Tools/Release/scan-distribution.swift",
+        "Tools/Release/scan-symbol-graphs.mjs",
+        "Tests/PlanStructureTests/DistributionScanTests.mjs"
+      ]
+    },
+    {
+      "id": "P08-T003",
+      "phase": "08",
+      "title": "Assemble exact license provenance and distribution notices",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P08-T001",
+        "P05-T006",
+        "P05-T007",
+        "P06-T008",
+        "P02-T005",
+        "P02-T007"
+      ],
+      "contractRefs": [
+        "G5-R.licensingProfile",
+        "P1-R",
+        "C10"
+      ],
+      "ownership": [
+        "release:license-notices",
+        "provenance:distribution-inputs"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [
+          "Sources/MonaCode/Generated/LICENSE.md",
+          "Tools/Release/verify-notices.mjs"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/PlanStructureTests/LicenseNoticeTests.mjs"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "ComparatorProvenanceLock",
+          "MonaLocalizationProfileSet",
+          "MonaIconRegistry",
+          "MonaMarkdownParser",
+          "MonaRegExpUnicodeProfileSet"
+        ],
+        "produces": [
+          "MonaLicenseNoticeSet"
+        ]
+      },
+      "red": [
+        {
+          "run": "node --test Tests/PlanStructureTests/LicenseNoticeTests.mjs --test-name-pattern missing-notice",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "LICENSE_NOTICE_MISSING profile=chromium-icu"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Assemble Monaco MIT, Monaco localization MIT, Marked 14 MIT, LSP specification CC BY 4.0, Codicon CC BY 4.0 plus Git Logo exception and generator MIT, Unicode-3.0, Chromium ICU, Test262 BSD, and esbuild comparator notices.",
+          "Record DOMPurify, V8/ICU runtime, and vscode-unicode-data as oracle-only or excluded inputs with no derived production code.",
+          "Verify pinned license hashes: LSP 9f614db80a4e62cbb744e6f00d9da221adf45c6463556cb32f81ad1f8467f188, Chromium ICU e55522d81edc687a341a4411e0776e54ca654e90147f354a90458aaced4116af, Codicon artwork af5e030844efddbc7ab00dcfea8b019703753d4d9f5172d727c533a492aec665, and Codicon code 9906940f61b1f0b533fa7d99baf55178b2808fbe113ea51dfbfad8572ccd5f2b.",
+          "Attach provenance headers to every generated table and asset."
+        ]
+      },
+      "green": [
+        {
+          "run": "node --test Tests/PlanStructureTests/LicenseNoticeTests.mjs",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "LICENSE_NOTICES profiles=complete hashMismatches=0 unlicensedInputs=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-08/P08-T003.json"
+      ],
+      "completion": [
+        "Every distributed or generated input has the exact notice.",
+        "Oracle-only inputs are absent from product output.",
+        "No unlicensed vscode-unicode-data input or output exists."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCode/Generated/LICENSE.md",
+        "Tools/Release/verify-notices.mjs",
+        "Tests/PlanStructureTests/LicenseNoticeTests.mjs"
+      ]
+    },
+    {
+      "id": "P08-T010",
+      "phase": "08",
+      "title": "Finalize MonaNativeDeclarationManifest after public API closure",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P07-T011",
+        "P08-T002",
+        "P05-T190"
+      ],
+      "contractRefs": [
+        "F1-R4",
+        "F1-R5",
+        "G5-R.candidateGeneratedArtifacts.MonaNativeDeclarationManifest"
+      ],
+      "ownership": [
+        "candidate-finalizer:MonaNativeDeclarationManifest.json"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [
+          "Tools/Candidates/finalize-native-declaration-manifest.mjs"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/PlanStructureTests/FinalNativeDeclarationManifestTests.mjs"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaPublicAPIClosure",
+          "MonaReleaseSymbolGraphs",
+          "ProvisionalMonaNativeDeclarationManifest"
+        ],
+        "produces": [
+          "MonaNativeDeclarationManifest.json"
+        ]
+      },
+      "red": [
+        {
+          "run": "node --test Tests/PlanStructureTests/FinalNativeDeclarationManifestTests.mjs --test-name-pattern late-symbol",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "NATIVE_DECLARATION_FINALIZATION_FAILED reason=late-public-symbol"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Regenerate all declaration, signature, disposition, owner, symbol, and product rows from the frozen release outputs.",
+          "Verify 555 public paths, five instance surfaces, three views, four SwiftUI types, 62 retained features, and three distinct native colorize replacements.",
+          "Hash every source artifact and mark the candidate final only after zero drift."
+        ]
+      },
+      "green": [
+        {
+          "run": "node --test Tests/PlanStructureTests/FinalNativeDeclarationManifestTests.mjs",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "CANDIDATE_FINAL name=MonaNativeDeclarationManifest.json paths=555 drift=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-08/P08-T010.json"
+      ],
+      "completion": [
+        "The native declaration candidate follows public API closure.",
+        "All public and feature sets are exact.",
+        "Candidate hash binds to release symbols and sources."
+      ],
+      "commitBoundary": [
+        "Tools/Candidates/finalize-native-declaration-manifest.mjs",
+        "Tests/PlanStructureTests/FinalNativeDeclarationManifestTests.mjs"
+      ]
+    },
+    {
+      "id": "P08-T011",
+      "phase": "08",
+      "title": "Finalize MonaRegExpUnicodeManifest after all semantic consumers",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P07-T011",
+        "P08-T003",
+        "P02-T009",
+        "P06-T007"
+      ],
+      "contractRefs": [
+        "M1-R3",
+        "G5-R.candidateGeneratedArtifacts.MonaRegExpUnicodeManifest"
+      ],
+      "ownership": [
+        "candidate-finalizer:MonaRegExpUnicodeManifest.json"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [
+          "Tools/Candidates/finalize-regexp-unicode-manifest.mjs"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/PlanStructureTests/FinalRegExpUnicodeManifestTests.mjs"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "RegExpCandidateInputSet",
+          "MonaRegExpConsumerProfileSet",
+          "MonaLicenseNoticeSet"
+        ],
+        "produces": [
+          "MonaRegExpUnicodeManifest.json"
+        ]
+      },
+      "red": [
+        {
+          "run": "node --test Tests/PlanStructureTests/FinalRegExpUnicodeManifestTests.mjs --test-name-pattern wrong-consumer-set",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "REGEXP_UNICODE_FINALIZATION_FAILED expectedConsumerProfiles=10"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Regenerate six distinct Unicode profiles, ten consumer mappings, Test262 selection, generator inputs, licenses, and output hashes.",
+          "Verify every final semantic consumer appears and no post-finalization product consumer exists.",
+          "Mark the candidate final only after exact provenance reproduction."
+        ]
+      },
+      "green": [
+        {
+          "run": "node --test Tests/PlanStructureTests/FinalRegExpUnicodeManifestTests.mjs",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "CANDIDATE_FINAL name=MonaRegExpUnicodeManifest.json unicodeProfiles=6 consumers=10"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-08/P08-T011.json"
+      ],
+      "completion": [
+        "Six profiles and ten consumers remain exact.",
+        "All generated data and licenses reproduce.",
+        "Candidate follows the last RegExp consumer."
+      ],
+      "commitBoundary": [
+        "Tools/Candidates/finalize-regexp-unicode-manifest.mjs",
+        "Tests/PlanStructureTests/FinalRegExpUnicodeManifestTests.mjs"
+      ]
+    },
+    {
+      "id": "P08-T012",
+      "phase": "08",
+      "title": "Finalize MonaEnvironmentManifest after every environment-sensitive consumer",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P07-T011",
+        "P08-T003",
+        "P02-T009",
+        "P07-T008"
+      ],
+      "contractRefs": [
+        "E1-R",
+        "X1-R.environmentConsumers",
+        "G5-R.candidateGeneratedArtifacts.MonaEnvironmentManifest"
+      ],
+      "ownership": [
+        "candidate-finalizer:MonaEnvironmentManifest.json"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [
+          "Tools/Candidates/finalize-environment-manifest.mjs"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/PlanStructureTests/FinalEnvironmentManifestTests.mjs"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "EnvironmentCandidateInputSet",
+          "ProvisionalMonaSourceClosureManifest",
+          "MonaLicenseNoticeSet"
+        ],
+        "produces": [
+          "MonaEnvironmentManifest.json"
+        ]
+      },
+      "red": [
+        {
+          "run": "node --test Tests/PlanStructureTests/FinalEnvironmentManifestTests.mjs --test-name-pattern missing-occurrence",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "ENVIRONMENT_FINALIZATION_FAILED occurrence=StopWatch"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Regenerate clock, entropy, number formatting, locale, calendar, numbering, time zone, case, collation, normalization, and finite-intrinsic occurrence rows.",
+          "Verify set equality against E1-R and X1-R plus generated input and output hashes.",
+          "Mark the candidate final only after the last source consumer and notice input."
+        ]
+      },
+      "green": [
+        {
+          "run": "node --test Tests/PlanStructureTests/FinalEnvironmentManifestTests.mjs",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "CANDIDATE_FINAL name=MonaEnvironmentManifest.json occurrences=exact"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-08/P08-T012.json"
+      ],
+      "completion": [
+        "Every environment-sensitive occurrence is present exactly once.",
+        "Generated tables and sources reproduce.",
+        "Candidate follows all product consumers."
+      ],
+      "commitBoundary": [
+        "Tools/Candidates/finalize-environment-manifest.mjs",
+        "Tests/PlanStructureTests/FinalEnvironmentManifestTests.mjs"
+      ]
+    },
+    {
+      "id": "P08-T013",
+      "phase": "08",
+      "title": "Finalize MonaSourceClosureManifest from the release source set",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P07-T011",
+        "P08-T002",
+        "P08-T003",
+        "P07-T008"
+      ],
+      "contractRefs": [
+        "X1-R",
+        "G5-R.implementationOutputRules",
+        "G5-R.candidateGeneratedArtifacts.MonaSourceClosureManifest"
+      ],
+      "ownership": [
+        "candidate-finalizer:MonaSourceClosureManifest.json"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [
+          "Tools/Candidates/finalize-source-closure-manifest.mjs"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/PlanStructureTests/FinalSourceClosureManifestTests.mjs"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "ProvisionalMonaSourceClosureManifest",
+          "MonaDistributionScan",
+          "MonaLicenseNoticeSet"
+        ],
+        "produces": [
+          "MonaSourceClosureManifest.json"
+        ]
+      },
+      "red": [
+        {
+          "run": "node --test Tests/PlanStructureTests/FinalSourceClosureManifestTests.mjs --test-name-pattern unmanifested-source",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "SOURCE_CLOSURE_FINALIZATION_FAILED path=Sources/MonaCode/Late.swift"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Regenerate the complete product source, generated source, resource, notice, finite-runtime, native-style, and explicit-cut inventory from release inputs.",
+          "Include the renderer source branch frozen in Phase 03 and reject every source path created afterward.",
+          "Verify all X1-R set-equality counts and artifact hashes before finalization."
+        ]
+      },
+      "green": [
+        {
+          "run": "node --test Tests/PlanStructureTests/FinalSourceClosureManifestTests.mjs",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "CANDIDATE_FINAL name=MonaSourceClosureManifest.json unmanifestedSources=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-08/P08-T013.json"
+      ],
+      "completion": [
+        "Release source set is exhaustively enumerated.",
+        "Renderer branch and all generated assets are bound.",
+        "No unmanifested production source remains."
+      ],
+      "commitBoundary": [
+        "Tools/Candidates/finalize-source-closure-manifest.mjs",
+        "Tests/PlanStructureTests/FinalSourceClosureManifestTests.mjs"
+      ]
+    },
+    {
+      "id": "P08-T014",
+      "phase": "08",
+      "title": "Finalize MonaCacheManifest from all registered caches",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P07-T011",
+        "P08-T002",
+        "P07-T007"
+      ],
+      "contractRefs": [
+        "H2-R.cacheRegistry",
+        "S1-R.cacheBounds",
+        "G5-R.candidateGeneratedArtifacts.MonaCacheManifest"
+      ],
+      "ownership": [
+        "candidate-finalizer:MonaCacheManifest.json"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [
+          "Tools/Candidates/finalize-cache-manifest.mjs"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/PlanStructureTests/FinalCacheManifestTests.mjs"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "ProvisionalMonaCacheManifest",
+          "MonaDistributionScan"
+        ],
+        "produces": [
+          "MonaCacheManifest.json"
+        ]
+      },
+      "red": [
+        {
+          "run": "node --test Tests/PlanStructureTests/FinalCacheManifestTests.mjs --test-name-pattern undeclared-cache",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "CACHE_FINALIZATION_FAILED cache=lateCache"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Regenerate the exact cache identity, owner, key, entry bound, byte bound, invalidation, eviction, counter, and plateau set.",
+          "Scan release symbols and source paths for undeclared cache-like storage.",
+          "Mark the candidate final only when exact-set and all bounds pass."
+        ]
+      },
+      "green": [
+        {
+          "run": "node --test Tests/PlanStructureTests/FinalCacheManifestTests.mjs",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "CANDIDATE_FINAL name=MonaCacheManifest.json undeclaredCaches=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-08/P08-T014.json"
+      ],
+      "completion": [
+        "All caches are declared and bounded.",
+        "Release source contains no hidden cache.",
+        "Candidate binds to the release revision."
+      ],
+      "commitBoundary": [
+        "Tools/Candidates/finalize-cache-manifest.mjs",
+        "Tests/PlanStructureTests/FinalCacheManifestTests.mjs"
+      ]
+    },
+    {
+      "id": "P08-T015",
+      "phase": "08",
+      "title": "Finalize MonaDistributionManifest after package and notice closure",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P08-T001",
+        "P08-T002",
+        "P08-T003",
+        "P08-T010",
+        "P08-T011",
+        "P08-T012",
+        "P08-T013",
+        "P08-T014"
+      ],
+      "contractRefs": [
+        "G5-R.deliveryScope",
+        "G5-R.licensingProfile",
+        "G5-R.candidateGeneratedArtifacts.MonaDistributionManifest",
+        "C10"
+      ],
+      "ownership": [
+        "candidate-finalizer:MonaDistributionManifest.json"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [
+          "Tools/Candidates/finalize-distribution-manifest.mjs"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/PlanStructureTests/FinalDistributionManifestTests.mjs"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaReleasePackage",
+          "MonaDistributionScan",
+          "MonaLicenseNoticeSet",
+          "MonaNativeDeclarationManifest.json",
+          "MonaRegExpUnicodeManifest.json",
+          "MonaEnvironmentManifest.json",
+          "MonaSourceClosureManifest.json",
+          "MonaCacheManifest.json"
+        ],
+        "produces": [
+          "MonaDistributionManifest.json"
+        ]
+      },
+      "red": [
+        {
+          "run": "node --test Tests/PlanStructureTests/FinalDistributionManifestTests.mjs --test-name-pattern artifact-hash-drift",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "DISTRIBUTION_FINALIZATION_FAILED artifact=MonaCode.framework"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Record every release artifact, product, target, architecture, deployment target, symbol graph, dependency, linked dylib, resource, license profile, and SHA-256.",
+          "Join the five preceding static candidates and verify their source revision and hash agreement.",
+          "Record exact absence of every prohibited runtime, resource, service, language bundle, and unlicensed input."
+        ]
+      },
+      "green": [
+        {
+          "run": "node --test Tests/PlanStructureTests/FinalDistributionManifestTests.mjs",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "CANDIDATE_FINAL name=MonaDistributionManifest.json products=3 forbidden=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-08/P08-T015.json"
+      ],
+      "completion": [
+        "Distribution candidate follows build, scans, notices, and five other static candidates.",
+        "All release artifact hashes agree.",
+        "Every prohibited class is explicitly absent."
+      ],
+      "commitBoundary": [
+        "Tools/Candidates/finalize-distribution-manifest.mjs",
+        "Tests/PlanStructureTests/FinalDistributionManifestTests.mjs"
+      ]
+    },
+    {
+      "id": "P08-T016",
+      "phase": "08",
+      "title": "Validate the exact six-static-candidate release set",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P08-T010",
+        "P08-T011",
+        "P08-T012",
+        "P08-T013",
+        "P08-T014",
+        "P08-T015"
+      ],
+      "contractRefs": [
+        "G5-R.candidateGeneratedArtifacts",
+        "G5-R.designClosure.candidateOrder"
+      ],
+      "ownership": [
+        "candidate-consumer:MonaNativeDeclarationManifest.json",
+        "candidate-consumer:MonaRegExpUnicodeManifest.json",
+        "candidate-consumer:MonaEnvironmentManifest.json",
+        "candidate-consumer:MonaSourceClosureManifest.json",
+        "candidate-consumer:MonaCacheManifest.json",
+        "candidate-consumer:MonaDistributionManifest.json"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [],
+        "modify": [],
+        "test": [
+          "Tests/PlanStructureTests/SixStaticCandidateSetTests.mjs"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaNativeDeclarationManifest.json",
+          "MonaRegExpUnicodeManifest.json",
+          "MonaEnvironmentManifest.json",
+          "MonaSourceClosureManifest.json",
+          "MonaCacheManifest.json",
+          "MonaDistributionManifest.json"
+        ],
+        "produces": [
+          "MonaStaticCandidateSet"
+        ]
+      },
+      "red": [
+        {
+          "run": "node --test Tests/PlanStructureTests/SixStaticCandidateSetTests.mjs --test-name-pattern stale-candidate",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "STATIC_CANDIDATE_SET_INVALID reason=source-revision-mismatch"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Require exactly the six static candidate names with no duplicate or extra artifact.",
+          "Verify schema, source revision, dependency edges, internal hashes, release hash, and mutual references.",
+          "Exclude QEnvironmentID because it is recollected per formal Phase 09 run."
+        ]
+      },
+      "green": [
+        {
+          "run": "node --test Tests/PlanStructureTests/SixStaticCandidateSetTests.mjs",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "STATIC_CANDIDATE_SET count=6 orderFailures=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-08/P08-T016.json"
+      ],
+      "completion": [
+        "All six static candidates are final and mutually consistent.",
+        "No acceptance run has started.",
+        "QEnvironmentID remains run-specific."
+      ],
+      "commitBoundary": [
+        "Tests/PlanStructureTests/SixStaticCandidateSetTests.mjs"
+      ]
     }
   ],
   "ownership": [
@@ -15002,6 +15810,72 @@
       ],
       "testOwners": [
         "P05-T002"
+      ]
+    },
+    {
+      "kind": "candidateArtifact",
+      "id": "MonaCacheManifest.json",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P08-T014"
+      ],
+      "testOwners": [
+        "P08-T014"
+      ]
+    },
+    {
+      "kind": "candidateArtifact",
+      "id": "MonaDistributionManifest.json",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P08-T015"
+      ],
+      "testOwners": [
+        "P08-T015"
+      ]
+    },
+    {
+      "kind": "candidateArtifact",
+      "id": "MonaEnvironmentManifest.json",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P08-T012"
+      ],
+      "testOwners": [
+        "P08-T012"
+      ]
+    },
+    {
+      "kind": "candidateArtifact",
+      "id": "MonaNativeDeclarationManifest.json",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P08-T010"
+      ],
+      "testOwners": [
+        "P08-T010"
+      ]
+    },
+    {
+      "kind": "candidateArtifact",
+      "id": "MonaRegExpUnicodeManifest.json",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P08-T011"
+      ],
+      "testOwners": [
+        "P08-T011"
+      ]
+    },
+    {
+      "kind": "candidateArtifact",
+      "id": "MonaSourceClosureManifest.json",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P08-T013"
+      ],
+      "testOwners": [
+        "P08-T013"
       ]
     },
     {
@@ -51341,6 +52215,10 @@
     {
       "path": "implementation-plan/phase-07-diff-services-host-source-closure.md",
       "sha256": "ce4b171b39e3f49c1167869f708f4ca466f2670f30f842e10e498400762f0c23"
+    },
+    {
+      "path": "implementation-plan/phase-08-release-candidate-distribution.md",
+      "sha256": "39717442073baf94f74126c777fa4c12d319ff8a4a3ffef07b0cbf099e164b74"
     }
   ],
   "audit": {
