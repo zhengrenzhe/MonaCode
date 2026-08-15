@@ -11392,6 +11392,839 @@
       "commitBoundary": [
         "Tests/ConformanceAndFailureInjection/Phase05PublicSurfaceConformanceTests.swift"
       ]
+    },
+    {
+      "id": "P06-T001",
+      "phase": "06",
+      "title": "Define a transport-neutral byte channel in Core",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P05-T200"
+      ],
+      "contractRefs": [
+        "L2-R.transportBoundary",
+        "H1-R.lspTransport",
+        "C06"
+      ],
+      "ownership": [
+        "lsp:MonaMessageTransport",
+        "lsp:byte-channel"
+      ],
+      "files": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Sources/MonaCode/LSP/MonaMessageTransport.swift",
+          "Sources/MonaCode/LSP/MonaTransportEvent.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/LSP/MonaMessageTransportContractTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaEvent",
+          "MonaDisposable",
+          "MonaCancellationToken"
+        ],
+        "produces": [
+          "MonaMessageTransport",
+          "MonaTransportEvent"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaMessageTransportContractTests/testFragmentedByteDelivery",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "TRANSPORT_CONTRACT_MISMATCH fixture=fragmented-bytes"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Expose only ordered byte receive, byte send, close, error, and disposal operations.",
+          "Keep framing, JSON, session state, launch policy, file descriptors, and platform lifecycle outside the protocol.",
+          "Serialize close and error terminal events exactly once."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaMessageTransportContractTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "MESSAGE_TRANSPORT bytesOnly=pass terminalEvents=exact"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-06/P06-T001.json"
+      ],
+      "completion": [
+        "Core transport contains bytes only.",
+        "Terminal events are single and ordered.",
+        "No host launch type enters Core."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCode/LSP/MonaMessageTransport.swift",
+        "Sources/MonaCode/LSP/MonaTransportEvent.swift",
+        "Tests/MonaCodeTests/LSP/MonaMessageTransportContractTests.swift"
+      ]
+    },
+    {
+      "id": "P06-T002",
+      "phase": "06",
+      "title": "Implement streaming LSP frame decoding and encoding",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P06-T001"
+      ],
+      "contractRefs": [
+        "L2-R2",
+        "C06",
+        "P11"
+      ],
+      "ownership": [
+        "normativeLayer:language-lsp:L2-R2",
+        "lsp:frame-codec"
+      ],
+      "files": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Sources/MonaCode/LSP/MonaLSPFrameDecoder.swift",
+          "Sources/MonaCode/LSP/MonaLSPFrameEncoder.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/LSP/MonaLSPFrameCodecTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaMessageTransport"
+        ],
+        "produces": [
+          "MonaLSPFrameDecoder",
+          "MonaLSPFrameEncoder",
+          "MonaLSPFrameError"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaLSPFrameCodecTests/testFragmentedHeaderBodyMatrix",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "LSP_FRAME_MISMATCH fixture=split-every-byte"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Decode arbitrary header and body fragmentation with exact Content-Length validation.",
+          "Reject duplicate, malformed, negative, overflowed, missing, and oversized lengths with typed terminal errors.",
+          "Encode canonical ASCII headers and raw JSON payload bytes without text normalization."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaLSPFrameCodecTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "LSP_FRAME_CODEC fragmentation=all malformed=typed"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-06/P06-T002.json"
+      ],
+      "completion": [
+        "Every fragmentation partition decodes identically.",
+        "Malformed frames fail at the frozen boundary.",
+        "Payload bytes round-trip unchanged."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCode/LSP/MonaLSPFrameDecoder.swift",
+        "Sources/MonaCode/LSP/MonaLSPFrameEncoder.swift",
+        "Tests/MonaCodeTests/LSP/MonaLSPFrameCodecTests.swift"
+      ]
+    },
+    {
+      "id": "P06-T003",
+      "phase": "06",
+      "title": "Implement deterministic JSON-RPC wire values and errors",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P06-T002"
+      ],
+      "contractRefs": [
+        "L2-R3",
+        "C06",
+        "P11"
+      ],
+      "ownership": [
+        "normativeLayer:language-lsp:L2-R3",
+        "lsp:json-rpc-codec"
+      ],
+      "files": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Sources/MonaCode/LSP/MonaJSONValue.swift",
+          "Sources/MonaCode/LSP/MonaJSONRPCMessage.swift",
+          "Sources/MonaCode/LSP/MonaJSONRPCCodec.swift",
+          "Sources/MonaCode/LSP/MonaJSONRPCError.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/LSP/MonaJSONRPCCodecTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaLSPFrameDecoder",
+          "MonaLSPFrameEncoder"
+        ],
+        "produces": [
+          "MonaJSONValue",
+          "MonaJSONRPCMessage",
+          "MonaJSONRPCCodec",
+          "MonaJSONRPCError"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaJSONRPCCodecTests/testDirectionAndIdentifierMatrix",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "JSON_RPC_DIRECTION_MISMATCH fixture=response-with-method"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Preserve string, integer, and null identifiers without coercion.",
+          "Distinguish requests, notifications, responses, and errors by exact field directionality.",
+          "Emit deterministic object-key order and number spelling for fixture hashes.",
+          "Reject malformed wire shapes with the L2-R3 typed error taxonomy."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaJSONRPCCodecTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "JSON_RPC_CODEC vectors=640 deterministic=pass"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-06/P06-T003.json"
+      ],
+      "completion": [
+        "Wire messages preserve exact identifier types.",
+        "Encoding hashes are deterministic.",
+        "Malformed direction and error shapes are rejected."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCode/LSP/MonaJSONValue.swift",
+        "Sources/MonaCode/LSP/MonaJSONRPCMessage.swift",
+        "Sources/MonaCode/LSP/MonaJSONRPCCodec.swift",
+        "Sources/MonaCode/LSP/MonaJSONRPCError.swift",
+        "Tests/MonaCodeTests/LSP/MonaJSONRPCCodecTests.swift"
+      ]
+    },
+    {
+      "id": "P06-T004",
+      "phase": "06",
+      "title": "Implement LSP session state and 25 capability mappings",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P06-T003",
+        "P05-T013"
+      ],
+      "contractRefs": [
+        "L2-R.lspClient",
+        "L2-R.capabilityMappings",
+        "C06",
+        "P11"
+      ],
+      "ownership": [
+        "lsp:client-session",
+        "provider:lsp-backed-25"
+      ],
+      "files": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Sources/MonaCode/LSP/MonaLSPClient.swift",
+          "Sources/MonaCode/LSP/MonaLSPSession.swift",
+          "Sources/MonaCode/LSP/MonaLSPCapabilityRegistry.swift",
+          "Sources/MonaCode/LSP/MonaLSPProviderAdapters.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/LSP/MonaLSPClientCapabilityTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaMessageTransport",
+          "MonaJSONRPCCodec",
+          "MonaProviderExecutor",
+          "MonaCodeModel"
+        ],
+        "produces": [
+          "MonaLSPClient",
+          "MonaLSPSession",
+          "MonaLSPCapabilityRegistry",
+          "MonaLSPProviderAdapters"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaLSPClientCapabilityTests/testDynamicRegistrationVersionlessDiagnostics",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "LSP_CAPABILITY_STATE_MISMATCH fixture=versionless-diagnostics"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Implement initialize, initialized, shutdown, exit, restart, request, notification, cancellation, progress, and error state transitions.",
+          "Map exactly 25 LSP-backed provider surfaces with raw UTF-16 positions and explicit capability availability.",
+          "Handle static and dynamic registration, resolve, release, partial results, stale responses, and versionless diagnostics.",
+          "Publish provider results only through validity tickets and the deterministic executor."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaLSPClientCapabilityTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "LSP_CLIENT mappings=25 dynamicRegistration=pass stalePublications=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-06/P06-T004.json"
+      ],
+      "completion": [
+        "All 25 LSP-backed provider identities have one mapping.",
+        "Session and restart state machines are explicit.",
+        "Versionless diagnostics follow the frozen policy."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCode/LSP/MonaLSPClient.swift",
+        "Sources/MonaCode/LSP/MonaLSPSession.swift",
+        "Sources/MonaCode/LSP/MonaLSPCapabilityRegistry.swift",
+        "Sources/MonaCode/LSP/MonaLSPProviderAdapters.swift",
+        "Tests/MonaCodeTests/LSP/MonaLSPClientCapabilityTests.swift"
+      ]
+    },
+    {
+      "id": "P06-T005",
+      "phase": "06",
+      "title": "Close all 30 provider registries and five direct-only surfaces",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P06-T004",
+        "P05-T008"
+      ],
+      "contractRefs": [
+        "L2-R.providerRegistry",
+        "F1-R5.providerExecution",
+        "C06"
+      ],
+      "ownership": [
+        "normativeLayer:language-lsp:L2-R",
+        "provider:all-30",
+        "provider:direct-only-5"
+      ],
+      "files": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Sources/MonaCode/Language/MonaProviderRegistry.swift",
+          "Sources/MonaCode/Language/MonaDirectProviderAdapters.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/Language/MonaProviderRegistryClosureTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaLSPProviderAdapters",
+          "MonaProviderExecutor",
+          "MonaLanguageRegistry"
+        ],
+        "produces": [
+          "MonaProviderRegistry",
+          "MonaDirectProviderAdapters"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaProviderRegistryClosureTests/testExactDispositionMatrix",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "PROVIDER_DISPOSITION_MISMATCH id=MultiDocumentHighlight"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Register exactly 30 provider identities: 25 LSP-backed and five direct-only.",
+          "Implement direct token factory, new-symbol-name, multi-document-highlight, paste-edit, and drop-edit adapters without pretending they are LSP capabilities.",
+          "Return explicit unavailable capability or plain-text behavior when no provider is attached.",
+          "Never bundle a built-in language implementation or server."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaProviderRegistryClosureTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "PROVIDER_REGISTRY total=30 lspBacked=25 directOnly=5"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-06/P06-T005.json"
+      ],
+      "completion": [
+        "All 30 provider identities and dispositions are exact.",
+        "Direct-only providers remain direct.",
+        "No-provider mode is stable plain text."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCode/Language/MonaProviderRegistry.swift",
+        "Sources/MonaCode/Language/MonaDirectProviderAdapters.swift",
+        "Tests/MonaCodeTests/Language/MonaProviderRegistryClosureTests.swift"
+      ]
+    },
+    {
+      "id": "P06-T006",
+      "phase": "06",
+      "title": "Port the complete snippet parser and grammar",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P06-T005",
+        "P02-T004"
+      ],
+      "contractRefs": [
+        "SN1-R.grammar",
+        "C06",
+        "P09"
+      ],
+      "ownership": [
+        "snippet:parser",
+        "snippet:grammar"
+      ],
+      "files": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Sources/MonaCode/Snippet/MonaSnippetAST.swift",
+          "Sources/MonaCode/Snippet/MonaSnippetParser.swift",
+          "Sources/MonaCode/Snippet/MonaSnippetTransform.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/Snippet/MonaSnippetParserTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaRegExpExecutor",
+          "MonaRegExpConsumerProfileSet"
+        ],
+        "produces": [
+          "MonaSnippetAST",
+          "MonaSnippetParser",
+          "MonaSnippetTransform"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaSnippetParserTests/testNestedPlaceholderTransformMatrix",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "SNIPPET_PARSE_MISMATCH fixture=nested-placeholder-transform"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Port text, escape, tabstop, placeholder, choice, variable, nested child, transform, format, conditional, and fallback grammar.",
+          "Preserve source offsets and depth-first parse order over raw UTF-16.",
+          "Execute transform RegExp through the declared snippet consumer profile."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaSnippetParserTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "SNIPPET_PARSER grammarVectors=1240 failures=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-06/P06-T006.json"
+      ],
+      "completion": [
+        "Accepted and rejected grammar vectors match.",
+        "Nested and transform nodes preserve order.",
+        "No generic template engine enters production."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCode/Snippet/MonaSnippetAST.swift",
+        "Sources/MonaCode/Snippet/MonaSnippetParser.swift",
+        "Sources/MonaCode/Snippet/MonaSnippetTransform.swift",
+        "Tests/MonaCodeTests/Snippet/MonaSnippetParserTests.swift"
+      ]
+    },
+    {
+      "id": "P06-T007",
+      "phase": "06",
+      "title": "Implement snippet variables, resolvers, sessions, and multi-cursor ordering",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P06-T006",
+        "P04-T005"
+      ],
+      "contractRefs": [
+        "SN1-R.variables",
+        "SN1-R.session",
+        "E1-R.entropy",
+        "C06",
+        "P09"
+      ],
+      "ownership": [
+        "normativeLayer:snippet-engine:SN1-R",
+        "machineArtifact:SN1-R-snippet-engine"
+      ],
+      "files": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Sources/MonaCode/Snippet/MonaSnippetVariableResolver.swift",
+          "Sources/MonaCode/Snippet/MonaSnippetSession.swift",
+          "Sources/MonaCode/Snippet/MonaSnippetController.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/Snippet/MonaSnippetSessionTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaSnippetParser",
+          "MonaModelInputBarrier",
+          "MonaRandomDoubleSource",
+          "MonaCryptoRandomSource",
+          "MonaWallClock"
+        ],
+        "produces": [
+          "MonaSnippetVariableResolver",
+          "MonaSnippetSession",
+          "MonaSnippetController"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaSnippetSessionTests/testThirtyNineVariableAndDrawOrderMatrix",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "SNIPPET_VARIABLE_MISMATCH variable=RANDOM_HEX"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Implement all 39 variable identifiers, clipboard spreading, time snapshot, original index, selected text, file, workspace, comment, random, and UUID resolvers.",
+          "Resolve variables in depth-first parser order with one injected time snapshot and shared entropy sequence.",
+          "Manage placeholder navigation, nested sessions, merge, cancel, undo, and 1/100/10000 cursor insertion through the input barrier."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaSnippetSessionTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "SNIPPET_SESSION variables=39 cursors=1,100,10000 ordering=exact"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-06/P06-T007.json"
+      ],
+      "completion": [
+        "All 39 variables match fixed vectors.",
+        "Entropy and time draw order is exact.",
+        "Session edits are transactional and disposable."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCode/Snippet/MonaSnippetVariableResolver.swift",
+        "Sources/MonaCode/Snippet/MonaSnippetSession.swift",
+        "Sources/MonaCode/Snippet/MonaSnippetController.swift",
+        "Tests/MonaCodeTests/Snippet/MonaSnippetSessionTests.swift"
+      ]
+    },
+    {
+      "id": "P06-T008",
+      "phase": "06",
+      "title": "Port Markdown semantics into a native presentation tree",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P06-T005",
+        "P05-T007"
+      ],
+      "contractRefs": [
+        "MD1-R",
+        "G5-R.licensingProfile.marked",
+        "C06",
+        "P11"
+      ],
+      "ownership": [
+        "normativeLayer:markdown-presentation-security:MD1-R",
+        "machineArtifact:MD1-R-markdown"
+      ],
+      "files": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Sources/MonaCode/Markdown/MonaMarkdownAST.swift",
+          "Sources/MonaCode/Markdown/MonaMarkdownParser.swift",
+          "Sources/MonaCode/Markdown/MonaMarkdownPresentation.swift",
+          "Sources/MonaCode/Markdown/MARKED-MIT-LICENSE.txt"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/Markdown/MonaMarkdownSecurityTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaURI",
+          "MonaLocalization"
+        ],
+        "produces": [
+          "MonaMarkdownAST",
+          "MonaMarkdownParser",
+          "MonaMarkdownPresentation"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaMarkdownSecurityTests/testHostileHTMLAndMediaMatrix",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "MARKDOWN_SECURITY_VIOLATION fixture=hostile-media"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Port the pinned Marked 14 grammar subset with its MIT notice and modification record.",
+          "Produce a semantic tree for native text, code, lists, tables, links, and trusted command metadata.",
+          "Reject raw HTML execution, style, scripts, media loading, remote images, web layout, and untrusted command links.",
+          "Keep parsed source ranges in raw UTF-16."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaMarkdownSecurityTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "MARKDOWN_NATIVE hostileFixtures=blocked semanticFixtures=pass"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-06/P06-T008.json"
+      ],
+      "completion": [
+        "Markdown semantic fixtures match MD1-R.",
+        "Hostile inputs cannot load or execute content.",
+        "No web sanitizer or renderer ships."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCode/Markdown/MonaMarkdownAST.swift",
+        "Sources/MonaCode/Markdown/MonaMarkdownParser.swift",
+        "Sources/MonaCode/Markdown/MonaMarkdownPresentation.swift",
+        "Sources/MonaCode/Markdown/MARKED-MIT-LICENSE.txt",
+        "Tests/MonaCodeTests/Markdown/MonaMarkdownSecurityTests.swift"
+      ]
+    },
+    {
+      "id": "P06-T009",
+      "phase": "06",
+      "title": "Implement the macOS host byte-transport adapter outside Core",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P06-T001",
+        "P04-T014"
+      ],
+      "contractRefs": [
+        "H1-R.lspTransport",
+        "L2-R.transportBoundary",
+        "C06"
+      ],
+      "ownership": [
+        "host:lsp-process-adapter"
+      ],
+      "files": {
+        "productTarget": "MonaCodeAppKit",
+        "create": [
+          "Sources/MonaCodeAppKit/Host/MonaProcessMessageTransport.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeAppKitTests/Host/MonaProcessMessageTransportTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaMessageTransport"
+        ],
+        "produces": [
+          "MonaProcessMessageTransport"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter MonaProcessMessageTransportTests/testExitAndPartialWriteOrdering",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "HOST_TRANSPORT_ORDER_MISMATCH fixture=exit-partial-write"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Launch only an explicitly host-authorized executable with an explicit environment and working directory.",
+          "Bridge standard input and output bytes to the transport-neutral Core protocol.",
+          "Serialize partial writes, end-of-file, exit, cancellation, termination, and disposal without embedding framing logic."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter MonaProcessMessageTransportTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "HOST_MESSAGE_TRANSPORT byteBridge=pass lifecycle=exact"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-06/P06-T009.json"
+      ],
+      "completion": [
+        "Host launch and file-descriptor details stay outside Core.",
+        "Bytes remain unchanged.",
+        "Exit and disposal emit one terminal sequence."
+      ],
+      "commitBoundary": [
+        "Sources/MonaCodeAppKit/Host/MonaProcessMessageTransport.swift",
+        "Tests/MonaCodeAppKitTests/Host/MonaProcessMessageTransportTests.swift"
+      ]
+    },
+    {
+      "id": "P06-T010",
+      "phase": "06",
+      "title": "Close LSP, provider, snippet, Markdown, and plain-text fallback behavior",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P06-T005",
+        "P06-T007",
+        "P06-T008",
+        "P06-T009"
+      ],
+      "contractRefs": [
+        "L2-R",
+        "L2-R2",
+        "L2-R3",
+        "SN1-R",
+        "MD1-R",
+        "C06",
+        "P11"
+      ],
+      "ownership": [
+        "phase-gate:06"
+      ],
+      "files": {
+        "productTarget": null,
+        "create": [],
+        "modify": [],
+        "test": [
+          "Tests/ConformanceAndFailureInjection/Phase06LanguageInfrastructureTests.swift"
+        ]
+      },
+      "interfaces": {
+        "consumes": [
+          "MonaLSPClient",
+          "MonaProviderRegistry",
+          "MonaSnippetController",
+          "MonaMarkdownPresentation",
+          "MonaProcessMessageTransport"
+        ],
+        "produces": [
+          "Phase06LanguageGate"
+        ]
+      },
+      "red": [
+        {
+          "run": "swift test --filter Phase06LanguageInfrastructureTests/testSeededLateResponsePublication",
+          "expectedExit": 1,
+          "expectedOutputIncludes": [
+            "PHASE06_LANGUAGE_GATE_FAILED fixture=late-response-after-restart"
+          ]
+        }
+      ],
+      "implementation": {
+        "operations": [
+          "Run transport fragmentation, framing, JSON direction, session, capability, provider, cancellation, stale, snippet, Markdown, hostile-input, and fallback matrices.",
+          "Inject malformed frames, oversized frames, duplicate IDs, disconnect, restart, late response, provider reentry, and release failures.",
+          "Verify product binaries contain no built-in language implementation, server, grammar pack, JavaScript runtime, or ICU runtime."
+        ]
+      },
+      "green": [
+        {
+          "run": "swift test --filter Phase06LanguageInfrastructureTests",
+          "expectedExit": 0,
+          "expectedOutputIncludes": [
+            "PHASE06_LANGUAGE_GATE C06=pass providers=30 builtinLanguages=0"
+          ]
+        }
+      ],
+      "evidence": [
+        "artifacts/acceptance-evidence/g5-r/phase-06/P06-T010.json"
+      ],
+      "completion": [
+        "C06 prerequisites pass.",
+        "All 30 provider surfaces have exact dispositions.",
+        "No-provider state remains pure text."
+      ],
+      "commitBoundary": [
+        "Tests/ConformanceAndFailureInjection/Phase06LanguageInfrastructureTests.swift"
+      ]
     }
   ],
   "ownership": [
@@ -37824,6 +38657,17 @@
     },
     {
       "kind": "machineArtifact",
+      "id": "MD1-R-markdown",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P06-T008"
+      ],
+      "testOwners": [
+        "P06-T008"
+      ]
+    },
+    {
+      "kind": "machineArtifact",
       "id": "N1-R-localization",
       "disposition": "retained",
       "implementationOwners": [
@@ -37842,6 +38686,17 @@
       ],
       "testOwners": [
         "P00-T012"
+      ]
+    },
+    {
+      "kind": "machineArtifact",
+      "id": "SN1-R-snippet-engine",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P06-T007"
+      ],
+      "testOwners": [
+        "P06-T007"
       ]
     },
     {
@@ -39760,6 +40615,39 @@
     },
     {
       "kind": "normativeLayer",
+      "id": "language-lsp:L2-R",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P06-T005"
+      ],
+      "testOwners": [
+        "P06-T005"
+      ]
+    },
+    {
+      "kind": "normativeLayer",
+      "id": "language-lsp:L2-R2",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P06-T002"
+      ],
+      "testOwners": [
+        "P06-T002"
+      ]
+    },
+    {
+      "kind": "normativeLayer",
+      "id": "language-lsp:L2-R3",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P06-T003"
+      ],
+      "testOwners": [
+        "P06-T003"
+      ]
+    },
+    {
+      "kind": "normativeLayer",
       "id": "layout-rendering:V1-R3",
       "disposition": "retained",
       "implementationOwners": [
@@ -39778,6 +40666,17 @@
       ],
       "testOwners": [
         "P03-T012"
+      ]
+    },
+    {
+      "kind": "normativeLayer",
+      "id": "markdown-presentation-security:MD1-R",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P06-T008"
+      ],
+      "testOwners": [
+        "P06-T008"
       ]
     },
     {
@@ -39877,6 +40776,17 @@
       ],
       "testOwners": [
         "P01-T012"
+      ]
+    },
+    {
+      "kind": "normativeLayer",
+      "id": "snippet-engine:SN1-R",
+      "disposition": "retained",
+      "implementationOwners": [
+        "P06-T007"
+      ],
+      "testOwners": [
+        "P06-T007"
       ]
     },
     {
@@ -41860,6 +42770,336 @@
       "disposition": "structural-plan-governance",
       "implementationOwners": [],
       "testOwners": []
+    },
+    {
+      "kind": "provider",
+      "id": "DocumentDropEdit",
+      "disposition": "retained-direct-only",
+      "implementationOwners": [
+        "P06-T005"
+      ],
+      "testOwners": [
+        "P06-T005"
+      ]
+    },
+    {
+      "kind": "provider",
+      "id": "DocumentPasteEdit",
+      "disposition": "retained-direct-only",
+      "implementationOwners": [
+        "P06-T005"
+      ],
+      "testOwners": [
+        "P06-T005"
+      ]
+    },
+    {
+      "kind": "provider",
+      "id": "languages.registerCodeActionProvider",
+      "disposition": "retained-lsp-backed",
+      "implementationOwners": [
+        "P06-T004"
+      ],
+      "testOwners": [
+        "P06-T004"
+      ]
+    },
+    {
+      "kind": "provider",
+      "id": "languages.registerCodeLensProvider",
+      "disposition": "retained-lsp-backed",
+      "implementationOwners": [
+        "P06-T004"
+      ],
+      "testOwners": [
+        "P06-T004"
+      ]
+    },
+    {
+      "kind": "provider",
+      "id": "languages.registerColorProvider",
+      "disposition": "retained-lsp-backed",
+      "implementationOwners": [
+        "P06-T004"
+      ],
+      "testOwners": [
+        "P06-T004"
+      ]
+    },
+    {
+      "kind": "provider",
+      "id": "languages.registerCompletionItemProvider",
+      "disposition": "retained-lsp-backed",
+      "implementationOwners": [
+        "P06-T004"
+      ],
+      "testOwners": [
+        "P06-T004"
+      ]
+    },
+    {
+      "kind": "provider",
+      "id": "languages.registerDeclarationProvider",
+      "disposition": "retained-lsp-backed",
+      "implementationOwners": [
+        "P06-T004"
+      ],
+      "testOwners": [
+        "P06-T004"
+      ]
+    },
+    {
+      "kind": "provider",
+      "id": "languages.registerDefinitionProvider",
+      "disposition": "retained-lsp-backed",
+      "implementationOwners": [
+        "P06-T004"
+      ],
+      "testOwners": [
+        "P06-T004"
+      ]
+    },
+    {
+      "kind": "provider",
+      "id": "languages.registerDocumentFormattingEditProvider",
+      "disposition": "retained-lsp-backed",
+      "implementationOwners": [
+        "P06-T004"
+      ],
+      "testOwners": [
+        "P06-T004"
+      ]
+    },
+    {
+      "kind": "provider",
+      "id": "languages.registerDocumentHighlightProvider",
+      "disposition": "retained-lsp-backed",
+      "implementationOwners": [
+        "P06-T004"
+      ],
+      "testOwners": [
+        "P06-T004"
+      ]
+    },
+    {
+      "kind": "provider",
+      "id": "languages.registerDocumentRangeFormattingEditProvider",
+      "disposition": "retained-lsp-backed",
+      "implementationOwners": [
+        "P06-T004"
+      ],
+      "testOwners": [
+        "P06-T004"
+      ]
+    },
+    {
+      "kind": "provider",
+      "id": "languages.registerDocumentRangeSemanticTokensProvider",
+      "disposition": "retained-lsp-backed",
+      "implementationOwners": [
+        "P06-T004"
+      ],
+      "testOwners": [
+        "P06-T004"
+      ]
+    },
+    {
+      "kind": "provider",
+      "id": "languages.registerDocumentSemanticTokensProvider",
+      "disposition": "retained-lsp-backed",
+      "implementationOwners": [
+        "P06-T004"
+      ],
+      "testOwners": [
+        "P06-T004"
+      ]
+    },
+    {
+      "kind": "provider",
+      "id": "languages.registerDocumentSymbolProvider",
+      "disposition": "retained-lsp-backed",
+      "implementationOwners": [
+        "P06-T004"
+      ],
+      "testOwners": [
+        "P06-T004"
+      ]
+    },
+    {
+      "kind": "provider",
+      "id": "languages.registerFoldingRangeProvider",
+      "disposition": "retained-lsp-backed",
+      "implementationOwners": [
+        "P06-T004"
+      ],
+      "testOwners": [
+        "P06-T004"
+      ]
+    },
+    {
+      "kind": "provider",
+      "id": "languages.registerHoverProvider",
+      "disposition": "retained-lsp-backed",
+      "implementationOwners": [
+        "P06-T004"
+      ],
+      "testOwners": [
+        "P06-T004"
+      ]
+    },
+    {
+      "kind": "provider",
+      "id": "languages.registerImplementationProvider",
+      "disposition": "retained-lsp-backed",
+      "implementationOwners": [
+        "P06-T004"
+      ],
+      "testOwners": [
+        "P06-T004"
+      ]
+    },
+    {
+      "kind": "provider",
+      "id": "languages.registerInlayHintsProvider",
+      "disposition": "retained-lsp-backed",
+      "implementationOwners": [
+        "P06-T004"
+      ],
+      "testOwners": [
+        "P06-T004"
+      ]
+    },
+    {
+      "kind": "provider",
+      "id": "languages.registerInlineCompletionsProvider",
+      "disposition": "retained-lsp-backed",
+      "implementationOwners": [
+        "P06-T004"
+      ],
+      "testOwners": [
+        "P06-T004"
+      ]
+    },
+    {
+      "kind": "provider",
+      "id": "languages.registerLinkedEditingRangeProvider",
+      "disposition": "retained-lsp-backed",
+      "implementationOwners": [
+        "P06-T004"
+      ],
+      "testOwners": [
+        "P06-T004"
+      ]
+    },
+    {
+      "kind": "provider",
+      "id": "languages.registerLinkProvider",
+      "disposition": "retained-lsp-backed",
+      "implementationOwners": [
+        "P06-T004"
+      ],
+      "testOwners": [
+        "P06-T004"
+      ]
+    },
+    {
+      "kind": "provider",
+      "id": "languages.registerNewSymbolNameProvider",
+      "disposition": "retained-direct-only",
+      "implementationOwners": [
+        "P06-T005"
+      ],
+      "testOwners": [
+        "P06-T005"
+      ]
+    },
+    {
+      "kind": "provider",
+      "id": "languages.registerOnTypeFormattingEditProvider",
+      "disposition": "retained-lsp-backed",
+      "implementationOwners": [
+        "P06-T004"
+      ],
+      "testOwners": [
+        "P06-T004"
+      ]
+    },
+    {
+      "kind": "provider",
+      "id": "languages.registerReferenceProvider",
+      "disposition": "retained-lsp-backed",
+      "implementationOwners": [
+        "P06-T004"
+      ],
+      "testOwners": [
+        "P06-T004"
+      ]
+    },
+    {
+      "kind": "provider",
+      "id": "languages.registerRenameProvider",
+      "disposition": "retained-lsp-backed",
+      "implementationOwners": [
+        "P06-T004"
+      ],
+      "testOwners": [
+        "P06-T004"
+      ]
+    },
+    {
+      "kind": "provider",
+      "id": "languages.registerSelectionRangeProvider",
+      "disposition": "retained-lsp-backed",
+      "implementationOwners": [
+        "P06-T004"
+      ],
+      "testOwners": [
+        "P06-T004"
+      ]
+    },
+    {
+      "kind": "provider",
+      "id": "languages.registerSignatureHelpProvider",
+      "disposition": "retained-lsp-backed",
+      "implementationOwners": [
+        "P06-T004"
+      ],
+      "testOwners": [
+        "P06-T004"
+      ]
+    },
+    {
+      "kind": "provider",
+      "id": "languages.registerTokensProviderFactory",
+      "disposition": "retained-direct-only",
+      "implementationOwners": [
+        "P06-T005"
+      ],
+      "testOwners": [
+        "P06-T005"
+      ]
+    },
+    {
+      "kind": "provider",
+      "id": "languages.registerTypeDefinitionProvider",
+      "disposition": "retained-lsp-backed",
+      "implementationOwners": [
+        "P06-T004"
+      ],
+      "testOwners": [
+        "P06-T004"
+      ]
+    },
+    {
+      "kind": "provider",
+      "id": "MultiDocumentHighlight",
+      "disposition": "retained-direct-only",
+      "implementationOwners": [
+        "P06-T005"
+      ],
+      "testOwners": [
+        "P06-T005"
+      ]
     },
     {
       "kind": "publicPath",
@@ -48952,6 +50192,10 @@
     {
       "path": "implementation-plan/phase-05-public-surface-features.md",
       "sha256": "dd44b86bda2d998e8e087f7836b987c3c09c8d991ad9d8961242680c0675d853"
+    },
+    {
+      "path": "implementation-plan/phase-06-language-lsp-snippet-markdown.md",
+      "sha256": "c617924cb7bd846a4f4b4782edd0234c9a6911b3fc2d24d96aa2e69378fd2225"
     }
   ],
   "audit": {
