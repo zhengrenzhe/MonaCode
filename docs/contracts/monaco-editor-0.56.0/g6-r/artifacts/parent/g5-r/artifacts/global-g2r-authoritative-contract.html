@@ -1,0 +1,84 @@
+<style>
+  :root{--ok:#059669;--warn:#d97706;--bad:#dc2626;--blue:#2563eb;--violet:#7c3aed}
+  .hero{display:flex;gap:14px;align-items:flex-start;padding:15px;border:2px solid var(--ok);border-radius:14px;background:color-mix(in srgb,var(--ok) 6%,var(--surface));margin:12px 0 15px}.mark{width:66px;height:66px;flex:0 0 66px;display:grid;place-items:center;border-radius:14px;background:var(--ok);color:#fff;font-weight:900;font-size:14px}.hero h3{margin:0 0 5px;font-size:15px}.hero p{margin:0;color:var(--muted);font-size:8.4px;line-height:1.52}
+  .section{margin-top:15px}.section h3{margin:0 0 8px;font-size:12px}.scope{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.scope-card{padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}.scope-card h4{margin:0 0 5px;font-size:9px}.scope-card ul{margin:0 0 0 14px;padding:0;font-size:7px;line-height:1.5}.scope-card.in{border-color:var(--ok)}.scope-card.out{border-color:var(--bad)}.scope-card.later{border-color:var(--violet)}.scope-card.base{border-color:var(--blue)}
+  .stack{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}.layer{padding:9px;border:1px solid var(--border);border-radius:10px;background:var(--surface);font-size:7px;line-height:1.43}.layer b{display:block;font-size:8.5px;margin-bottom:3px}.layer span{color:var(--muted)}.matrix{border:1px solid var(--border);border-radius:11px;overflow:hidden}.row{display:grid;grid-template-columns:.55fr 1.2fr 1.45fr 1.08fr;border-top:1px solid var(--border)}.row:first-child{border-top:0;font-weight:800;background:color-mix(in srgb,var(--accent) 6%,var(--surface))}.cell{padding:7px 8px;border-left:1px solid var(--border);font-size:6.9px;line-height:1.43}.cell:first-child{border-left:0}.yes{color:#047857;font-weight:750}.fail{color:#b91c1c;font-weight:750}
+  .counts{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}.count{padding:9px;border:1px solid var(--border);border-radius:9px;background:var(--surface)}.count strong{display:block;font-size:18px;color:var(--blue)}.count b{display:block;font-size:7.4px}.count span{display:block;color:var(--muted);font-size:6.1px;line-height:1.35;margin-top:2px}.authority{display:grid;grid-template-columns:1.1fr .9fr;gap:8px}.box{padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}.box h4{margin:0 0 5px;font-size:9px}.box ul{margin:0 0 0 14px;padding:0;font-size:7px;line-height:1.5}.box.ok{border-color:var(--ok)}.box.bad{border-color:var(--bad)}.rules{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.rule{padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}.rule h4{margin:0 0 5px;font-size:9px}.rule ul{margin:0 0 0 14px;padding:0;font-size:7px;line-height:1.5}.next{padding:11px;border:2px solid var(--blue);border-radius:11px;background:color-mix(in srgb,var(--blue) 5%,var(--surface));font-size:7.5px;line-height:1.5}.source{margin-top:12px;padding:9px 10px;border-left:3px solid var(--blue);background:color-mix(in srgb,var(--blue) 5%,var(--surface));color:var(--muted);font-size:7px;line-height:1.48}.actions{display:flex;gap:8px;margin-top:13px}.decision{flex:1;padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--surface);cursor:pointer}.decision.selected{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 18%,transparent)}.decision h4{margin:0 0 3px;font-size:9px}.decision span{display:block;color:var(--muted);font-size:6.8px;line-height:1.4}
+  @media(max-width:980px){.scope{grid-template-columns:1fr 1fr}.stack{grid-template-columns:1fr 1fr}.counts{grid-template-columns:repeat(3,1fr)}.rules,.authority{grid-template-columns:1fr}.row{grid-template-columns:.45fr 1fr 1fr .85fr}.cell{padding:5px 4px;font-size:6.3px}}
+</style>
+
+<h2>MonaCode 全量目标：G2-R 最终权威合同</h2>
+<p class="subtitle">本页冻结最终功能范围、生产架构、等价边界与验收定义。它不声称已有实现；旧页与本页冲突时全部失效。</p>
+
+<div class="hero"><div class="mark">G2-R</div><div><h3>设计选择已收敛为唯一合同；代码与实测仍是零通过</h3><p>本期交付 arm64 macOS 26.0+ 原生 Swift 编辑器组件。文本模型按 Monaco 0.56.0 逐可观察结果等价；布局使用 Projection + Core Text；CG-first，只有 renderer-owned gate 失败才建设 Metal；语言 registry 全量、LSP client 内置、生产语言内容为 0；性能必须同时不劣于官方原版 M0 与能力匹配 M1。</p></div></div>
+
+<div class="section"><h3>产品范围一次冻结</h3><div class="scope">
+  <div class="scope-card in"><h4>本期必须交付</h4><ul><li>Swift Package、AppKit editor/diff/multi-diff、SwiftUI wrapper</li><li>同步 ITextModel 等价、完整 core/editor/features/options</li><li>自定义 IME/input/AX/clipboard/drag/drop/services</li><li>30 provider surfaces、LSP 3.18 client、host protocols</li><li>sample、conformance、benchmark、failure injection</li></ul></div>
+  <div class="scope-card base"><h4>本期 deployment</h4><ul><li>arm64 only；macOS 26.0+</li><li>Swift 6.3 strict concurrency；Xcode 26.6 / SDK 26.5 baseline</li><li>M4 Pro 48 GB 当前设备验收</li><li>60 Hz 外接与 120 Hz 内屏分别通过</li><li>生产 linked code 只依赖 Apple system frameworks 与仓内 MonaCode code；Codicon 是许可资源</li></ul></div>
+  <div class="scope-card later"><h4>长期目标，非本期</h4><ul><li>iOS 26+ / iPadOS 26+ UIKit adapter</li><li>touch、software keyboard、UIPasteboard/NSItemProvider/UITextDrop</li><li>移动端独立 device/performance baseline</li><li>Model/Language/LSP/Diff/Features 复用</li><li>LSP 核心只依赖 message transport，不依赖本地进程</li></ul></div>
+  <div class="scope-card out"><h4>明确排除</h4><ul><li>JS/DOM/WebWorker/NPM/AMD/global/source compatibility</li><li>TextKit production backend、WebGPU/SVG/DOM selector、WebGPU debug action</li><li>Monarch、Tree-sitter、81 个内置语言、4 个 language feature packs</li><li>bundled LSP servers、扩展宿主、Workbench、文件树、SCM、终端</li><li>AI、协作、非 Apple 平台、x86_64、富文本 model</li></ul></div>
+</div></div>
+
+<div class="section"><h3>唯一生产架构</h3><div class="stack">
+  <div class="layer"><b>AppKit / SwiftUI</b><span>NSView + NSTextInputClient + NSAccessibility；SwiftUI 仅包装。</span></div>
+  <div class="layer"><b>Features / Diff</b><span>actions、widgets、zones、state；single/multi Diff；shared model。</span></div>
+  <div class="layer"><b>Projection / Core Text</b><span>ViewGraph 与 LineLayoutRecord 是唯一 native geometry truth。</span></div>
+  <div class="layer"><b>Language / LSP / Theme</b><span>registry、byte transport、profile、markers、context/keybindings。</span></div>
+  <div class="layer"><b>Model / Base</b><span>persistent raw-UTF16 Piece Tree、undo/events/decorations、URI/cancel。</span></div>
+</div></div>
+
+<div class="section"><h3>权威章节与最终结论</h3><div class="matrix">
+  <div class="row"><div class="cell">合同</div><div class="cell">唯一结论</div><div class="cell">被封堵的错误实现</div><div class="cell">当前状态</div></div>
+  <div class="row"><div class="cell"><b>M1-R</b></div><div class="cell">raw UInt16 canonical value；persistent Piece Tree；自研 ECMAScript runtime；MainActor 内同步 search/event/undo；Sendable immutable snapshots</div><div class="cell">Swift String/Character/NSRegularExpression 代替；mutable snapshot；异步 API 改写同步结果；跨 actor 假同步</div><div class="cell fail">未实现、未验收</div></div>
+  <div class="row"><div class="cell"><b>A+ / R1</b></div><div class="cell">MainActor live mutation；PreparedModelCommit；GlobalModelEventHub；逐功能 version/epoch/owner reconciliation</div><div class="cell">锁内 callback、跨模型半提交、无版本 async result、通用 stale 分类</div><div class="cell fail">未实现、未验收</div></div>
+  <div class="row"><div class="cell"><b>V1-R4</b></div><div class="cell">Projection exact domain；Core Text native geometry domain；CG-first；renderer-owned trigger；Metal 共用 LineLayoutRecord</div><div class="cell">Chrome/HarfBuzz 坐标当 CT oracle、TextKit fallback、renderer 二次排版、任意性能失败触发 Metal</div><div class="cell fail">CG/Metal 均未实现</div></div>
+  <div class="row"><div class="cell"><b>L2-R2</b></div><div class="cell">30 surfaces；25 LSP；5 direct-only；ASCII/Content-Length/raw-UTF16 JSON；transport 不依赖 Process；plaintext fallback</div><div class="cell">27 public funcs 当全量、JSON batch、Codable String、per-editor didOpen、组件发现 server</div><div class="cell fail">fixture/bridge 未实现</div></div>
+  <div class="row"><div class="cell"><b>I3-R / I4-R</b></div><div class="cell">双平面 NSTextInputClient；主选区系统投影；MonaDataTransfer 三层；变更全部进入 R1</div><div class="cell">NSTextView 当 model、event.characters 写入、async pasteboard callback、cut-before-write</div><div class="cell fail">未实现、未验收</div></div>
+  <div class="row"><div class="cell"><b>F1-R</b></div><div class="cell">registry/public manifest；174 options；single/multi Diff；typed native replacement；11 explicit cuts</div><div class="cell">目录当 API、silent no-op、external/wasm diff、NSUndo history、系统分词冒充 Intl.Segmenter</div><div class="cell fail">未实现、未验收</div></div>
+  <div class="row"><div class="cell"><b>Q1-R2</b></div><div class="cell">C01–C08；P00–P13；M0/M1 双基线；total+component；去重 footprint；continuous thermal；固定 corpus</div><div class="cell">平均 FPS、单 PID、共享内存求和、浏览器 overhead 掩盖、权限缺失跳过、无限重跑</div><div class="cell fail">全部 gate 未执行</div></div>
+</div></div>
+
+<div class="section"><h3>机器可核对的最终计数</h3><div class="counts">
+  <div class="count"><strong>64</strong><b>feature entries</b><span>62 macOS + 1 iPad later + 1 WebGPU debug cut</span></div>
+  <div class="count"><strong>167→166</strong><b>actions</b><span>pure text 127→126；cut=GPU debug</span></div>
+  <div class="count"><strong>53→52</strong><b>contributions</b><span>official→macOS；iPadOS union=53</span></div>
+  <div class="count"><strong>454→453</strong><b>commands</b><span>GPU debug action 占 1 command</span></div>
+  <div class="count"><strong>379</strong><b>mac keybindings</b><span>含 chord/weight/when/args</span></div>
+  <div class="count"><strong>18/121</strong><b>menus/items</b><span>menu 数 / item 数</span></div>
+  <div class="count"><strong>174</strong><b>editor options</b><span>157 retained + 6 computed + 11 cuts</span></div>
+  <div class="count"><strong>68/57</strong><b>editor/languages keys</b><span>4 Web editor cuts；1 Monarch cut</span></div>
+  <div class="count"><strong>19</strong><b>main exports</b><span>15 retained；4 feature-pack cuts</span></div>
+  <div class="count"><strong>30/25/5</strong><b>language surfaces</b><span>all / LSP / direct-only</span></div>
+  <div class="count"><strong>81/91/4/0</strong><b>language content</b><span>entries/descriptors/packs/shipped</span></div>
+  <div class="count"><strong>22+7</strong><b>Diff options</b><span>legacy/advanced；external/wasm cut</span></div>
+  <div class="count"><strong>8/14</strong><b>correctness/perf</b><span>C01–C08；P00–P13</span></div>
+  <div class="count"><strong>2</strong><b>perf baselines</b><span>M0 original + M1 matched；两者都过</span></div>
+</div></div>
+
+<div class="section"><h3>11 个 EditorOption cut 与行为影响</h3><div class="matrix">
+  <div class="row"><div class="cell">组</div><div class="cell">删除 symbol</div><div class="cell">保留的 native 行为</div><div class="cell">结论</div></div>
+  <div class="row"><div class="cell"><b>DOM/input</b></div><div class="cell">disableLayerHinting、domReadOnly、editContext、effectiveEditContextEnabled、useShadowDOM</div><div class="cell">readOnly + I3-R NSTextInputClient；renderer 自管资源；NSView 原生封装</div><div class="cell yes">Web implementation switch 删除</div></div>
+  <div class="row"><div class="cell"><b>CSS/platform</b></div><div class="cell">extraEditorClassName、editorClassName、selectionClipboard</div><div class="cell">typed MonaEditorAppearance；macOS NSPasteboard copy/cut/paste</div><div class="cell yes">CSS 与 Linux primary selection 删除</div></div>
+  <div class="row"><div class="cell"><b>Renderer</b></div><div class="cell">experimentalGpuAcceleration、experimentalWhitespaceRendering</div><div class="cell">renderWhitespace 可见语义；CG/Metal 只按 V1-R4/Q1-R2 选择</div><div class="cell yes">runtime renderer selector 删除</div></div>
+  <div class="row"><div class="cell"><b>Locale words</b></div><div class="cell">wordSegmenterLocales</div><div class="cell">默认空数组；wordSeparators 与默认 word movement/selection/delete 全部等价</div><div class="cell yes">显式 BCP-47 Intl.Segmenter 行为删除</div></div>
+</div></div>
+
+<div class="section"><h3>规范效力</h3><div class="authority">
+  <div class="box ok"><h4>仍具规范效力</h4><ul><li>model-m1r-regex-snapshot-closure.html：M1-R；wordSegmenterLocales 读 F1-R cut</li><li>transactions-validity-adversarial.html：R1</li><li>native-input-i3r-adversarial.html：I3-R；transfer-i4r-adversarial.html：I4-R</li><li>layout-v1r3-final-closure.html 是详细基础；layout-v1r4-cross-engine-closure.html 覆盖跨引擎 geometry、renderer trigger 与 conditional Metal 条款</li><li>language-l2r-provider-lsp-closure.html + language-l2r2-framing-closure.html：L2-R2</li><li>features-f1r-complete-surface-closure.html：F1-R</li><li>verification-q1r-differential-performance-closure.html 是 P00–P13/基础 gate 清单；verification-q1r2-measurement-closure.html 覆盖 C02/C03/C05/C08、baseline、collector 与统计条款</li></ul></div>
+  <div class="box bad"><h4>历史证据，不具规范效力</h4><ul><li>G1-R 被 G2-R 全面替代</li><li>V1-R/V1-R2 被 V1-R3/V1-R4 替代</li><li>早期 architecture/concurrency/recovery 页面只保留攻击过程</li><li>V1-R3 的 Chrome exact geometry/patch table、Q1-R 的单 baseline/RSS/起止 thermal/无条件 Metal parity 条款失效</li><li>任何 TextKit production、27-provider 目标、158/6/10 option 目标失效</li><li>冲突优先级：G2-R &gt; R4/R2 overlays &gt; detailed base pages &gt; pinned official source/spec &gt; history</li></ul></div>
+</div></div>
+
+<div class="section"><h3>不再重开的决定与当前证据状态</h3><div class="rules">
+  <div class="rule"><h4>Architecture locked</h4><ul><li>无 TextKit production、editable mirror、JS engine、third-party runtime</li><li>无 runtime renderer selector；CG-first；Metal trigger 集固定</li><li>无内置语言内容；LSP client 属于核心能力</li><li>无 silent no-op；cut 从 Swift type system 删除</li><li>Core Text native geometry 不冒充 Blink numerical equivalence</li></ul></div>
+  <div class="rule"><h4>Empirical status</h4><ul><li>仓库没有 MonaCode production source、test executable 或 sample</li><li>M1 output、corpus、controller、collector artifact 不存在</li><li>正确性、性能、AX、IME、CG、Metal、LSP、Diff 全部未通过</li><li>Metal 在 CG renderer gates 全过时记录 N/A</li><li>没有全套通过证据时禁止宣称等价或不劣</li></ul></div>
+  <div class="rule"><h4>Change control</h4><ul><li>Monaco、Chrome、OS、SDK、device、corpus 改动创建新 baseline revision</li><li>范围变化先改 G2-R manifest，再重做阶段划分</li><li>iOS/iPadOS 启动前冻结独立 UIKit/input/AX/performance contract</li><li>用户未授权时不添加语言包、AI、协作、workbench、第三方依赖</li><li>Monaco code 保留 MIT provenance；Codicon 图标保留 CC BY 4.0 attribution/license/modification notice</li></ul></div>
+</div></div>
+
+<div class="section"><div class="next"><b>G2-R 采纳后的唯一下一步：</b>按本页完整范围和依赖图划分实施阶段、里程碑、交付物与逐阶段 gate。阶段只决定实现顺序，不修改最终功能集合或验收门槛。</div></div>
+
+<div class="actions">
+  <div class="decision" data-choice="accept-global-g2r" onclick="toggleSelect(this)"><h4>采纳 G2-R</h4><span>冻结全量范围；下一轮开始阶段划分。</span></div>
+  <div class="decision" data-choice="challenge-global-g2r" onclick="toggleSelect(this)"><h4>提交新事实反例</h4><span>反例必须指向 pinned source、协议、SDK、设备探针或范围自相矛盾。</span></div>
+</div>
+
+<div class="source"><b>固定事实基线：</b>Monaco Editor v0.56.0 tag 13f0c872dcf352815cc28d92dfff496c9839ea5c；npm tar SHA-256 b74bc4437205c194b779b0f21e5e7fcd3b4e9acbf3f7c8732a545d2059fb7412；public monaco.d.ts SHA-256 fbbab04ba04224a04b2bc3243e536d1af6e26d14eb00fe8b3177bf3daef8d3f2；core dependency 0.56.0-dev-20260625；Chrome 151.0.7922.109 / V8 15.1.206.16 / binary SHA-256 ca6036a1ad80092a2817f0dfd986782736fa7d7977c4922d37a3853b7342408c；LSP 3.18 gh-pages commit 8b9fab8f0912b694c795d05c1d5e9d357bee0193 / spec SHA-256 67e09b5458884dad63631a4cc7f4ea72b659b023e950eb0f7fa7311355cde3d7；macOS 26.6 build 25G72 / Xcode 26.6 build 17F113 / SDK 26.5 / Swift 6.3.3 / M4 Pro 48 GB；3008×1692@60 Hz 与 1728×1117@120 Hz。</div>

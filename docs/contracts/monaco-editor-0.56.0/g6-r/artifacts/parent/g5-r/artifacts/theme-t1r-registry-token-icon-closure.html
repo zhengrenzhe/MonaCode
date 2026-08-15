@@ -1,0 +1,45 @@
+<style>
+  :root{--ok:#059669;--warn:#d97706;--bad:#dc2626;--blue:#2563eb;--violet:#7c3aed}
+  .hero{display:flex;gap:13px;align-items:flex-start;padding:14px;border:2px solid var(--ok);border-radius:14px;background:color-mix(in srgb,var(--ok) 6%,var(--surface));margin:12px 0 15px}.mark{width:62px;height:62px;flex:0 0 62px;display:grid;place-items:center;border-radius:13px;background:var(--ok);color:#fff;font-weight:900}.hero h3{margin:0 0 5px;font-size:14px}.hero p{margin:0;color:var(--muted);font-size:8.2px;line-height:1.5}
+  .section{margin-top:15px}.section h3{margin:0 0 8px;font-size:12px}.counts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.count{padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}.count strong{display:block;font-size:22px;color:var(--blue)}.count b{display:block;font-size:7.8px}.count span{display:block;margin-top:3px;color:var(--muted);font-size:6.5px;line-height:1.4}
+  .hits{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.hit{padding:9px;border:1px solid var(--warn);border-radius:10px;background:var(--surface)}.hit b{display:block;font-size:8.4px;margin-bottom:3px}.hit span{display:block;color:var(--muted);font-size:6.9px;line-height:1.43}.hit em{font-style:normal;color:#b45309;font-weight:800}
+  .matrix{border:1px solid var(--border);border-radius:11px;overflow:hidden}.row{display:grid;grid-template-columns:.75fr 1.3fr 1.55fr 1.05fr;border-top:1px solid var(--border)}.row:first-child{border-top:0;font-weight:800;background:color-mix(in srgb,var(--accent) 6%,var(--surface))}.cell{padding:7px 8px;border-left:1px solid var(--border);font-size:7px;line-height:1.45}.cell:first-child{border-left:0}.yes{color:#047857;font-weight:750}.no{color:#b91c1c;font-weight:750}.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.card{padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}.card h4{margin:0 0 5px;font-size:9px}.card ul{margin:0 0 0 14px;padding:0;font-size:7px;line-height:1.5}.source{margin-top:12px;padding:9px 10px;border-left:3px solid var(--blue);background:color-mix(in srgb,var(--blue) 5%,var(--surface));color:var(--muted);font-size:7px;line-height:1.48}
+  @media(max-width:980px){.counts,.hits,.cards{grid-template-columns:1fr 1fr}.row{grid-template-columns:.55fr 1fr 1fr .8fr}.cell{padding:5px 4px;font-size:6.2px}}
+</style>
+
+<h2>主题基础设施第一轮攻击：T1-R color/token/icon 闭包</h2>
+<p class="subtitle">F1-R 保留 defineTheme、setTheme、setColorMap、theme features 与 Codicon 资源，但没有固定 registry identity。本页把主题从“功能名称”收敛为机器可核对 artifact。</p>
+
+<div class="hero"><div class="mark">T1-R</div><div><h3>431 个 color IDs、776 个 product icon IDs、4 个 builtin themes 全部保留</h3><p>CSS 输出本身不属于 native source compatibility；颜色解析、默认值解析、token-rule 匹配、icon ID→glyph、主题切换状态与所有 feature 对 color/icon ID 的引用属于 exact domain。最终像素进入 V1-R4/T1-R native rendering domain。</p></div></div>
+
+<div class="section"><h3>固定 registry identity</h3><div class="counts">
+  <div class="count"><strong>431</strong><b>color IDs</b><span>sorted ID SHA-256 3a20a42d…189d970。</span></div>
+  <div class="count"><strong>776</strong><b>product icon IDs</b><span>sorted ID SHA-256 d9542a8e…cc1631。</span></div>
+  <div class="count"><strong>4</strong><b>builtin themes</b><span>vs、vs-dark、hc-black、hc-light。</span></div>
+  <div class="count"><strong>0</strong><b>theme cuts</b><span>所有 retained feature 的 color/icon references 有定义。</span></div>
+</div></div>
+
+<div class="section"><h3>本轮四个命中</h3><div class="hits">
+  <div class="hit"><b>27 · 四个 theme 名称就是完整主题范围</b><span>feature imports 还注册数百 color/icon identifiers。<em>431/776 registry manifests 同时验收。</em></span></div>
+  <div class="hit"><b>28 · NSColor 直接读取 hex 就完成等价</b><span>Monaco color defaults 含透明度、lighten/darken、oneOf 与主题依赖。<em>先复制 RGBA transform/default graph，再构造 extended-sRGB CGColor。</em></span></div>
+  <div class="hit"><b>29 · token rules 只按完整 token 字符串匹配</b><span>TokenTheme 有 scope hierarchy、rule order、fontStyle 与 encoded color map。<em>移植固定 matcher/metadata packing，不用 NSAttributedString 自己猜优先级。</em></span></div>
+  <div class="hit"><b>30 · TTF 文件足够</b><span>同一 glyph 有 alias ID，feature icon 还可引用另一 ThemeIcon。<em>保留 776 ID graph 与 resolved glyph mapping；TTF hash 只是第二个 gate。</em></span></div>
+</div></div>
+
+<div class="section"><h3>主题语义与 native 输出</h3><div class="matrix">
+  <div class="row"><div class="cell">表面</div><div class="cell">Exact state contract</div><div class="cell">Native output contract</div><div class="cell">Gate</div></div>
+  <div class="row"><div class="cell"><b>defineTheme</b></div><div class="cell">base 只允许四值；inherit、rules、encodedTokensColors、colors；同名覆盖并通知当前继承 theme</div><div class="cell">无 CSS class API；生成 immutable MonaTheme snapshot</div><div class="cell yes">API/event trace</div></div>
+  <div class="row"><div class="cell"><b>Color registry</b></div><div class="cell">431 IDs、default graph、transform arithmetic、undefined fallback 与 explicit override exact</div><div class="cell">RGBA 使用 extended-sRGB；alpha 由 compositor 处理；不经 device color guess</div><div class="cell yes">431×4 value matrix</div></div>
+  <div class="row"><div class="cell"><b>Token theme</b></div><div class="cell">rule insertion、scope matching、foreground/background/fontStyle、encoded token colors 与 setColorMap override exact</div><div class="cell">结果转换为 LineLayoutRecord token runs 与 AX attributed runs</div><div class="cell yes">metadata/value trace</div></div>
+  <div class="row"><div class="cell"><b>High contrast</b></div><div class="cell">autoDetectHighContrast option/event semantics exact；base theme state 按 AppKit accessibility display state 更新</div><div class="cell">hc-black/hc-light colors、focus/contrast borders 与 AX 属性进入 native render</div><div class="cell yes">state + golden</div></div>
+  <div class="row"><div class="cell"><b>Product icons</b></div><div class="cell">776 IDs、alias chain、modifier、resolved fontCharacter exact</div><div class="cell">Codicon TTF 固定 asset；glyph baseline/size/color 进入 CT line or vector icon record</div><div class="cell yes">ID/glyph + image golden</div></div>
+  <div class="row"><div class="cell"><b>Feature references</b></div><div class="cell">action/widget/menu/deco 中每个 color/icon ID 必须在 manifest 中解析</div><div class="cell">missing ID 不用 SF Symbol 替代；显示 missing-asset failure marker</div><div class="cell no">missing=整体失败</div></div>
+</div></div>
+
+<div class="section"><h3>Artifact、license 与验收</h3><div class="cards">
+  <div class="card"><h4>Pinned artifacts</h4><ul><li>themes.js SHA-256 d38d520d…ae8716</li><li>StandaloneThemeService SHA-256 6156d6fa…1e1f9f</li><li>Codicon TTF SHA-256 cc2472e2…6333a8</li><li>codicons.js SHA-256 c664cd1f…ae4cd0</li><li>color/icon resolved manifests 在实现前 checked in</li></ul></div>
+  <div class="card"><h4>License boundary</h4><ul><li>Monaco code与 theme data 保留 MIT notice/provenance</li><li>Codicon 字体/图标内容保留 CC BY 4.0 attribution</li><li>发行包带 license URI 与 modification notice</li><li>Codicon 是许可 asset，不是 linked runtime</li><li>产品代码生产依赖仍只有 system frameworks + MonaCode</li></ul></div>
+  <div class="card"><h4>Current status</h4><ul><li>431/776 数量与 source hashes 已采集</li><li>仓库没有 native theme/color/icon implementation</li><li>resolved manifests、value matrix、goldens 不存在</li><li>T1-R 全部 gate 未通过</li><li>不能宣称主题或图标等价</li></ul></div>
+</div></div>
+
+<div class="source"><b>事实索引：</b>在固定 Monaco 0.56.0 editor.main 中导入完整 feature graph 后，Chrome 151 runtime probe 读取 ColorContribution 与 IconRegistry：431 sorted color IDs，SHA-256 3a20a42d64fddd34ab150416036fcb63007e24693db99a7512a82e110189d970；776 sorted icon IDs，SHA-256 d9542a8eaec33de2cba862c9456613dd979ece013478697a21e6f35306cc1631。StandaloneThemeService 固定注册 vs/vs-dark/hc-black/hc-light，并用 theme colors、builtin inheritance、TokenTheme 与 color registry default resolver。Codicon TTF 与 mappings hashes 如上。Probe 只提供 registry 事实；当前没有 native 实现结果。</div>

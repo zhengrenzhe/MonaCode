@@ -1,0 +1,8 @@
+{
+  "mutation": "add-interface-consume",
+  "task": "P00-T001",
+  "value": "MonaUndefinedInterface",
+  "expectedFindingIds": [
+    "PLAN_INTERFACE_UNDEFINED"
+  ]
+}

@@ -1,0 +1,63 @@
+<style>
+  :root{--ok:#059669;--warn:#d97706;--bad:#dc2626;--blue:#2563eb;--violet:#7c3aed}
+  .hero{display:flex;gap:13px;align-items:flex-start;padding:14px;border:2px solid var(--ok);border-radius:14px;background:color-mix(in srgb,var(--ok) 6%,var(--surface));margin:12px 0 15px}.mark{width:66px;height:66px;flex:0 0 66px;display:grid;place-items:center;border-radius:13px;background:var(--ok);color:#fff;font-weight:900}.hero h3{margin:0 0 5px;font-size:14px}.hero p{margin:0;color:var(--muted);font-size:8.2px;line-height:1.5}
+  .section{margin-top:15px}.section h3{margin:0 0 8px;font-size:12px}.hits{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.hit{padding:9px;border:1px solid var(--warn);border-radius:10px;background:var(--surface)}.hit b{display:block;font-size:8.3px;margin-bottom:3px}.hit span{display:block;color:var(--muted);font-size:6.8px;line-height:1.44}.hit em{font-style:normal;color:#b45309;font-weight:800}
+  .flow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.node{padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--surface);font-size:6.9px;line-height:1.45}.node b{display:block;font-size:8.7px;color:var(--blue);margin-bottom:4px}.matrix{border:1px solid var(--border);border-radius:11px;overflow:hidden}.row{display:grid;grid-template-columns:.75fr 1.35fr 1.55fr 1fr;border-top:1px solid var(--border)}.row:first-child{border-top:0;font-weight:800;background:color-mix(in srgb,var(--accent) 6%,var(--surface))}.cell{padding:7px 8px;border-left:1px solid var(--border);font-size:6.8px;line-height:1.45}.cell:first-child{border-left:0}.yes{color:#047857;font-weight:750}.no{color:#b91c1c;font-weight:750}
+  .cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.card{padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}.card h4{margin:0 0 5px;font-size:9px}.card ul{margin:0 0 0 14px;padding:0;font-size:7px;line-height:1.5}.artifact{padding:11px;border:1px solid var(--blue);border-radius:11px;background:color-mix(in srgb,var(--blue) 5%,var(--surface));font-size:7px;line-height:1.52}.artifact code{font-size:6.3px;word-break:break-all}.artifact a{font-weight:800;color:var(--blue)}.source{margin-top:12px;padding:9px 10px;border-left:3px solid var(--blue);background:color-mix(in srgb,var(--blue) 5%,var(--surface));color:var(--muted);font-size:7px;line-height:1.48}
+  @media(max-width:1020px){.hits{grid-template-columns:1fr 1fr}.flow,.cards{grid-template-columns:1fr}.row{grid-template-columns:.6fr 1fr 1.15fr .8fr}.cell{padding:5px 4px;font-size:6.2px}}
+</style>
+
+<h2>原生边界攻击：H1-R Package、宿主与 SwiftUI 闭包</h2>
+<p class="subtitle">本页不增加 Monaco 功能，只把已承诺的 Swift Package、AppKit views、SwiftUI wrapper、LSP transport、workspace edit、command/log host 与 multi-diff data source 转成可实现、可编译、可失败注入的合同。</p>
+
+<div class="hero"><div class="mark">H1-R</div><div><h3>三项产品、三种 AppKit view、四个 SwiftUI 类型、七组宿主协议与四态 WorkspaceEdit 已全部冻结</h3><p>产品面只有 MonaCode、MonaCodeAppKit、MonaCodeSwiftUI。内部模块不成为额外 implementation products；UIKit target 本期完全不存在。SwiftUI 不复制文本或 view state；宿主不获得 open-model mutation 权；LSP transport 不解析协议；transactional capability 只有在 host prepare 产出不可失败 commit 时才能广告。</p></div></div>
+
+<div class="section"><h3>本轮八个确定命中</h3><div class="hits">
+  <div class="hit"><b>80 · 写 Swift Package 即边界完整</b><span>旧页列了 11 个模块却未区分 products、implementation targets 与 test targets。<em>本期 public products 固定为 3。</em></span></div>
+  <div class="hit"><b>81 · SwiftUI 只包装无需合同</b><span>model identity、dismantle、controller 与重建会决定 model copy 和 double-dispose。<em>四个 wrapper/controller 类型逐项冻结。</em></span></div>
+  <div class="hit"><b>82 · 每个 editor 注入 services</b><span>Monaco StandaloneServices 只允许首次 initialize 覆盖；create 的 override 不是 per-editor scope。<em>MonaCodeEnvironment 同样 first-access freeze。</em></span></div>
+  <div class="hit"><b>83 · Workspace host 一个 apply 方法足够</b><span>transactional 要求所有操作全成或全不成；逐操作 async apply 无法实现。<em>另设 prepare + nonthrowing commit。</em></span></div>
+  <div class="hit"><b>84 · textOnlyTransactional 只影响文本部分</b><span>LSP 定义：只要含 resource op，整次 edit 使用 abort。<em>按完整 ordered edit 切换策略。</em></span></div>
+  <div class="hit"><b>85 · LSP transport 可以顺便 parse</b><span>L2-R2/R3 已固定 byte/frame/JSON 四层。<em>host transport 只收发有序 bytes 与 backpressure。</em></span></div>
+  <div class="hit"><b>86 · MultiDiff any 可自由设计</b><span>此前只列列表/折叠，未定义稳定 item identity 与 source change。<em>数据源 snapshot、ID、reorder/state preservation 固定。</em></span></div>
+  <div class="hit"><b>87 · MainActor 已足够防回调重入</b><span>host callback 可在 prepare、send、command、open 中同步/异步重入。<em>root swap/event queue 内零 callback；所有异步结果重验 generation。</em></span></div>
+</div></div>
+
+<div class="section"><h3>SwiftPM 产品与依赖方向</h3><div class="flow">
+  <div class="node"><b>MonaCode</b>Foundation only；model/editor semantics、providers/LSP、diff/theme 公共面；禁止 AppKit/SwiftUI/UIKit/Metal/CoreText/CoreGraphics imports。</div>
+  <div class="node"><b>MonaCodeAppKit → MonaCode</b>NSView、NSTextInputClient、AX、Core Text/CG；Metal 仅在 renderer gate 触发并实现后成为 internal import。</div>
+  <div class="node"><b>MonaCodeSwiftUI → AppKit + Core</b>NSViewRepresentable 生命周期桥；无 editable Binding&lt;String&gt;、无第二份 selection/scroll/undo state。</div>
+</div></div>
+
+<div class="section"><h3>三种 view 与 process-global environment</h3><div class="matrix">
+  <div class="row"><div class="cell">Surface</div><div class="cell">确定 public shape</div><div class="cell">ownership / lifecycle</div><div class="cell">失败条件</div></div>
+  <div class="row"><div class="cell"><b>Code</b></div><div class="cell">MonaCodeEditorView : NSView + NSTextInputClient + mapped standalone interface</div><div class="cell">retains attached model；移出 superview 不 dispose；显式 dispose 幂等</div><div class="cell no">复制 model text 或 implicit dispose</div></div>
+  <div class="row"><div class="cell"><b>Diff</b></div><div class="cell">MonaDiffEditorView : NSView + mapped standalone diff interface</div><div class="cell">retains original/modified references；不拥有 model lifetime；child editor events exact</div><div class="cell no">dispose models 或漏 create event</div></div>
+  <div class="row"><div class="cell"><b>Multi-diff</b></div><div class="cell">MonaMultiDiffEditorView + stable MonaMultiDiffDataSource</div><div class="cell">item ID 保存 collapse/active/scroll；remove 只 dispose child view</div><div class="cell no">duplicate ID 被部分应用</div></div>
+  <div class="row"><div class="cell"><b>Environment</b></div><div class="cell">initialize once；opener registries；workspace/command/log host</div><div class="cell">首次 service access 冻结 overrides；opener last-registered-first；进程隔离测试</div><div class="cell no">第二次 initialize 改动 live services</div></div>
+</div></div>
+
+<div class="section"><h3>WorkspaceEdit 四态执行结果</h3><div class="matrix">
+  <div class="row"><div class="cell">failureHandling</div><div class="cell">准备与执行</div><div class="cell">失败后可观察状态</div><div class="cell">event rule</div></div>
+  <div class="row"><div class="cell"><b>abort</b></div><div class="cell">协议顺序逐项执行；首次失败停止</div><div class="cell">此前成功项保留；applied=false；failedChange=失败 index</div><div class="cell">按真实 commit 顺序投递</div></div>
+  <div class="row"><div class="cell"><b>transactional</b></div><div class="cell">全量 model preflight + host prepare + 全 DependencyStamp 重验 + nonthrowing commit/root swap</div><div class="cell">prepare/revalidate 失败零 mutation；commit 后不可报告失败</div><div class="cell">整批先 enqueue 再 drain</div></div>
+  <div class="row"><div class="cell"><b>textOnlyTransactional</b></div><div class="cell">纯 textDocumentChanges 走 transactional；含任一 create/rename/delete 时整批走 abort</div><div class="cell">完全服从对应两行，不混合语义</div><div class="cell">随所选路径</div></div>
+  <div class="row"><div class="cell"><b>undo</b></div><div class="cell">顺序执行；失败后逆序尝试 host receipt 与 model inverse</div><div class="cell">始终 applied=false；回滚不承诺成功；failedChange 固定</div><div class="cell">commit 与 inverse 都按实际顺序</div></div>
+</div></div>
+
+<div class="section"><h3>宿主协议的不可跨越边界</h3><div class="cards">
+  <div class="card"><h4>Workspace / Command / Log</h4><ul><li>open model mutation 永不委托 host</li><li>无 host 时仍支持全 open-model text transaction</li><li>component command registry 先执行</li><li>host command 只接 unhandled provider/LSP command</li><li>log 不含文档正文、不阻塞、不改变控制流</li></ul></div>
+  <div class="card"><h4>LSP transport / factory</h4><ul><li>ordered byte chunks；single consumer</li><li>send async throws + backpressure</li><li>close 幂等；state 有 typed reason</li><li>factory 明确 owned/remote/embedded ownership</li><li>组件不查 PATH、不启进程、不开 socket、不下载</li></ul></div>
+  <div class="card"><h4>SwiftUI / MultiDiff</h4><ul><li>model/options 更新只走 mapped API</li><li>controller 只持 weak editor handle</li><li>dismantle exactly once</li><li>data source duplicate ID 整批拒绝</li><li>source identity replacement 使全部 item view state 失效</li></ul></div>
+</div></div>
+
+<div class="section"><h3>机器可核对工件</h3><div class="artifact">
+  <a href="./monacode-h1r-native-boundary-manifest.json">打开 monacode-h1r-native-boundary-manifest.json</a><br>
+  文件 SHA-256（含结尾 LF）：<code>b4da93f958462af3215a82c020bba98e6aab02bbdfe6a705b21de5f34dbf825c</code>。<br>
+  JSON 固定 3 个 products、3 个 AppKit views、4 个 SwiftUI wrappers/controllers、7 组 host contracts、4 态 workspace state machine 与完整 failure-injection list。<br>
+  <code>productStatus</code> 全部为 0；本页不声称 package、protocol 或 fixture 已实现。
+</div></div>
+
+<div class="source"><b>事实索引：</b>锁定 standaloneEditor.js 的 create/createDiff/createMultiDiff 都先调用同一个 StandaloneServices.initialize；standaloneServices.js 明确 only first override takes effect，后续 initialize 直接返回同一 instantiation service；registerLinkOpener 与 registerEditorOpener 使用全局服务，最后注册先尝试。锁定 LSP 3.18 FailureHandlingKind：abort 保留失败前操作；transactional 全有或全无；textOnlyTransactional 遇 resource operation 时整批使用 abort；undo 明确不保证成功。H1-R 的具体 Swift protocol spelling、prepared-host transaction 与 wrapper lifecycle 是 MonaCode 冻结的 native API 设计，当前没有实现结果。</div>
+
+<div class="section"><div class="decision" data-choice="accept-h1r"><h4>H1-R 作为全局合同输入</h4><span>冻结原生 package 与宿主边界；继续攻击后再提交全量范围。</span></div></div>

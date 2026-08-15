@@ -1,0 +1,83 @@
+<style>
+  :root{--ok:#059669;--warn:#d97706;--bad:#dc2626;--blue:#2563eb;--violet:#7c3aed;--cyan:#0891b2}
+  .hero{display:flex;gap:13px;align-items:flex-start;padding:14px;border:1px solid var(--ok);border-radius:14px;background:color-mix(in srgb,var(--ok) 6%,var(--surface));margin:12px 0 15px}.mark{width:58px;height:58px;flex:0 0 58px;display:grid;place-items:center;border-radius:13px;background:var(--ok);color:#fff;font-weight:900}.hero h3{margin:0 0 5px;font-size:14px}.hero p{margin:0;color:var(--muted);font-size:8.4px;line-height:1.5}
+  .section{margin-top:15px}.section h3{margin:0 0 8px;font-size:12px}.hits{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.hit{padding:9px;border:1px solid var(--warn);border-radius:10px;background:var(--surface)}.hit b{display:block;font-size:8.4px;margin-bottom:3px}.hit span{display:block;color:var(--muted);font-size:7px;line-height:1.43}.hit em{font-style:normal;color:#b45309;font-weight:800}
+  .baseline{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.base{padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}.base h4{margin:0 0 4px;font-size:8.8px}.base p{margin:0;color:var(--muted);font-size:6.8px;line-height:1.48}
+  .matrix{border:1px solid var(--border);border-radius:11px;overflow:hidden}.row{display:grid;grid-template-columns:.56fr 1.15fr 1.5fr 1.15fr;border-top:1px solid var(--border)}.row:first-child{border-top:0;font-weight:800;background:color-mix(in srgb,var(--accent) 6%,var(--surface))}.cell{padding:6px 8px;border-left:1px solid var(--border);font-size:6.85px;line-height:1.43}.cell:first-child{border-left:0}.yes{color:#047857;font-weight:750}.fail{color:#b91c1c;font-weight:750}
+  .flow{display:grid;grid-template-columns:1fr 20px 1fr 20px 1fr 20px 1fr;gap:4px;align-items:stretch;padding:11px;border:1px solid var(--border);border-radius:11px;background:var(--surface)}.node{padding:8px;border:1px solid var(--border);border-radius:9px;font-size:7px;line-height:1.42}.node b{display:block;font-size:8.2px}.arrow{display:grid;place-items:center;color:var(--muted);font-size:14px}.blue{border-color:var(--blue)}.violet{border-color:var(--violet)}.green{border-color:var(--ok)}
+  .cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.card{padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}.card h4{margin:0 0 5px;font-size:9px}.card ul{margin:0 0 0 14px;padding:0;font-size:7px;line-height:1.5}.statement{padding:11px;border:2px solid var(--violet);border-radius:11px;background:color-mix(in srgb,var(--violet) 5%,var(--surface));font-size:7.5px;line-height:1.52}.statement b{font-size:9px}.source{margin-top:12px;padding:9px 10px;border-left:3px solid var(--blue);background:color-mix(in srgb,var(--blue) 5%,var(--surface));color:var(--muted);font-size:7px;line-height:1.48}
+  @media(max-width:980px){.hits,.baseline{grid-template-columns:1fr 1fr}.cards{grid-template-columns:1fr}.row{grid-template-columns:.48fr 1fr 1fr 1fr}.cell{padding:5px 4px;font-size:6.25px}}
+</style>
+
+<h2>验收协议第六轮攻击：Q1-R 可证伪合同</h2>
+<p class="subtitle">“不比 Monaco 差”不再是口号：正确性要求零差异；性能要求每个共同定义的独立成本指标，其 Mona/Monaco 配对比值 95% 置信区间上界不超过 1.00。</p>
+
+<div class="hero"><div class="mark">Q1-R</div><div><h3>同一输入、同一机器、同一合成画面观察器、逐指标 non-inferiority</h3><p>不使用综合分、平均帧率或内部埋点互相比。外部控制器向两个产品注入相同事件，并用 ScreenCaptureKit 识别首个包含预期像素状态的合成帧；RSS/CPU/energy 对完整进程树聚合。</p></div></div>
+
+<div class="section"><h3>本轮命中的八个反例</h3><div class="hits">
+  <div class="hit"><b>01 · 有限 benchmark 证明所有场景更快</b><span>有限样本不能推出所有文档、设备和操作上的普遍序关系。<em>发布声明只覆盖固定 baseline、完整 workload manifest 与已证明的复杂度上界。</em></span></div>
+  <div class="hit"><b>02 · JS rAF 对比 Metal completion</b><span>两者不是同一时间点；command buffer completion 也不等于屏幕呈现。<em>共同 oracle 固定为 CGEvent 时间戳到 ScreenCaptureKit 首个目标合成帧。</em></span></div>
+  <div class="hit"><b>03 · 只看平均 FPS</b><span>平均值隐藏尾延迟与掉帧。<em>60 Hz / 120 Hz 分开记录 input-to-present、missed presentation、p50/p95/p99。</em></span></div>
+  <div class="hit"><b>04 · Chrome 只量 renderer PID</b><span>Monaco 还消耗 browser、GPU、utility 与 worker 进程。<em>Chrome dedicated process tree 全量聚合；Mona sample app 及其 helper/LSP 全量聚合。</em></span></div>
+  <div class="hit"><b>05 · GPU memory 使用两套 API</b><span>MTLDevice.currentAllocatedSize 与 Chrome MemoryInfra 字段语义不同。<em>跨产品硬门槛使用 OS aggregate physical footprint/IOSurface categories；私有 allocator 数字只做 Mona 泄漏诊断。</em></span></div>
+  <div class="hit"><b>06 · 一项更快抵消另一项更慢</b><span>加权总分会掩盖退化。<em>每个 workload × metric × refresh-rate 都独立判定；任一失败即整节未通过。</em></span></div>
+  <div class="hit"><b>07 · 正确性只测正常 Unicode</b><span>Monaco model 接受孤立 surrogate，regex/CRLF/grapheme 也有独立规则。<em>raw UTF-16、阈值边界、异常协议、重入与取消全部纳入 differential。</em></span></div>
+  <div class="hit"><b>08 · 没有设备就把 gate 推迟</b><span>当前设备事实已取得，且本期只验 macOS。<em>baseline 固定当前 M4 Pro；iOS/iPadOS 不进入本期通过声明。</em></span></div>
+</div></div>
+
+<div class="section"><h3>Baseline revision Q1-2026-08-13</h3><div class="baseline">
+  <div class="base"><h4>Hardware / OS</h4><p>Apple M4 Pro · 48 GB · arm64<br>macOS 26.6 build 25G72<br>AC power · thermalState=nominal 才收样</p></div>
+  <div class="base"><h4>Toolchain</h4><p>Xcode 26.6 build 17F113<br>macOS SDK 26.5<br>Swift 6.3.3 · release optimized build</p></div>
+  <div class="base"><h4>Monaco oracle</h4><p>monaco-editor 0.56.0<br>tag 13f0c872dcf352815cc28d92dfff496c9839ea5c<br>npm tar SHA-256 b74bc4437…fb7412</p></div>
+  <div class="base"><h4>Browser / displays</h4><p>Chrome 151.0.7922.109 · V8 15.1.206.16<br>binary SHA-256 ca6036a1…2408c<br>3008×1692 @60 Hz；1728×1117 @120 Hz</p></div>
+</div></div>
+
+<div class="section"><h3>Correctness gates：任何一处 mismatch 都失败</h3><div class="matrix">
+  <div class="row"><div class="cell">ID</div><div class="cell">范围</div><div class="cell">固定工作量</div><div class="cell">通过条件</div></div>
+  <div class="row"><div class="cell"><b>C01</b></div><div class="cell">ITextModel / Piece Tree</div><div class="cell">0.56 editor model/piece-tree tests；256 个 seed × 10,000 edit/undo/EOL/decoration/search ops；base seed 0x4D4F4E41434F4445</div><div class="cell yes">raw units、positions、versions、events、undo、decorations 全等</div></div>
+  <div class="row"><div class="cell"><b>C02</b></div><div class="cell">ECMAScript regex</div><div class="cell">Chrome 151 /gimu differential；Test262 commit 3655e7464de3d52643ecddd4b5f9f4f3e7f62398 的 RegExp execution/replacement vectors</div><div class="cell yes">match ranges、captures、lastIndex、replacement output unit-for-unit 全等</div></div>
+  <div class="row"><div class="cell"><b>C03</b></div><div class="cell">Projection / geometry</div><div class="cell">ASCII、CRLF、CJK、Arabic/bidi、combining、emoji ZWJ/RI、tabs、injected text、fold、zones、1M-unit line、孤立 surrogate</div><div class="cell yes">wrap rows、model↔view、hit/caret/selection、scroll extents 零语义差异</div></div>
+  <div class="row"><div class="cell"><b>C04</b></div><div class="cell">Editor registries/API</div><div class="cell">64 entrypoint dispositions；source 167 actions/127 pure-text/454 commands → native 166/126/453；53 contributions、379 keybindings、18 menus/121 items；main 19 / editor 68 / languages 57 dispositions；MultiDiff</div><div class="cell yes">retained ID/entry 集合、enabled state、API result/events、focus 与 view state 全等；唯一 action/command cut 在 Swift 中不存在</div></div>
+  <div class="row"><div class="cell"><b>C05</b></div><div class="cell">Options / Diff</div><div class="cell">174 option dispositions；158 retained 更新值 × invalid/clamp/default；6 computed-only；22+7 Diff options；legacy/advanced diff corpus</div><div class="cell yes">retained behavior/event 全等；10 cuts 无 Swift symbol；Diff mappings/moves/timeout 全等</div></div>
+  <div class="row"><div class="cell"><b>C06</b></div><div class="cell">Language / LSP</div><div class="cell">direct fixture 30 面；in-memory LSP 3.18 fixture 25 面；selector ordering、dynamic registration、resolve/release、restart、out-of-order</div><div class="cell yes">registry order、UI result、R1 transaction、dispose/cancel 全等</div></div>
+  <div class="row"><div class="cell"><b>C07</b></div><div class="cell">Native input / AX</div><div class="cell">当前 ABC 与简体拼音输入源；marked text、candidate、undo、multi-cursor、drag/drop；VoiceOver range/value/frame/action；dictation path</div><div class="cell yes">I3-R/I4-R trace 无非法状态；最终 model/selection/AX observation 符合合同</div></div>
+  <div class="row"><div class="cell"><b>C08</b></div><div class="cell">CG / Metal parity</div><div class="cell">相同 CTLine records、所有 scale/subpixel phase、atlas rollover/generation、color glyph、fallback；CG 是 reference</div><div class="cell yes">geometry/coverage 同源；linear-premultiplied RGBA 每通道差 ≤1/255</div></div>
+</div></div>
+
+<div class="section"><h3>Performance workloads：每项同时跑 Monaco 与 Mona</h3><div class="matrix">
+  <div class="row"><div class="cell">ID</div><div class="cell">场景</div><div class="cell">固定参数</div><div class="cell">独立成本指标</div></div>
+  <div class="row"><div class="cell"><b>P00</b></div><div class="cell">cold startup</div><div class="cell">fresh process/profile，pure-text 1 MiB / 100K lines，首个可输入且首帧完整</div><div class="cell">startup、first-present、CPU、peak footprint、energy</div></div>
+  <div class="row"><div class="cell"><b>P01</b></div><div class="cell">model load</div><div class="cell">1 MiB/100K lines 与 100 MiB/1M lines；LF/CRLF 各一；raw UTF-16 family matrix</div><div class="cell">create/open latency、CPU、peak/quiescent footprint</div></div>
+  <div class="row"><div class="cell"><b>P02</b></div><div class="cell">typing / undo</div><div class="cell">1 MiB model；10,000 ABC actions；insert/delete/newline/undo/redo 固定 trace</div><div class="cell">event→model、input→present p50/p95/p99、CPU、footprint</div></div>
+  <div class="row"><div class="cell"><b>P03</b></div><div class="cell">batch edits</div><div class="cell">1、100、10,000 non-overlap edits；prepare/commit 分开；同一 inverse workload</div><div class="cell">prepare、commit、event drain、snapshot、undo latency</div></div>
+  <div class="row"><div class="cell"><b>P04</b></div><div class="cell">vertical scroll</div><div class="cell">100 MiB/1M lines；60 Hz 与 120 Hz 各 ≥10,000 injected wheel/display intervals</div><div class="cell">input→present、missed presentation、CPU/GPU time、energy、footprint</div></div>
+  <div class="row"><div class="cell"><b>P05</b></div><div class="cell">long line</div><div class="cell">1M UTF-16 units；horizontal sweep；stopRenderingLineAfter=10,000 与 -1</div><div class="cell">layout/present/hit-test p99、CPU、peak footprint、hang count</div></div>
+  <div class="row"><div class="cell"><b>P06</b></div><div class="cell">wrap / resize</div><div class="cell">100K mixed-script lines；width 320/768/1440 pt 循环 10,000 次；fold/inlay/variable-height matrix</div><div class="cell">projection/layout/present tail latency、miss count、CPU</div></div>
+  <div class="row"><div class="cell"><b>P07</b></div><div class="cell">decorations</div><div class="cell">100K model decorations；每 action 更新 10K visible/offscreen mixed ranges</div><div class="cell">transform/query/render p50/p95/p99、CPU、footprint</div></div>
+  <div class="row"><div class="cell"><b>P08</b></div><div class="cell">find / replace</div><div class="cell">10 MiB；literal、/gimu、zero-length、capture replace；match density 0/0.1/10/1000 per KiB</div><div class="cell">first/all result、replace commit、CPU、peak footprint</div></div>
+  <div class="row"><div class="cell"><b>P09</b></div><div class="cell">multicursor</div><div class="cell">1、100、10,000 cursors；type/paste/delete/undo；overlap merge on/off</div><div class="cell">action→commit/present、CPU、footprint</div></div>
+  <div class="row"><div class="cell"><b>P10</b></div><div class="cell">Diff / MultiDiff</div><div class="cell">single：1/10/50 MiB、1/10/30% changes、legacy/advanced；multi：1/10/100 items、每项 1 MiB、逐项折叠/滚动</div><div class="cell">compute、first-present、virtualized scroll/state、CPU、peak footprint</div></div>
+  <div class="row"><div class="cell"><b>P11</b></div><div class="cell">Provider / LSP</div><div class="cell">30 direct surfaces、25 protocol mappings；0/1/10K results；cancel/stale/resolve；transport delay fixed at 0/10/100 ms</div><div class="cell">adapter overhead 排除注入延迟后计时；UI present、CPU、footprint</div></div>
+  <div class="row"><div class="cell"><b>P12</b></div><div class="cell">shared model</div><div class="cell">一个 10 MiB model、4 editors、独立 wrap/fold/selection/scroll；10K interleaved actions</div><div class="cell">commit fanout、present tail、CPU、peak/quiescent footprint</div></div>
+  <div class="row"><div class="cell"><b>P13</b></div><div class="cell">IME / AX query</div><div class="cell">ABC/拼音 marked-text traces；10K small AX ranges；100 full-document AX queries；VoiceOver on/off 分组</div><div class="cell">callback latency、input→present、CPU、miss count、footprint</div></div>
+</div></div>
+
+<div class="section"><h3>共同测量链与统计判定</h3><div class="flow">
+  <div class="node blue"><b>External controller</b>固定 CGEvent trace；mach continuous clock；目标窗口/显示/像素 marker</div><div class="arrow">›</div>
+  <div class="node violet"><b>Product under test</b>dedicated fresh process tree；本地资源；无其他 tab/extension/network</div><div class="arrow">›</div>
+  <div class="node green"><b>OS observation</b>ScreenCaptureKit composed frame；xctrace Animation Hitches/Power；footprint/process CPU tree</div><div class="arrow">›</div>
+  <div class="node blue"><b>Paired verdict</b>AB/BA；ratio bootstrap；每 metric 独立 pass/fail；artifact manifest 签名</div>
+</div></div>
+
+<div class="section"><h3>采样、可靠性与失败语义</h3><div class="cards">
+  <div class="card"><h4>Statistical gate</h4><ul><li>cold：50 fresh-process/profile pairs</li><li>hot：30 AB/BA alternating pairs；每产品每 pair ≥10,000 frames/actions</li><li>resource：30 pairs；start/end thermalState 必须 nominal</li><li>每 paired-run 先算 cost/p50/p95/p99，再对 ratio 做 10,000 次 bootstrap</li><li>lower-is-better 的 95% CI 上界 ≤1.00；throughput 先转单位工作成本</li></ul></div>
+  <div class="card"><h4>Zero / invalid handling</h4><ul><li>Monaco 离散基线为 0：Mona 每个有效样本也必须为 0</li><li>样本不足、manifest 不同、thermal 非 nominal：整 pair 作废并重跑</li><li>CI 跨 1、任一独立 metric 落后、正确性 mismatch：该 section 未通过</li><li>不删除 outlier；保留原始 trace</li><li>refresh、版本或 corpus 改动创建新 baseline revision</li></ul></div>
+  <div class="card"><h4>Reliability gate</h4><ul><li>1,000 create/attach/detach/dispose cycles，Mona weak tracker 回到 warm baseline</li><li>24h mixed P02–P13 soak；quiescent live allocations 不超过已声明 cache bounds</li><li>Leaks：0 definite leaks；Main Thread Checker：0；Metal validation：0</li><li>ASan、TSan、UBSan 分开全套运行：0 finding</li><li>crash、hang、data loss、half-committed transaction：0</li></ul></div>
+  <div class="card"><h4>Failure injection</h4><ul><li>allocator denial、memory pressure、Core Text NULL、Metal allocation/present failure</li><li>LSP malformed/oversize frame、disconnect、restart、late response、duplicate id</li><li>provider throw/cancel/reenter/late release；host opener/workspace rejection</li><li>IME reentrancy、folded composition、editor disposal during callback</li><li>每次都验证 typed failure、R1 rollback/drop 与 model invariants</li></ul></div>
+  <div class="card"><h4>Complexity gate</h4><ul><li>Piece Tree edit/search/offset 与 decoration interval operations 保持 Monaco 同阶上界</li><li>projection/vertical prefix query 不做 document-wide viewport hot-path scan</li><li>visible rendering 与 viewport rows/changed dependencies 成正比</li><li>每项用 operation counters 验证增长曲线，不用 wall-time 代替复杂度</li><li>检测到更差阶数即失败，不等待大文件耗时回归</li></ul></div>
+  <div class="card"><h4>Current status</h4><ul><li>仓库没有 MonaCode 可执行实现</li><li>C01–C08、P00–P13、reliability、failure injection 全部未执行</li><li>因此当前正确性与性能状态统一为“未通过”</li><li>screen/controller permissions 尚未授予时，外部 presentation gate 保持未通过</li><li>设计闭环不改变任何 empirical status</li></ul></div>
+</div></div>
+
+<div class="section"><div class="statement"><b>唯一允许的发布结论</b><br>“MonaCode revision X 在 Q1-2026-08-13 baseline、Q1-R corpus 与全部 retained surface 上通过零差异 conformance；在 P00–P13 每个共同成本指标上，配对 Mona/Monaco ratio 的 95% CI 上界均 ≤1.00；核心操作复杂度不高于 Monaco 0.56.0。”<br><br>禁止改写成“在所有 Apple 设备、所有输入和所有文档上都快于 Monaco”；有限测试无法证明该全称命题。</div></div>
+
+<div class="source"><b>事实索引：</b>当前设备与工具链数值来自本机 `system_profiler`、`sw_vers`、Xcode/Swift 命令；Chrome/V8 与 Monaco package/tag/hash 已在本轮固定；当前启用输入源为 ABC 与 `com.apple.inputmethod.SCIM.ITABC`；Xcode 26.6 提供 Animation Hitches、Game Memory、Game Performance、Metal System Trace、Power Profiler、Allocations、Leaks 模板，并接受 address/thread/undefined sanitizer；Test262 HEAD 已固定为 3655e7464de3d52643ecddd4b5f9f4f3e7f62398。</div>

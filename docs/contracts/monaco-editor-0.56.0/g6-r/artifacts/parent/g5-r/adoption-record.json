@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "product": "MonaCode",
+  "decision": "adopted",
+  "adoptedOn": "2026-08-15",
+  "behaviorBaseline": "monaco-editor@0.56.0",
+  "promotedRevision": "G5-R-full-scope-final",
+  "contract": {
+    "path": "artifacts/monacode-g5r-authoritative-manifest.json",
+    "artifactRevision": "G5-R-full-scope-candidate",
+    "sha256": "b8f9b31f739d2b5587b3bef1699786cef465af3f7173a1c413d276772c81f94f",
+    "bytesAreImmutable": true
+  },
+  "plan": {
+    "path": "artifacts/monacode-g5r-implementation-plan-manifest.json",
+    "planRevision": "G5-R-full-scope-plan-candidate",
+    "sha256": "114979c5faf1369d1f74a8a3905981c1cbef85b9dd93b6a12f8fc48460e64b5c",
+    "acceptedState": "structurally-verified"
+  },
+  "humanReadableCompanion": {
+    "path": "artifacts/global-g5r-authoritative-contract.html",
+    "sha256": "43bdbab55322db98683b6aa42ac4b4296a4c2384740911bcd7db8e3c8931fbb5",
+    "normative": false
+  },
+  "globalAudit": {
+    "path": "artifacts/monacode-g5r-audit.mjs",
+    "sha256": "dbfb37f8f9863e84a3d780c6b53a2c5a440106f84af9123543b9a05e7847fb4d",
+    "acceptedStatus": "pass",
+    "acceptedFailureCount": 0,
+    "acceptedUnresolvedScopeDecisions": 0,
+    "acceptedUnresolvedPlanFindings": 0
+  },
+  "planAudit": {
+    "path": "implementation-plan/verification/plan-audit.json",
+    "sha256": "78e7bcd33f53fd888a56d69357ded5d2c86bade11f76f3be4f3cc58a670474d0",
+    "acceptedStatus": "pass",
+    "acceptedFindingCount": 0
+  },
+  "adversarialReview": {
+    "path": "implementation-plan/verification/adversarial-plan-review.md",
+    "sha256": "04e9f1af6b3c6127654bdae69b41c8667fe788fb0e3be97efd9cd42fbac61c90",
+    "acceptedRounds": 3,
+    "acceptedAttacks": 53,
+    "acceptedMissed": 0,
+    "acceptedUnresolvedFindings": 0
+  },
+  "archive": {
+    "checksumIndex": "SHA256SUMS",
+    "indexedFileCount": 144
+  },
+  "status": {
+    "designScope": "frozen",
+    "implementationPlan": "structurally-verified",
+    "implementation": "not-started",
+    "releaseAcceptance": "not-passed"
+  }
+}

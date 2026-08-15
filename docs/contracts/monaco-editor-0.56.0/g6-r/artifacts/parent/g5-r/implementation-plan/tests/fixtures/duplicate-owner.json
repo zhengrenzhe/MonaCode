@@ -1,0 +1,9 @@
+{
+  "mutation": "add-implementation-owner",
+  "kind": "feature",
+  "id": "anchorSelect",
+  "owner": "P00-T002",
+  "expectedFindingIds": [
+    "PLAN_DUPLICATE_IMPLEMENTATION_OWNER"
+  ]
+}

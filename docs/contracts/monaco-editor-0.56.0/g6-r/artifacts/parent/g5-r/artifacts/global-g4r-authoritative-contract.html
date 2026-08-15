@@ -1,0 +1,94 @@
+<style>
+  :root{--ok:#059669;--warn:#d97706;--bad:#dc2626;--blue:#2563eb;--violet:#7c3aed;--cyan:#0891b2}
+  .hero{display:flex;gap:14px;align-items:flex-start;padding:15px;border:2px solid var(--ok);border-radius:14px;background:color-mix(in srgb,var(--ok) 6%,var(--surface));margin:12px 0 15px}.mark{width:72px;height:72px;flex:0 0 72px;display:grid;place-items:center;border-radius:14px;background:var(--ok);color:#fff;font-size:16px;font-weight:900}.hero h3{margin:0 0 5px;font-size:15px}.hero p{margin:0;color:var(--muted);font-size:8.2px;line-height:1.52}
+  .section{margin-top:16px}.section h3{margin:0 0 8px;font-size:12px}.counts{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:7px}.count{padding:9px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}.count strong{display:block;font-size:18px;color:var(--blue)}.count b{display:block;font-size:7.7px;margin:2px 0}.count span{font-size:6.4px;color:var(--muted);line-height:1.4}
+  .flow{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}.node{padding:9px;border:1px solid var(--border);border-radius:9px;background:var(--surface);font-size:6.5px;line-height:1.42}.node b{display:block;color:var(--blue);font-size:7.8px;margin-bottom:3px}.node.green{border-color:var(--ok)}.node.violet{border-color:var(--violet)}.node.cyan{border-color:var(--cyan)}
+  .matrix{border:1px solid var(--border);border-radius:11px;overflow:hidden}.row{display:grid;grid-template-columns:.58fr 1.15fr 2fr 1.05fr;border-top:1px solid var(--border)}.row:first-child{border-top:0;font-weight:800;background:color-mix(in srgb,var(--accent) 6%,var(--surface))}.cell{padding:7px 8px;border-left:1px solid var(--border);font-size:6.7px;line-height:1.45}.cell:first-child{border-left:0}.yes{color:#047857;font-weight:750}.no{color:#b91c1c;font-weight:750}.later{color:#7c3aed;font-weight:750}
+  .cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.card{padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}.card h4{margin:0 0 5px;font-size:8.7px}.card ul{margin:0 0 0 14px;padding:0;font-size:6.7px;line-height:1.5}.artifact{padding:11px;border:1px solid var(--blue);border-radius:11px;background:color-mix(in srgb,var(--blue) 5%,var(--surface));font-size:7px;line-height:1.52}.artifact code{font-size:6.25px;word-break:break-all}.artifact a{font-weight:800;color:var(--blue)}.statement{padding:12px;border:2px solid var(--violet);border-radius:12px;background:color-mix(in srgb,var(--violet) 5%,var(--surface));font-size:7.4px;line-height:1.55}.source{margin-top:12px;padding:9px 10px;border-left:3px solid var(--blue);background:color-mix(in srgb,var(--blue) 5%,var(--surface));color:var(--muted);font-size:6.8px;line-height:1.5}
+  @media(max-width:1120px){.counts{grid-template-columns:repeat(3,1fr)}.flow{grid-template-columns:repeat(2,1fr)}.cards{grid-template-columns:1fr 1fr}.row{grid-template-columns:.5fr .9fr 1.35fr .8fr}.cell{padding:5px 4px;font-size:6.05px}}
+</style>
+
+<h2>MonaCode G4-R：全量功能范围唯一合同</h2>
+<p class="subtitle">G4-R 取代 G1/G2/G3。它冻结 macOS 首期全部功能、裁剪、原生适配、架构、宿主边界与验收门槛；不把设计收敛写成实现通过。</p>
+
+<div class="hero"><div class="mark">G4-R</div><div><h3>范围已闭包，实证状态仍是 not-passed</h3><p>本页是非规范可视化，唯一全局规范为哈希校验后的 G4 JSON。机器审计结果：42 个规范层、17 个机器工件、1 个可复跑验证器、60 个本地 hash reference、555 条 public declaration、10 个 correctness gates、14 个 performance workloads、7 个 candidate artifacts，failure=0；unresolved scope decision=0。总预检 non-historical error=0，两个精确 G3 历史 hash 例外已封闭登记。仓库产品源码=0、可执行文件=0、候选工件=0、通过 gate=0。</p></div></div>
+
+<div class="section"><h3>最终可数范围</h3><div class="counts">
+  <div class="count"><strong>555</strong><b>public paths</b><span>434 retained / 121 cut；13 个 explicit member cuts。</span></div>
+  <div class="count"><strong>64</strong><b>features</b><span>62 macOS / 1 later iPadOS / 1 WebGPU cut。</span></div>
+  <div class="count"><strong>73 / 70</strong><b>ITextModel</b><span>declarations / unique members；cut=0。</span></div>
+  <div class="count"><strong>30</strong><b>language surfaces</b><span>25 LSP-backed / 5 direct-only；内置实现=0。</span></div>
+  <div class="count"><strong>2120 / 15</strong><b>UI localization</b><span>message identities / profiles；与代码语言包 0 相互独立。</span></div>
+  <div class="count"><strong>2 / 11</strong><b>Markdown</b><span>public paths / consumer fields；6 members retained / 1 cut。</span></div>
+  <div class="count"><strong>956 / 98</strong><b>runtime source</b><span>reachable JS / imported CSS；6275 edges，84 globals。</span></div>
+  <div class="count"><strong>2112 / 38</strong><b>package closure</b><span>core files / unreachable vs JS exclusion rows。</span></div>
+  <div class="count"><strong>3099</strong><b>visual mutation overlay</b><span>217 files；static CSS 之外的 runtime omission detector。</span></div>
+  <div class="count"><strong>40 / 40</strong><b>standalone services</b><span>全部 disposition；dialog sites=4。</span></div>
+  <div class="count"><strong>39 / 0</strong><b>snippet</b><span>variables / bundled catalogs；grammar/session 全保留。</span></div>
+  <div class="count"><strong>2 / 2</strong><b>diff algorithms</b><span>functional / fixed unavailable；cache max=11。</span></div>
+  <div class="count"><strong>7 / 10</strong><b>host boundary</b><span>groups / concrete types；双 opener registry。</span></div>
+  <div class="count"><strong>10 / 14</strong><b>acceptance</b><span>C01–C10 / P00–P13；双基线。</span></div>
+</div></div>
+
+<div class="section"><h3>唯一生产数据流</h3><div class="flow">
+  <div class="node green"><b>Raw UTF-16 Piece Tree</b>MainActor live truth；73/70 model API 全保留。</div>
+  <div class="node"><b>Transaction gateway</b>prepare → validate → atomic apply → deterministic events。</div>
+  <div class="node cyan"><b>ViewGraph</b>fold、wrap、injected、zones 与 vertical indexes。</div>
+  <div class="node"><b>Core Text</b>唯一 shaping / layout / hit-test authority。</div>
+  <div class="node green"><b>Core Graphics</b>首个完整 renderer；先过正确性和性能。</div>
+  <div class="node violet"><b>Conditional Metal</b>只有 renderer-owned gate 失败后实施；共享 LineLayoutRecord。</div>
+  <div class="node"><b>AppKit surface</b>NSView + NSTextInputClient + AX；SwiftUI 只管生命周期。</div>
+</div></div>
+
+<div class="section"><h3>功能处置与等价边界</h3><div class="matrix">
+  <div class="row"><div class="cell">域</div><div class="cell">最终处置</div><div class="cell">硬合同</div><div class="cell">验收</div></div>
+  <div class="row"><div class="cell"><b>Text model</b></div><div class="cell">全面保留</div><div class="cell">raw UTF-16、Piece Tree、search/snapshot、undo/deco/event、large-model flags；同步语义无自定义 timeout。</div><div class="cell yes">C01 exact</div></div>
+  <div class="row"><div class="cell"><b>RegExp / Unicode</b></div><div class="cell">Swift 自研</div><div class="cell">10 个 consumer profiles、8 flags、11 retained fields、6 Unicode profiles；V8/ICU 只作 oracle；CLOCK_REALTIME integer ms。</div><div class="cell yes">C02/C06/C10/P08</div></div>
+  <div class="row"><div class="cell"><b>Environment</b></div><div class="cell">Swift finite profiles</div><div class="cell">case/collation/normalization、Intl、binary64、wall clock 与 mach_absolute_time 两域、timer/microtask/entropy 均按 E1/X1 source rows 固定；无通用 JS/ICU runtime。</div><div class="cell yes">C02/C04/C05/C10</div></div>
+  <div class="row"><div class="cell"><b>Source / style</b></div><div class="cell">闭世界 exact-by-default</div><div class="cell">2112-file package inventory；956 JS + 98 CSS runtime closure；38 package exclusions；3099 runtime visual rows；14 implicit external effects；17 unprovided CSS vars 保持 inactive。</div><div class="cell yes">C02/C04/C05/C07/C10</div></div>
+  <div class="row"><div class="cell"><b>Rendering</b></div><div class="cell">Core Text + CG-first</div><div class="cell">native geometry domain；CG golden；Metal 由固定 trigger 决定，不是自由选项；TextKit production backend 已裁。</div><div class="cell yes">C03/C08 + P cells</div></div>
+  <div class="row"><div class="cell"><b>Language</b></div><div class="cell">架构全保留，内容全裁</div><div class="cell">30 registry surfaces、LSP 3.18、direct provider、host byte transport、plain text；无 Monarch/Tree-sitter/pack/server。</div><div class="cell yes">C06</div></div>
+  <div class="row"><div class="cell"><b>UI localization</b></div><div class="cell">全部保留</div><div class="cell">2120 message identities、English + 13 packaged + pseudo；pt-br 逐项回退 English；环境初始化后不可变。</div><div class="cell yes">C04/C07/C10</div></div>
+  <div class="row"><div class="cell"><b>Markdown</b></div><div class="cell">非 HTML GFM 保留</div><div class="cell">Marked 14 Swift port → native semantic tree；trust/command/baseUri/icons/code blocks 保留；supportHtml 与媒体字节加载显式裁剪。</div><div class="cell yes">C04–C07/C10/P11</div></div>
+  <div class="row"><div class="cell"><b>Services</b></div><div class="cell">40/40 固定</div><div class="cell">process-memory session state、4 个 AppKit dialog traces；notification/progress/telemetry/signal outputs 按 S1 固定 cut/no-op；不新增 storage host。</div><div class="cell yes">C04/C07/C09/C10</div></div>
+  <div class="row"><div class="cell"><b>Snippet</b></div><div class="cell">引擎保留，catalog=0</div><div class="cell">11 classes、15 tokens、39 variables、7 resolver positions、transform 与 multi-cursor session exact；内容来自 direct/LSP/editor API。</div><div class="cell yes">C02/C04/C05/C09/P09</div></div>
+  <div class="row"><div class="cell"><b>Diff</b></div><div class="cell">2 native + 2 unavailable</div><div class="cell">legacy/advanced Swift ports；external/WASM 保持官方包 unavailable；line=1700、char=500、process cache observable max=11。</div><div class="cell yes">C02/C04/C05/C09/C10/P10</div></div>
+  <div class="row"><div class="cell"><b>Input / AX</b></div><div class="cell">AppKit 原生适配</div><div class="cell">NSTextInputClient、IME、keybinding、pointer/scroll、clipboard/DnD、VoiceOver、native widgets 与 focus。</div><div class="cell yes">C07</div></div>
+  <div class="row"><div class="cell"><b>Embedding</b></div><div class="cell">3 products / 3 views / 4 wrappers</div><div class="cell">7 host groups、10 types；8 process-global / 7 per-editor / 3 initial-model states；no implicit external open。</div><div class="cell yes">C09</div></div>
+  <div class="row"><div class="cell"><b>Mobile</b></div><div class="cell">本期不存在</div><div class="cell">iOS/iPadOS、touch、software keyboard 与 device baselines 必须进入新的全局 revision。</div><div class="cell later">Later</div></div>
+</div></div>
+
+<div class="section"><h3>对抗收敛后的确定修正</h3><div class="cards">
+  <div class="card"><h4>Authority / privacy</h4><ul><li>G3 保持历史只读；2 个精确 stale hash 例外</li><li>correctness 8 → 10</li><li>42 layers / 17 manifests / 60 refs</li><li>QEnvironment 禁止 serial/UUID/UDID</li></ul></div>
+  <div class="card"><h4>Type / RegExp / NLS / Markdown</h4><ul><li>direct mapping 最终 407</li><li>explicit member cuts 最终 13</li><li>C02 覆盖 10 RegExp profiles</li><li>NLS 2120/15；Markdown 2 paths/11 consumers</li></ul></div>
+  <div class="card"><h4>Environment / source graph</h4><ul><li>1054 修正为 956 JS + 98 CSS</li><li>13 high-res StopWatch + input latency recorder</li><li>model raw UTF-16 与 decoder replacement 分层</li><li>package=2112 files；38 unreachable exclusions</li></ul></div>
+  <div class="card"><h4>Native style / effects</h4><ul><li>1281 static rules + 3099 runtime overlay</li><li>257 vars；17 unprovided / 48 inactive</li><li>14 implicit external-effect sites</li><li>URI visual producers=0；host groups 仍为 7</li></ul></div>
+  <div class="card"><h4>Registry reconciliation</h4><ul><li>432 registerColor sites = 431 IDs + 1 forwarder</li><li>37 registerIcon sites 不等于 776 registry IDs</li><li>Codicon 是 core package 唯一 runtime asset</li><li>WASM package files=0</li></ul></div>
+  <div class="card"><h4>Services / snippet / diff</h4><ul><li>standalone defaults 40/40</li><li>snippet variables 39 / catalogs 0</li><li>diff functional 2 / unavailable 2</li><li>diff cache max 从注释 10 修正为代码可见 11</li></ul></div>
+  <div class="card"><h4>Host closure</h4><ul><li>7 groups / 8 H1 types / 10 total types</li><li>link 与 code-editor opener 独立</li><li>MonaResourceOpener 不存在</li><li>默认 external open 为 unhandled</li></ul></div>
+  <div class="card"><h4>Claim boundary</h4><ul><li>deployment target 与 runtime qualification 分离</li><li>本期只验当前 macOS 26.6 build</li><li>iOS/iPadOS 不进入本期 verdict</li><li>设计 closed；implementation 仍 not-passed</li></ul></div>
+</div></div>
+
+<div class="section"><h3>七个实现后必须生成的工件</h3><div class="matrix">
+  <div class="row"><div class="cell">Artifact</div><div class="cell">生产者</div><div class="cell">阻断范围</div><div class="cell">当前</div></div>
+  <div class="row"><div class="cell"><b>Native declarations</b></div><div class="cell">symbol graph + mapper</div><div class="cell">434 retained、121 absent、native types/extensions 全分类；无 unclassified public symbol。</div><div class="cell no">absent</div></div>
+  <div class="row"><div class="cell"><b>RegExp / Unicode</b></div><div class="cell">linked engine/table scanner</div><div class="cell">engine、tables、Test262 dispositions、forbidden dependency absence。</div><div class="cell no">absent</div></div>
+  <div class="row"><div class="cell"><b>Environment</b></div><div class="cell">effect registry + table exporter</div><div class="cell">case/collation/normalization、clock、scheduler、entropy 与 source-effect rows；生成表输入和哈希。</div><div class="cell no">absent</div></div>
+  <div class="row"><div class="cell"><b>Source closure</b></div><div class="cell">symbol/module/effect/style exporters</div><div class="cell">956 reachable、38 package exclusions、98 styles、84 globals/8221 refs、3099 visual rows 与所有 platform effects。</div><div class="cell no">absent</div></div>
+  <div class="row"><div class="cell"><b>Cache</b></div><div class="cell">linked cache registry</div><div class="cell">每个 strong derived cache 的 bound/eviction/epoch/pressure/counter；24h plateau。</div><div class="cell no">absent</div></div>
+  <div class="row"><div class="cell"><b>Distribution</b></div><div class="cell">release scanner</div><div class="cell">products、binary、API、dylib、2120-message/15-profile resources、hash、Monaco MIT、LSP/Codicon CC、Unicode、Test262 notices。</div><div class="cell no">absent</div></div>
+  <div class="row"><div class="cell"><b>QEnvironment</b></div><div class="cell">privacy-filtered preflight</div><div class="cell">同 block OS/tool/display mode/font/input/permission/artifact；无持久设备标识。</div><div class="cell no">absent</div></div>
+</div></div>
+
+<div class="section"><h3>性能门槛不再有解释空间</h3><div class="statement"><b>每个 cell 都必须过：</b>对每个预注册 workload × metric × 60/120 Hz × M0/M1 baseline，native/comparator 的配对、单侧 95% basic-bootstrap 上界 ≤ 1.00。60 Hz 帧时限 16.666… ms，120 Hz 为 8.333… ms；刷新率只改变 deadline，不降低相对“不比原版差”的要求。P00 需 50 个有效 cold blocks，其余 hot/resource condition 需 30 个；attempt cap=2× required，不能删 outlier、补综合分或跳过缺失 cell。</div></div>
+
+<div class="section"><h3>机器可核对工件</h3><div class="artifact">
+  <a href="./monacode-g4r-authoritative-manifest.json">打开 monacode-g4r-authoritative-manifest.json</a><br>
+  文件 SHA-256（含结尾 LF）：<code>f4d0da0ff6c1ad90ab1376588260afd6c92c1eca236619449c9b6532b5e57021</code>。<br>
+  <a href="./monacode-g4r-audit.mjs">审计器</a> SHA-256：<code>5b37ec76ec3d381feb35bfb57d5457314b3c5dd60fd0e8b8271cb93e2ac88071</code>；结果：<code>pass / failureCount=0 / unresolvedScopeDecisions=0</code>。全范围预检：<code>pass / nonHistorical=0 / exact historical G3 exceptions=2</code>。<br>
+  关键修正页：<a href="./model-m1r3-regexp-unicode-provenance-closure.html">M1-R3</a> · <a href="./environment-e1r-intl-clock-entropy-closure.html">E1-R</a> · <a href="./source-x1r-runtime-style-closure.html">X1-R</a> · <a href="./features-f1r5-native-type-semantics-closure.html">F1-R5</a> · <a href="./localization-n1r-ui-message-closure.html">N1-R</a> · <a href="./markdown-md1r-native-security-closure.html">MD1-R</a> · <a href="./services-s1r-session-feedback-closure.html">S1-R</a> · <a href="./snippet-sn1r-engine-closure.html">SN1-R</a> · <a href="./diff-d1r-engine-closure.html">D1-R</a> · <a href="./host-h1r2-opener-count-closure.html">H1-R2</a> · <a href="./verification-q1r5-complete-acceptance-closure.html">Q1-R5</a>。
+</div></div>
+
+<div class="source"><b>事实边界：</b>G4 的 counts 来自 F1-R3/F1-R4/F1-R5、M1-R3、E1-R、X1-R、N1-R、MD1-R、S1-R、SN1-R、D1-R、A2-R2、H1-R/H1-R2、H2-R 与 Q1-R5 机器清单；当前环境来自本机 sw_vers、Xcode/SDK/Swift、system_profiler、display probe 与输入源配置。设计合同已闭包不等于产品达标：当前没有 Package.swift、Swift 产品源码、生成表、native parser/engine、七个候选 manifest、可执行物或任一验收结果。</div>
+
+<div class="section"><div class="decision" data-choice="accept-g4r"><h4>采纳 G4-R</h4><span>采纳后才按这份全量范围划分实现阶段；阶段无权改动功能、裁剪、架构或门槛。</span></div></div>

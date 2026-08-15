@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MonaCode G5-R authoritative contract</title>
+  <style>
+    :root { color-scheme: light dark; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+    body { max-width: 1040px; margin: 0 auto; padding: 40px 24px 80px; line-height: 1.55; }
+    h1, h2 { line-height: 1.2; }
+    .adopted { border: 1px solid #15803d; border-radius: 10px; padding: 14px 16px; background: color-mix(in srgb, #15803d 12%, transparent); }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border-bottom: 1px solid #8886; padding: 8px; text-align: left; vertical-align: top; }
+    code { font-family: ui-monospace, SFMono-Regular, monospace; }
+  </style>
+</head>
+<body>
+  <h1>MonaCode G5-R authoritative contract</h1>
+  <p class="adopted"><strong>Status:</strong> adopted. The design scope and complete implementation plan are frozen; product implementation has not started and release acceptance has not passed.</p>
+
+  <h2>Authority</h2>
+  <ol>
+    <li><code>adoption-record.json</code> selects the exact adopted G5-R bytes.</li>
+    <li><code>monacode-g5r-authoritative-manifest.json</code> is the normative product and acceptance contract.</li>
+    <li><code>monacode-g5r-implementation-plan-manifest.json</code> is the normative task, ownership, command, evidence, and dependency graph.</li>
+    <li>This HTML file is explanatory and never overrides either machine manifest.</li>
+  </ol>
+
+  <h2>Frozen product scope</h2>
+  <table>
+    <tr><th>Baseline</th><td><code>monaco-editor@0.56.0</code></td></tr>
+    <tr><th>Public declarations</th><td>555 total: 434 retained, 121 cut</td></tr>
+    <tr><th>Features</th><td>64 total: 62 retained for macOS, one later iPadOS entry, one WebGPU debug cut</td></tr>
+    <tr><th>Language infrastructure</th><td>30 provider surfaces; LSP 3.18 client architecture; zero bundled language implementations, grammar packs, snippet catalogs, or LSP servers</td></tr>
+    <tr><th>Acceptance</th><td>C01-C10, P00-P13, M0/M1, 60/120 Hz, and <code>native/comparator &lt;= 1.00</code> remain unchanged</td></tr>
+    <tr><th>Release target</th><td>arm64 macOS only; iOS and iPadOS are outside this release verdict</td></tr>
+  </table>
+
+  <h2>Architecture retained from G4-R</h2>
+  <ul>
+    <li>Raw UTF-16 Piece Tree model truth and MainActor live ownership.</li>
+    <li>Core Text shaping, layout, geometry, and hit testing.</li>
+    <li>A complete Core Graphics renderer first; Metal exists only if the Phase 03 renderer-owned gate fails, and parity closes before later phases.</li>
+    <li>Custom AppKit input, transfer, accessibility, and embedding; SwiftUI owns lifecycle wrappers only.</li>
+    <li>Foundation-only <code>MonaCode</code>, AppKit/Core Text/Core Graphics/conditional Metal in <code>MonaCodeAppKit</code>, and explicit dependencies for <code>MonaCodeSwiftUI</code>.</li>
+  </ul>
+
+  <h2>Qualified environment revision</h2>
+  <table>
+    <tr><th>macOS</th><td>26.6.1 build <code>25G76</code></td></tr>
+    <tr><th>Xcode / SDK / Swift</th><td>26.6 build <code>17F113</code> / SDK 26.5 / Swift 6.3.3</td></tr>
+    <tr><th>Hardware class</th><td>arm64 MacBook Pro, Apple M4 Pro, 20 GPU cores, 48 GiB, Metal 4</td></tr>
+    <tr><th>Built-in display</th><td>3456 x 2234 pixels, 1728 x 1117 logical points, 2x, 120 Hz</td></tr>
+    <tr><th>Chrome</th><td>151.0.7922.138; V8 15.1.206.17; Chromium ICU 78.2</td></tr>
+  </table>
+  <p>The dated 2026-08-15 observation contains one privacy-filtered, unqualified LG external-display slot. Every formal C/P run requires <code>externalDisplayCount == 0</code>. External-display behavior is excluded from the release verdict.</p>
+
+  <h2>Plan governance added by G5-R</h2>
+  <p>The plan schema, plan manifest, plan verifier, plan audit, and three-round adversarial review are part of the adopted G5-R authority graph. The final review contains 53 attacks, 53 detections, zero misses, and zero unresolved findings. Structural verification does not claim product implementation or release acceptance.</p>
+
+  <h2>Empirical boundary</h2>
+  <p>This revision creates documentation, machine contracts, verification tools, and the complete product execution plan only. It creates no product Swift source, generated product table, release package, C01-C10 result, or P00-P13 result.</p>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "expectedFindingIds": [
+    "PLAN_DEPENDENCY_CYCLE"
+  ],
+  "tasks": [
+    {
+      "id": "P00-T001",
+      "dependencies": [
+        "P00-T003"
+      ]
+    },
+    {
+      "id": "P00-T002",
+      "dependencies": [
+        "P00-T001"
+      ]
+    },
+    {
+      "id": "P00-T003",
+      "dependencies": [
+        "P00-T002"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,179 @@
+{
+  "schemaVersion": 1,
+  "identity": {
+    "product": "MonaCode",
+    "revision": "S1-R-standalone-service-session-feedback-closure",
+    "date": "2026-08-14",
+    "baseline": "monaco-editor-core@0.56.0 final editor.main.js static closure",
+    "status": "design-baseline-only"
+  },
+  "authorities": {
+    "coreTarSha256": "78e222c77e7ef6402ea0bfb20e02caad7b63156f5d2798bc3c398a8bb396f4ed",
+    "entry": {
+      "file": "esm/vs/editor/editor.main.js",
+      "sha256": "2b9a37b9c886162a724ac98dac24455a2bafb7e445dca37a1315f4afde14bad2"
+    },
+    "standaloneServices": {
+      "file": "esm/vs/editor/standalone/browser/standaloneServices.js",
+      "sha256": "1db8e09483ce403ec441d345c759d2d5d80dcf28ab667c0ab1788d3a8f8ee540"
+    },
+    "storage": {
+      "file": "esm/vs/platform/storage/common/storage.js",
+      "sha256": "335b17e55bd917beae38b2dd2df6a8469fd4f3711b5f0fb452a73260709a971b"
+    },
+    "undoRedo": {
+      "file": "esm/vs/platform/undoRedo/common/undoRedoService.js",
+      "sha256": "733e6eb74c733233a99da70e9efacea0a055a386af4b3c5fed7ffb44c1a424b5"
+    },
+    "commandQuickAccess": {
+      "file": "esm/vs/platform/quickinput/browser/commandsQuickAccess.js",
+      "sha256": "937f4f9acf49f532ce855341bd2b161a840978b416f89422f9b62f4bcb7a2e75"
+    },
+    "unusualLineTerminators": {
+      "file": "esm/vs/editor/contrib/unusualLineTerminators/browser/unusualLineTerminators.js",
+      "sha256": "223d15eaa83b6ef7979b89d486a2194625a91bb824823152e2a6fcef72b5f2b9"
+    }
+  },
+  "sourceClosure": {
+    "algorithm": "parse ECMAScript modules, recursively resolve relative static import and export-from edges from editor.main.js within esm/vs, and classify non-JavaScript side-effect imports separately",
+    "reachableJavaScriptFiles": 956,
+    "reachableStyleResources": 98,
+    "totalImportedFiles": 1054,
+    "standaloneDefaultServiceRegistrations": 40,
+    "storageImportFiles": 17,
+    "directStorageConsumerFiles": 14,
+    "dialogCallSites": 4,
+    "shutdownFlushCallSites": 0,
+    "splitButtonRegistrations": 0
+  },
+  "serviceDispositionCounts": {
+    "retained-native-core": 14,
+    "fixed-standalone-semantic": 2,
+    "native-adaptation": 10,
+    "host-adaptation": 2,
+    "session-memory": 1,
+    "mixed-log-noop": 1,
+    "baseline-noop": 8,
+    "explicit-cut": 2,
+    "total": 40
+  },
+  "serviceMatrix": [
+    { "service": "IWebWorkerService", "implementation": "StandaloneWebWorkerService", "disposition": "explicit-cut", "contract": "WebWorker construction and execution are absent." },
+    { "service": "ILogService", "implementation": "StandaloneLogService", "disposition": "host-adaptation", "contract": "Routes sanitized nonblocking events to MonaLogSink; nil drops them." },
+    { "service": "IConfigurationService", "implementation": "StandaloneConfigurationService", "disposition": "retained-native-core", "contract": "Process-memory configuration, default model, editor/diff updates and synchronous change events are retained." },
+    { "service": "ITextResourceConfigurationService", "implementation": "StandaloneResourceConfigurationService", "disposition": "retained-native-core", "contract": "Resource and language override lookup is retained." },
+    { "service": "ITextResourcePropertiesService", "implementation": "StandaloneResourcePropertiesService", "disposition": "retained-native-core", "contract": "files.eol override and macOS LF fallback are retained." },
+    { "service": "IWorkspaceContextService", "implementation": "StandaloneWorkspaceContextService", "disposition": "fixed-standalone-semantic", "contract": "One synthetic inmemory://model/ workspace is retained; no host filesystem workspace is inferred." },
+    { "service": "ILabelService", "implementation": "StandaloneUriLabelService", "disposition": "native-adaptation", "contract": "file URI uses fsPath semantics; other schemes use URI path; basename behavior is retained." },
+    { "service": "ITelemetryService", "implementation": "StandaloneTelemetryService", "disposition": "baseline-noop", "contract": "publicLog2 emits nothing and never reaches MonaLogSink or a network." },
+    { "service": "IDialogService", "implementation": "StandaloneDialogService", "disposition": "native-adaptation", "contract": "Exactly four reachable dialog call sites use the S1-R AppKit dialog outcomes and validity rules." },
+    { "service": "IEnvironmentService", "implementation": "StandaloneEnvironmentService", "disposition": "native-adaptation", "contract": "Standalone fixed flags and MonaCodeEnvironment initialization are retained without browser globals." },
+    { "service": "INotificationService", "implementation": "StandaloneNotificationService", "disposition": "mixed-log-noop", "contract": "info, warn, error and notify route to MonaLogSink only; prompt and status remain strict no-ops with no toast, choice execution or AX output." },
+    { "service": "IMarkerService", "implementation": "MarkerService", "disposition": "retained-native-core", "contract": "Process-global marker ownership, reads and change events are retained." },
+    { "service": "ILanguageService", "implementation": "StandaloneLanguageService", "disposition": "retained-native-core", "contract": "Language metadata lookup is retained with N1/L2 language-content cuts." },
+    { "service": "IStandaloneThemeService", "implementation": "StandaloneThemeService", "disposition": "retained-native-core", "contract": "T1 global theme and token behavior is retained." },
+    { "service": "IModelService", "implementation": "ModelService", "disposition": "retained-native-core", "contract": "M1/H2 model registry, creation and lifecycle behavior is retained." },
+    { "service": "IMarkerDecorationsService", "implementation": "MarkerDecorationsService", "disposition": "retained-native-core", "contract": "Marker-to-decoration projection and updates are retained." },
+    { "service": "IContextKeyService", "implementation": "ContextKeyService", "disposition": "retained-native-core", "contract": "Process root and per-editor child scopes are retained." },
+    { "service": "IProgressService", "implementation": "StandaloneProgressService", "disposition": "baseline-noop", "contract": "Runs the task and discards progress reports; exposes no progress UI or cancellation control." },
+    { "service": "IEditorProgressService", "implementation": "StandaloneEditorProgressService", "disposition": "baseline-noop", "contract": "show returns inert runner and showWhile only awaits; exposes no editor progress UI." },
+    { "service": "IStorageService", "implementation": "InMemoryStorageService", "disposition": "session-memory", "contract": "Four logical scopes are process-memory namespaces only; no disk, defaults, keychain, host storage or cross-process recovery exists." },
+    { "service": "IBulkEditService", "implementation": "StandaloneBulkEditService", "disposition": "retained-native-core", "contract": "Open-model text edits, version checks, undo stops and summary are retained; resource edits remain governed by H1." },
+    { "service": "IWorkspaceTrustManagementService", "implementation": "StandaloneWorkspaceTrustManagementService", "disposition": "fixed-standalone-semantic", "contract": "Workspace trust is always true and never changes." },
+    { "service": "ITextModelService", "implementation": "StandaloneTextModelService", "disposition": "retained-native-core", "contract": "Only existing registered models resolve; missing resources reject Model not found; references never own model disposal." },
+    { "service": "IAccessibilityService", "implementation": "AccessibilityService", "disposition": "native-adaptation", "contract": "A1/A2 AppKit accessibility state and events replace browser media queries and DOM." },
+    { "service": "IListService", "implementation": "ListService", "disposition": "native-adaptation", "contract": "Retained widget list identity, selection, focus and lifecycle use AppKit controls." },
+    { "service": "ICommandService", "implementation": "StandaloneCommandService", "disposition": "retained-native-core", "contract": "Component command lookup, will/did order, sync handler invocation and async result normalization are retained." },
+    { "service": "IKeybindingService", "implementation": "StandaloneKeybindingService", "disposition": "native-adaptation", "contract": "I3 native event mapping feeds the retained resolver and command semantics." },
+    { "service": "IQuickInputService", "implementation": "StandaloneQuickInputService", "disposition": "native-adaptation", "contract": "Retained quick-access data and action traces use native controls." },
+    { "service": "IContextViewService", "implementation": "StandaloneContextViewService", "disposition": "native-adaptation", "contract": "Overlay ownership, placement and focused-editor fallback use AppKit view/window coordinates." },
+    { "service": "IOpenerService", "implementation": "OpenerService", "disposition": "host-adaptation", "contract": "H1/MD1 link and code-editor opener registries replace window navigation." },
+    { "service": "IClipboardService", "implementation": "BrowserClipboardService", "disposition": "native-adaptation", "contract": "I4 NSPasteboard transport and metadata semantics replace browser clipboard APIs." },
+    { "service": "IContextMenuService", "implementation": "StandaloneContextMenuService", "disposition": "native-adaptation", "contract": "Retained menu groups, actions, key labels, focus and dismissal use NSMenu." },
+    { "service": "IMenuService", "implementation": "MenuService", "disposition": "retained-native-core", "contract": "F1 menu IDs, ordering, context rules and in-session hidden state are retained." },
+    { "service": "IAccessibilitySignalService", "implementation": "StandaloneAccessbilitySignalService", "disposition": "baseline-noop", "contract": "Audio and other accessibility signals emit nothing." },
+    { "service": "ITreeSitterLibraryService", "implementation": "StandaloneTreeSitterLibraryService", "disposition": "explicit-cut", "contract": "Tree-sitter library loading and tokenization are absent." },
+    { "service": "ILoggerService", "implementation": "NullLoggerService", "disposition": "baseline-noop", "contract": "No logger resources or output are created." },
+    { "service": "IDataChannelService", "implementation": "NullDataChannelService", "disposition": "baseline-noop", "contract": "No data channel is created or opened." },
+    { "service": "IDefaultAccountService", "implementation": "StandaloneDefaultAccountService", "disposition": "baseline-noop", "contract": "Default account is always null and its change event never fires." },
+    { "service": "IRenameSymbolTrackerService", "implementation": "NullRenameSymbolTrackerService", "disposition": "baseline-noop", "contract": "Rename tracking has no external side effect or state." },
+    { "service": "IUserInteractionService", "implementation": "UserInteractionService", "disposition": "retained-native-core", "contract": "Retained user-interaction epochs and events follow native input/action commits." }
+  ],
+  "sessionStorage": {
+    "architecture": "MonaSessionStateStore is a process-global MainActor typed store with application, profile, workspace and applicationShared namespaces; it is initialized empty and destroyed with the process.",
+    "forbiddenBackends": [
+      "UserDefaults",
+      "NSUbiquitousKeyValueStore",
+      "Keychain",
+      "filesystem",
+      "database",
+      "network",
+      "host callback"
+    ],
+    "addressableConcreteKeyIdentities": 22,
+    "dynamicKeyFamilies": 3,
+    "groups": [
+      { "id": "find", "keys": ["editor.matchCase", "editor.wholeWord", "editor.isRegex", "editor.preserveCase", "workbench.find.history", "workbench.replace.history"], "scope": "workspace", "contract": "flags default false; histories are insertion-ordered unique raw strings with no source eviction bound and synchronous store/event effects behind an already-resolved Promise" },
+      { "id": "suggest-memory", "keys": ["suggest/memories/first", "suggest/memories/recentlyUsed", "suggest/memories/recentlyUsedByPrefix"], "scope": "workspace by default and profile only when shareSuggestSelections=true", "contract": "default first stores no value; recentlyUsed is LRU 300 with ratio 0.66; prefix serialization keeps 200 newest; save scheduler is 500 ms" },
+      { "id": "suggest-widget", "keys": ["suggestWidget.size/vs.editor.ICodeEditor/false", "suggestWidget.size/vs.editor.ICodeEditor/true", "expandSuggestionDocs"], "scope": "profile", "contract": "two exact code-editor/embedded size identities and one default-false documentation visibility flag" },
+      { "id": "peek", "keys": ["peekViewLayout"], "scope": "profile", "contract": "reference Peek layout is restored at creation and stored at close" },
+      { "id": "quick-input", "keys": ["workbench.quickInput.viewState", "gotoLine.useZeroBasedOffset", "commandPalette.mru.cache", "commandPalette.mru.counter"], "scope": "application for view/offset and profile for command MRU", "contract": "view position and zero-based default false persist in session; command MRU has default bound 50 and remains process-static because standalone never emits SHUTDOWN" },
+      { "id": "inline-completions", "keys": ["inlineCompletions.lastSnoozeDuration", "inlineEditsGutterIndicatorUserKind"], "scope": "profile and application respectively", "contract": "last duration defaults 300000 ms; new-user kind is session state and reset removes it" },
+      { "id": "menu", "keys": ["menu.hiddenCommands"], "scope": "profile", "contract": "hidden command state is session-global; the dynamic {submenuID}_lastActionId family has zero concrete registrations because the fixed standalone graph has zero isSplitButton declarations" },
+      { "id": "codelens-storage", "keys": ["codelens/cache", "codelens/cache2"], "scope": "workspace", "contract": "old-key removal and cache2 restore see an empty store; cache2 save is unreachable because no SHUTDOWN flush caller exists; live CodeLens LRU 20 remains a separate retained cache" }
+    ],
+    "lifetime": "Editor disposal does not clear session state. Process termination clears every entry. A new process starts empty. No public storage protocol or persistence opt-in exists in this revision.",
+    "privacy": "Find, replace, completion and resource-derived values never leave process memory; logging and generated acceptance artifacts must not serialize session values."
+  },
+  "dialogs": {
+    "architecture": "MonaDialogCoordinator presents AppKit sheets owned by the initiating editor window; each result carries dialog, editor, model, version and transaction identity and revalidates before mutation. No host dialog protocol is added.",
+    "noWindowFallback": "Return the non-mutating cancel or false branch and emit one sanitized log event.",
+    "callSites": [
+      { "id": "unusual-line-terminators", "sourceCallSiteCount": 1, "nativeButtons": ["Remove Unusual Line Terminators", "Ignore"], "outcomes": "Remove executes only after A2 generation and model/version revalidation; Ignore records the existing detector-session ignore state." },
+      { "id": "workspace-undo-split", "sourceCallSiteCount": 1, "baselineFact": "StandaloneDialogService.prompt calls window.confirm and only runs the first prompt button when confirmed; a cancel returns undefined. UndoRedoService treats both first-button value 0 and undefined as UndoChoice.All, so both browser outcomes continue all-files undo.", "nativeButtons": ["Undo in N Files", "Dismiss"], "outcomes": "Both buttons continue the all-files undo path after edit-stack revalidation; Undo this File remains unreachable in the fixed standalone baseline." },
+      { "id": "undo-confirmation", "sourceCallSiteCount": 1, "nativeButtons": ["Yes", "No"], "outcomes": "Yes re-enters undo with confirmation; No performs no mutation." },
+      { "id": "command-palette-error", "sourceCallSiteCount": 1, "nativeButtons": ["OK"], "outcomes": "Displays localized command label plus error detail; dismissal has no command or model effect." }
+    ],
+    "ordering": "The sheet result resumes through the repository MainActor microtask queue; the initiating operation continuation runs with the complete validity gate before later results can mutate the same dependency set.",
+    "focus": "Sheet start records first responder; dismissal restores focus only if window, editor, widget generation and responder ownership remain valid."
+  },
+  "feedbackChannels": {
+    "notification": "info, warn, error and notify produce sanitized severity-tagged MonaLogSink events only; notification prompt returns inert handle and never executes choices; notification status returns inert close and produces no UI or accessibility announcement.",
+    "progress": "Both progress services execute and await tasks but discard report values and expose no spinner, bar, cancellation button or accessibility announcement.",
+    "telemetry": "All telemetry calls are strict no-ops and never reach a host, file, socket or generated report.",
+    "accessibilitySignals": "playSignal is a strict no-op and no audio resource ships."
+  },
+  "sourceConsumers": [
+    { "file": "esm/vs/editor/browser/services/inlineCompletionsService.js", "sha256": "2dde1c0f1e0dd76356a9330aab76f398f06ae185bf8144fe75f9b97919bea4cb" },
+    { "file": "esm/vs/editor/contrib/codelens/browser/codeLensCache.js", "sha256": "005794e23707172fe99f0749c25ce70c6639b83299a47c3b5b805f5b4256a220" },
+    { "file": "esm/vs/editor/contrib/find/browser/findController.js", "sha256": "5bb2f65b120ad95bc3e098498088cc8756f8405558fb459cccb802253b59ae58" },
+    { "file": "esm/vs/editor/contrib/find/browser/findWidgetSearchHistory.js", "sha256": "f7a460da57968dd5ef614b4dfb2fac0ee9bbaa58f05689ec8508efdf25afeb52" },
+    { "file": "esm/vs/editor/contrib/find/browser/replaceWidgetHistory.js", "sha256": "7cc3e78abadb303cddffbdf1b185b34b8d3878ff7cf6b17d5ee384698991ca79" },
+    { "file": "esm/vs/editor/contrib/gotoSymbol/browser/peek/referencesController.js", "sha256": "85302af720af62dffb01b477dc5a06a938f0bffa6f7b36532321a32d2f88bab4" },
+    { "file": "esm/vs/editor/contrib/inlineCompletions/browser/view/inlineEdits/inlineEditsNewUsers.js", "sha256": "fba742665a3b40647b7cc4e2eb57f6e4fd2f930f0bd92db8a2b8ec5e9fe0d407" },
+    { "file": "esm/vs/editor/contrib/quickAccess/browser/gotoLineQuickAccess.js", "sha256": "379b8d815a0ee76cbc2fa6f734bea5a6270e699774bb8e63ec83834f4ae9b944" },
+    { "file": "esm/vs/editor/contrib/suggest/browser/suggestMemory.js", "sha256": "6f2fb0a7b1e0370df92e3bf1fc68b47acd4130f86276e5f30159ca1346c65090" },
+    { "file": "esm/vs/editor/contrib/suggest/browser/suggestWidget.js", "sha256": "1e61c08f387554123baff08ccfe2b234cdcf31b3e1fa6e4c40e0b296464bde69" },
+    { "file": "esm/vs/platform/actions/browser/menuEntryActionViewItem.js", "sha256": "82ebcef6d8306d74cfc9f1709073dbd3f616151dd7ea91aad2052ecb2056e026" },
+    { "file": "esm/vs/platform/actions/common/menuService.js", "sha256": "35b4976fc86e054c5ca9f2f4357e34018306bbdfdd7b47ae098322a7e241bd0c" },
+    { "file": "esm/vs/platform/quickinput/browser/commandsQuickAccess.js", "sha256": "937f4f9acf49f532ce855341bd2b161a840978b416f89422f9b62f4bcb7a2e75" },
+    { "file": "esm/vs/platform/quickinput/browser/quickInputController.js", "sha256": "52cad8d38442a98f5e752b84acd60b1c1d0e6a07d1fca812583e80aeeff03a73" }
+  ],
+  "acceptance": {
+    "C04": "All 40 default services have exactly one classified native disposition; no unclassified service or added host protocol exists.",
+    "C05": "Cross-editor session state, histories, suggestion selection, quick input, menus, Peek, widget layout and all four dialog outcome traces match S1-R; process restart begins empty.",
+    "C07": "Dialogs expose native roles, labels, focus and deterministic no-window fallback; notification status/prompt, progress and signals produce no accessibility output.",
+    "C09": "Session state remains process-only; bounded states enforce 300/200/50/20 source bounds; find and replace history retain source-unbounded semantic state and are exercised by soak memory accounting.",
+    "C10": "Binary and source scans prove no persistence backend, telemetry transport, notification UI, progress UI, signal audio, WebWorker or Tree-sitter implementation is linked.",
+    "P11": "Provider-result workloads include suggestion memory strategy/scope switching, 500 ms save timing, widget details/size and process-shared state without changing workload IDs.",
+    "security": "Session values never enter logs, crash fixtures, manifests or distribution resources; hostile stored JSON falls back exactly as the fixed consumers define."
+  },
+  "implementationStatus": {
+    "nativeServiceSourceFiles": 0,
+    "nativeSessionStoreSourceFiles": 0,
+    "dialogFixturesRun": 0,
+    "sessionStateFixturesRun": 0,
+    "serviceDispositionAuditRun": 0,
+    "verdict": "not-passed"
+  }
+}

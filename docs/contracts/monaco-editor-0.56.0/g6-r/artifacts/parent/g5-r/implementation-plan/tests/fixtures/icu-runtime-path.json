@@ -1,0 +1,6 @@
+{
+  "mutation": "add-source-path",
+  "task": "P02-T007",
+  "value": "Sources/MonaCode/Runtime/MonaICURuntime.swift",
+  "expectedFindingIds": ["PLAN_FORBIDDEN_PRODUCT_PATH"]
+}

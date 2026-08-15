@@ -1,0 +1,141 @@
+<style>
+  .arch-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 22px;
+  }
+  .arch-card {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 16px;
+    background: var(--surface);
+    cursor: pointer;
+    transition: transform 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+  }
+  .arch-card:hover { transform: translateY(-2px); }
+  .arch-card.selected {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent) 20%, transparent);
+  }
+  .arch-card.recommended { border-color: color-mix(in srgb, var(--accent) 55%, var(--border)); }
+  .arch-head { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+  .arch-letter {
+    width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center;
+    font-weight: 750; color: white; background: var(--accent); flex: 0 0 auto;
+  }
+  .arch-card:not(.recommended) .arch-letter { background: #6b7280; }
+  .badge {
+    display: inline-block; margin-top: 4px; padding: 2px 7px; border-radius: 999px;
+    font-size: 11px; font-weight: 700; letter-spacing: .02em;
+    color: #047857; background: #d1fae5;
+  }
+  .flow { display: grid; gap: 8px; margin: 16px 0; }
+  .node {
+    border: 1px solid var(--border); border-radius: 9px; padding: 9px 10px;
+    text-align: center; background: color-mix(in srgb, var(--surface) 80%, var(--background));
+    font-size: 13px; line-height: 1.35;
+  }
+  .node.primary { border-color: var(--accent); font-weight: 700; }
+  .node.danger { border-color: #ef4444; background: color-mix(in srgb, #ef4444 8%, var(--surface)); }
+  .node.warn { border-color: #f59e0b; background: color-mix(in srgb, #f59e0b 8%, var(--surface)); }
+  .arrow { text-align: center; color: var(--muted); height: 10px; line-height: 10px; }
+  .split-node { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+  .verdict {
+    margin-top: 13px; padding-top: 12px; border-top: 1px solid var(--border);
+    font-size: 13px; line-height: 1.5;
+  }
+  .verdict strong { display: block; margin-bottom: 3px; }
+  .criteria {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;
+    margin-top: 22px; padding: 14px; border-radius: 12px;
+    background: color-mix(in srgb, var(--surface) 84%, var(--background)); border: 1px solid var(--border);
+  }
+  .criterion { font-size: 12px; color: var(--muted); }
+  .criterion b { display: block; color: var(--text); margin-bottom: 2px; }
+  @media (max-width: 980px) {
+    .arch-grid { grid-template-columns: 1fr; }
+    .criteria { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+
+<h2>哪一个对象掌握“唯一真实文本”？</h2>
+<p class="subtitle">三种方案都能显示代码；只有数据所有权不同。点击一个方案。推荐 A，因为它同时满足 Monaco 模型等价和 TextKit 2 优先策略。</p>
+
+<div class="arch-grid">
+  <div class="arch-card recommended" data-choice="a" onclick="toggleSelect(this)">
+    <div class="arch-head">
+      <div class="arch-letter">A</div>
+      <div>
+        <h3 style="margin:0">MonaModel 单一真源</h3>
+        <span class="badge">推荐</span>
+      </div>
+    </div>
+    <div class="flow">
+      <div class="node primary">MonaModel<br><small>Piece Tree · Undo · Decorations · UTF-16</small></div>
+      <div class="arrow">↓ 共享存储适配，不复制全文</div>
+      <div class="node">Custom NSTextContentManager</div>
+      <div class="arrow">↓</div>
+      <div class="node">TextKit 2 Layout + Input + Accessibility</div>
+      <div class="arrow">↓ 若基准失败，只替换这一层</div>
+      <div class="split-node">
+        <div class="node">Custom TK2 Viewport</div>
+        <div class="node">CoreText + Metal</div>
+      </div>
+    </div>
+    <div class="verdict">
+      <strong>模型行为可与 Monaco 做差分测试</strong>
+      TextKit 2 是首选布局后端，但不拥有编辑历史和文档语义；渲染下沉不会改动 Model、LSP 或命令 API。
+    </div>
+  </div>
+
+  <div class="arch-card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="arch-head">
+      <div class="arch-letter">B</div>
+      <div><h3 style="margin:0">TextKit 2 单一真源</h3></div>
+    </div>
+    <div class="flow">
+      <div class="node primary">NSTextContentStorage / NSTextStorage</div>
+      <div class="arrow">↓ 包装</div>
+      <div class="node warn">Monaco-compatible Model API</div>
+      <div class="arrow">↓</div>
+      <div class="node">Commands · LSP · Diff · Providers</div>
+      <div class="arrow">↓</div>
+      <div class="node">TextKit 2 Layout + Input</div>
+    </div>
+    <div class="verdict">
+      <strong>代码最少，系统集成最直接</strong>
+      TextKit 的存储、Undo、版本、Tracked Range 与 Monaco 不同；无法把 ITextModel 完全等价作为可证明的不变量。
+    </div>
+  </div>
+
+  <div class="arch-card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="arch-head">
+      <div class="arch-letter">C</div>
+      <div><h3 style="margin:0">双模型镜像</h3></div>
+    </div>
+    <div class="flow">
+      <div class="split-node">
+        <div class="node primary">MonaModel</div>
+        <div class="node primary">TextKit Storage</div>
+      </div>
+      <div class="arrow">↕ 双向编辑同步</div>
+      <div class="node danger">Range 映射 · 版本仲裁 · 防回环</div>
+      <div class="arrow">↓</div>
+      <div class="node">TextKit 2 Layout + Input</div>
+      <div class="arrow">↓</div>
+      <div class="node">Commands · LSP · Diff · Providers</div>
+    </div>
+    <div class="verdict">
+      <strong>两个系统都保持原生数据结构</strong>
+      每次输入都产生同步、映射和一致性成本；复制与竞态直接冲击“性能不得劣于 Monaco”的硬门槛。
+    </div>
+  </div>
+</div>
+
+<div class="criteria">
+  <div class="criterion"><b>模型等价</b>同操作序列逐步对比 Monaco 0.56</div>
+  <div class="criterion"><b>渲染可替换</b>TextKit 2 失败时不重写上层</div>
+  <div class="criterion"><b>性能非劣</b>无全量复制、无双模型同步热路径</div>
+  <div class="criterion"><b>长期跨平台</b>Core 与 AppKit/UIKit 解耦</div>
+</div>

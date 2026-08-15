@@ -1,0 +1,6 @@
+{
+  "mutation": "add-source-path",
+  "task": "P06-T005",
+  "value": "Sources/MonaCode/Language/BuiltinTypeScriptLanguage.swift",
+  "expectedFindingIds": ["PLAN_FORBIDDEN_PRODUCT_PATH"]
+}

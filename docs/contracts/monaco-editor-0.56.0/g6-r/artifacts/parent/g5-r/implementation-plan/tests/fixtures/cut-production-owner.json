@@ -1,0 +1,9 @@
+{
+  "mutation": "own-cut-row",
+  "kind": "feature",
+  "id": "gpu",
+  "owner": "P00-T001",
+  "expectedFindingIds": [
+    "PLAN_CUT_IDENTITY_OWNED"
+  ]
+}

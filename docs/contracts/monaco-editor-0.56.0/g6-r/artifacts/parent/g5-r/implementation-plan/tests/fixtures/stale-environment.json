@@ -1,0 +1,7 @@
+{
+  "mutation": "macos-build",
+  "value": "25G72",
+  "expectedFindingIds": [
+    "PLAN_ENVIRONMENT_MISMATCH"
+  ]
+}

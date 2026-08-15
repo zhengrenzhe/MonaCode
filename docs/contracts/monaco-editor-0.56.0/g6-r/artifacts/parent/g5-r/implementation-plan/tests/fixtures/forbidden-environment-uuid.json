@@ -1,0 +1,8 @@
+{
+  "mutation": "qualification-property",
+  "key": "deviceUUID",
+  "value": "redacted",
+  "expectedFindingIds": [
+    "PLAN_ENVIRONMENT_PRIVACY"
+  ]
+}

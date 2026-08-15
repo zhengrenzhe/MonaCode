@@ -1,0 +1,8 @@
+{
+  "mutation": "remove-consumer-dependency",
+  "consumer": "P09-T020",
+  "finalizer": "P09-T001",
+  "expectedFindingIds": [
+    "PLAN_CANDIDATE_ORDER"
+  ]
+}

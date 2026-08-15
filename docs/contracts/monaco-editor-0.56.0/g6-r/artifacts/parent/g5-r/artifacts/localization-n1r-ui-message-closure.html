@@ -1,0 +1,51 @@
+<style>
+  :root{--ok:#059669;--warn:#d97706;--bad:#dc2626;--blue:#2563eb;--violet:#7c3aed}
+  .hero{display:flex;gap:13px;align-items:flex-start;padding:14px;border:2px solid var(--ok);border-radius:14px;background:color-mix(in srgb,var(--ok) 6%,var(--surface));margin:12px 0 15px}.mark{width:62px;height:62px;flex:0 0 62px;display:grid;place-items:center;border-radius:13px;background:var(--ok);color:#fff;font-weight:900}.hero h3{margin:0 0 5px;font-size:14px}.hero p{margin:0;color:var(--muted);font-size:8.2px;line-height:1.5}
+  .section{margin-top:15px}.section h3{margin:0 0 8px;font-size:12px}.counts{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}.count{padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}.count strong{display:block;font-size:22px;color:var(--blue)}.count b{display:block;font-size:7.8px}.count span{display:block;margin-top:3px;color:var(--muted);font-size:6.5px;line-height:1.4}
+  .hits{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.hit{padding:9px;border:1px solid var(--warn);border-radius:10px;background:var(--surface)}.hit b{display:block;font-size:8.4px;margin-bottom:3px}.hit span{display:block;color:var(--muted);font-size:6.9px;line-height:1.43}.hit em{font-style:normal;color:#b45309;font-weight:800}
+  .matrix{border:1px solid var(--border);border-radius:11px;overflow:hidden}.row{display:grid;grid-template-columns:.65fr 1.2fr 1.55fr 1.2fr;border-top:1px solid var(--border)}.row:first-child{border-top:0;font-weight:800;background:color-mix(in srgb,var(--accent) 6%,var(--surface))}.cell{padding:7px 8px;border-left:1px solid var(--border);font-size:7px;line-height:1.45}.cell:first-child{border-left:0}.yes{color:#047857;font-weight:750}.no{color:#b91c1c;font-weight:750}
+  .cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.card{padding:10px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}.card h4{margin:0 0 5px;font-size:9px}.card ul{margin:0 0 0 14px;padding:0;font-size:7px;line-height:1.5}.artifact{padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--surface);font-size:7px;line-height:1.55}.source{margin-top:12px;padding:9px 10px;border-left:3px solid var(--blue);background:color-mix(in srgb,var(--blue) 5%,var(--surface));color:var(--muted);font-size:7px;line-height:1.48}
+  @media(max-width:980px){.counts{grid-template-columns:1fr 1fr}.hits,.cards{grid-template-columns:1fr}.row{grid-template-columns:.55fr 1fr 1fr .8fr}.cell{padding:5px 4px;font-size:6.2px}}
+</style>
+
+<h2>功能面补漏攻击：N1-R UI 本地化闭包</h2>
+<p class="subtitle">代码语言包仍为 0；本页处理的是 Monaco 自身的 action、menu、widget、错误与无障碍文案。它是可观察 UI 能力，不属于 tokenizer、provider 或 LSP 内容。</p>
+
+<div class="hero"><div class="mark">N1-R</div><div><h3>保留官方全部 UI locale profile；默认 English，初始化后不可变</h3><p>最终 core 产物包含 2120 个有序 message key、13 个 locale 文件和 pseudo transform。MonaCode 全部保留，使用显式 MonaCodeEnvironment localization profile；不调用系统本地化、不联网、不在 editor 存活期切换。</p></div></div>
+
+<div class="section"><h3>固定产物事实</h3><div class="counts">
+  <div class="count"><strong>2120</strong><b>message keys</b><span>180 个 source modules；English fallback 全量存在。</span></div>
+  <div class="count"><strong>13</strong><b>packaged locales</b><span>cs/de/es/fr/it/ja/ko/pl/pt-br/ru/tr/zh-cn/zh-tw。</span></div>
+  <div class="count"><strong>12</strong><b>fully translated</b><span>每份 2120 个 string。</span></div>
+  <div class="count"><strong>2120</strong><b>pt-br nulls</b><span>该官方文件全部回退 English，不伪造翻译。</span></div>
+  <div class="count"><strong>15</strong><b>selectable profiles</b><span>English + 13 packaged + pseudo。</span></div>
+</div></div>
+
+<div class="section"><h3>四个攻击命中</h3><div class="hits">
+  <div class="hit"><b>109 · 语言包为 0 等于无本地化</b><span>官方 NLS 与代码语言 provider 是两套产物。<em>UI locale 全保留；代码语言实现仍为 0。</em></span></div>
+  <div class="hit"><b>110 · 跟随系统 locale 即等价</b><span>Monaco locale 在 bootstrap 前显式注入。<em>环境初始化显式选择；默认 en；不支持的 ID typed reject。</em></span></div>
+  <div class="hit"><b>111 · Foundation format 可替代</b><span>Monaco 的替换规则、参数类型与 {10} 行为自定义。<em>raw UTF-16 逐规则移植，不用 String(format:)。</em></span></div>
+  <div class="hit"><b>112 · pt-br 是完整葡语</b><span>固定文件实测 2120 项全部 null。<em>保留 profile 与逐项 English fallback，不虚构文案。</em></span></div>
+</div></div>
+
+<div class="section"><h3>运行语义</h3><div class="matrix">
+  <div class="row"><div class="cell">域</div><div class="cell">冻结规则</div><div class="cell">可观察结果</div><div class="cell">失败</div></div>
+  <div class="row"><div class="cell"><b>Identity</b></div><div class="cell">保留 180 module / 2120 ordered key identity</div><div class="cell">fixture 可与 final core 的同一 message index/key 对照</div><div class="cell no">缺项或重排</div></div>
+  <div class="row"><div class="cell"><b>Lookup</b></div><div class="cell">locale string → English fallback → typed missing</div><div class="cell">pt-br 全部得到 English；其他 12 份全量翻译</div><div class="cell no">静默空串</div></div>
+  <div class="row"><div class="cell"><b>Format</b></div><div class="cell">Monaco 正则与 raw UTF-16 参数规则原样保留</div><div class="cell">value、localize2.original、异常逐 UTF-16 unit 相同</div><div class="cell no">Foundation locale formatting</div></div>
+  <div class="row"><div class="cell"><b>Selection</b></div><div class="cell">MonaCodeEnvironment 首次访问前一次性选择</div><div class="cell">默认 en；15 个固定 profile；重启进程才可换</div><div class="cell no">运行时混用两套表</div></div>
+  <div class="row"><div class="cell"><b>UI / AX</b></div><div class="cell">action、menu、widget、error、AX 共用同一 lookup</div><div class="cell">标题、标签、announcement 与事件顺序共同验证</div><div class="cell no">视觉与 AX 文案分叉</div></div>
+</div></div>
+
+<div class="section"><h3>验收与分发</h3><div class="cards">
+  <div class="card"><h4>C04</h4><ul><li>profile API 被 symbol graph 分类</li><li>2120 identities 完整</li><li>15 profile exact set</li><li>不支持 ID 不进入 API</li></ul></div>
+  <div class="card"><h4>C07</h4><ul><li>controls 与 AX 共用 locale</li><li>30 effective announcements</li><li>空消息/重复/截断语义不变</li><li>原事件顺序不变</li></ul></div>
+  <div class="card"><h4>C10</h4><ul><li>所有表进入 resource manifest</li><li>生成表有 source hash</li><li>无 Foundation/network lookup</li><li>Monaco MIT notice 随包</li></ul></div>
+</div></div>
+
+<div class="section"><h3>机器可核对工件</h3><div class="artifact">
+  <a href="./monacode-n1r-localization-manifest.json">打开 monacode-n1r-localization-manifest.json</a><br>
+  文件 SHA-256（含结尾 LF）：<code>4e91e4a40f752065629241c502bbcc0fb0e6925f0be28f03c7ffce1731aedb74</code>。当前 native localization source/resource/fixture 均为 0，verdict=<code>not-passed</code>。
+</div></div>
+
+<div class="source"><b>事实索引：</b>monaco-editor-core@0.56.0 final tar SHA-256 <code>78e222c7…96f4ed</code>；<code>nls.keys.json</code> 为 180 modules / 2120 keys，SHA-256 <code>fe0b719b…2ab</code>；English JSON SHA-256 <code>151c64af…24c6</code>。13 个 final-core locale JS 与 monaco-editor@0.56.0 的 ESM locale copies 逐字节相同。vm 执行固定 JS 后，cs/de/es/fr/it/ja/ko/pl/ru/tr/zh-cn/zh-tw 各 2120 strings，pt-br 为 2120 null。<code>vs/nls.js</code> 源码确认 lookup/fallback、format、localize2 与 pseudo 规则。当前没有 MonaCode 本地化实现或验收结果。</div>
