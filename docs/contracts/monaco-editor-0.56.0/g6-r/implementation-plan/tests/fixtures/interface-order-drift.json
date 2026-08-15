@@ -1,0 +1,35 @@
+{
+  "plan": {
+    "planID": "g6r-interface-order-drift",
+    "tasks": [
+      {
+        "taskID": "P00-T001",
+        "interfaces": {
+          "consumes": [],
+          "produces": [
+            {
+              "id": "MonaLineTokenizer",
+              "ordinal": 1
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "contracts": [
+    {
+      "id": "MonaLineTokenizer",
+      "kind": "swift-declaration",
+      "task": "P00-T001",
+      "signatureSha256": "cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc",
+      "ordinal": 2
+    }
+  ],
+  "expected": {
+    "id": "PLAN_INTERFACE_ORDER",
+    "category": "semantic",
+    "taskID": "P00-T001",
+    "path": "/tasks/0/interfaces/produces/0",
+    "message": "interface \"MonaLineTokenizer\" produced ordinal 2 != declared 1"
+  }
+}

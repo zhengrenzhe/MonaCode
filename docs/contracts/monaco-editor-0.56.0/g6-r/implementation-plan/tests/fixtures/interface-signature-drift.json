@@ -1,0 +1,35 @@
+{
+  "plan": {
+    "planID": "g6r-interface-signature-drift",
+    "tasks": [
+      {
+        "taskID": "P00-T001",
+        "interfaces": {
+          "consumes": [
+            {
+              "id": "MonaEditorConfiguration",
+              "signatureSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            }
+          ],
+          "produces": []
+        }
+      }
+    ]
+  },
+  "contracts": [
+    {
+      "id": "MonaEditorConfiguration",
+      "kind": "swift-declaration",
+      "task": "P00-T000",
+      "signatureSha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+      "ordinal": 1
+    }
+  ],
+  "expected": {
+    "id": "PLAN_INTERFACE_SIGNATURE_MISMATCH",
+    "category": "semantic",
+    "taskID": "P00-T001",
+    "path": "/tasks/0/interfaces/consumes/0",
+    "message": "interface \"MonaEditorConfiguration\" produced signatureSha256 bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb != consumed aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+  }
+}
