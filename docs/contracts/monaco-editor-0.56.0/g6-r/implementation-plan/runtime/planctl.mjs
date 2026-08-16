@@ -6,16 +6,21 @@
 //
 // createPlanctl({ handlers }) is the dependency-injection factory used by tests:
 // handlers is a Map<name, async ({ command, flags }) => { result, findings }>).
-// The CLI entry point uses pre-assembly handlers that return the exact finding
-// PLAN_AUTHORITY_NOT_ASSEMBLED until Task 26 replaces them with the complete
-// audit/runtime handlers. Dispatch and argument tests assert this result
-// instead of claiming an assembled plan exists.
+//
+// Task 26 replaces the Task 10 pre-assembly handlers with production modules.
+// The production handlers delegate to the integrated audit (auditPlan) when the
+// caller supplies the assembled-plan authority flag (--plan); without it the
+// authority is not assembled for that invocation and the handler returns
+// PLAN_AUTHORITY_NOT_ASSEMBLED. Dependency injection is retained for tests.
 
 import { spawnSync } from 'node:child_process';
+import fs from 'node:fs';
+import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { makeFinding, sortFindings } from '../lib/findings.mjs';
 import { canonicalJSONStringify } from '../lib/canonical-json.mjs';
+import { auditPlan, formatAuditStatus } from '../lib/audit.mjs';
 
 export const PLAN_AUTHORITY_NOT_ASSEMBLED = 'PLAN_AUTHORITY_NOT_ASSEMBLED';
 
@@ -178,11 +183,17 @@ export function createPlanctl({ handlers }) {
 }
 
 // ---------------------------------------------------------------------------
-// Pre-assembly handlers (return PLAN_AUTHORITY_NOT_ASSEMBLED until Task 26).
+// Production handlers (Task 26). Delegate to the integrated audit when the
+// caller supplies the assembled-plan authority flag (--plan); otherwise the
+// authority is not assembled for the invocation and the handler returns
+// PLAN_AUTHORITY_NOT_ASSEMBLED. Runtime commands (begin-task, run-command, etc.)
+// require a repository/evidence context that the bare CLI does not assemble.
 // ---------------------------------------------------------------------------
 
-function preAssemblyHandler(commandName) {
-  return async () => ({
+const AUDIT_COMMANDS = new Set(['verify-archive', 'audit', 'simulate', 'render', 'preflight --all', 'interfaces compile']);
+
+function notAssembled(commandName) {
+  return {
     result: null,
     findings: [
       makeFinding({
@@ -190,16 +201,50 @@ function preAssemblyHandler(commandName) {
         category: 'authority',
         taskID: null,
         path: '',
-        message: `plan authority not assembled; complete audit/runtime handlers for ${commandName} are installed by Task 26`,
+        message: `plan authority not assembled for ${commandName}; supply --plan or run verify-plan.mjs`,
       }),
     ],
-  });
+  };
 }
 
-function preAssemblyHandlers() {
+function productionHandler(commandName) {
+  return async ({ flags }) => {
+    if (!AUDIT_COMMANDS.has(commandName)) return notAssembled(commandName);
+    const planFlag = flags && flags['--plan'];
+    if (!planFlag) return notAssembled(commandName);
+    // Load the assembled plan from the --plan path and run the integrated audit.
+    try {
+      const planPath = path.resolve(planFlag);
+      const plan = JSON.parse(fs.readFileSync(planPath, 'utf8'));
+      const archiveRoot = path.dirname(path.dirname(planPath));
+      const artifactDir = path.join(archiveRoot, 'artifacts');
+      const contract = JSON.parse(fs.readFileSync(path.join(artifactDir, 'monacode-g6r-authoritative-manifest.json'), 'utf8'));
+      const idxPath = path.join(path.dirname(planPath), 'verification', 'payload-index.json');
+      const payloadIndex = fs.existsSync(idxPath) ? JSON.parse(fs.readFileSync(idxPath, 'utf8')) : null;
+      const result = auditPlan({
+        contract, plan, commands: plan.commands, interfaces: plan.interfaces,
+        archiveRoot, completedThroughTask: 26, payloadIndex,
+      });
+      return {
+        result: { status: result.status, findingCount: result.findingCount },
+        findings: result.findings,
+      };
+    } catch (e) {
+      return {
+        result: null,
+        findings: [makeFinding({
+          id: PLAN_AUTHORITY_NOT_ASSEMBLED, category: 'authority', taskID: null, path: '',
+          message: `plan authority load failed: ${e.message}`,
+        })],
+      };
+    }
+  };
+}
+
+function productionHandlers() {
   const m = new Map();
   for (const name of Object.keys(COMMAND_FLAGS)) {
-    m.set(name, preAssemblyHandler(name));
+    m.set(name, productionHandler(name));
   }
   return m;
 }
@@ -209,7 +254,7 @@ function preAssemblyHandlers() {
 // ---------------------------------------------------------------------------
 
 export async function main(argv) {
-  const ctl = createPlanctl({ handlers: preAssemblyHandlers() });
+  const ctl = createPlanctl({ handlers: productionHandlers() });
   const res = await ctl.run(argv);
   process.stdout.write(res.stdout);
   process.exit(res.exitCode);
