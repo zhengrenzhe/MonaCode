@@ -1,0 +1,647 @@
+{
+  "tasks": {
+    "P08-T001": {
+      "testAuthoringOperation": "Tests/PlanStructureTests/ReleaseBuildTests.mjs",
+      "testContract": {
+        "contractID": "P08-T001",
+        "cases": [
+          {
+            "caseID": "P08-T001.CASE.001",
+            "file": {
+              "path": "Tests/PlanStructureTests/ReleaseBuildTests.mjs",
+              "availability": "local"
+            },
+            "checker": "node --test Tests/PlanStructureTests/ReleaseBuildTests.mjs --test-name-pattern wrong-product-set",
+            "target": "Tests/PlanStructureTests/ReleaseBuildTests.mjs",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "RELEASE_PRODUCT_SET_MISMATCH expected=3",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P08-T001.RED.001.PROC.001",
+            "greenLeafID": "P08-T001.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/PlanStructureTests/ReleaseBuildTests.mjs",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "MonaReleasePackage",
+            "kind": "command-contract",
+            "sourceArtifactPath": "implementation-plan/phase-08-release-candidate-distribution.md",
+            "sourceArtifactHash": "39717442073baf94f74126c777fa4c12d319ff8a4a3ffef07b0cbf099e164b74",
+            "sourceLocator": "/sections/interfaces/MonaReleasePackage",
+            "contractRefs": [
+              "C10",
+              "G5-R.deliveryScope",
+              "G5-R.validationScope.packageDeploymentTarget"
+            ],
+            "commandRecordHash": "8605fb21d7b41850d23df1bd037180adb0d060053312c45b7d55645c093a8c0d",
+            "orderedLeafHashes": [
+              "0889f7ed59bd312e4bed31fd9fdfbc4ed97e98ab12945912143460db0a3db6c6"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "MonaReleasePackage",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "RELEASE_BUILD products=3 nonProductTargets=3 architecture=arm64 deployment=macOS26.0"
+            ]
+          }
+        ]
+      }
+    },
+    "P08-T002": {
+      "testAuthoringOperation": "Tests/PlanStructureTests/DistributionScanTests.mjs",
+      "testContract": {
+        "contractID": "P08-T002",
+        "cases": [
+          {
+            "caseID": "P08-T002.CASE.001",
+            "file": {
+              "path": "Tests/PlanStructureTests/DistributionScanTests.mjs",
+              "availability": "local"
+            },
+            "checker": "node --test Tests/PlanStructureTests/DistributionScanTests.mjs --test-name-pattern forbidden-runtime",
+            "target": "Tests/PlanStructureTests/DistributionScanTests.mjs",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "FORBIDDEN_RUNTIME_LINKED name=JavaScriptCore",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P08-T002.RED.001.PROC.001",
+            "greenLeafID": "P08-T002.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/PlanStructureTests/DistributionScanTests.mjs",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "MonaDistributionScan",
+            "kind": "command-contract",
+            "sourceArtifactPath": "implementation-plan/phase-08-release-candidate-distribution.md",
+            "sourceArtifactHash": "39717442073baf94f74126c777fa4c12d319ff8a4a3ffef07b0cbf099e164b74",
+            "sourceLocator": "/sections/interfaces/MonaDistributionScan",
+            "contractRefs": [
+              "C10",
+              "G5-R.deliveryScope.productionLinkedDependencies",
+              "G5-R.explicitCuts"
+            ],
+            "commandRecordHash": "b939c6a36f0d741ca69a61f022f52f0918508e7138ec90697bffddcc7f4f3508",
+            "orderedLeafHashes": [
+              "6b51f85f9792e7c7ac70acc47e4c3c042d0978e553f49177750ef1c0f8a2896d"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "MonaDistributionScan",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "DISTRIBUTION_SCAN products=3 publicAPIDrift=0 forbiddenRuntime=0"
+            ]
+          },
+          {
+            "id": "MonaReleaseSymbolGraphs",
+            "kind": "command-contract",
+            "sourceArtifactPath": "implementation-plan/phase-08-release-candidate-distribution.md",
+            "sourceArtifactHash": "39717442073baf94f74126c777fa4c12d319ff8a4a3ffef07b0cbf099e164b74",
+            "sourceLocator": "/sections/interfaces/MonaReleaseSymbolGraphs",
+            "contractRefs": [
+              "C10",
+              "G5-R.deliveryScope.productionLinkedDependencies",
+              "G5-R.explicitCuts"
+            ],
+            "commandRecordHash": "4db59008b60af180a7fa4382f16e2151267e3dc2134a0f2aa039173d5cd82618",
+            "orderedLeafHashes": [
+              "68fb692ab8d8fc41908b75775bcdbfc8e9aab64fc37d912f4d678a510cf9eab3"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "MonaReleaseSymbolGraphs",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "DISTRIBUTION_SCAN products=3 publicAPIDrift=0 forbiddenRuntime=0"
+            ]
+          }
+        ]
+      }
+    },
+    "P08-T003": {
+      "testAuthoringOperation": "Tests/PlanStructureTests/LicenseNoticeTests.mjs",
+      "testContract": {
+        "contractID": "P08-T003",
+        "cases": [
+          {
+            "caseID": "P08-T003.CASE.001",
+            "file": {
+              "path": "Tests/PlanStructureTests/LicenseNoticeTests.mjs",
+              "availability": "local"
+            },
+            "checker": "node --test Tests/PlanStructureTests/LicenseNoticeTests.mjs --test-name-pattern missing-notice",
+            "target": "Tests/PlanStructureTests/LicenseNoticeTests.mjs",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "LICENSE_NOTICE_MISSING profile=chromium-icu",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P08-T003.RED.001.PROC.001",
+            "greenLeafID": "P08-T003.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/PlanStructureTests/LicenseNoticeTests.mjs",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "MonaLicenseNoticeSet",
+            "kind": "command-contract",
+            "sourceArtifactPath": "implementation-plan/phase-08-release-candidate-distribution.md",
+            "sourceArtifactHash": "39717442073baf94f74126c777fa4c12d319ff8a4a3ffef07b0cbf099e164b74",
+            "sourceLocator": "/sections/interfaces/MonaLicenseNoticeSet",
+            "contractRefs": [
+              "C10",
+              "G5-R.licensingProfile",
+              "P1-R"
+            ],
+            "commandRecordHash": "b495fa483d540a322034c9b588b2ce8b61dcdcfede025de4d25b94b64eccd856",
+            "orderedLeafHashes": [
+              "dc263a03ab744d9c5f5523ab686ec7cead217f5d7e0537560d75047cf2f16854"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "MonaLicenseNoticeSet",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "LICENSE_NOTICES profiles=complete hashMismatches=0 unlicensedInputs=0"
+            ]
+          }
+        ]
+      }
+    },
+    "P08-T010": {
+      "testAuthoringOperation": "Tests/PlanStructureTests/FinalNativeDeclarationManifestTests.mjs",
+      "testContract": {
+        "contractID": "P08-T010",
+        "cases": [
+          {
+            "caseID": "P08-T010.CASE.001",
+            "file": {
+              "path": "Tests/PlanStructureTests/FinalNativeDeclarationManifestTests.mjs",
+              "availability": "local"
+            },
+            "checker": "node --test Tests/PlanStructureTests/FinalNativeDeclarationManifestTests.mjs --test-name-pattern late-symbol",
+            "target": "Tests/PlanStructureTests/FinalNativeDeclarationManifestTests.mjs",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "NATIVE_DECLARATION_FINALIZATION_FAILED reason=late-public-symbol",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P08-T010.RED.001.PROC.001",
+            "greenLeafID": "P08-T010.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/PlanStructureTests/FinalNativeDeclarationManifestTests.mjs",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "MonaNativeDeclarationManifest.json",
+            "kind": "command-contract",
+            "sourceArtifactPath": "artifacts/features-f1r5-native-type-semantics-closure.html",
+            "sourceArtifactHash": "0a988664e10743b5603ccfd2cf5a1a35bbf22c4ebbd860679127bddc2b911c82",
+            "sourceLocator": "/sections/interfaces/MonaNativeDeclarationManifest.json",
+            "contractRefs": [
+              "F1-R4",
+              "F1-R5",
+              "G5-R.candidateGeneratedArtifacts.MonaNativeDeclarationManifest"
+            ],
+            "commandRecordHash": "f0e2d76c5187a3ecd705e7e2ad6488bf1575960c334f03264bd12a8cd7b7a22a",
+            "orderedLeafHashes": [
+              "359b27fc393de1ee80a2b11fcc8a892ce3a5338ce42bbd4aa3328652d05a73a5"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "MonaNativeDeclarationManifest.json",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "CANDIDATE_FINAL name=MonaNativeDeclarationManifest.json paths=555 drift=0"
+            ]
+          }
+        ]
+      }
+    },
+    "P08-T011": {
+      "testAuthoringOperation": "Tests/PlanStructureTests/FinalRegExpUnicodeManifestTests.mjs",
+      "testContract": {
+        "contractID": "P08-T011",
+        "cases": [
+          {
+            "caseID": "P08-T011.CASE.001",
+            "file": {
+              "path": "Tests/PlanStructureTests/FinalRegExpUnicodeManifestTests.mjs",
+              "availability": "local"
+            },
+            "checker": "node --test Tests/PlanStructureTests/FinalRegExpUnicodeManifestTests.mjs --test-name-pattern wrong-consumer-set",
+            "target": "Tests/PlanStructureTests/FinalRegExpUnicodeManifestTests.mjs",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "REGEXP_UNICODE_FINALIZATION_FAILED expectedConsumerProfiles=10",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P08-T011.RED.001.PROC.001",
+            "greenLeafID": "P08-T011.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/PlanStructureTests/FinalRegExpUnicodeManifestTests.mjs",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "MonaRegExpUnicodeManifest.json",
+            "kind": "command-contract",
+            "sourceArtifactPath": "artifacts/model-m1r3-regexp-unicode-provenance-closure.html",
+            "sourceArtifactHash": "81f2991c8457ef8e773b81c351a7fdba6e3586b020de6be7acfbd8f47bc2f8bb",
+            "sourceLocator": "/sections/interfaces/MonaRegExpUnicodeManifest.json",
+            "contractRefs": [
+              "G5-R.candidateGeneratedArtifacts.MonaRegExpUnicodeManifest",
+              "M1-R3"
+            ],
+            "commandRecordHash": "ef72ca40af9ca1d3f0b37bc31a83528489a6c703b256ab5b626b1954d5f9634b",
+            "orderedLeafHashes": [
+              "96799e52659b8cc903017528dc1599cef97b3156bd61cfe7073fd41dc21fc27c"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "MonaRegExpUnicodeManifest.json",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "CANDIDATE_FINAL name=MonaRegExpUnicodeManifest.json unicodeProfiles=6 consumers=10"
+            ]
+          }
+        ]
+      }
+    },
+    "P08-T012": {
+      "testAuthoringOperation": "Tests/PlanStructureTests/FinalEnvironmentManifestTests.mjs",
+      "testContract": {
+        "contractID": "P08-T012",
+        "cases": [
+          {
+            "caseID": "P08-T012.CASE.001",
+            "file": {
+              "path": "Tests/PlanStructureTests/FinalEnvironmentManifestTests.mjs",
+              "availability": "local"
+            },
+            "checker": "node --test Tests/PlanStructureTests/FinalEnvironmentManifestTests.mjs --test-name-pattern missing-occurrence",
+            "target": "Tests/PlanStructureTests/FinalEnvironmentManifestTests.mjs",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "ENVIRONMENT_FINALIZATION_FAILED occurrence=StopWatch",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P08-T012.RED.001.PROC.001",
+            "greenLeafID": "P08-T012.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/PlanStructureTests/FinalEnvironmentManifestTests.mjs",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "MonaEnvironmentManifest.json",
+            "kind": "command-contract",
+            "sourceArtifactPath": "artifacts/environment-e1r-intl-clock-entropy-closure.html",
+            "sourceArtifactHash": "920e102184648cd1a08d589944708ceb62b4f3f6c091b4b100378f989709637b",
+            "sourceLocator": "/sections/interfaces/MonaEnvironmentManifest.json",
+            "contractRefs": [
+              "E1-R",
+              "G5-R.candidateGeneratedArtifacts.MonaEnvironmentManifest",
+              "X1-R.environmentConsumers"
+            ],
+            "commandRecordHash": "9c303c8f00698b4ee30b64c5bbbbcdc45610575fc7e1d810608f4097f77d7297",
+            "orderedLeafHashes": [
+              "4e10cd4eb9d0d56311e7a36f286622108b764ebbb5c2b8e7b403cc991e346564"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "MonaEnvironmentManifest.json",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "CANDIDATE_FINAL name=MonaEnvironmentManifest.json occurrences=exact"
+            ]
+          }
+        ]
+      }
+    },
+    "P08-T013": {
+      "testAuthoringOperation": "Tests/PlanStructureTests/FinalSourceClosureManifestTests.mjs",
+      "testContract": {
+        "contractID": "P08-T013",
+        "cases": [
+          {
+            "caseID": "P08-T013.CASE.001",
+            "file": {
+              "path": "Tests/PlanStructureTests/FinalSourceClosureManifestTests.mjs",
+              "availability": "local"
+            },
+            "checker": "node --test Tests/PlanStructureTests/FinalSourceClosureManifestTests.mjs --test-name-pattern unmanifested-source",
+            "target": "Tests/PlanStructureTests/FinalSourceClosureManifestTests.mjs",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "SOURCE_CLOSURE_FINALIZATION_FAILED path=Sources/MonaCode/Late.swift",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P08-T013.RED.001.PROC.001",
+            "greenLeafID": "P08-T013.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/PlanStructureTests/FinalSourceClosureManifestTests.mjs",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "MonaSourceClosureManifest.json",
+            "kind": "command-contract",
+            "sourceArtifactPath": "artifacts/source-x1r-runtime-style-closure.html",
+            "sourceArtifactHash": "32bebccbf932e1baab6bb9ebd386715295625792198ae378566d0bc11ca2a3a9",
+            "sourceLocator": "/sections/interfaces/MonaSourceClosureManifest.json",
+            "contractRefs": [
+              "G5-R.candidateGeneratedArtifacts.MonaSourceClosureManifest",
+              "G5-R.implementationOutputRules",
+              "X1-R"
+            ],
+            "commandRecordHash": "242cf5b2fc9b857e24675354a7934abeb53458c5b84fa037ffe588e07435afaa",
+            "orderedLeafHashes": [
+              "cf1f66f17447c5e4d0845c4b14f71db502b54273d078c5a7f0a57f87a67c7899"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "MonaSourceClosureManifest.json",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "CANDIDATE_FINAL name=MonaSourceClosureManifest.json unmanifestedSources=0"
+            ]
+          }
+        ]
+      }
+    },
+    "P08-T014": {
+      "testAuthoringOperation": "Tests/PlanStructureTests/FinalCacheManifestTests.mjs",
+      "testContract": {
+        "contractID": "P08-T014",
+        "cases": [
+          {
+            "caseID": "P08-T014.CASE.001",
+            "file": {
+              "path": "Tests/PlanStructureTests/FinalCacheManifestTests.mjs",
+              "availability": "local"
+            },
+            "checker": "node --test Tests/PlanStructureTests/FinalCacheManifestTests.mjs --test-name-pattern undeclared-cache",
+            "target": "Tests/PlanStructureTests/FinalCacheManifestTests.mjs",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "CACHE_FINALIZATION_FAILED cache=lateCache",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P08-T014.RED.001.PROC.001",
+            "greenLeafID": "P08-T014.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/PlanStructureTests/FinalCacheManifestTests.mjs",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "MonaCacheManifest.json",
+            "kind": "command-contract",
+            "sourceArtifactPath": "artifacts/runtime-h2r-global-lifetime-resource-closure.html",
+            "sourceArtifactHash": "be66e6ec8e0d03b4561b3e93e2611b3750c0c4b2ca2868506727f0184a12cfea",
+            "sourceLocator": "/sections/interfaces/MonaCacheManifest.json",
+            "contractRefs": [
+              "G5-R.candidateGeneratedArtifacts.MonaCacheManifest",
+              "H2-R.cacheRegistry",
+              "S1-R.cacheBounds"
+            ],
+            "commandRecordHash": "55a2696fd593a2ccebabbded90793a9effc8e3bb02e0fba174de6fc5f038b5c8",
+            "orderedLeafHashes": [
+              "4258331eadcf450681e558c5d374bc3cd742b080ac0dbb06ae37bc57c6c736ff"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "MonaCacheManifest.json",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "CANDIDATE_FINAL name=MonaCacheManifest.json undeclaredCaches=0"
+            ]
+          }
+        ]
+      }
+    },
+    "P08-T015": {
+      "testAuthoringOperation": "Tests/PlanStructureTests/FinalDistributionManifestTests.mjs",
+      "testContract": {
+        "contractID": "P08-T015",
+        "cases": [
+          {
+            "caseID": "P08-T015.CASE.001",
+            "file": {
+              "path": "Tests/PlanStructureTests/FinalDistributionManifestTests.mjs",
+              "availability": "local"
+            },
+            "checker": "node --test Tests/PlanStructureTests/FinalDistributionManifestTests.mjs --test-name-pattern artifact-hash-drift",
+            "target": "Tests/PlanStructureTests/FinalDistributionManifestTests.mjs",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "DISTRIBUTION_FINALIZATION_FAILED artifact=MonaCode.framework",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P08-T015.RED.001.PROC.001",
+            "greenLeafID": "P08-T015.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/PlanStructureTests/FinalDistributionManifestTests.mjs",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "MonaDistributionManifest.json",
+            "kind": "command-contract",
+            "sourceArtifactPath": "implementation-plan/phase-08-release-candidate-distribution.md",
+            "sourceArtifactHash": "39717442073baf94f74126c777fa4c12d319ff8a4a3ffef07b0cbf099e164b74",
+            "sourceLocator": "/sections/interfaces/MonaDistributionManifest.json",
+            "contractRefs": [
+              "C10",
+              "G5-R.candidateGeneratedArtifacts.MonaDistributionManifest",
+              "G5-R.deliveryScope",
+              "G5-R.licensingProfile"
+            ],
+            "commandRecordHash": "644dd7b446a44b3d0543509e531e7c4df4b7cc68b3b43ea164da56789bff8371",
+            "orderedLeafHashes": [
+              "1743e3ef0fbb3fd6cb9606ac2823d27142d980b7ca126ae5f684b05b77114abb"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "MonaDistributionManifest.json",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "CANDIDATE_FINAL name=MonaDistributionManifest.json products=3 forbidden=0"
+            ]
+          }
+        ]
+      }
+    },
+    "P08-T016": {
+      "testAuthoringOperation": "Tests/PlanStructureTests/SixStaticCandidateSetTests.mjs",
+      "testContract": {
+        "contractID": "P08-T016",
+        "cases": [
+          {
+            "caseID": "P08-T016.CASE.001",
+            "file": {
+              "path": "Tests/PlanStructureTests/SixStaticCandidateSetTests.mjs",
+              "availability": "local"
+            },
+            "checker": "node --test Tests/PlanStructureTests/SixStaticCandidateSetTests.mjs --test-name-pattern stale-candidate",
+            "target": "Tests/PlanStructureTests/SixStaticCandidateSetTests.mjs",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "STATIC_CANDIDATE_SET_INVALID reason=source-revision-mismatch",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P08-T016.RED.001.PROC.001",
+            "greenLeafID": "P08-T016.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/PlanStructureTests/SixStaticCandidateSetTests.mjs",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "MonaStaticCandidateSet",
+            "kind": "command-contract",
+            "sourceArtifactPath": "implementation-plan/phase-08-release-candidate-distribution.md",
+            "sourceArtifactHash": "39717442073baf94f74126c777fa4c12d319ff8a4a3ffef07b0cbf099e164b74",
+            "sourceLocator": "/sections/interfaces/MonaStaticCandidateSet",
+            "contractRefs": [
+              "G5-R.candidateGeneratedArtifacts",
+              "G5-R.designClosure.candidateOrder"
+            ],
+            "commandRecordHash": "3d90536c0835e3759232d59c246cc09c31e2ae440d8bb158bdddbb3e965b6ece",
+            "orderedLeafHashes": [
+              "383365bc7b4c2c8827480c7f34d4a58f5a145638ae9193eaf619852a23882713"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "MonaStaticCandidateSet",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "STATIC_CANDIDATE_SET count=6 orderFailures=0"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}
