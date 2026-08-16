@@ -1,0 +1,2133 @@
+{
+  "tasks": {
+    "P09-T001": {
+      "testAuthoringOperation": "Tests/PlanStructureTests/FormalQEnvironmentPreflightTests.mjs",
+      "testContract": {
+        "contractID": "P09-T001",
+        "cases": [
+          {
+            "caseID": "P09-T001.CASE.001",
+            "file": {
+              "path": "Tests/PlanStructureTests/FormalQEnvironmentPreflightTests.mjs",
+              "availability": "local"
+            },
+            "checker": "node --test Tests/PlanStructureTests/FormalQEnvironmentPreflightTests.mjs --test-name-pattern external-display",
+            "target": "Tests/PlanStructureTests/FormalQEnvironmentPreflightTests.mjs",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "QENVIRONMENT_FORMAL_RUN_REJECTED externalDisplayCount=1 required=0",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P09-T001.RED.001.PROC.001",
+            "greenLeafID": "P09-T001.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/PlanStructureTests/FormalQEnvironmentPreflightTests.mjs",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "QEnvironmentID.json",
+            "kind": "command-contract",
+            "sourceArtifactPath": "artifacts/monacode-g5r-qualification-environment-manifest.json",
+            "sourceArtifactHash": "e1442e293517c510fb462e3acfbcf123faaaa0342604c7cb9e57d27f11afc753",
+            "sourceLocator": "/sections/interfaces/QEnvironmentID.json",
+            "contractRefs": [
+              "G5-R.currentLocalEnvironment",
+              "Q1-R4.environmentIdentity",
+              "Q1-R5.preflight",
+              "G5-R.validationScope.privacy"
+            ],
+            "commandRecordHash": "b417ae8f51aa81f24b5e9c5443c848bef933bb2cbf953cc694b4abca98bf32d6",
+            "orderedLeafHashes": [
+              "66368645b702331d98450ec3ca60f5a78e37ea63d9e2ea679c126d3add9fc966",
+              "00bbf42ca0387d6cdb2e0d492520684cd05503ab7f27e6f68498a794f292d46c"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "QEnvironmentID.json",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "CANDIDATE_FINAL name=QEnvironmentID.json build=25G76 chrome=151.0.7922.138 externalDisplays=0 privacy=pass"
+            ],
+            "commandTimeoutMs": 1800000,
+            "qualificationPredicate": "externalDisplays=0 privacy=pass",
+            "sourceMutationProhibited": true
+          }
+        ]
+      },
+      "commandTimeoutMs": 1800000,
+      "qualificationConsumed": "zero-external-display",
+      "sourceMutations": 0
+    },
+    "P09-T002": {
+      "testAuthoringOperation": "Tests/PlanStructureTests/QualifiedCandidateSetTests.mjs",
+      "testContract": {
+        "contractID": "P09-T002",
+        "cases": [
+          {
+            "caseID": "P09-T002.CASE.001",
+            "file": {
+              "path": "Tests/PlanStructureTests/QualifiedCandidateSetTests.mjs",
+              "availability": "local"
+            },
+            "checker": "node --test Tests/PlanStructureTests/QualifiedCandidateSetTests.mjs --test-name-pattern mixed-revision",
+            "target": "Tests/PlanStructureTests/QualifiedCandidateSetTests.mjs",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "QUALIFIED_CANDIDATE_SET_INVALID reason=mixed-source-revision",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P09-T002.RED.001.PROC.001",
+            "greenLeafID": "P09-T002.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/PlanStructureTests/QualifiedCandidateSetTests.mjs",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "MonaQualifiedCandidateSet",
+            "kind": "command-contract",
+            "sourceArtifactPath": "artifacts/monacode-q1r5-acceptance-manifest.json",
+            "sourceArtifactHash": "b695a29f52fde3311c4b9ebcd282877a61de6cf071112458363d89fb32f6f720",
+            "sourceLocator": "/sections/interfaces/MonaQualifiedCandidateSet",
+            "contractRefs": [
+              "G5-R.candidateGeneratedArtifacts",
+              "Q1-R5.candidateJoin"
+            ],
+            "commandRecordHash": "21b7e3c3a94b88674eb80e3f7585dd3baacbf784ed9a777169631a47f389b311",
+            "orderedLeafHashes": [
+              "4fcf392896af27052a59a1e9025a202bf4378199f949344de4374f0a3a37ae29",
+              "998efc64f97a14f84541b9367211206d6ddbc355a295892d172fd0d9b2780faa"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "MonaQualifiedCandidateSet",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "QUALIFIED_CANDIDATE_SET count=7 sourceRevisions=1 environments=1"
+            ],
+            "commandTimeoutMs": 1800000,
+            "qualificationPredicate": "externalDisplays=0 privacy=pass",
+            "sourceMutationProhibited": true
+          }
+        ]
+      },
+      "commandTimeoutMs": 1800000,
+      "qualificationConsumed": "zero-external-display",
+      "sourceMutations": 0
+    },
+    "P09-T010": {
+      "testAuthoringOperation": "Tests/ConformanceAndFailureInjection/Correctness/C01Tests.swift",
+      "testContract": {
+        "contractID": "P09-T010",
+        "cases": [
+          {
+            "caseID": "P09-T010.CASE.001",
+            "file": {
+              "path": "Tests/ConformanceAndFailureInjection/Correctness/C01Tests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter C01Tests/testSeededMismatch",
+            "target": "Tests/ConformanceAndFailureInjection/Correctness/C01Tests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "CORRECTNESS_GATE_FAILED gate=C01",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P09-T010.RED.001.PROC.001",
+            "greenLeafID": "P09-T010.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/ConformanceAndFailureInjection/Correctness/C01Tests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "C01Evidence",
+            "kind": "command-contract",
+            "sourceArtifactPath": "implementation-plan/phase-09-acceptance-release-verdict.md",
+            "sourceArtifactHash": "0c22e1c8e8dd512823c0d3e06bf0c1c88e0eb376991fca9c1833dce8aaadc2b2",
+            "sourceLocator": "/sections/interfaces/C01Evidence",
+            "contractRefs": [
+              "G5-R.acceptance.correctnessGates.C01",
+              "Q1-R5",
+              "C01"
+            ],
+            "commandRecordHash": "d5ba1c95b77485a025dcf8adb8244d8b634509404b0331ac8c664e7688374d88",
+            "orderedLeafHashes": [
+              "008ad705b633b847e3eb32e1b1e07786b10c156effa32dfd9a9d449291bd5de9",
+              "1232830d3a263741948ff8d5e7c34c3ea17e592def603ea9f01d466259d8e830"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "C01Evidence",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "CORRECTNESS_GATE_PASS gate=C01 skipped=0"
+            ],
+            "commandTimeoutMs": 1800000,
+            "qualificationPredicate": "externalDisplays=0 privacy=pass",
+            "sourceMutationProhibited": true
+          }
+        ]
+      },
+      "commandTimeoutMs": 1800000,
+      "qualificationConsumed": "zero-external-display",
+      "sourceMutations": 0
+    },
+    "P09-T011": {
+      "testAuthoringOperation": "Tests/ConformanceAndFailureInjection/Correctness/C02Tests.swift",
+      "testContract": {
+        "contractID": "P09-T011",
+        "cases": [
+          {
+            "caseID": "P09-T011.CASE.001",
+            "file": {
+              "path": "Tests/ConformanceAndFailureInjection/Correctness/C02Tests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter C02Tests/testSeededMismatch",
+            "target": "Tests/ConformanceAndFailureInjection/Correctness/C02Tests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "CORRECTNESS_GATE_FAILED gate=C02",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P09-T011.RED.001.PROC.001",
+            "greenLeafID": "P09-T011.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/ConformanceAndFailureInjection/Correctness/C02Tests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "C02Evidence",
+            "kind": "command-contract",
+            "sourceArtifactPath": "implementation-plan/phase-09-acceptance-release-verdict.md",
+            "sourceArtifactHash": "0c22e1c8e8dd512823c0d3e06bf0c1c88e0eb376991fca9c1833dce8aaadc2b2",
+            "sourceLocator": "/sections/interfaces/C02Evidence",
+            "contractRefs": [
+              "G5-R.acceptance.correctnessGates.C02",
+              "Q1-R5",
+              "C02"
+            ],
+            "commandRecordHash": "d031bed7038bc7d4d3df69f7515d1825e9fcac4d555cfe0954850b686c8f6309",
+            "orderedLeafHashes": [
+              "b19df3feafc48a2519f290e14dc17b7be0ad42c7eeef434befa0098e4d8a281f",
+              "5a7009507f838ec16391e76e8c9e88bca196ab2a3fedcf4fc03bdbd827564343"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "C02Evidence",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "CORRECTNESS_GATE_PASS gate=C02 skipped=0"
+            ],
+            "commandTimeoutMs": 1800000,
+            "qualificationPredicate": "externalDisplays=0 privacy=pass",
+            "sourceMutationProhibited": true
+          }
+        ]
+      },
+      "commandTimeoutMs": 1800000,
+      "qualificationConsumed": "zero-external-display",
+      "sourceMutations": 0
+    },
+    "P09-T012": {
+      "testAuthoringOperation": "Tests/ConformanceAndFailureInjection/Correctness/C03Tests.swift",
+      "testContract": {
+        "contractID": "P09-T012",
+        "cases": [
+          {
+            "caseID": "P09-T012.CASE.001",
+            "file": {
+              "path": "Tests/ConformanceAndFailureInjection/Correctness/C03Tests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter C03Tests/testSeededMismatch",
+            "target": "Tests/ConformanceAndFailureInjection/Correctness/C03Tests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "CORRECTNESS_GATE_FAILED gate=C03",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P09-T012.RED.001.PROC.001",
+            "greenLeafID": "P09-T012.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/ConformanceAndFailureInjection/Correctness/C03Tests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "C03Evidence",
+            "kind": "command-contract",
+            "sourceArtifactPath": "implementation-plan/phase-09-acceptance-release-verdict.md",
+            "sourceArtifactHash": "0c22e1c8e8dd512823c0d3e06bf0c1c88e0eb376991fca9c1833dce8aaadc2b2",
+            "sourceLocator": "/sections/interfaces/C03Evidence",
+            "contractRefs": [
+              "G5-R.acceptance.correctnessGates.C03",
+              "Q1-R5",
+              "C03"
+            ],
+            "commandRecordHash": "371a504ad78ead023979f43e153deccaf3c04d5f0b14cdb755c38a39fcca8f82",
+            "orderedLeafHashes": [
+              "10f78ed128e6351ac2a55eeeb900a14ed0b8a00017cb7c479384d653cc52d044",
+              "bba6c7104cd7fb66f55585485ea219074c1cabde72b1c06e7d666a8660eb57ee"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "C03Evidence",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "CORRECTNESS_GATE_PASS gate=C03 skipped=0"
+            ],
+            "commandTimeoutMs": 1800000,
+            "qualificationPredicate": "externalDisplays=0 privacy=pass",
+            "sourceMutationProhibited": true
+          }
+        ]
+      },
+      "commandTimeoutMs": 1800000,
+      "qualificationConsumed": "zero-external-display",
+      "sourceMutations": 0
+    },
+    "P09-T013": {
+      "testAuthoringOperation": "Tests/ConformanceAndFailureInjection/Correctness/C04Tests.swift",
+      "testContract": {
+        "contractID": "P09-T013",
+        "cases": [
+          {
+            "caseID": "P09-T013.CASE.001",
+            "file": {
+              "path": "Tests/ConformanceAndFailureInjection/Correctness/C04Tests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter C04Tests/testSeededMismatch",
+            "target": "Tests/ConformanceAndFailureInjection/Correctness/C04Tests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "CORRECTNESS_GATE_FAILED gate=C04",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P09-T013.RED.001.PROC.001",
+            "greenLeafID": "P09-T013.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/ConformanceAndFailureInjection/Correctness/C04Tests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "C04Evidence",
+            "kind": "command-contract",
+            "sourceArtifactPath": "implementation-plan/phase-09-acceptance-release-verdict.md",
+            "sourceArtifactHash": "0c22e1c8e8dd512823c0d3e06bf0c1c88e0eb376991fca9c1833dce8aaadc2b2",
+            "sourceLocator": "/sections/interfaces/C04Evidence",
+            "contractRefs": [
+              "G5-R.acceptance.correctnessGates.C04",
+              "Q1-R5",
+              "C04"
+            ],
+            "commandRecordHash": "2114985ff1a52ca6742c1595e61d3783cd853bf727910219098a5a9f30308302",
+            "orderedLeafHashes": [
+              "e63f55da7239af62326d1d8c8c4818b0e284dada40586eaea63a082ead7de3ea",
+              "c47f26b1ff7212d01e49c74de1e0e03c08a538c3f13bb5b83b764add622c5621"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "C04Evidence",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "CORRECTNESS_GATE_PASS gate=C04 skipped=0"
+            ],
+            "commandTimeoutMs": 1800000,
+            "qualificationPredicate": "externalDisplays=0 privacy=pass",
+            "sourceMutationProhibited": true
+          }
+        ]
+      },
+      "commandTimeoutMs": 1800000,
+      "qualificationConsumed": "zero-external-display",
+      "sourceMutations": 0
+    },
+    "P09-T014": {
+      "testAuthoringOperation": "Tests/ConformanceAndFailureInjection/Correctness/C05Tests.swift",
+      "testContract": {
+        "contractID": "P09-T014",
+        "cases": [
+          {
+            "caseID": "P09-T014.CASE.001",
+            "file": {
+              "path": "Tests/ConformanceAndFailureInjection/Correctness/C05Tests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter C05Tests/testSeededMismatch",
+            "target": "Tests/ConformanceAndFailureInjection/Correctness/C05Tests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "CORRECTNESS_GATE_FAILED gate=C05",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P09-T014.RED.001.PROC.001",
+            "greenLeafID": "P09-T014.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/ConformanceAndFailureInjection/Correctness/C05Tests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "C05Evidence",
+            "kind": "command-contract",
+            "sourceArtifactPath": "implementation-plan/phase-09-acceptance-release-verdict.md",
+            "sourceArtifactHash": "0c22e1c8e8dd512823c0d3e06bf0c1c88e0eb376991fca9c1833dce8aaadc2b2",
+            "sourceLocator": "/sections/interfaces/C05Evidence",
+            "contractRefs": [
+              "G5-R.acceptance.correctnessGates.C05",
+              "Q1-R5",
+              "C05"
+            ],
+            "commandRecordHash": "f5f2c5299d9f9a9965ed46b08573fd07e6624bad08157f053b3283eedfc2451e",
+            "orderedLeafHashes": [
+              "948a7a93c6dcc7c203dba019a710c9c77141cc541d59a3e03544036880ef654b",
+              "4f6167a75542d9ab77dbd4f8a50149d7bc8126dfc81fd5070ceb95b9940858ee"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "C05Evidence",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "CORRECTNESS_GATE_PASS gate=C05 skipped=0"
+            ],
+            "commandTimeoutMs": 1800000,
+            "qualificationPredicate": "externalDisplays=0 privacy=pass",
+            "sourceMutationProhibited": true
+          }
+        ]
+      },
+      "commandTimeoutMs": 1800000,
+      "qualificationConsumed": "zero-external-display",
+      "sourceMutations": 0
+    },
+    "P09-T015": {
+      "testAuthoringOperation": "Tests/ConformanceAndFailureInjection/Correctness/C06Tests.swift",
+      "testContract": {
+        "contractID": "P09-T015",
+        "cases": [
+          {
+            "caseID": "P09-T015.CASE.001",
+            "file": {
+              "path": "Tests/ConformanceAndFailureInjection/Correctness/C06Tests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter C06Tests/testSeededMismatch",
+            "target": "Tests/ConformanceAndFailureInjection/Correctness/C06Tests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "CORRECTNESS_GATE_FAILED gate=C06",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P09-T015.RED.001.PROC.001",
+            "greenLeafID": "P09-T015.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/ConformanceAndFailureInjection/Correctness/C06Tests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "C06Evidence",
+            "kind": "command-contract",
+            "sourceArtifactPath": "implementation-plan/phase-09-acceptance-release-verdict.md",
+            "sourceArtifactHash": "0c22e1c8e8dd512823c0d3e06bf0c1c88e0eb376991fca9c1833dce8aaadc2b2",
+            "sourceLocator": "/sections/interfaces/C06Evidence",
+            "contractRefs": [
+              "G5-R.acceptance.correctnessGates.C06",
+              "Q1-R5",
+              "C06"
+            ],
+            "commandRecordHash": "c75bb3ca678ed77a4f706f37393159997092c109daeccc85441d62c84de859f4",
+            "orderedLeafHashes": [
+              "a3dad1d62df58fb90c7a7f370d8b0c4bea88a695c1afde205922d725f6c233fb",
+              "1cee5af0f5d0594d1f0bbc673dd811011f175cd6083ced292b9e8b7162b892be"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "C06Evidence",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "CORRECTNESS_GATE_PASS gate=C06 skipped=0"
+            ],
+            "commandTimeoutMs": 1800000,
+            "qualificationPredicate": "externalDisplays=0 privacy=pass",
+            "sourceMutationProhibited": true
+          }
+        ]
+      },
+      "commandTimeoutMs": 1800000,
+      "qualificationConsumed": "zero-external-display",
+      "sourceMutations": 0
+    },
+    "P09-T016": {
+      "testAuthoringOperation": "Tests/ConformanceAndFailureInjection/Correctness/C07Tests.swift",
+      "testContract": {
+        "contractID": "P09-T016",
+        "cases": [
+          {
+            "caseID": "P09-T016.CASE.001",
+            "file": {
+              "path": "Tests/ConformanceAndFailureInjection/Correctness/C07Tests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter C07Tests/testSeededMismatch",
+            "target": "Tests/ConformanceAndFailureInjection/Correctness/C07Tests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "CORRECTNESS_GATE_FAILED gate=C07",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P09-T016.RED.001.PROC.001",
+            "greenLeafID": "P09-T016.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/ConformanceAndFailureInjection/Correctness/C07Tests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "C07Evidence",
+            "kind": "command-contract",
+            "sourceArtifactPath": "implementation-plan/phase-09-acceptance-release-verdict.md",
+            "sourceArtifactHash": "0c22e1c8e8dd512823c0d3e06bf0c1c88e0eb376991fca9c1833dce8aaadc2b2",
+            "sourceLocator": "/sections/interfaces/C07Evidence",
+            "contractRefs": [
+              "G5-R.acceptance.correctnessGates.C07",
+              "Q1-R5",
+              "C07"
+            ],
+            "commandRecordHash": "d967f91171b230ec858320e6317dc612159587b1b2afe99425297b8834890b0d",
+            "orderedLeafHashes": [
+              "620474747e22a5ac861fc3b3f9ebb22af5a0d46b9fb36056bce9fcf0f5c376a4",
+              "92f6c80e01af262129f18a424d1b77e0e00d99f21df3ce2c1187982602db7d65"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "C07Evidence",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "CORRECTNESS_GATE_PASS gate=C07 skipped=0"
+            ],
+            "commandTimeoutMs": 1800000,
+            "qualificationPredicate": "externalDisplays=0 privacy=pass",
+            "sourceMutationProhibited": true
+          }
+        ]
+      },
+      "commandTimeoutMs": 1800000,
+      "qualificationConsumed": "zero-external-display",
+      "sourceMutations": 0
+    },
+    "P09-T017": {
+      "testAuthoringOperation": "Tests/ConformanceAndFailureInjection/Correctness/C08Tests.swift",
+      "testContract": {
+        "contractID": "P09-T017",
+        "cases": [
+          {
+            "caseID": "P09-T017.CASE.001",
+            "file": {
+              "path": "Tests/ConformanceAndFailureInjection/Correctness/C08Tests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter C08Tests/testSeededMismatch",
+            "target": "Tests/ConformanceAndFailureInjection/Correctness/C08Tests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "CORRECTNESS_GATE_FAILED gate=C08",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P09-T017.RED.001.PROC.001",
+            "greenLeafID": "P09-T017.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/ConformanceAndFailureInjection/Correctness/C08Tests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "C08Evidence",
+            "kind": "command-contract",
+            "sourceArtifactPath": "implementation-plan/phase-09-acceptance-release-verdict.md",
+            "sourceArtifactHash": "0c22e1c8e8dd512823c0d3e06bf0c1c88e0eb376991fca9c1833dce8aaadc2b2",
+            "sourceLocator": "/sections/interfaces/C08Evidence",
+            "contractRefs": [
+              "G5-R.acceptance.correctnessGates.C08",
+              "Q1-R5",
+              "C08"
+            ],
+            "commandRecordHash": "e5fa3e70b1e096f94105ef3c578b3259fa4d1c5badc93af0cb5da98289137da2",
+            "orderedLeafHashes": [
+              "e82bdf1372cb268cb815607d47ce7f4f2d3cb35bdda24236da503247fba81acc",
+              "760f45f72317b28cd129f22262eba5616812bbf58cccd42c2300433c5e6fec16"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "C08Evidence",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "CORRECTNESS_GATE_PASS gate=C08 skipped=0"
+            ],
+            "commandTimeoutMs": 1800000,
+            "qualificationPredicate": "externalDisplays=0 privacy=pass",
+            "sourceMutationProhibited": true
+          }
+        ]
+      },
+      "commandTimeoutMs": 1800000,
+      "qualificationConsumed": "zero-external-display",
+      "sourceMutations": 0
+    },
+    "P09-T018": {
+      "testAuthoringOperation": "Tests/ConformanceAndFailureInjection/Correctness/C09Tests.swift",
+      "testContract": {
+        "contractID": "P09-T018",
+        "cases": [
+          {
+            "caseID": "P09-T018.CASE.001",
+            "file": {
+              "path": "Tests/ConformanceAndFailureInjection/Correctness/C09Tests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter C09Tests/testSeededMismatch",
+            "target": "Tests/ConformanceAndFailureInjection/Correctness/C09Tests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "CORRECTNESS_GATE_FAILED gate=C09",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P09-T018.RED.001.PROC.001",
+            "greenLeafID": "P09-T018.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/ConformanceAndFailureInjection/Correctness/C09Tests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "C09Evidence",
+            "kind": "command-contract",
+            "sourceArtifactPath": "implementation-plan/phase-09-acceptance-release-verdict.md",
+            "sourceArtifactHash": "0c22e1c8e8dd512823c0d3e06bf0c1c88e0eb376991fca9c1833dce8aaadc2b2",
+            "sourceLocator": "/sections/interfaces/C09Evidence",
+            "contractRefs": [
+              "G5-R.acceptance.correctnessGates.C09",
+              "Q1-R5",
+              "C09"
+            ],
+            "commandRecordHash": "30c1d825ee7d8f8dd3091f7e015850576ccbe11a53758f4a5fe7f4356ec790d2",
+            "orderedLeafHashes": [
+              "f260bcd98be521c44613ef71b2a541289825b6b0eaa75eb93ce86f2c098dd785",
+              "2aa087de6011ff2cef58fc795877058008a3d7dddb87028cf88f6d7f2efc1d31"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "C09Evidence",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "CORRECTNESS_GATE_PASS gate=C09 skipped=0"
+            ],
+            "commandTimeoutMs": 1800000,
+            "qualificationPredicate": "externalDisplays=0 privacy=pass",
+            "sourceMutationProhibited": true
+          }
+        ]
+      },
+      "commandTimeoutMs": 1800000,
+      "qualificationConsumed": "zero-external-display",
+      "sourceMutations": 0
+    },
+    "P09-T019": {
+      "testAuthoringOperation": "Tests/ConformanceAndFailureInjection/Correctness/C10Tests.swift",
+      "testContract": {
+        "contractID": "P09-T019",
+        "cases": [
+          {
+            "caseID": "P09-T019.CASE.001",
+            "file": {
+              "path": "Tests/ConformanceAndFailureInjection/Correctness/C10Tests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter C10Tests/testSeededMismatch",
+            "target": "Tests/ConformanceAndFailureInjection/Correctness/C10Tests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "CORRECTNESS_GATE_FAILED gate=C10",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P09-T019.RED.001.PROC.001",
+            "greenLeafID": "P09-T019.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/ConformanceAndFailureInjection/Correctness/C10Tests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "C10Evidence",
+            "kind": "command-contract",
+            "sourceArtifactPath": "implementation-plan/phase-09-acceptance-release-verdict.md",
+            "sourceArtifactHash": "0c22e1c8e8dd512823c0d3e06bf0c1c88e0eb376991fca9c1833dce8aaadc2b2",
+            "sourceLocator": "/sections/interfaces/C10Evidence",
+            "contractRefs": [
+              "G5-R.acceptance.correctnessGates.C10",
+              "Q1-R5",
+              "C10"
+            ],
+            "commandRecordHash": "ef1b64f6498780d5d0be34d2c8abe2604aa9c5383d19646fc25675852756e320",
+            "orderedLeafHashes": [
+              "080adf3f946fa209bde7537d91f3945fc60b8019a6a7e11a5280ca6bc2aa71d2",
+              "68ba43c87449ee83d5d10147c7abcb44bbda6cc5f538e1630d6131a64fe89c57"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "C10Evidence",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "CORRECTNESS_GATE_PASS gate=C10 skipped=0"
+            ],
+            "commandTimeoutMs": 1800000,
+            "qualificationPredicate": "externalDisplays=0 privacy=pass",
+            "sourceMutationProhibited": true
+          }
+        ]
+      },
+      "commandTimeoutMs": 1800000,
+      "qualificationConsumed": "zero-external-display",
+      "sourceMutations": 0
+    },
+    "P09-T030": {
+      "testAuthoringOperation": "Tests/BenchmarkHarness/Workloads/P00WorkloadTests.swift",
+      "testContract": {
+        "contractID": "P09-T030",
+        "cases": [
+          {
+            "caseID": "P09-T030.CASE.001",
+            "file": {
+              "path": "Tests/BenchmarkHarness/Workloads/P00WorkloadTests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter P00WorkloadTests/testSeededRegression",
+            "target": "Tests/BenchmarkHarness/Workloads/P00WorkloadTests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "PERFORMANCE_NO_REGRESSION_FAILED workload=P00 comparator=M0",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P09-T030.RED.001.PROC.001",
+            "greenLeafID": "P09-T030.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/BenchmarkHarness/Workloads/P00WorkloadTests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "P00Evidence",
+            "kind": "command-contract",
+            "sourceArtifactPath": "implementation-plan/phase-09-acceptance-release-verdict.md",
+            "sourceArtifactHash": "0c22e1c8e8dd512823c0d3e06bf0c1c88e0eb376991fca9c1833dce8aaadc2b2",
+            "sourceLocator": "/sections/interfaces/P00Evidence",
+            "contractRefs": [
+              "G5-R.performanceDecision.workloads.P00",
+              "Q1-R2",
+              "Q1-R3",
+              "Q1-R4",
+              "Q1-R5"
+            ],
+            "commandRecordHash": "cc13880bac61342d1f30204b43160a96be8624910db3a61fdd3ed83cb6424d22",
+            "orderedLeafHashes": [
+              "c9314dc64425b643a7fda22dec7c1381b07487359a2e6444fc5980cac9d6321a",
+              "898acc2b716621096f77a5314adf5cee4d843b852453964f81cb16ff21497174"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "P00Evidence",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "PERFORMANCE_WORKLOAD_PASS workload=P00 baselines=M0,M1 skipped=0"
+            ],
+            "commandTimeoutMs": 1800000,
+            "qualificationPredicate": "externalDisplays=0 privacy=pass",
+            "sourceMutationProhibited": true
+          }
+        ]
+      },
+      "commandTimeoutMs": 1800000,
+      "qualificationConsumed": "zero-external-display",
+      "sourceMutations": 0
+    },
+    "P09-T031": {
+      "testAuthoringOperation": "Tests/BenchmarkHarness/Workloads/P01WorkloadTests.swift",
+      "testContract": {
+        "contractID": "P09-T031",
+        "cases": [
+          {
+            "caseID": "P09-T031.CASE.001",
+            "file": {
+              "path": "Tests/BenchmarkHarness/Workloads/P01WorkloadTests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter P01WorkloadTests/testSeededRegression",
+            "target": "Tests/BenchmarkHarness/Workloads/P01WorkloadTests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "PERFORMANCE_NO_REGRESSION_FAILED workload=P01 comparator=M0",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P09-T031.RED.001.PROC.001",
+            "greenLeafID": "P09-T031.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/BenchmarkHarness/Workloads/P01WorkloadTests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "P01Evidence",
+            "kind": "command-contract",
+            "sourceArtifactPath": "implementation-plan/phase-09-acceptance-release-verdict.md",
+            "sourceArtifactHash": "0c22e1c8e8dd512823c0d3e06bf0c1c88e0eb376991fca9c1833dce8aaadc2b2",
+            "sourceLocator": "/sections/interfaces/P01Evidence",
+            "contractRefs": [
+              "G5-R.performanceDecision.workloads.P01",
+              "Q1-R2",
+              "Q1-R3",
+              "Q1-R4",
+              "Q1-R5"
+            ],
+            "commandRecordHash": "75796138ab635c0201c984add4bc60219c7c6312bae9905ebb13f29d3e238447",
+            "orderedLeafHashes": [
+              "75870ac036de52118a6cdd5e7b5eee0ada747dd1274ba3521f4bde0247ca7017",
+              "214cdec6c24cfd16acd2059ce19e0d6c1989099499c439b30b75820503d3de4c"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "P01Evidence",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "PERFORMANCE_WORKLOAD_PASS workload=P01 baselines=M0,M1 skipped=0"
+            ],
+            "commandTimeoutMs": 1800000,
+            "qualificationPredicate": "externalDisplays=0 privacy=pass",
+            "sourceMutationProhibited": true
+          }
+        ]
+      },
+      "commandTimeoutMs": 1800000,
+      "qualificationConsumed": "zero-external-display",
+      "sourceMutations": 0
+    },
+    "P09-T032": {
+      "testAuthoringOperation": "Tests/BenchmarkHarness/Workloads/P02WorkloadTests.swift",
+      "testContract": {
+        "contractID": "P09-T032",
+        "cases": [
+          {
+            "caseID": "P09-T032.CASE.001",
+            "file": {
+              "path": "Tests/BenchmarkHarness/Workloads/P02WorkloadTests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter P02WorkloadTests/testSeededRegression",
+            "target": "Tests/BenchmarkHarness/Workloads/P02WorkloadTests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "PERFORMANCE_NO_REGRESSION_FAILED workload=P02 comparator=M0",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P09-T032.RED.001.PROC.001",
+            "greenLeafID": "P09-T032.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/BenchmarkHarness/Workloads/P02WorkloadTests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "P02Evidence",
+            "kind": "command-contract",
+            "sourceArtifactPath": "implementation-plan/phase-09-acceptance-release-verdict.md",
+            "sourceArtifactHash": "0c22e1c8e8dd512823c0d3e06bf0c1c88e0eb376991fca9c1833dce8aaadc2b2",
+            "sourceLocator": "/sections/interfaces/P02Evidence",
+            "contractRefs": [
+              "G5-R.performanceDecision.workloads.P02",
+              "Q1-R2",
+              "Q1-R3",
+              "Q1-R4",
+              "Q1-R5"
+            ],
+            "commandRecordHash": "06daad185fbcb8d4466c5f428426f516b5f5a6564d92ffe5593c7ec97078b1bf",
+            "orderedLeafHashes": [
+              "d959d71fe3ce2cbb41bf9eabdf5de85a551cf4213302028da0cb621d3a17efc5",
+              "34c1f86ccb336f797bc71dc1042bf9d6b88601c03656ef9dab543b2d6ba7101c"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "P02Evidence",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "PERFORMANCE_WORKLOAD_PASS workload=P02 baselines=M0,M1 skipped=0"
+            ],
+            "commandTimeoutMs": 1800000,
+            "qualificationPredicate": "externalDisplays=0 privacy=pass",
+            "sourceMutationProhibited": true
+          }
+        ]
+      },
+      "commandTimeoutMs": 1800000,
+      "qualificationConsumed": "zero-external-display",
+      "sourceMutations": 0
+    },
+    "P09-T033": {
+      "testAuthoringOperation": "Tests/BenchmarkHarness/Workloads/P03WorkloadTests.swift",
+      "testContract": {
+        "contractID": "P09-T033",
+        "cases": [
+          {
+            "caseID": "P09-T033.CASE.001",
+            "file": {
+              "path": "Tests/BenchmarkHarness/Workloads/P03WorkloadTests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter P03WorkloadTests/testSeededRegression",
+            "target": "Tests/BenchmarkHarness/Workloads/P03WorkloadTests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "PERFORMANCE_NO_REGRESSION_FAILED workload=P03 comparator=M0",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P09-T033.RED.001.PROC.001",
+            "greenLeafID": "P09-T033.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/BenchmarkHarness/Workloads/P03WorkloadTests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "P03Evidence",
+            "kind": "command-contract",
+            "sourceArtifactPath": "implementation-plan/phase-09-acceptance-release-verdict.md",
+            "sourceArtifactHash": "0c22e1c8e8dd512823c0d3e06bf0c1c88e0eb376991fca9c1833dce8aaadc2b2",
+            "sourceLocator": "/sections/interfaces/P03Evidence",
+            "contractRefs": [
+              "G5-R.performanceDecision.workloads.P03",
+              "Q1-R2",
+              "Q1-R3",
+              "Q1-R4",
+              "Q1-R5"
+            ],
+            "commandRecordHash": "ad7bd7ef5402c15f1b187178c0c07e9314b05b6b329c1c79b19474365f16bd70",
+            "orderedLeafHashes": [
+              "8663f18a820fc8105a2f5e58642ea9b10750fc1715a2dc1e8ae576cbbeec429b",
+              "28f46cb3bd779d0af332f08bcb3d0b041e60a1b912ee85a4bdcc924df3c84001"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "P03Evidence",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "PERFORMANCE_WORKLOAD_PASS workload=P03 baselines=M0,M1 skipped=0"
+            ],
+            "commandTimeoutMs": 1800000,
+            "qualificationPredicate": "externalDisplays=0 privacy=pass",
+            "sourceMutationProhibited": true
+          }
+        ]
+      },
+      "commandTimeoutMs": 1800000,
+      "qualificationConsumed": "zero-external-display",
+      "sourceMutations": 0
+    },
+    "P09-T034": {
+      "testAuthoringOperation": "Tests/BenchmarkHarness/Workloads/P04WorkloadTests.swift",
+      "testContract": {
+        "contractID": "P09-T034",
+        "cases": [
+          {
+            "caseID": "P09-T034.CASE.001",
+            "file": {
+              "path": "Tests/BenchmarkHarness/Workloads/P04WorkloadTests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter P04WorkloadTests/testSeededRegression",
+            "target": "Tests/BenchmarkHarness/Workloads/P04WorkloadTests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "PERFORMANCE_NO_REGRESSION_FAILED workload=P04 comparator=M0",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P09-T034.RED.001.PROC.001",
+            "greenLeafID": "P09-T034.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/BenchmarkHarness/Workloads/P04WorkloadTests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "P04Evidence",
+            "kind": "command-contract",
+            "sourceArtifactPath": "implementation-plan/phase-09-acceptance-release-verdict.md",
+            "sourceArtifactHash": "0c22e1c8e8dd512823c0d3e06bf0c1c88e0eb376991fca9c1833dce8aaadc2b2",
+            "sourceLocator": "/sections/interfaces/P04Evidence",
+            "contractRefs": [
+              "G5-R.performanceDecision.workloads.P04",
+              "Q1-R2",
+              "Q1-R3",
+              "Q1-R4",
+              "Q1-R5"
+            ],
+            "commandRecordHash": "9a74dcfba451667975a91c0dcc24ffe229d3c91c77d3c0118f9ca08f3c1c6a05",
+            "orderedLeafHashes": [
+              "858cc6696ddc716ee033cf19101dbf1883495ea6837df5d003b3ed1f6e9b0f35",
+              "a94cb9dd4717900a8d783af086b49958bff2a83ff4a9dd7c2fe0aaf9dd057709"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "P04Evidence",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "PERFORMANCE_WORKLOAD_PASS workload=P04 baselines=M0,M1 skipped=0"
+            ],
+            "commandTimeoutMs": 1800000,
+            "qualificationPredicate": "externalDisplays=0 privacy=pass",
+            "sourceMutationProhibited": true
+          }
+        ]
+      },
+      "commandTimeoutMs": 1800000,
+      "qualificationConsumed": "zero-external-display",
+      "sourceMutations": 0
+    },
+    "P09-T035": {
+      "testAuthoringOperation": "Tests/BenchmarkHarness/Workloads/P05WorkloadTests.swift",
+      "testContract": {
+        "contractID": "P09-T035",
+        "cases": [
+          {
+            "caseID": "P09-T035.CASE.001",
+            "file": {
+              "path": "Tests/BenchmarkHarness/Workloads/P05WorkloadTests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter P05WorkloadTests/testSeededRegression",
+            "target": "Tests/BenchmarkHarness/Workloads/P05WorkloadTests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "PERFORMANCE_NO_REGRESSION_FAILED workload=P05 comparator=M0",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P09-T035.RED.001.PROC.001",
+            "greenLeafID": "P09-T035.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/BenchmarkHarness/Workloads/P05WorkloadTests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "P05Evidence",
+            "kind": "command-contract",
+            "sourceArtifactPath": "implementation-plan/phase-09-acceptance-release-verdict.md",
+            "sourceArtifactHash": "0c22e1c8e8dd512823c0d3e06bf0c1c88e0eb376991fca9c1833dce8aaadc2b2",
+            "sourceLocator": "/sections/interfaces/P05Evidence",
+            "contractRefs": [
+              "G5-R.performanceDecision.workloads.P05",
+              "Q1-R2",
+              "Q1-R3",
+              "Q1-R4",
+              "Q1-R5"
+            ],
+            "commandRecordHash": "6c93fe0c334d37ccae505cfe56421c82463e947616c26bea650b8e58127cff91",
+            "orderedLeafHashes": [
+              "d3f1c40b34c79b3f320470b769e624f8d653e0975820feede59a4efc48b2eff5",
+              "920473d4c426cfa8f1df373a1d61a2247984250ecf9c4108ad447e546eba40bf"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "P05Evidence",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "PERFORMANCE_WORKLOAD_PASS workload=P05 baselines=M0,M1 skipped=0"
+            ],
+            "commandTimeoutMs": 1800000,
+            "qualificationPredicate": "externalDisplays=0 privacy=pass",
+            "sourceMutationProhibited": true
+          }
+        ]
+      },
+      "commandTimeoutMs": 1800000,
+      "qualificationConsumed": "zero-external-display",
+      "sourceMutations": 0
+    },
+    "P09-T036": {
+      "testAuthoringOperation": "Tests/BenchmarkHarness/Workloads/P06WorkloadTests.swift",
+      "testContract": {
+        "contractID": "P09-T036",
+        "cases": [
+          {
+            "caseID": "P09-T036.CASE.001",
+            "file": {
+              "path": "Tests/BenchmarkHarness/Workloads/P06WorkloadTests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter P06WorkloadTests/testSeededRegression",
+            "target": "Tests/BenchmarkHarness/Workloads/P06WorkloadTests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "PERFORMANCE_NO_REGRESSION_FAILED workload=P06 comparator=M0",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P09-T036.RED.001.PROC.001",
+            "greenLeafID": "P09-T036.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/BenchmarkHarness/Workloads/P06WorkloadTests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "P06Evidence",
+            "kind": "command-contract",
+            "sourceArtifactPath": "implementation-plan/phase-09-acceptance-release-verdict.md",
+            "sourceArtifactHash": "0c22e1c8e8dd512823c0d3e06bf0c1c88e0eb376991fca9c1833dce8aaadc2b2",
+            "sourceLocator": "/sections/interfaces/P06Evidence",
+            "contractRefs": [
+              "G5-R.performanceDecision.workloads.P06",
+              "Q1-R2",
+              "Q1-R3",
+              "Q1-R4",
+              "Q1-R5"
+            ],
+            "commandRecordHash": "6c92e55cb889ab1cfe2591a6b44fe34e052a2d339f9609f8afc0e55733bb0d1b",
+            "orderedLeafHashes": [
+              "bc88b7f95c217a752c5c88db974ad95148c007123e3c9e0ce33297fe892900ab",
+              "0947821fe12f71204b5526475e06da976e7348717f4fb06eacf91fc1b84eb689"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "P06Evidence",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "PERFORMANCE_WORKLOAD_PASS workload=P06 baselines=M0,M1 skipped=0"
+            ],
+            "commandTimeoutMs": 1800000,
+            "qualificationPredicate": "externalDisplays=0 privacy=pass",
+            "sourceMutationProhibited": true
+          }
+        ]
+      },
+      "commandTimeoutMs": 1800000,
+      "qualificationConsumed": "zero-external-display",
+      "sourceMutations": 0
+    },
+    "P09-T037": {
+      "testAuthoringOperation": "Tests/BenchmarkHarness/Workloads/P07WorkloadTests.swift",
+      "testContract": {
+        "contractID": "P09-T037",
+        "cases": [
+          {
+            "caseID": "P09-T037.CASE.001",
+            "file": {
+              "path": "Tests/BenchmarkHarness/Workloads/P07WorkloadTests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter P07WorkloadTests/testSeededRegression",
+            "target": "Tests/BenchmarkHarness/Workloads/P07WorkloadTests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "PERFORMANCE_NO_REGRESSION_FAILED workload=P07 comparator=M0",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P09-T037.RED.001.PROC.001",
+            "greenLeafID": "P09-T037.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/BenchmarkHarness/Workloads/P07WorkloadTests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "P07Evidence",
+            "kind": "command-contract",
+            "sourceArtifactPath": "implementation-plan/phase-09-acceptance-release-verdict.md",
+            "sourceArtifactHash": "0c22e1c8e8dd512823c0d3e06bf0c1c88e0eb376991fca9c1833dce8aaadc2b2",
+            "sourceLocator": "/sections/interfaces/P07Evidence",
+            "contractRefs": [
+              "G5-R.performanceDecision.workloads.P07",
+              "Q1-R2",
+              "Q1-R3",
+              "Q1-R4",
+              "Q1-R5"
+            ],
+            "commandRecordHash": "88f9081ddaf587dfa62f1b6832d9e48b7be7752b94bcc7cd3d9ad5dd13d49869",
+            "orderedLeafHashes": [
+              "150d24858432d4bc875f72a6f7982804dd7bf76389998e62ddd76ca5c6ab6022",
+              "be9c0ae35aed1c48a1e3fbb43cda4ffa24c674b67f9e4cc4c2e3c1e12d1c2f06"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "P07Evidence",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "PERFORMANCE_WORKLOAD_PASS workload=P07 baselines=M0,M1 skipped=0"
+            ],
+            "commandTimeoutMs": 1800000,
+            "qualificationPredicate": "externalDisplays=0 privacy=pass",
+            "sourceMutationProhibited": true
+          }
+        ]
+      },
+      "commandTimeoutMs": 1800000,
+      "qualificationConsumed": "zero-external-display",
+      "sourceMutations": 0
+    },
+    "P09-T038": {
+      "testAuthoringOperation": "Tests/BenchmarkHarness/Workloads/P08WorkloadTests.swift",
+      "testContract": {
+        "contractID": "P09-T038",
+        "cases": [
+          {
+            "caseID": "P09-T038.CASE.001",
+            "file": {
+              "path": "Tests/BenchmarkHarness/Workloads/P08WorkloadTests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter P08WorkloadTests/testSeededRegression",
+            "target": "Tests/BenchmarkHarness/Workloads/P08WorkloadTests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "PERFORMANCE_NO_REGRESSION_FAILED workload=P08 comparator=M0",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P09-T038.RED.001.PROC.001",
+            "greenLeafID": "P09-T038.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/BenchmarkHarness/Workloads/P08WorkloadTests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "P08Evidence",
+            "kind": "command-contract",
+            "sourceArtifactPath": "implementation-plan/phase-09-acceptance-release-verdict.md",
+            "sourceArtifactHash": "0c22e1c8e8dd512823c0d3e06bf0c1c88e0eb376991fca9c1833dce8aaadc2b2",
+            "sourceLocator": "/sections/interfaces/P08Evidence",
+            "contractRefs": [
+              "G5-R.performanceDecision.workloads.P08",
+              "Q1-R2",
+              "Q1-R3",
+              "Q1-R4",
+              "Q1-R5"
+            ],
+            "commandRecordHash": "866ae593898fdebdc5f383695959a0f3666de8cdaf9429b7852a27e4ccdede01",
+            "orderedLeafHashes": [
+              "b00114ed8ca818c5511e40862a24322f98e1ffdaa399dfad8ca50630a09fe75c",
+              "be8b11e7b3a140f8c0bb616bb201389ad80a5c2e0f0a2b0ce83e820e66abd76a"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "P08Evidence",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "PERFORMANCE_WORKLOAD_PASS workload=P08 baselines=M0,M1 skipped=0"
+            ],
+            "commandTimeoutMs": 1800000,
+            "qualificationPredicate": "externalDisplays=0 privacy=pass",
+            "sourceMutationProhibited": true
+          }
+        ]
+      },
+      "commandTimeoutMs": 1800000,
+      "qualificationConsumed": "zero-external-display",
+      "sourceMutations": 0
+    },
+    "P09-T039": {
+      "testAuthoringOperation": "Tests/BenchmarkHarness/Workloads/P09WorkloadTests.swift",
+      "testContract": {
+        "contractID": "P09-T039",
+        "cases": [
+          {
+            "caseID": "P09-T039.CASE.001",
+            "file": {
+              "path": "Tests/BenchmarkHarness/Workloads/P09WorkloadTests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter P09WorkloadTests/testSeededRegression",
+            "target": "Tests/BenchmarkHarness/Workloads/P09WorkloadTests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "PERFORMANCE_NO_REGRESSION_FAILED workload=P09 comparator=M0",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P09-T039.RED.001.PROC.001",
+            "greenLeafID": "P09-T039.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/BenchmarkHarness/Workloads/P09WorkloadTests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "P09Evidence",
+            "kind": "command-contract",
+            "sourceArtifactPath": "implementation-plan/phase-09-acceptance-release-verdict.md",
+            "sourceArtifactHash": "0c22e1c8e8dd512823c0d3e06bf0c1c88e0eb376991fca9c1833dce8aaadc2b2",
+            "sourceLocator": "/sections/interfaces/P09Evidence",
+            "contractRefs": [
+              "G5-R.performanceDecision.workloads.P09",
+              "Q1-R2",
+              "Q1-R3",
+              "Q1-R4",
+              "Q1-R5"
+            ],
+            "commandRecordHash": "40d8f7502479f40ddf788d04fd6bdef06e74330427a4dbbca0bd47fa6958f582",
+            "orderedLeafHashes": [
+              "a9cba90e948be9df217d8c909ff85ce413c647dd4e105e69dba88cc9f7f3d696",
+              "79a1651abd910fa3330d811085dde55b00ce4085543c2316a1a990ddd7a57970"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "P09Evidence",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "PERFORMANCE_WORKLOAD_PASS workload=P09 baselines=M0,M1 skipped=0"
+            ],
+            "commandTimeoutMs": 1800000,
+            "qualificationPredicate": "externalDisplays=0 privacy=pass",
+            "sourceMutationProhibited": true
+          }
+        ]
+      },
+      "commandTimeoutMs": 1800000,
+      "qualificationConsumed": "zero-external-display",
+      "sourceMutations": 0
+    },
+    "P09-T040": {
+      "testAuthoringOperation": "Tests/BenchmarkHarness/Workloads/P10WorkloadTests.swift",
+      "testContract": {
+        "contractID": "P09-T040",
+        "cases": [
+          {
+            "caseID": "P09-T040.CASE.001",
+            "file": {
+              "path": "Tests/BenchmarkHarness/Workloads/P10WorkloadTests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter P10WorkloadTests/testSeededRegression",
+            "target": "Tests/BenchmarkHarness/Workloads/P10WorkloadTests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "PERFORMANCE_NO_REGRESSION_FAILED workload=P10 comparator=M0",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P09-T040.RED.001.PROC.001",
+            "greenLeafID": "P09-T040.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/BenchmarkHarness/Workloads/P10WorkloadTests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "P10Evidence",
+            "kind": "command-contract",
+            "sourceArtifactPath": "implementation-plan/phase-09-acceptance-release-verdict.md",
+            "sourceArtifactHash": "0c22e1c8e8dd512823c0d3e06bf0c1c88e0eb376991fca9c1833dce8aaadc2b2",
+            "sourceLocator": "/sections/interfaces/P10Evidence",
+            "contractRefs": [
+              "G5-R.performanceDecision.workloads.P10",
+              "Q1-R2",
+              "Q1-R3",
+              "Q1-R4",
+              "Q1-R5"
+            ],
+            "commandRecordHash": "5a9e52b8ae94470db175425e9018b07bb75e2a7dd7287ae2b7567a62d2b87c3b",
+            "orderedLeafHashes": [
+              "532602e3ba5c69e2ac3d64273b3c24871af329437c36274b1ff6fa0563c7b344",
+              "c9b9a7d8e60f5803937955a4d59c8e542f2dea72b7683e8b2c0815098f67d745"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "P10Evidence",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "PERFORMANCE_WORKLOAD_PASS workload=P10 baselines=M0,M1 skipped=0"
+            ],
+            "commandTimeoutMs": 1800000,
+            "qualificationPredicate": "externalDisplays=0 privacy=pass",
+            "sourceMutationProhibited": true
+          }
+        ]
+      },
+      "commandTimeoutMs": 1800000,
+      "qualificationConsumed": "zero-external-display",
+      "sourceMutations": 0
+    },
+    "P09-T041": {
+      "testAuthoringOperation": "Tests/BenchmarkHarness/Workloads/P11WorkloadTests.swift",
+      "testContract": {
+        "contractID": "P09-T041",
+        "cases": [
+          {
+            "caseID": "P09-T041.CASE.001",
+            "file": {
+              "path": "Tests/BenchmarkHarness/Workloads/P11WorkloadTests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter P11WorkloadTests/testSeededRegression",
+            "target": "Tests/BenchmarkHarness/Workloads/P11WorkloadTests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "PERFORMANCE_NO_REGRESSION_FAILED workload=P11 comparator=M0",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P09-T041.RED.001.PROC.001",
+            "greenLeafID": "P09-T041.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/BenchmarkHarness/Workloads/P11WorkloadTests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "P11Evidence",
+            "kind": "command-contract",
+            "sourceArtifactPath": "implementation-plan/phase-09-acceptance-release-verdict.md",
+            "sourceArtifactHash": "0c22e1c8e8dd512823c0d3e06bf0c1c88e0eb376991fca9c1833dce8aaadc2b2",
+            "sourceLocator": "/sections/interfaces/P11Evidence",
+            "contractRefs": [
+              "G5-R.performanceDecision.workloads.P11",
+              "Q1-R2",
+              "Q1-R3",
+              "Q1-R4",
+              "Q1-R5"
+            ],
+            "commandRecordHash": "c798e5615665436854a9d0acc8ec9f790f12313d54db0b82224597365ad71ca9",
+            "orderedLeafHashes": [
+              "7b79a053805962c4dac9a43d6310aa1a49313458c1da0fa3110bf1afccebb224",
+              "e5a05436e7d2d07cf65f6419c81fba8b282beb359e21aabad3c1c2ecd3a20f3c"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "P11Evidence",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "PERFORMANCE_WORKLOAD_PASS workload=P11 baselines=M0,M1 skipped=0"
+            ],
+            "commandTimeoutMs": 1800000,
+            "qualificationPredicate": "externalDisplays=0 privacy=pass",
+            "sourceMutationProhibited": true
+          }
+        ]
+      },
+      "commandTimeoutMs": 1800000,
+      "qualificationConsumed": "zero-external-display",
+      "sourceMutations": 0
+    },
+    "P09-T042": {
+      "testAuthoringOperation": "Tests/BenchmarkHarness/Workloads/P12WorkloadTests.swift",
+      "testContract": {
+        "contractID": "P09-T042",
+        "cases": [
+          {
+            "caseID": "P09-T042.CASE.001",
+            "file": {
+              "path": "Tests/BenchmarkHarness/Workloads/P12WorkloadTests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter P12WorkloadTests/testSeededRegression",
+            "target": "Tests/BenchmarkHarness/Workloads/P12WorkloadTests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "PERFORMANCE_NO_REGRESSION_FAILED workload=P12 comparator=M0",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P09-T042.RED.001.PROC.001",
+            "greenLeafID": "P09-T042.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/BenchmarkHarness/Workloads/P12WorkloadTests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "P12Evidence",
+            "kind": "command-contract",
+            "sourceArtifactPath": "implementation-plan/phase-09-acceptance-release-verdict.md",
+            "sourceArtifactHash": "0c22e1c8e8dd512823c0d3e06bf0c1c88e0eb376991fca9c1833dce8aaadc2b2",
+            "sourceLocator": "/sections/interfaces/P12Evidence",
+            "contractRefs": [
+              "G5-R.performanceDecision.workloads.P12",
+              "Q1-R2",
+              "Q1-R3",
+              "Q1-R4",
+              "Q1-R5"
+            ],
+            "commandRecordHash": "9e7a52b2d7087cb001ed682358b47972e97a3f116bc9e12d47c12c005a5366ef",
+            "orderedLeafHashes": [
+              "3bcc990d83d0827d57baa48f548ff15b035290517dfa14d5042f0e5fd66a4bac",
+              "a936a916f1bd7bccf00e8cf63b1bc2ad9e2567ec43e867d1713007dbdd81bc60"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "P12Evidence",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "PERFORMANCE_WORKLOAD_PASS workload=P12 baselines=M0,M1 skipped=0"
+            ],
+            "commandTimeoutMs": 1800000,
+            "qualificationPredicate": "externalDisplays=0 privacy=pass",
+            "sourceMutationProhibited": true
+          }
+        ]
+      },
+      "commandTimeoutMs": 1800000,
+      "qualificationConsumed": "zero-external-display",
+      "sourceMutations": 0
+    },
+    "P09-T043": {
+      "testAuthoringOperation": "Tests/BenchmarkHarness/Workloads/P13WorkloadTests.swift",
+      "testContract": {
+        "contractID": "P09-T043",
+        "cases": [
+          {
+            "caseID": "P09-T043.CASE.001",
+            "file": {
+              "path": "Tests/BenchmarkHarness/Workloads/P13WorkloadTests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter P13WorkloadTests/testSeededRegression",
+            "target": "Tests/BenchmarkHarness/Workloads/P13WorkloadTests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "PERFORMANCE_NO_REGRESSION_FAILED workload=P13 comparator=M0",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P09-T043.RED.001.PROC.001",
+            "greenLeafID": "P09-T043.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/BenchmarkHarness/Workloads/P13WorkloadTests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "P13Evidence",
+            "kind": "command-contract",
+            "sourceArtifactPath": "implementation-plan/phase-09-acceptance-release-verdict.md",
+            "sourceArtifactHash": "0c22e1c8e8dd512823c0d3e06bf0c1c88e0eb376991fca9c1833dce8aaadc2b2",
+            "sourceLocator": "/sections/interfaces/P13Evidence",
+            "contractRefs": [
+              "G5-R.performanceDecision.workloads.P13",
+              "Q1-R2",
+              "Q1-R3",
+              "Q1-R4",
+              "Q1-R5"
+            ],
+            "commandRecordHash": "5df7ed63899f3a1218949513a8645307085819cfc1db463b0f11e07301a316dc",
+            "orderedLeafHashes": [
+              "c80d2f677740e703c223c92f418c7486c936e3fc8146e5870d325fad87638643",
+              "ccf6db8f48c19ad584f889a2ed3368005fcc40e391b4db523701433678241201"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "P13Evidence",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "PERFORMANCE_WORKLOAD_PASS workload=P13 baselines=M0,M1 skipped=0"
+            ],
+            "commandTimeoutMs": 1800000,
+            "qualificationPredicate": "externalDisplays=0 privacy=pass",
+            "sourceMutationProhibited": true
+          }
+        ]
+      },
+      "commandTimeoutMs": 1800000,
+      "qualificationConsumed": "zero-external-display",
+      "sourceMutations": 0
+    },
+    "P09-T050": {
+      "testAuthoringOperation": "Tests/ConformanceAndFailureInjection/CrossCutting/LifecycleSoakSanitizerTests.swift",
+      "testContract": {
+        "contractID": "P09-T050",
+        "cases": [
+          {
+            "caseID": "P09-T050.CASE.001",
+            "file": {
+              "path": "Tests/ConformanceAndFailureInjection/CrossCutting/LifecycleSoakSanitizerTests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter LifecycleSoakSanitizerTests/testSeededLifetimeLeak",
+            "target": "Tests/ConformanceAndFailureInjection/CrossCutting/LifecycleSoakSanitizerTests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "LIFECYCLE_SOAK_GATE_FAILED reason=definite-leak",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P09-T050.RED.001.PROC.001",
+            "greenLeafID": "P09-T050.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/ConformanceAndFailureInjection/CrossCutting/LifecycleSoakSanitizerTests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "LifecycleSoakSanitizerEvidence",
+            "kind": "command-contract",
+            "sourceArtifactPath": "implementation-plan/phase-09-acceptance-release-verdict.md",
+            "sourceArtifactHash": "0c22e1c8e8dd512823c0d3e06bf0c1c88e0eb376991fca9c1833dce8aaadc2b2",
+            "sourceLocator": "/sections/interfaces/LifecycleSoakSanitizerEvidence",
+            "contractRefs": [
+              "G5-R.acceptance.crossCutting.lifecycle",
+              "G5-R.acceptance.crossCutting.soak",
+              "G5-R.acceptance.crossCutting.sanitizers"
+            ],
+            "commandRecordHash": "8f53a17fa6bd3944c1d8a1837a2585d2e6f89fe10836933ac1f5dc3de72de787",
+            "orderedLeafHashes": [
+              "5845a612244cb0c66d9c4f2ada50e66a80bf4d3772e424093596375069db7b08",
+              "035b0fa1975b1bbfb3028ff526d012e02bd72c0d14ced8ad6bd0a0b649696f1b"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "LifecycleSoakSanitizerEvidence",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "LIFECYCLE_SOAK_SANITIZERS cycles=1000 hours=24 findings=0"
+            ],
+            "commandTimeoutMs": 1800000,
+            "qualificationPredicate": "externalDisplays=0 privacy=pass",
+            "sourceMutationProhibited": true
+          }
+        ]
+      },
+      "commandTimeoutMs": 1800000,
+      "qualificationConsumed": "zero-external-display",
+      "sourceMutations": 0
+    },
+    "P09-T051": {
+      "testAuthoringOperation": "Tests/ConformanceAndFailureInjection/CrossCutting/FailureAndComplexityTests.swift",
+      "testContract": {
+        "contractID": "P09-T051",
+        "cases": [
+          {
+            "caseID": "P09-T051.CASE.001",
+            "file": {
+              "path": "Tests/ConformanceAndFailureInjection/CrossCutting/FailureAndComplexityTests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter FailureAndComplexityTests/testSeededViewportFullScan",
+            "target": "Tests/ConformanceAndFailureInjection/CrossCutting/FailureAndComplexityTests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "COMPLEXITY_GATE_FAILED operation=viewport-layout observed=full-document-scan",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P09-T051.RED.001.PROC.001",
+            "greenLeafID": "P09-T051.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/ConformanceAndFailureInjection/CrossCutting/FailureAndComplexityTests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "FailureInjectionEvidence",
+            "kind": "command-contract",
+            "sourceArtifactPath": "implementation-plan/phase-09-acceptance-release-verdict.md",
+            "sourceArtifactHash": "0c22e1c8e8dd512823c0d3e06bf0c1c88e0eb376991fca9c1833dce8aaadc2b2",
+            "sourceLocator": "/sections/interfaces/FailureInjectionEvidence",
+            "contractRefs": [
+              "G5-R.acceptance.crossCutting.failureInjection",
+              "G5-R.acceptance.crossCutting.complexity",
+              "R1",
+              "H2-R"
+            ],
+            "commandRecordHash": "3735ac6b66dd22eeddc72655e8e60791c422a6a9d3910ac59624b031f146913a",
+            "orderedLeafHashes": [
+              "c69e04a2f90a70624e84712141b255254e5ccb7158d89ea6a80de2e1b9cc4b61",
+              "25814a042e1ac50abac4f1ecfb8303023e641df3cb1c3bfc2afc99eec5b972d5"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "FailureInjectionEvidence",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "FAILURE_COMPLEXITY recoverableRows=all halfCommits=0 growthRegressions=0"
+            ],
+            "commandTimeoutMs": 1800000,
+            "qualificationPredicate": "externalDisplays=0 privacy=pass",
+            "sourceMutationProhibited": true
+          },
+          {
+            "id": "ComplexityEvidence",
+            "kind": "command-contract",
+            "sourceArtifactPath": "implementation-plan/phase-09-acceptance-release-verdict.md",
+            "sourceArtifactHash": "0c22e1c8e8dd512823c0d3e06bf0c1c88e0eb376991fca9c1833dce8aaadc2b2",
+            "sourceLocator": "/sections/interfaces/ComplexityEvidence",
+            "contractRefs": [
+              "G5-R.acceptance.crossCutting.failureInjection",
+              "G5-R.acceptance.crossCutting.complexity",
+              "R1",
+              "H2-R"
+            ],
+            "commandRecordHash": "a6f493e807c849e62d97bb8e943fd6c82ca4400116290e843ac53b9edeac8f58",
+            "orderedLeafHashes": [
+              "c69e04a2f90a70624e84712141b255254e5ccb7158d89ea6a80de2e1b9cc4b61",
+              "25814a042e1ac50abac4f1ecfb8303023e641df3cb1c3bfc2afc99eec5b972d5"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "ComplexityEvidence",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "FAILURE_COMPLEXITY recoverableRows=all halfCommits=0 growthRegressions=0"
+            ],
+            "commandTimeoutMs": 1800000,
+            "qualificationPredicate": "externalDisplays=0 privacy=pass",
+            "sourceMutationProhibited": true
+          }
+        ]
+      },
+      "commandTimeoutMs": 1800000,
+      "qualificationConsumed": "zero-external-display",
+      "sourceMutations": 0
+    },
+    "P09-T052": {
+      "testAuthoringOperation": "Tests/ConformanceAndFailureInjection/CrossCutting/RendererDecisionValidationTests.swift",
+      "testContract": {
+        "contractID": "P09-T052",
+        "cases": [
+          {
+            "caseID": "P09-T052.CASE.001",
+            "file": {
+              "path": "Tests/ConformanceAndFailureInjection/CrossCutting/RendererDecisionValidationTests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter RendererDecisionValidationTests/testDecisionEvidenceCannotBeRecomputed",
+            "target": "Tests/ConformanceAndFailureInjection/CrossCutting/RendererDecisionValidationTests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "RENDERER_DECISION_VALIDATION_FAILED reason=phase09-source-change",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P09-T052.RED.001.PROC.001",
+            "greenLeafID": "P09-T052.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/ConformanceAndFailureInjection/CrossCutting/RendererDecisionValidationTests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "RendererDecisionValidationEvidence",
+            "kind": "command-contract",
+            "sourceArtifactPath": "implementation-plan/phase-09-acceptance-release-verdict.md",
+            "sourceArtifactHash": "0c22e1c8e8dd512823c0d3e06bf0c1c88e0eb376991fca9c1833dce8aaadc2b2",
+            "sourceLocator": "/sections/interfaces/RendererDecisionValidationEvidence",
+            "contractRefs": [
+              "G5-R.performanceDecision.metalTrigger",
+              "V1-R4.rendererDecision",
+              "C03",
+              "C08"
+            ],
+            "commandRecordHash": "aedf484b74368159458ea413533fed3d8c625c41ba8f4a330c08bcc935cede6b",
+            "orderedLeafHashes": [
+              "11d587c30be079344baea203eef490aa937777c6e0a325d50f166b04a92ba5e6",
+              "1006ffef6a15060b6ffa960931b370a6b3d1e2f9bfd032ddb79a5f7f513ad207"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "RendererDecisionValidationEvidence",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "RENDERER_DECISION_VALIDATION frozen=pass sourceChanges=0"
+            ],
+            "commandTimeoutMs": 1800000,
+            "qualificationPredicate": "externalDisplays=0 privacy=pass",
+            "sourceMutationProhibited": true
+          }
+        ]
+      },
+      "commandTimeoutMs": 1800000,
+      "qualificationConsumed": "zero-external-display",
+      "sourceMutations": 0
+    },
+    "P09-T099": {
+      "testAuthoringOperation": "Tests/PlanStructureTests/FinalReleaseVerdictTests.mjs",
+      "testContract": {
+        "contractID": "P09-T099",
+        "cases": [
+          {
+            "caseID": "P09-T099.CASE.001",
+            "file": {
+              "path": "Tests/PlanStructureTests/FinalReleaseVerdictTests.mjs",
+              "availability": "local"
+            },
+            "checker": "node --test Tests/PlanStructureTests/FinalReleaseVerdictTests.mjs --test-name-pattern skipped-cell",
+            "target": "Tests/PlanStructureTests/FinalReleaseVerdictTests.mjs",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "RELEASE_VERDICT_NOT_PASSED reason=skipped-cell cell=P04-M1-120Hz",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P09-T099.RED.001.PROC.001",
+            "greenLeafID": "P09-T099.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/PlanStructureTests/FinalReleaseVerdictTests.mjs",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "MonaG5RReleaseVerdict",
+            "kind": "command-contract",
+            "sourceArtifactPath": "artifacts/verification-q1r5-complete-acceptance-closure.html",
+            "sourceArtifactHash": "939d9ecf93273dedab49898bf82d2fd801866b7bd959d5f5b439e81dcf39b52c",
+            "sourceLocator": "/sections/interfaces/MonaG5RReleaseVerdict",
+            "contractRefs": [
+              "G5-R.acceptance.releaseVerdict",
+              "G5-R.designClosure.stoppingCriterion",
+              "Q1-R5"
+            ],
+            "commandRecordHash": "e9fcbffec2911a5c25af1b229e00a1b5b8057abc9873e6bd270ae1cae1382bbc",
+            "orderedLeafHashes": [
+              "7d5dda292c8c8840d1faba218c7f87e2fc4a6e18743a557c8c21677197e0431a",
+              "87f75bbb2be2613d76040a0f57c9c6c20fcc49f66d87750253e65de4aa279645"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "MonaG5RReleaseVerdict",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "RELEASE_VERDICT passed sourceRevisions=1 candidates=7 correctness=10 performance=14 skipped=0"
+            ],
+            "commandTimeoutMs": 1800000,
+            "qualificationPredicate": "externalDisplays=0 privacy=pass",
+            "sourceMutationProhibited": true
+          }
+        ]
+      },
+      "commandTimeoutMs": 1800000,
+      "qualificationConsumed": "zero-external-display",
+      "sourceMutations": 0
+    }
+  }
+}
