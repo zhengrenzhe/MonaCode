@@ -1,0 +1,5389 @@
+{
+  "phase": "07",
+  "tasks": [
+    {
+      "id": "P07-T001",
+      "phase": "07",
+      "title": "Implement legacy and advanced diff engines over raw UTF-16",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P02-T009",
+        "P06-T010"
+      ],
+      "contractRefs": [
+        "C05",
+        "D1-R.engines",
+        "P10"
+      ],
+      "ownership": [
+        "diff:legacy-engine",
+        "diff:advanced-engine"
+      ],
+      "paths": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Sources/MonaCode/Diff/MonaDiffEngine.swift",
+          "Sources/MonaCode/Diff/MonaLegacyDiffEngine.swift",
+          "Sources/MonaCode/Diff/MonaAdvancedDiffEngine.swift",
+          "Sources/MonaCode/Diff/MonaDiffResult.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/Diff/MonaDiffEngineDifferentialTests.swift"
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "MonaDiffEngine",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/diff-d1r-engine-closure.html",
+            "sourceArtifactHash": "c1b89a33b2be85d5ff9154f4ee10de83910136f4f3deca29c8425b2163be99ba",
+            "sourceLocator": "/sections/interfaces/MonaDiffEngine",
+            "contractRefs": [
+              "D1-R.engines",
+              "C05",
+              "P10"
+            ],
+            "declarationText": "// MonaDiffEngine declaration authored by P07-T001",
+            "target": "MonaCode",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "diff:legacy-engine",
+              "diff:advanced-engine"
+            ],
+            "sendable": true
+          },
+          {
+            "id": "MonaLegacyDiffEngine",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/diff-d1r-engine-closure.html",
+            "sourceArtifactHash": "c1b89a33b2be85d5ff9154f4ee10de83910136f4f3deca29c8425b2163be99ba",
+            "sourceLocator": "/sections/interfaces/MonaLegacyDiffEngine",
+            "contractRefs": [
+              "D1-R.engines",
+              "C05",
+              "P10"
+            ],
+            "declarationText": "// MonaLegacyDiffEngine declaration authored by P07-T001",
+            "target": "MonaCode",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "diff:legacy-engine",
+              "diff:advanced-engine"
+            ],
+            "sendable": true
+          },
+          {
+            "id": "MonaAdvancedDiffEngine",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/diff-d1r-engine-closure.html",
+            "sourceArtifactHash": "c1b89a33b2be85d5ff9154f4ee10de83910136f4f3deca29c8425b2163be99ba",
+            "sourceLocator": "/sections/interfaces/MonaAdvancedDiffEngine",
+            "contractRefs": [
+              "D1-R.engines",
+              "C05",
+              "P10"
+            ],
+            "declarationText": "// MonaAdvancedDiffEngine declaration authored by P07-T001",
+            "target": "MonaCode",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "diff:legacy-engine",
+              "diff:advanced-engine"
+            ],
+            "sendable": true
+          },
+          {
+            "id": "MonaDiffResult",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/diff-d1r-engine-closure.html",
+            "sourceArtifactHash": "c1b89a33b2be85d5ff9154f4ee10de83910136f4f3deca29c8425b2163be99ba",
+            "sourceLocator": "/sections/interfaces/MonaDiffResult",
+            "contractRefs": [
+              "D1-R.engines",
+              "C05",
+              "P10"
+            ],
+            "declarationText": "// MonaDiffResult declaration authored by P07-T001",
+            "target": "MonaCode",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "diff:legacy-engine",
+              "diff:advanced-engine"
+            ],
+            "sendable": true
+          }
+        ],
+        "consumes": [
+          {
+            "id": "MonaCodeModel"
+          },
+          {
+            "id": "MonaHighResolutionClock"
+          },
+          {
+            "id": "MonaCancellationToken"
+          }
+        ]
+      },
+      "stages": [
+        {
+          "name": "preflight",
+          "steps": [
+            {
+              "kind": "controller-action",
+              "action": "begin-task"
+            }
+          ]
+        },
+        {
+          "name": "test-authoring",
+          "steps": [
+            {
+              "kind": "authoring-operation",
+              "operation": "Tests/MonaCodeTests/Diff/MonaDiffEngineDifferentialTests.swift"
+            }
+          ]
+        },
+        {
+          "name": "red",
+          "steps": [
+            {
+              "kind": "verification-command",
+              "command": {
+                "commandID": "P07-T001.RED.001",
+                "kind": "process",
+                "networkMode": "forbidden",
+                "timeoutMs": 600000,
+                "stage": "red",
+                "expectedExit": 1,
+                "expectedOutputIncludes": [
+                  "DIFF_DIFFERENTIAL_MISMATCH fixture=isolated-surrogate-moved-block"
+                ],
+                "leaves": [
+                  {
+                    "leafID": "P07-T001.RED.001.PROC.001",
+                    "executable": "/usr/bin/xcrun",
+                    "toolchainRow": "xcrun-swift-6.0-macos-26",
+                    "args": [
+                      "swift",
+                      "test",
+                      "--filter",
+                      "MonaDiffEngineDifferentialTests/testIsolatedSurrogateAndMovedBlockMatrix",
+                      "--scratch-path",
+                      "/tmp/monacode-planctl/P07-T001.RED.001.PROC.001"
+                    ],
+                    "timeoutMs": 600000,
+                    "form": "swift-test",
+                    "stage": "red",
+                    "optionReorder": false,
+                    "declaredPaths": [
+                      "Package.swift"
+                    ]
+                  }
+                ],
+                "failureClass": "behavioral"
+              }
+            }
+          ]
+        },
+        {
+          "name": "implementation",
+          "steps": [
+            {
+              "kind": "implementation-operation",
+              "operation": "Port line hashing, sequence diff, character refinement, moved-block detection, inner changes, and result normalization for both engines."
+            },
+            {
+              "kind": "implementation-operation",
+              "operation": "Operate on raw UTF-16 ranges and preserve comparator ordering and optional fields."
+            },
+            {
+              "kind": "implementation-operation",
+              "operation": "Check cancellation and timeout at the frozen algorithm checkpoints."
+            }
+          ]
+        },
+        {
+          "name": "green",
+          "steps": [
+            {
+              "kind": "verification-command",
+              "command": {
+                "commandID": "P07-T001.GREEN.001",
+                "kind": "process",
+                "networkMode": "forbidden",
+                "timeoutMs": 600000,
+                "stage": "green",
+                "expectedExit": 0,
+                "expectedOutputIncludes": [
+                  "DIFF_ENGINES legacy=exact advanced=exact"
+                ],
+                "leaves": [
+                  {
+                    "leafID": "P07-T001.GREEN.001.PROC.001",
+                    "executable": "/usr/bin/xcrun",
+                    "toolchainRow": "xcrun-swift-6.0-macos-26",
+                    "args": [
+                      "swift",
+                      "test",
+                      "--filter",
+                      "MonaDiffEngineDifferentialTests",
+                      "--scratch-path",
+                      "/tmp/monacode-planctl/P07-T001.GREEN.001.PROC.001"
+                    ],
+                    "timeoutMs": 600000,
+                    "form": "swift-test",
+                    "stage": "green",
+                    "optionReorder": false,
+                    "declaredPaths": [
+                      "Package.swift"
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "commit",
+          "steps": [
+            {
+              "kind": "controller-action",
+              "action": "commit-task"
+            }
+          ]
+        },
+        {
+          "name": "evidence",
+          "steps": [
+            {
+              "kind": "controller-action",
+              "action": "finalize-evidence"
+            }
+          ]
+        }
+      ],
+      "testContract": {
+        "contractID": "P07-T001",
+        "cases": [
+          {
+            "caseID": "P07-T001.CASE.001",
+            "file": {
+              "path": "Tests/MonaCodeTests/Diff/MonaDiffEngineDifferentialTests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter MonaDiffEngineDifferentialTests/testIsolatedSurrogateAndMovedBlockMatrix",
+            "target": "Tests/MonaCodeTests/Diff/MonaDiffEngineDifferentialTests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "DIFF_DIFFERENTIAL_MISMATCH fixture=isolated-surrogate-moved-block",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P07-T001.RED.001.PROC.001",
+            "greenLeafID": "P07-T001.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/MonaCodeTests/Diff/MonaDiffEngineDifferentialTests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "redScaffold": [
+        {
+          "sourcePath": "Sources/MonaCode/Diff/MonaDiffEngine.swift",
+          "marker": "G6_RED_SCAFFOLD:P07-T001:daf12cf3e268595e0569caaaa673db24f676a99c5674822a32c634aab35d9afb",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        },
+        {
+          "sourcePath": "Sources/MonaCode/Diff/MonaLegacyDiffEngine.swift",
+          "marker": "G6_RED_SCAFFOLD:P07-T001:7321cd1a389e0bdf6693f9a2f2c5ba4d2851d4eb0b0039a37270ae39b497d8a1",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        },
+        {
+          "sourcePath": "Sources/MonaCode/Diff/MonaAdvancedDiffEngine.swift",
+          "marker": "G6_RED_SCAFFOLD:P07-T001:e85b1f49e3dc51ea5917e75c27d46fadc71e89c5d4dfc5adc80f0d3596f67628",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        },
+        {
+          "sourcePath": "Sources/MonaCode/Diff/MonaDiffResult.swift",
+          "marker": "G6_RED_SCAFFOLD:P07-T001:3a36279c7e3f7fa61fb3f1b3749f6f0d2a2898ec4249891fd58b7f0cc4df4dd8",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        }
+      ],
+      "sourceAcquisitions": [],
+      "evidence": {
+        "paths": [
+          "artifacts/acceptance-evidence/g6-r/phase-07/P07-T001.json"
+        ],
+        "fromRevision": "g5-r",
+        "toRevision": "g6-r",
+        "stagedEvidencePath": "artifacts/acceptance-evidence/g6-r/phase-07/P07-T001.json"
+      },
+      "completion": [
+        "Legacy and advanced fixture outputs match M0/M1.",
+        "Raw-unit inner changes remain exact.",
+        "Cancellation leaves no cached partial result."
+      ],
+      "commits": {
+        "product": {
+          "author": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "committer": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "message": "monacode: complete P07-T001",
+          "stagedProductPaths": [
+            "Sources/MonaCode/Diff/MonaDiffEngine.swift",
+            "Sources/MonaCode/Diff/MonaLegacyDiffEngine.swift",
+            "Sources/MonaCode/Diff/MonaAdvancedDiffEngine.swift",
+            "Sources/MonaCode/Diff/MonaDiffResult.swift",
+            "Tests/MonaCodeTests/Diff/MonaDiffEngineDifferentialTests.swift"
+          ],
+          "hooksDisabled": true,
+          "signingDisabled": true,
+          "evidenceExcluded": true
+        },
+        "evidence": {
+          "author": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "committer": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "message": "evidence(monacode): complete P07-T001",
+          "firstParentSuccessor": "immediate",
+          "stagedEvidencePath": "artifacts/acceptance-evidence/g6-r/phase-07/P07-T001.json",
+          "laterFirstParentTouches": 0,
+          "hooksDisabled": true,
+          "signingDisabled": true,
+          "selectorMode": "external-git",
+          "prohibitsSelfEmbedding": true,
+          "evidenceSchema": "task-evidence.schema.json",
+          "verifiedAssertions": [
+            "Legacy and advanced fixture outputs match M0/M1.",
+            "Raw-unit inner changes remain exact.",
+            "Cancellation leaves no cached partial result."
+          ]
+        }
+      },
+      "recordSha256": "c23c6fe6f5f4b428054d1ffd8153658970eb3d0cbf6c0142bd3cb79a700a3e72"
+    },
+    {
+      "id": "P07-T002",
+      "phase": "07",
+      "title": "Close diff timeouts, caches, maximum size, and unavailable external paths",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P07-T001"
+      ],
+      "contractRefs": [
+        "C05",
+        "D1-R.cache",
+        "D1-R.externalUnavailable",
+        "D1-R.timeout",
+        "P10"
+      ],
+      "ownership": [
+        "normativeLayer:diff-engine:D1-R",
+        "machineArtifact:D1-R-diff-engine"
+      ],
+      "paths": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Sources/MonaCode/Diff/MonaDiffCoordinator.swift",
+          "Sources/MonaCode/Diff/MonaDiffCache.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/Diff/MonaDiffCoordinatorTests.swift"
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "MonaDiffCoordinator",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/diff-d1r-engine-closure.html",
+            "sourceArtifactHash": "c1b89a33b2be85d5ff9154f4ee10de83910136f4f3deca29c8425b2163be99ba",
+            "sourceLocator": "/sections/interfaces/MonaDiffCoordinator",
+            "contractRefs": [
+              "D1-R.timeout",
+              "D1-R.cache",
+              "D1-R.externalUnavailable",
+              "C05",
+              "P10"
+            ],
+            "declarationText": "// MonaDiffCoordinator declaration authored by P07-T002",
+            "target": "MonaCode",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "normativeLayer:diff-engine:D1-R",
+              "machineArtifact:D1-R-diff-engine"
+            ],
+            "sendable": true
+          },
+          {
+            "id": "MonaDiffCache",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/diff-d1r-engine-closure.html",
+            "sourceArtifactHash": "c1b89a33b2be85d5ff9154f4ee10de83910136f4f3deca29c8425b2163be99ba",
+            "sourceLocator": "/sections/interfaces/MonaDiffCache",
+            "contractRefs": [
+              "D1-R.timeout",
+              "D1-R.cache",
+              "D1-R.externalUnavailable",
+              "C05",
+              "P10"
+            ],
+            "declarationText": "// MonaDiffCache declaration authored by P07-T002",
+            "target": "MonaCode",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "normativeLayer:diff-engine:D1-R",
+              "machineArtifact:D1-R-diff-engine"
+            ],
+            "sendable": true
+          }
+        ],
+        "consumes": [
+          {
+            "id": "MonaDiffEngine"
+          },
+          {
+            "id": "MonaAsyncValidityTicket"
+          }
+        ]
+      },
+      "stages": [
+        {
+          "name": "preflight",
+          "steps": [
+            {
+              "kind": "controller-action",
+              "action": "begin-task"
+            }
+          ]
+        },
+        {
+          "name": "test-authoring",
+          "steps": [
+            {
+              "kind": "authoring-operation",
+              "operation": "Tests/MonaCodeTests/Diff/MonaDiffCoordinatorTests.swift"
+            }
+          ]
+        },
+        {
+          "name": "red",
+          "steps": [
+            {
+              "kind": "verification-command",
+              "command": {
+                "commandID": "P07-T002.RED.001",
+                "kind": "process",
+                "networkMode": "forbidden",
+                "timeoutMs": 600000,
+                "stage": "red",
+                "expectedExit": 1,
+                "expectedOutputIncludes": [
+                  "DIFF_TIMEOUT_BOUNDARY_MISMATCH boundary=T"
+                ],
+                "leaves": [
+                  {
+                    "leafID": "P07-T002.RED.001.PROC.001",
+                    "executable": "/usr/bin/xcrun",
+                    "toolchainRow": "xcrun-swift-6.0-macos-26",
+                    "args": [
+                      "swift",
+                      "test",
+                      "--filter",
+                      "MonaDiffCoordinatorTests/testTimeoutTMinusOneTPlusOne",
+                      "--scratch-path",
+                      "/tmp/monacode-planctl/P07-T002.RED.001.PROC.001"
+                    ],
+                    "timeoutMs": 600000,
+                    "form": "swift-test",
+                    "stage": "red",
+                    "optionReorder": false,
+                    "declaredPaths": [
+                      "Package.swift"
+                    ]
+                  }
+                ],
+                "failureClass": "behavioral"
+              }
+            }
+          ]
+        },
+        {
+          "name": "implementation",
+          "steps": [
+            {
+              "kind": "implementation-operation",
+              "operation": "Apply T-1, T, and T+1 timeout truth with injected monotonic time."
+            },
+            {
+              "kind": "implementation-operation",
+              "operation": "Implement the bounded maximum-11 cache with exact key, hit, miss, invalidation, and eviction semantics."
+            },
+            {
+              "kind": "implementation-operation",
+              "operation": "Return explicit no-op results for maximum-file-size and external/WASM-unavailable paths."
+            },
+            {
+              "kind": "implementation-operation",
+              "operation": "Publish only complete results whose model versions still match."
+            }
+          ]
+        },
+        {
+          "name": "green",
+          "steps": [
+            {
+              "kind": "verification-command",
+              "command": {
+                "commandID": "P07-T002.GREEN.001",
+                "kind": "process",
+                "networkMode": "forbidden",
+                "timeoutMs": 600000,
+                "stage": "green",
+                "expectedExit": 0,
+                "expectedOutputIncludes": [
+                  "DIFF_COORDINATOR timeout=exact cacheMax=11 external=unavailable"
+                ],
+                "leaves": [
+                  {
+                    "leafID": "P07-T002.GREEN.001.PROC.001",
+                    "executable": "/usr/bin/xcrun",
+                    "toolchainRow": "xcrun-swift-6.0-macos-26",
+                    "args": [
+                      "swift",
+                      "test",
+                      "--filter",
+                      "MonaDiffCoordinatorTests",
+                      "--scratch-path",
+                      "/tmp/monacode-planctl/P07-T002.GREEN.001.PROC.001"
+                    ],
+                    "timeoutMs": 600000,
+                    "form": "swift-test",
+                    "stage": "green",
+                    "optionReorder": false,
+                    "declaredPaths": [
+                      "Package.swift"
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "commit",
+          "steps": [
+            {
+              "kind": "controller-action",
+              "action": "commit-task"
+            }
+          ]
+        },
+        {
+          "name": "evidence",
+          "steps": [
+            {
+              "kind": "controller-action",
+              "action": "finalize-evidence"
+            }
+          ]
+        }
+      ],
+      "testContract": {
+        "contractID": "P07-T002",
+        "cases": [
+          {
+            "caseID": "P07-T002.CASE.001",
+            "file": {
+              "path": "Tests/MonaCodeTests/Diff/MonaDiffCoordinatorTests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter MonaDiffCoordinatorTests/testTimeoutTMinusOneTPlusOne",
+            "target": "Tests/MonaCodeTests/Diff/MonaDiffCoordinatorTests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "DIFF_TIMEOUT_BOUNDARY_MISMATCH boundary=T",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P07-T002.RED.001.PROC.001",
+            "greenLeafID": "P07-T002.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/MonaCodeTests/Diff/MonaDiffCoordinatorTests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "redScaffold": [
+        {
+          "sourcePath": "Sources/MonaCode/Diff/MonaDiffCoordinator.swift",
+          "marker": "G6_RED_SCAFFOLD:P07-T002:43fdc9e0f8df2eb40842ac3404ed8966f7697f7c1267fa3e5cf0287622b6e016",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        },
+        {
+          "sourcePath": "Sources/MonaCode/Diff/MonaDiffCache.swift",
+          "marker": "G6_RED_SCAFFOLD:P07-T002:2e6e00b9c462ab33c5e60ebab063f537051f19f97d9e02193b8c24d6137df105",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        }
+      ],
+      "sourceAcquisitions": [],
+      "evidence": {
+        "paths": [
+          "artifacts/acceptance-evidence/g6-r/phase-07/P07-T002.json"
+        ],
+        "fromRevision": "g5-r",
+        "toRevision": "g6-r",
+        "stagedEvidencePath": "artifacts/acceptance-evidence/g6-r/phase-07/P07-T002.json"
+      },
+      "completion": [
+        "Timeout boundaries match D1-R.",
+        "Cache never exceeds 11 entries.",
+        "Unavailable external paths never load external code."
+      ],
+      "commits": {
+        "product": {
+          "author": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "committer": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "message": "monacode: complete P07-T002",
+          "stagedProductPaths": [
+            "Sources/MonaCode/Diff/MonaDiffCoordinator.swift",
+            "Sources/MonaCode/Diff/MonaDiffCache.swift",
+            "Tests/MonaCodeTests/Diff/MonaDiffCoordinatorTests.swift"
+          ],
+          "hooksDisabled": true,
+          "signingDisabled": true,
+          "evidenceExcluded": true
+        },
+        "evidence": {
+          "author": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "committer": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "message": "evidence(monacode): complete P07-T002",
+          "firstParentSuccessor": "immediate",
+          "stagedEvidencePath": "artifacts/acceptance-evidence/g6-r/phase-07/P07-T002.json",
+          "laterFirstParentTouches": 0,
+          "hooksDisabled": true,
+          "signingDisabled": true,
+          "selectorMode": "external-git",
+          "prohibitsSelfEmbedding": true,
+          "evidenceSchema": "task-evidence.schema.json",
+          "verifiedAssertions": [
+            "Timeout boundaries match D1-R.",
+            "Cache never exceeds 11 entries.",
+            "Unavailable external paths never load external code."
+          ]
+        }
+      },
+      "recordSha256": "33abb3d6dbec371ab1813bbedf9c2764acfad4bcf09c7e59b1a8887eeee15efa"
+    },
+    {
+      "id": "P07-T003",
+      "phase": "07",
+      "title": "Implement 40 standalone services and bounded session state",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P05-T200",
+        "P06-T010"
+      ],
+      "contractRefs": [
+        "C09",
+        "P11",
+        "S1-R.services",
+        "S1-R.sessionStore"
+      ],
+      "ownership": [
+        "normativeLayer:standalone-services-session-feedback:S1-R",
+        "machineArtifact:S1-R-standalone-services"
+      ],
+      "paths": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Sources/MonaCode/Services/MonaServiceCollection.swift",
+          "Sources/MonaCode/Services/MonaStandaloneServices.swift",
+          "Sources/MonaCode/Services/MonaSessionStore.swift",
+          "Sources/MonaCode/Services/MonaFeedbackService.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/Services/MonaStandaloneServiceTests.swift"
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "MonaServiceCollection",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/services-s1r-session-feedback-closure.html",
+            "sourceArtifactHash": "ced5a3a27ff1a8d0f9ff1abc43f15d5cb594d51c83c7d4a14fc977b4947d7ec0",
+            "sourceLocator": "/sections/interfaces/MonaServiceCollection",
+            "contractRefs": [
+              "S1-R.services",
+              "S1-R.sessionStore",
+              "C09",
+              "P11"
+            ],
+            "declarationText": "// MonaServiceCollection declaration authored by P07-T003",
+            "target": "MonaCode",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "normativeLayer:standalone-services-session-feedback:S1-R",
+              "machineArtifact:S1-R-standalone-services"
+            ],
+            "sendable": true
+          },
+          {
+            "id": "MonaStandaloneServices",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/services-s1r-session-feedback-closure.html",
+            "sourceArtifactHash": "ced5a3a27ff1a8d0f9ff1abc43f15d5cb594d51c83c7d4a14fc977b4947d7ec0",
+            "sourceLocator": "/sections/interfaces/MonaStandaloneServices",
+            "contractRefs": [
+              "S1-R.services",
+              "S1-R.sessionStore",
+              "C09",
+              "P11"
+            ],
+            "declarationText": "// MonaStandaloneServices declaration authored by P07-T003",
+            "target": "MonaCode",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "normativeLayer:standalone-services-session-feedback:S1-R",
+              "machineArtifact:S1-R-standalone-services"
+            ],
+            "sendable": true
+          },
+          {
+            "id": "MonaSessionStore",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/services-s1r-session-feedback-closure.html",
+            "sourceArtifactHash": "ced5a3a27ff1a8d0f9ff1abc43f15d5cb594d51c83c7d4a14fc977b4947d7ec0",
+            "sourceLocator": "/sections/interfaces/MonaSessionStore",
+            "contractRefs": [
+              "S1-R.services",
+              "S1-R.sessionStore",
+              "C09",
+              "P11"
+            ],
+            "declarationText": "// MonaSessionStore declaration authored by P07-T003",
+            "target": "MonaCode",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "normativeLayer:standalone-services-session-feedback:S1-R",
+              "machineArtifact:S1-R-standalone-services"
+            ],
+            "sendable": true
+          },
+          {
+            "id": "MonaFeedbackService",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/services-s1r-session-feedback-closure.html",
+            "sourceArtifactHash": "ced5a3a27ff1a8d0f9ff1abc43f15d5cb594d51c83c7d4a14fc977b4947d7ec0",
+            "sourceLocator": "/sections/interfaces/MonaFeedbackService",
+            "contractRefs": [
+              "S1-R.services",
+              "S1-R.sessionStore",
+              "C09",
+              "P11"
+            ],
+            "declarationText": "// MonaFeedbackService declaration authored by P07-T003",
+            "target": "MonaCode",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "normativeLayer:standalone-services-session-feedback:S1-R",
+              "machineArtifact:S1-R-standalone-services"
+            ],
+            "sendable": true
+          }
+        ],
+        "consumes": [
+          {
+            "id": "MonaGlobalLifetime"
+          },
+          {
+            "id": "MonaEditorLifetime"
+          },
+          {
+            "id": "MonaCommandRegistry"
+          },
+          {
+            "id": "MonaLocalization"
+          }
+        ]
+      },
+      "stages": [
+        {
+          "name": "preflight",
+          "steps": [
+            {
+              "kind": "controller-action",
+              "action": "begin-task"
+            }
+          ]
+        },
+        {
+          "name": "test-authoring",
+          "steps": [
+            {
+              "kind": "authoring-operation",
+              "operation": "Tests/MonaCodeTests/Services/MonaStandaloneServiceTests.swift"
+            }
+          ]
+        },
+        {
+          "name": "red",
+          "steps": [
+            {
+              "kind": "verification-command",
+              "command": {
+                "commandID": "P07-T003.RED.001",
+                "kind": "process",
+                "networkMode": "forbidden",
+                "timeoutMs": 600000,
+                "stage": "red",
+                "expectedExit": 1,
+                "expectedOutputIncludes": [
+                  "STANDALONE_SERVICE_SET_MISMATCH expected=40"
+                ],
+                "leaves": [
+                  {
+                    "leafID": "P07-T003.RED.001.PROC.001",
+                    "executable": "/usr/bin/xcrun",
+                    "toolchainRow": "xcrun-swift-6.0-macos-26",
+                    "args": [
+                      "swift",
+                      "test",
+                      "--filter",
+                      "MonaStandaloneServiceTests/testExactServiceAndCacheBounds",
+                      "--scratch-path",
+                      "/tmp/monacode-planctl/P07-T003.RED.001.PROC.001"
+                    ],
+                    "timeoutMs": 600000,
+                    "form": "swift-test",
+                    "stage": "red",
+                    "optionReorder": false,
+                    "declaredPaths": [
+                      "Package.swift"
+                    ]
+                  }
+                ],
+                "failureClass": "behavioral"
+              }
+            }
+          ]
+        },
+        {
+          "name": "implementation",
+          "steps": [
+            {
+              "kind": "implementation-operation",
+              "operation": "Instantiate exactly 40 retained services with explicit global or per-editor lifetime ownership."
+            },
+            {
+              "kind": "implementation-operation",
+              "operation": "Implement bounded session rows for suggestion memory, scope switching, save delay, widget details, and shared state."
+            },
+            {
+              "kind": "implementation-operation",
+              "operation": "Keep persistence, telemetry transport, notification-progress UI, and signal audio absent."
+            },
+            {
+              "kind": "implementation-operation",
+              "operation": "Expose nonblocking localized feedback without document-text logging."
+            }
+          ]
+        },
+        {
+          "name": "green",
+          "steps": [
+            {
+              "kind": "verification-command",
+              "command": {
+                "commandID": "P07-T003.GREEN.001",
+                "kind": "process",
+                "networkMode": "forbidden",
+                "timeoutMs": 600000,
+                "stage": "green",
+                "expectedExit": 0,
+                "expectedOutputIncludes": [
+                  "STANDALONE_SERVICES count=40 caches=300,200,50,20 persistence=0"
+                ],
+                "leaves": [
+                  {
+                    "leafID": "P07-T003.GREEN.001.PROC.001",
+                    "executable": "/usr/bin/xcrun",
+                    "toolchainRow": "xcrun-swift-6.0-macos-26",
+                    "args": [
+                      "swift",
+                      "test",
+                      "--filter",
+                      "MonaStandaloneServiceTests",
+                      "--scratch-path",
+                      "/tmp/monacode-planctl/P07-T003.GREEN.001.PROC.001"
+                    ],
+                    "timeoutMs": 600000,
+                    "form": "swift-test",
+                    "stage": "green",
+                    "optionReorder": false,
+                    "declaredPaths": [
+                      "Package.swift"
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "commit",
+          "steps": [
+            {
+              "kind": "controller-action",
+              "action": "commit-task"
+            }
+          ]
+        },
+        {
+          "name": "evidence",
+          "steps": [
+            {
+              "kind": "controller-action",
+              "action": "finalize-evidence"
+            }
+          ]
+        }
+      ],
+      "testContract": {
+        "contractID": "P07-T003",
+        "cases": [
+          {
+            "caseID": "P07-T003.CASE.001",
+            "file": {
+              "path": "Tests/MonaCodeTests/Services/MonaStandaloneServiceTests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter MonaStandaloneServiceTests/testExactServiceAndCacheBounds",
+            "target": "Tests/MonaCodeTests/Services/MonaStandaloneServiceTests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "STANDALONE_SERVICE_SET_MISMATCH expected=40",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P07-T003.RED.001.PROC.001",
+            "greenLeafID": "P07-T003.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/MonaCodeTests/Services/MonaStandaloneServiceTests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "redScaffold": [
+        {
+          "sourcePath": "Sources/MonaCode/Services/MonaServiceCollection.swift",
+          "marker": "G6_RED_SCAFFOLD:P07-T003:e040204ae2224eac738cb6424345665541a92801a265a91df47519a825486f6a",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        },
+        {
+          "sourcePath": "Sources/MonaCode/Services/MonaStandaloneServices.swift",
+          "marker": "G6_RED_SCAFFOLD:P07-T003:a592673f845ad86b7f7f72fc119236ce7fbd4b0a3b4d5774b2d96ab78184194c",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        },
+        {
+          "sourcePath": "Sources/MonaCode/Services/MonaSessionStore.swift",
+          "marker": "G6_RED_SCAFFOLD:P07-T003:bded9c1431492802d851350c939bb74c0e03571f128c4fd96a504ccdbb1745b8",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        },
+        {
+          "sourcePath": "Sources/MonaCode/Services/MonaFeedbackService.swift",
+          "marker": "G6_RED_SCAFFOLD:P07-T003:3aaac08f80abf49ec00dfef8e9dde70cd680531de976dc743ff223c621512f24",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        }
+      ],
+      "sourceAcquisitions": [],
+      "evidence": {
+        "paths": [
+          "artifacts/acceptance-evidence/g6-r/phase-07/P07-T003.json"
+        ],
+        "fromRevision": "g5-r",
+        "toRevision": "g6-r",
+        "stagedEvidencePath": "artifacts/acceptance-evidence/g6-r/phase-07/P07-T003.json"
+      },
+      "completion": [
+        "Service identity set and lifetimes are exact.",
+        "All session stores remain memory-only and bounded.",
+        "Prohibited services are absent."
+      ],
+      "commits": {
+        "product": {
+          "author": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "committer": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "message": "monacode: complete P07-T003",
+          "stagedProductPaths": [
+            "Sources/MonaCode/Services/MonaServiceCollection.swift",
+            "Sources/MonaCode/Services/MonaStandaloneServices.swift",
+            "Sources/MonaCode/Services/MonaSessionStore.swift",
+            "Sources/MonaCode/Services/MonaFeedbackService.swift",
+            "Tests/MonaCodeTests/Services/MonaStandaloneServiceTests.swift"
+          ],
+          "hooksDisabled": true,
+          "signingDisabled": true,
+          "evidenceExcluded": true
+        },
+        "evidence": {
+          "author": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "committer": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "message": "evidence(monacode): complete P07-T003",
+          "firstParentSuccessor": "immediate",
+          "stagedEvidencePath": "artifacts/acceptance-evidence/g6-r/phase-07/P07-T003.json",
+          "laterFirstParentTouches": 0,
+          "hooksDisabled": true,
+          "signingDisabled": true,
+          "selectorMode": "external-git",
+          "prohibitsSelfEmbedding": true,
+          "evidenceSchema": "task-evidence.schema.json",
+          "verifiedAssertions": [
+            "Service identity set and lifetimes are exact.",
+            "All session stores remain memory-only and bounded.",
+            "Prohibited services are absent."
+          ]
+        }
+      },
+      "recordSha256": "f632ffc2e68f44f9fcbadbcd38a132e5d805c16ebd5a873e9be910ffcc4c1485"
+    },
+    {
+      "id": "P07-T004",
+      "phase": "07",
+      "title": "Project four dialog sites into host-authorized native dialogs",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P04-T014",
+        "P07-T003"
+      ],
+      "contractRefs": [
+        "C09",
+        "H1-R.hostBoundary",
+        "S1-R.dialogSites"
+      ],
+      "ownership": [
+        "services:dialog-sites-four"
+      ],
+      "paths": {
+        "productTarget": "MonaCodeAppKit",
+        "create": [
+          "Sources/MonaCodeAppKit/Services/MonaDialogService.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeAppKitTests/Services/MonaDialogServiceTests.swift"
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "MonaDialogService",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/services-s1r-session-feedback-closure.html",
+            "sourceArtifactHash": "ced5a3a27ff1a8d0f9ff1abc43f15d5cb594d51c83c7d4a14fc977b4947d7ec0",
+            "sourceLocator": "/sections/interfaces/MonaDialogService",
+            "contractRefs": [
+              "S1-R.dialogSites",
+              "H1-R.hostBoundary",
+              "C09"
+            ],
+            "declarationText": "// MonaDialogService declaration authored by P07-T004",
+            "target": "MonaCodeAppKit",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "services:dialog-sites-four"
+            ],
+            "sendable": true
+          }
+        ],
+        "consumes": [
+          {
+            "id": "MonaStandaloneServices"
+          },
+          {
+            "id": "MonaCodeEditorView"
+          }
+        ]
+      },
+      "stages": [
+        {
+          "name": "preflight",
+          "steps": [
+            {
+              "kind": "controller-action",
+              "action": "begin-task"
+            }
+          ]
+        },
+        {
+          "name": "test-authoring",
+          "steps": [
+            {
+              "kind": "authoring-operation",
+              "operation": "Tests/MonaCodeAppKitTests/Services/MonaDialogServiceTests.swift"
+            }
+          ]
+        },
+        {
+          "name": "red",
+          "steps": [
+            {
+              "kind": "verification-command",
+              "command": {
+                "commandID": "P07-T004.RED.001",
+                "kind": "process",
+                "networkMode": "forbidden",
+                "timeoutMs": 600000,
+                "stage": "red",
+                "expectedExit": 1,
+                "expectedOutputIncludes": [
+                  "DIALOG_SITE_MISMATCH site=saveConflict"
+                ],
+                "leaves": [
+                  {
+                    "leafID": "P07-T004.RED.001.PROC.001",
+                    "executable": "/usr/bin/xcrun",
+                    "toolchainRow": "xcrun-swift-6.0-macos-26",
+                    "args": [
+                      "swift",
+                      "test",
+                      "--filter",
+                      "MonaDialogServiceTests/testFourSiteOutcomeMatrix",
+                      "--scratch-path",
+                      "/tmp/monacode-planctl/P07-T004.RED.001.PROC.001"
+                    ],
+                    "timeoutMs": 600000,
+                    "form": "swift-test",
+                    "stage": "red",
+                    "optionReorder": false,
+                    "declaredPaths": [
+                      "Package.swift"
+                    ]
+                  }
+                ],
+                "failureClass": "behavioral"
+              }
+            }
+          ]
+        },
+        {
+          "name": "implementation",
+          "steps": [
+            {
+              "kind": "implementation-operation",
+              "operation": "Map exactly four retained dialog call sites to native sheet or alert requests."
+            },
+            {
+              "kind": "implementation-operation",
+              "operation": "Require an attached authorized host window and expose accepted, canceled, and unavailable outcomes."
+            },
+            {
+              "kind": "implementation-operation",
+              "operation": "Never fabricate acceptance when presentation is unavailable."
+            }
+          ]
+        },
+        {
+          "name": "green",
+          "steps": [
+            {
+              "kind": "verification-command",
+              "command": {
+                "commandID": "P07-T004.GREEN.001",
+                "kind": "process",
+                "networkMode": "forbidden",
+                "timeoutMs": 600000,
+                "stage": "green",
+                "expectedExit": 0,
+                "expectedOutputIncludes": [
+                  "DIALOG_SITES count=4 outcomes=exact"
+                ],
+                "leaves": [
+                  {
+                    "leafID": "P07-T004.GREEN.001.PROC.001",
+                    "executable": "/usr/bin/xcrun",
+                    "toolchainRow": "xcrun-swift-6.0-macos-26",
+                    "args": [
+                      "swift",
+                      "test",
+                      "--filter",
+                      "MonaDialogServiceTests",
+                      "--scratch-path",
+                      "/tmp/monacode-planctl/P07-T004.GREEN.001.PROC.001"
+                    ],
+                    "timeoutMs": 600000,
+                    "form": "swift-test",
+                    "stage": "green",
+                    "optionReorder": false,
+                    "declaredPaths": [
+                      "Package.swift"
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "commit",
+          "steps": [
+            {
+              "kind": "controller-action",
+              "action": "commit-task"
+            }
+          ]
+        },
+        {
+          "name": "evidence",
+          "steps": [
+            {
+              "kind": "controller-action",
+              "action": "finalize-evidence"
+            }
+          ]
+        }
+      ],
+      "testContract": {
+        "contractID": "P07-T004",
+        "cases": [
+          {
+            "caseID": "P07-T004.CASE.001",
+            "file": {
+              "path": "Tests/MonaCodeAppKitTests/Services/MonaDialogServiceTests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter MonaDialogServiceTests/testFourSiteOutcomeMatrix",
+            "target": "Tests/MonaCodeAppKitTests/Services/MonaDialogServiceTests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "DIALOG_SITE_MISMATCH site=saveConflict",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P07-T004.RED.001.PROC.001",
+            "greenLeafID": "P07-T004.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/MonaCodeAppKitTests/Services/MonaDialogServiceTests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "redScaffold": [
+        {
+          "sourcePath": "Sources/MonaCodeAppKit/Services/MonaDialogService.swift",
+          "marker": "G6_RED_SCAFFOLD:P07-T004:0a45d51bf84a2599a3c397c25adf3a1b8e851db97102f0a45e37e4b9bfd6a6bd",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        }
+      ],
+      "sourceAcquisitions": [],
+      "evidence": {
+        "paths": [
+          "artifacts/acceptance-evidence/g6-r/phase-07/P07-T004.json"
+        ],
+        "fromRevision": "g5-r",
+        "toRevision": "g6-r",
+        "stagedEvidencePath": "artifacts/acceptance-evidence/g6-r/phase-07/P07-T004.json"
+      },
+      "completion": [
+        "All four sites use explicit native outcomes.",
+        "Detached editors return unavailable.",
+        "No web dialog surface ships."
+      ],
+      "commits": {
+        "product": {
+          "author": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "committer": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "message": "monacode: complete P07-T004",
+          "stagedProductPaths": [
+            "Sources/MonaCodeAppKit/Services/MonaDialogService.swift",
+            "Tests/MonaCodeAppKitTests/Services/MonaDialogServiceTests.swift"
+          ],
+          "hooksDisabled": true,
+          "signingDisabled": true,
+          "evidenceExcluded": true
+        },
+        "evidence": {
+          "author": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "committer": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "message": "evidence(monacode): complete P07-T004",
+          "firstParentSuccessor": "immediate",
+          "stagedEvidencePath": "artifacts/acceptance-evidence/g6-r/phase-07/P07-T004.json",
+          "laterFirstParentTouches": 0,
+          "hooksDisabled": true,
+          "signingDisabled": true,
+          "selectorMode": "external-git",
+          "prohibitsSelfEmbedding": true,
+          "evidenceSchema": "task-evidence.schema.json",
+          "verifiedAssertions": [
+            "All four sites use explicit native outcomes.",
+            "Detached editors return unavailable.",
+            "No web dialog surface ships."
+          ]
+        }
+      },
+      "recordSha256": "3c6c9d93ed5c3e1b42460760dce787431c0299f9c984e4d3473c5eb3de9821bd"
+    },
+    {
+      "id": "P07-T005",
+      "phase": "07",
+      "title": "Implement seven host groups and ten concrete host types",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P06-T009",
+        "P07-T003"
+      ],
+      "contractRefs": [
+        "C09",
+        "G5-R.deliveryScope.hostGroups",
+        "H1-R",
+        "H1-R2"
+      ],
+      "ownership": [
+        "normativeLayer:native-embedding-host:H1-R",
+        "normativeLayer:native-embedding-host:H1-R2",
+        "machineArtifact:H1-R-native-boundary",
+        "machineArtifact:H1-R2-host-group"
+      ],
+      "paths": {
+        "productTarget": null,
+        "create": [
+          "Sources/MonaCode/Host/MonaHostContracts.swift",
+          "Sources/MonaCode/Host/MonaOpenerRegistry.swift",
+          "Sources/MonaCodeAppKit/Host/MonaAppKitHostAdapters.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeAppKitTests/Host/MonaHostContractClosureTests.swift"
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "MonaHostContractSet",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/host-h1r-native-embedding-closure.html",
+            "sourceArtifactHash": "6eb212e54af92ac3de2d2892276ef1bebe2eb9e112fcb2a9e91f9224a627cb49",
+            "sourceLocator": "/sections/interfaces/MonaHostContractSet",
+            "contractRefs": [
+              "H1-R",
+              "H1-R2",
+              "G5-R.deliveryScope.hostGroups",
+              "C09"
+            ],
+            "declarationText": "// MonaHostContractSet declaration authored by P07-T005",
+            "target": "MonaCode",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "normativeLayer:native-embedding-host:H1-R",
+              "normativeLayer:native-embedding-host:H1-R2",
+              "machineArtifact:H1-R-native-boundary",
+              "machineArtifact:H1-R2-host-group"
+            ],
+            "sendable": true
+          },
+          {
+            "id": "MonaOpenerRegistry",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/host-h1r2-opener-count-closure.html",
+            "sourceArtifactHash": "896c75756af88d2050b94c0601a26a4a037b727c16697de95c78aa18e55012fb",
+            "sourceLocator": "/sections/interfaces/MonaOpenerRegistry",
+            "contractRefs": [
+              "H1-R",
+              "H1-R2",
+              "G5-R.deliveryScope.hostGroups",
+              "C09"
+            ],
+            "declarationText": "// MonaOpenerRegistry declaration authored by P07-T005",
+            "target": "MonaCode",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "normativeLayer:native-embedding-host:H1-R",
+              "normativeLayer:native-embedding-host:H1-R2",
+              "machineArtifact:H1-R-native-boundary",
+              "machineArtifact:H1-R2-host-group"
+            ],
+            "sendable": true
+          },
+          {
+            "id": "MonaAppKitHostAdapters",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/host-h1r-native-embedding-closure.html",
+            "sourceArtifactHash": "6eb212e54af92ac3de2d2892276ef1bebe2eb9e112fcb2a9e91f9224a627cb49",
+            "sourceLocator": "/sections/interfaces/MonaAppKitHostAdapters",
+            "contractRefs": [
+              "H1-R",
+              "H1-R2",
+              "G5-R.deliveryScope.hostGroups",
+              "C09"
+            ],
+            "declarationText": "// MonaAppKitHostAdapters declaration authored by P07-T005",
+            "target": "MonaCodeAppKit",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "normativeLayer:native-embedding-host:H1-R",
+              "normativeLayer:native-embedding-host:H1-R2",
+              "machineArtifact:H1-R-native-boundary",
+              "machineArtifact:H1-R2-host-group"
+            ],
+            "sendable": true
+          }
+        ],
+        "consumes": [
+          {
+            "id": "MonaCodeEnvironment"
+          },
+          {
+            "id": "MonaMessageTransport"
+          },
+          {
+            "id": "MonaCommandRegistry"
+          },
+          {
+            "id": "MonaURI"
+          }
+        ]
+      },
+      "stages": [
+        {
+          "name": "preflight",
+          "steps": [
+            {
+              "kind": "controller-action",
+              "action": "begin-task"
+            }
+          ]
+        },
+        {
+          "name": "test-authoring",
+          "steps": [
+            {
+              "kind": "authoring-operation",
+              "operation": "Tests/MonaCodeAppKitTests/Host/MonaHostContractClosureTests.swift"
+            }
+          ]
+        },
+        {
+          "name": "red",
+          "steps": [
+            {
+              "kind": "verification-command",
+              "command": {
+                "commandID": "P07-T005.RED.001",
+                "kind": "process",
+                "networkMode": "forbidden",
+                "timeoutMs": 600000,
+                "stage": "red",
+                "expectedExit": 1,
+                "expectedOutputIncludes": [
+                  "HOST_CONTRACT_SET_MISMATCH groups=7 concreteTypes=10"
+                ],
+                "leaves": [
+                  {
+                    "leafID": "P07-T005.RED.001.PROC.001",
+                    "executable": "/usr/bin/xcrun",
+                    "toolchainRow": "xcrun-swift-6.0-macos-26",
+                    "args": [
+                      "swift",
+                      "test",
+                      "--filter",
+                      "MonaHostContractClosureTests/testSevenGroupsTenTypes",
+                      "--scratch-path",
+                      "/tmp/monacode-planctl/P07-T005.RED.001.PROC.001"
+                    ],
+                    "timeoutMs": 600000,
+                    "form": "swift-test",
+                    "stage": "red",
+                    "optionReorder": false,
+                    "declaredPaths": [
+                      "Package.swift"
+                    ]
+                  }
+                ],
+                "failureClass": "behavioral"
+              }
+            }
+          ]
+        },
+        {
+          "name": "implementation",
+          "steps": [
+            {
+              "kind": "implementation-operation",
+              "operation": "Implement environment, opener-registry, workspace-edit, command, logging, LSP-transport, and multi-diff-data host groups."
+            },
+            {
+              "kind": "implementation-operation",
+              "operation": "Expose exactly ten concrete public types with their frozen throwing, nonthrowing, ordering, disposal, and fallback behavior."
+            },
+            {
+              "kind": "implementation-operation",
+              "operation": "Keep link and code-editor opener registries distinct and traverse last-registered-first."
+            },
+            {
+              "kind": "implementation-operation",
+              "operation": "Add no implicit URL, file, network, logging, transport, or workspace authority."
+            }
+          ]
+        },
+        {
+          "name": "green",
+          "steps": [
+            {
+              "kind": "verification-command",
+              "command": {
+                "commandID": "P07-T005.GREEN.001",
+                "kind": "process",
+                "networkMode": "forbidden",
+                "timeoutMs": 600000,
+                "stage": "green",
+                "expectedExit": 0,
+                "expectedOutputIncludes": [
+                  "HOST_CONTRACTS groups=7 concreteTypes=10 implicitAuthority=0"
+                ],
+                "leaves": [
+                  {
+                    "leafID": "P07-T005.GREEN.001.PROC.001",
+                    "executable": "/usr/bin/xcrun",
+                    "toolchainRow": "xcrun-swift-6.0-macos-26",
+                    "args": [
+                      "swift",
+                      "test",
+                      "--filter",
+                      "MonaHostContractClosureTests",
+                      "--scratch-path",
+                      "/tmp/monacode-planctl/P07-T005.GREEN.001.PROC.001"
+                    ],
+                    "timeoutMs": 600000,
+                    "form": "swift-test",
+                    "stage": "green",
+                    "optionReorder": false,
+                    "declaredPaths": [
+                      "Package.swift"
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "commit",
+          "steps": [
+            {
+              "kind": "controller-action",
+              "action": "commit-task"
+            }
+          ]
+        },
+        {
+          "name": "evidence",
+          "steps": [
+            {
+              "kind": "controller-action",
+              "action": "finalize-evidence"
+            }
+          ]
+        }
+      ],
+      "testContract": {
+        "contractID": "P07-T005",
+        "cases": [
+          {
+            "caseID": "P07-T005.CASE.001",
+            "file": {
+              "path": "Tests/MonaCodeAppKitTests/Host/MonaHostContractClosureTests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter MonaHostContractClosureTests/testSevenGroupsTenTypes",
+            "target": "Tests/MonaCodeAppKitTests/Host/MonaHostContractClosureTests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "HOST_CONTRACT_SET_MISMATCH groups=7 concreteTypes=10",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P07-T005.RED.001.PROC.001",
+            "greenLeafID": "P07-T005.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/MonaCodeAppKitTests/Host/MonaHostContractClosureTests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "redScaffold": [
+        {
+          "sourcePath": "Sources/MonaCode/Host/MonaHostContracts.swift",
+          "marker": "G6_RED_SCAFFOLD:P07-T005:4ce998285a6fd71ac7e548ab3d9dc8ed33d43c21b86142c987e62ccd09ae2038",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        },
+        {
+          "sourcePath": "Sources/MonaCode/Host/MonaOpenerRegistry.swift",
+          "marker": "G6_RED_SCAFFOLD:P07-T005:be8feb27d8cf0c0349fe7250aaa52d8742900d83e090c9a9db7d41528a232c7b",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        },
+        {
+          "sourcePath": "Sources/MonaCodeAppKit/Host/MonaAppKitHostAdapters.swift",
+          "marker": "G6_RED_SCAFFOLD:P07-T005:f496a74914625c6834a27aea87008d6bf2bda114584f27219aed1b90e6ef241e",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        }
+      ],
+      "sourceAcquisitions": [],
+      "evidence": {
+        "paths": [
+          "artifacts/acceptance-evidence/g6-r/phase-07/P07-T005.json"
+        ],
+        "fromRevision": "g5-r",
+        "toRevision": "g6-r",
+        "stagedEvidencePath": "artifacts/acceptance-evidence/g6-r/phase-07/P07-T005.json"
+      },
+      "completion": [
+        "Seven host groups and ten concrete types are exact.",
+        "Every host action requires explicit attachment.",
+        "Opener fallthrough and disposal order match H1-R2."
+      ],
+      "commits": {
+        "product": {
+          "author": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "committer": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "message": "monacode: complete P07-T005",
+          "stagedProductPaths": [
+            "Sources/MonaCode/Host/MonaHostContracts.swift",
+            "Sources/MonaCode/Host/MonaOpenerRegistry.swift",
+            "Sources/MonaCodeAppKit/Host/MonaAppKitHostAdapters.swift",
+            "Tests/MonaCodeAppKitTests/Host/MonaHostContractClosureTests.swift"
+          ],
+          "hooksDisabled": true,
+          "signingDisabled": true,
+          "evidenceExcluded": true
+        },
+        "evidence": {
+          "author": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "committer": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "message": "evidence(monacode): complete P07-T005",
+          "firstParentSuccessor": "immediate",
+          "stagedEvidencePath": "artifacts/acceptance-evidence/g6-r/phase-07/P07-T005.json",
+          "laterFirstParentTouches": 0,
+          "hooksDisabled": true,
+          "signingDisabled": true,
+          "selectorMode": "external-git",
+          "prohibitsSelfEmbedding": true,
+          "evidenceSchema": "task-evidence.schema.json",
+          "verifiedAssertions": [
+            "Seven host groups and ten concrete types are exact.",
+            "Every host action requires explicit attachment.",
+            "Opener fallthrough and disposal order match H1-R2."
+          ]
+        }
+      },
+      "recordSha256": "2ea9b4a2fecebd70905f606ecabf3434e320c28921fb2b6ce5f62bc1dc9f5285"
+    },
+    {
+      "id": "P07-T006",
+      "phase": "07",
+      "title": "Implement the four-outcome WorkspaceEdit transaction",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P01-T010",
+        "P07-T005"
+      ],
+      "contractRefs": [
+        "C07",
+        "C09",
+        "H1-R.workspaceEdit",
+        "R1.transactionRecovery"
+      ],
+      "ownership": [
+        "host:workspace-edit",
+        "transaction:workspace-edit"
+      ],
+      "paths": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Sources/MonaCode/Host/MonaWorkspaceEdit.swift",
+          "Sources/MonaCode/Host/MonaPreparedWorkspaceTransaction.swift"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/Host/MonaWorkspaceEditTests.swift"
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "MonaWorkspaceEdit",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/host-h1r-native-embedding-closure.html",
+            "sourceArtifactHash": "6eb212e54af92ac3de2d2892276ef1bebe2eb9e112fcb2a9e91f9224a627cb49",
+            "sourceLocator": "/sections/interfaces/MonaWorkspaceEdit",
+            "contractRefs": [
+              "H1-R.workspaceEdit",
+              "R1.transactionRecovery",
+              "C07",
+              "C09"
+            ],
+            "declarationText": "// MonaWorkspaceEdit declaration authored by P07-T006",
+            "target": "MonaCode",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "host:workspace-edit",
+              "transaction:workspace-edit"
+            ],
+            "sendable": true
+          },
+          {
+            "id": "MonaPreparedWorkspaceTransaction",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/host-h1r-native-embedding-closure.html",
+            "sourceArtifactHash": "6eb212e54af92ac3de2d2892276ef1bebe2eb9e112fcb2a9e91f9224a627cb49",
+            "sourceLocator": "/sections/interfaces/MonaPreparedWorkspaceTransaction",
+            "contractRefs": [
+              "H1-R.workspaceEdit",
+              "R1.transactionRecovery",
+              "C07",
+              "C09"
+            ],
+            "declarationText": "// MonaPreparedWorkspaceTransaction declaration authored by P07-T006",
+            "target": "MonaCode",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "host:workspace-edit",
+              "transaction:workspace-edit"
+            ],
+            "sendable": true
+          },
+          {
+            "id": "MonaWorkspaceEditOutcome",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/host-h1r-native-embedding-closure.html",
+            "sourceArtifactHash": "6eb212e54af92ac3de2d2892276ef1bebe2eb9e112fcb2a9e91f9224a627cb49",
+            "sourceLocator": "/sections/interfaces/MonaWorkspaceEditOutcome",
+            "contractRefs": [
+              "H1-R.workspaceEdit",
+              "R1.transactionRecovery",
+              "C07",
+              "C09"
+            ],
+            "declarationText": "// MonaWorkspaceEditOutcome declaration authored by P07-T006",
+            "target": "MonaCode",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "host:workspace-edit",
+              "transaction:workspace-edit"
+            ],
+            "sendable": true
+          }
+        ],
+        "consumes": [
+          {
+            "id": "MonaTransactionGateway"
+          },
+          {
+            "id": "MonaHostContractSet"
+          }
+        ]
+      },
+      "stages": [
+        {
+          "name": "preflight",
+          "steps": [
+            {
+              "kind": "controller-action",
+              "action": "begin-task"
+            }
+          ]
+        },
+        {
+          "name": "test-authoring",
+          "steps": [
+            {
+              "kind": "authoring-operation",
+              "operation": "Tests/MonaCodeTests/Host/MonaWorkspaceEditTests.swift"
+            }
+          ]
+        },
+        {
+          "name": "red",
+          "steps": [
+            {
+              "kind": "verification-command",
+              "command": {
+                "commandID": "P07-T006.RED.001",
+                "kind": "process",
+                "networkMode": "forbidden",
+                "timeoutMs": 600000,
+                "stage": "red",
+                "expectedExit": 1,
+                "expectedOutputIncludes": [
+                  "WORKSPACE_EDIT_PARTIAL_COMMIT outcome=externalRejected"
+                ],
+                "leaves": [
+                  {
+                    "leafID": "P07-T006.RED.001.PROC.001",
+                    "executable": "/usr/bin/xcrun",
+                    "toolchainRow": "xcrun-swift-6.0-macos-26",
+                    "args": [
+                      "swift",
+                      "test",
+                      "--filter",
+                      "MonaWorkspaceEditTests/testFourOutcomeAndRollbackMatrix",
+                      "--scratch-path",
+                      "/tmp/monacode-planctl/P07-T006.RED.001.PROC.001"
+                    ],
+                    "timeoutMs": 600000,
+                    "form": "swift-test",
+                    "stage": "red",
+                    "optionReorder": false,
+                    "declaredPaths": [
+                      "Package.swift"
+                    ]
+                  }
+                ],
+                "failureClass": "behavioral"
+              }
+            }
+          ]
+        },
+        {
+          "name": "implementation",
+          "steps": [
+            {
+              "kind": "implementation-operation",
+              "operation": "Prepare open-model edits inside component truth and external resource operations through the explicit host."
+            },
+            {
+              "kind": "implementation-operation",
+              "operation": "Expose applied, rejected, failed, and canceled outcomes with exact failure details."
+            },
+            {
+              "kind": "implementation-operation",
+              "operation": "Require a prepared nonthrowing atomic external commit before publishing open-model changes."
+            },
+            {
+              "kind": "implementation-operation",
+              "operation": "Roll back every prepared open-model mutation when external preparation or commit fails."
+            }
+          ]
+        },
+        {
+          "name": "green",
+          "steps": [
+            {
+              "kind": "verification-command",
+              "command": {
+                "commandID": "P07-T006.GREEN.001",
+                "kind": "process",
+                "networkMode": "forbidden",
+                "timeoutMs": 600000,
+                "stage": "green",
+                "expectedExit": 0,
+                "expectedOutputIncludes": [
+                  "WORKSPACE_EDIT outcomes=4 partialCommits=0"
+                ],
+                "leaves": [
+                  {
+                    "leafID": "P07-T006.GREEN.001.PROC.001",
+                    "executable": "/usr/bin/xcrun",
+                    "toolchainRow": "xcrun-swift-6.0-macos-26",
+                    "args": [
+                      "swift",
+                      "test",
+                      "--filter",
+                      "MonaWorkspaceEditTests",
+                      "--scratch-path",
+                      "/tmp/monacode-planctl/P07-T006.GREEN.001.PROC.001"
+                    ],
+                    "timeoutMs": 600000,
+                    "form": "swift-test",
+                    "stage": "green",
+                    "optionReorder": false,
+                    "declaredPaths": [
+                      "Package.swift"
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "commit",
+          "steps": [
+            {
+              "kind": "controller-action",
+              "action": "commit-task"
+            }
+          ]
+        },
+        {
+          "name": "evidence",
+          "steps": [
+            {
+              "kind": "controller-action",
+              "action": "finalize-evidence"
+            }
+          ]
+        }
+      ],
+      "testContract": {
+        "contractID": "P07-T006",
+        "cases": [
+          {
+            "caseID": "P07-T006.CASE.001",
+            "file": {
+              "path": "Tests/MonaCodeTests/Host/MonaWorkspaceEditTests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter MonaWorkspaceEditTests/testFourOutcomeAndRollbackMatrix",
+            "target": "Tests/MonaCodeTests/Host/MonaWorkspaceEditTests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "WORKSPACE_EDIT_PARTIAL_COMMIT outcome=externalRejected",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P07-T006.RED.001.PROC.001",
+            "greenLeafID": "P07-T006.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/MonaCodeTests/Host/MonaWorkspaceEditTests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "redScaffold": [
+        {
+          "sourcePath": "Sources/MonaCode/Host/MonaWorkspaceEdit.swift",
+          "marker": "G6_RED_SCAFFOLD:P07-T006:8549a449cf7652b4e7e45de95670f0dc232567afe1a411a8699789d0344d6f9a",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        },
+        {
+          "sourcePath": "Sources/MonaCode/Host/MonaPreparedWorkspaceTransaction.swift",
+          "marker": "G6_RED_SCAFFOLD:P07-T006:443f684c276a199213998e5b132c6327e38f8c2d6e482b2aeb708dd76e1ad940",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        }
+      ],
+      "sourceAcquisitions": [],
+      "evidence": {
+        "paths": [
+          "artifacts/acceptance-evidence/g6-r/phase-07/P07-T006.json"
+        ],
+        "fromRevision": "g5-r",
+        "toRevision": "g6-r",
+        "stagedEvidencePath": "artifacts/acceptance-evidence/g6-r/phase-07/P07-T006.json"
+      },
+      "completion": [
+        "All four outcomes are distinguishable.",
+        "External failure cannot partially mutate open models.",
+        "Cancellation and stale versions leave no side effects."
+      ],
+      "commits": {
+        "product": {
+          "author": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "committer": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "message": "monacode: complete P07-T006",
+          "stagedProductPaths": [
+            "Sources/MonaCode/Host/MonaWorkspaceEdit.swift",
+            "Sources/MonaCode/Host/MonaPreparedWorkspaceTransaction.swift",
+            "Tests/MonaCodeTests/Host/MonaWorkspaceEditTests.swift"
+          ],
+          "hooksDisabled": true,
+          "signingDisabled": true,
+          "evidenceExcluded": true
+        },
+        "evidence": {
+          "author": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "committer": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "message": "evidence(monacode): complete P07-T006",
+          "firstParentSuccessor": "immediate",
+          "stagedEvidencePath": "artifacts/acceptance-evidence/g6-r/phase-07/P07-T006.json",
+          "laterFirstParentTouches": 0,
+          "hooksDisabled": true,
+          "signingDisabled": true,
+          "selectorMode": "external-git",
+          "prohibitsSelfEmbedding": true,
+          "evidenceSchema": "task-evidence.schema.json",
+          "verifiedAssertions": [
+            "All four outcomes are distinguishable.",
+            "External failure cannot partially mutate open models.",
+            "Cancellation and stale versions leave no side effects."
+          ]
+        }
+      },
+      "recordSha256": "d11bf66705c3f8033550b3eb6ff0f9cf02b556e48ee58208f2d0f70f32fd0330"
+    },
+    {
+      "id": "P07-T007",
+      "phase": "07",
+      "title": "Close the bounded cache registry and provisional cache manifest",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P02-T007",
+        "P06-T010",
+        "P07-T002",
+        "P07-T003"
+      ],
+      "contractRefs": [
+        "C09",
+        "D1-R.cache",
+        "H2-R.cacheRegistry",
+        "S1-R.cacheBounds"
+      ],
+      "ownership": [
+        "machineArtifact:H2-R-runtime-resource",
+        "candidate-producer:MonaCacheManifest.json"
+      ],
+      "paths": {
+        "productTarget": "MonaCode",
+        "create": [
+          "Sources/MonaCode/Runtime/MonaCacheRegistry.swift",
+          "Tools/Candidates/build-cache-manifest.mjs"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/MonaCodeTests/Runtime/MonaCacheRegistryTests.swift"
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "MonaCacheRegistry",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/runtime-h2r-global-lifetime-resource-closure.html",
+            "sourceArtifactHash": "be66e6ec8e0d03b4561b3e93e2611b3750c0c4b2ca2868506727f0184a12cfea",
+            "sourceLocator": "/sections/interfaces/MonaCacheRegistry",
+            "contractRefs": [
+              "H2-R.cacheRegistry",
+              "S1-R.cacheBounds",
+              "D1-R.cache",
+              "C09"
+            ],
+            "declarationText": "// MonaCacheRegistry declaration authored by P07-T007",
+            "target": "MonaCode",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "machineArtifact:H2-R-runtime-resource",
+              "candidate-producer:MonaCacheManifest.json"
+            ],
+            "sendable": true
+          },
+          {
+            "id": "ProvisionalMonaCacheManifest",
+            "kind": "command-contract",
+            "sourceArtifactPath": "artifacts/runtime-h2r-global-lifetime-resource-closure.html",
+            "sourceArtifactHash": "be66e6ec8e0d03b4561b3e93e2611b3750c0c4b2ca2868506727f0184a12cfea",
+            "sourceLocator": "/sections/interfaces/ProvisionalMonaCacheManifest",
+            "contractRefs": [
+              "H2-R.cacheRegistry",
+              "S1-R.cacheBounds",
+              "D1-R.cache",
+              "C09"
+            ],
+            "commandRecordHash": "7a05ab3e19b3b23193e1f1cabef7fb3448f4e7fd94cb14d523673a63207fdebf",
+            "orderedLeafHashes": [
+              "19061dd9a242b845d6ea0d5734d8621da8cea53ef5c591695932a3d70bb1369a"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "ProvisionalMonaCacheManifest",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "CACHE_REGISTRY exactSet=pass bounds=pass plateau=pass"
+            ]
+          }
+        ],
+        "consumes": [
+          {
+            "id": "MonaDiffCache"
+          },
+          {
+            "id": "MonaSessionStore"
+          },
+          {
+            "id": "MonaNormalizer"
+          },
+          {
+            "id": "MonaGlobalLifetime"
+          }
+        ]
+      },
+      "stages": [
+        {
+          "name": "preflight",
+          "steps": [
+            {
+              "kind": "controller-action",
+              "action": "begin-task"
+            }
+          ]
+        },
+        {
+          "name": "test-authoring",
+          "steps": [
+            {
+              "kind": "authoring-operation",
+              "operation": "Tests/MonaCodeTests/Runtime/MonaCacheRegistryTests.swift"
+            }
+          ]
+        },
+        {
+          "name": "red",
+          "steps": [
+            {
+              "kind": "verification-command",
+              "command": {
+                "commandID": "P07-T007.RED.001",
+                "kind": "process",
+                "networkMode": "forbidden",
+                "timeoutMs": 600000,
+                "stage": "red",
+                "expectedExit": 1,
+                "expectedOutputIncludes": [
+                  "CACHE_BOUND_EXCEEDED cache=diff actual=12 max=11"
+                ],
+                "leaves": [
+                  {
+                    "leafID": "P07-T007.RED.001.PROC.001",
+                    "executable": "/usr/bin/xcrun",
+                    "toolchainRow": "xcrun-swift-6.0-macos-26",
+                    "args": [
+                      "swift",
+                      "test",
+                      "--filter",
+                      "MonaCacheRegistryTests/testExactSetBoundsAndPlateau",
+                      "--scratch-path",
+                      "/tmp/monacode-planctl/P07-T007.RED.001.PROC.001"
+                    ],
+                    "timeoutMs": 600000,
+                    "form": "swift-test",
+                    "stage": "red",
+                    "optionReorder": false,
+                    "declaredPaths": [
+                      "Package.swift"
+                    ]
+                  }
+                ],
+                "failureClass": "behavioral"
+              }
+            }
+          ]
+        },
+        {
+          "name": "implementation",
+          "steps": [
+            {
+              "kind": "implementation-operation",
+              "operation": "Register every cache with exact owner, key shape, entry bound, byte bound, counter width, invalidation, eviction, and quiescent plateau."
+            },
+            {
+              "kind": "implementation-operation",
+              "operation": "Include suggestion caches 300/200/50/20, two normalization caches of 10000, and maximum-11 diff cache."
+            },
+            {
+              "kind": "implementation-operation",
+              "operation": "Reject unregistered cache allocations and signed-counter overflow."
+            },
+            {
+              "kind": "implementation-operation",
+              "operation": "Emit a provisional cache manifest for Phase 08 regeneration."
+            }
+          ]
+        },
+        {
+          "name": "green",
+          "steps": [
+            {
+              "kind": "verification-command",
+              "command": {
+                "commandID": "P07-T007.GREEN.001",
+                "kind": "process",
+                "networkMode": "forbidden",
+                "timeoutMs": 600000,
+                "stage": "green",
+                "expectedExit": 0,
+                "expectedOutputIncludes": [
+                  "CACHE_REGISTRY exactSet=pass bounds=pass plateau=pass"
+                ],
+                "leaves": [
+                  {
+                    "leafID": "P07-T007.GREEN.001.PROC.001",
+                    "executable": "/usr/bin/xcrun",
+                    "toolchainRow": "xcrun-swift-6.0-macos-26",
+                    "args": [
+                      "swift",
+                      "test",
+                      "--filter",
+                      "MonaCacheRegistryTests",
+                      "--scratch-path",
+                      "/tmp/monacode-planctl/P07-T007.GREEN.001.PROC.001"
+                    ],
+                    "timeoutMs": 600000,
+                    "form": "swift-test",
+                    "stage": "green",
+                    "optionReorder": false,
+                    "declaredPaths": [
+                      "Package.swift"
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "commit",
+          "steps": [
+            {
+              "kind": "controller-action",
+              "action": "commit-task"
+            }
+          ]
+        },
+        {
+          "name": "evidence",
+          "steps": [
+            {
+              "kind": "controller-action",
+              "action": "finalize-evidence"
+            }
+          ]
+        }
+      ],
+      "testContract": {
+        "contractID": "P07-T007",
+        "cases": [
+          {
+            "caseID": "P07-T007.CASE.001",
+            "file": {
+              "path": "Tests/MonaCodeTests/Runtime/MonaCacheRegistryTests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter MonaCacheRegistryTests/testExactSetBoundsAndPlateau",
+            "target": "Tests/MonaCodeTests/Runtime/MonaCacheRegistryTests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "CACHE_BOUND_EXCEEDED cache=diff actual=12 max=11",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P07-T007.RED.001.PROC.001",
+            "greenLeafID": "P07-T007.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/MonaCodeTests/Runtime/MonaCacheRegistryTests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "redScaffold": [
+        {
+          "sourcePath": "Sources/MonaCode/Runtime/MonaCacheRegistry.swift",
+          "marker": "G6_RED_SCAFFOLD:P07-T007:a6dcfe705d26fc58ff6964bd32dbd79a7bf2e060480ee0112de67b0e6e710c23",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        }
+      ],
+      "sourceAcquisitions": [],
+      "evidence": {
+        "paths": [
+          "artifacts/acceptance-evidence/g6-r/phase-07/P07-T007.json"
+        ],
+        "fromRevision": "g5-r",
+        "toRevision": "g6-r",
+        "stagedEvidencePath": "artifacts/acceptance-evidence/g6-r/phase-07/P07-T007.json"
+      },
+      "completion": [
+        "All cache identities and bounds are explicit.",
+        "Quiescent usage reaches the declared plateau.",
+        "The candidate output remains provisional."
+      ],
+      "commits": {
+        "product": {
+          "author": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "committer": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "message": "monacode: complete P07-T007",
+          "stagedProductPaths": [
+            "Sources/MonaCode/Runtime/MonaCacheRegistry.swift",
+            "Tools/Candidates/build-cache-manifest.mjs",
+            "Tests/MonaCodeTests/Runtime/MonaCacheRegistryTests.swift"
+          ],
+          "hooksDisabled": true,
+          "signingDisabled": true,
+          "evidenceExcluded": true
+        },
+        "evidence": {
+          "author": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "committer": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "message": "evidence(monacode): complete P07-T007",
+          "firstParentSuccessor": "immediate",
+          "stagedEvidencePath": "artifacts/acceptance-evidence/g6-r/phase-07/P07-T007.json",
+          "laterFirstParentTouches": 0,
+          "hooksDisabled": true,
+          "signingDisabled": true,
+          "selectorMode": "external-git",
+          "prohibitsSelfEmbedding": true,
+          "evidenceSchema": "task-evidence.schema.json",
+          "verifiedAssertions": [
+            "All cache identities and bounds are explicit.",
+            "Quiescent usage reaches the declared plateau.",
+            "The candidate output remains provisional."
+          ]
+        }
+      },
+      "recordSha256": "a320c9e1e708f5d4c05b9c2adab47b00c1427f00ef029b764daa3d07dfd6eb50"
+    },
+    {
+      "id": "P07-T008",
+      "phase": "07",
+      "title": "Close runtime-style substitutions and full source inventory",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P05-T200",
+        "P06-T010",
+        "P07-T006",
+        "P07-T007"
+      ],
+      "contractRefs": [
+        "C04",
+        "C10",
+        "G5-R.implementationOutputRules",
+        "X1-R"
+      ],
+      "ownership": [
+        "normativeLayer:source-runtime-style:X1-R",
+        "machineArtifact:X1-R-source-runtime-style",
+        "candidate-producer:MonaSourceClosureManifest.json"
+      ],
+      "paths": {
+        "productTarget": null,
+        "create": [
+          "Tools/Candidates/build-source-closure-manifest.mjs",
+          "Tests/PlanStructureTests/SourceClosureTests.mjs"
+        ],
+        "modify": [],
+        "test": [
+          "Tests/PlanStructureTests/SourceRuntimeStyleTests.mjs"
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "ProvisionalMonaSourceClosureManifest",
+            "kind": "command-contract",
+            "sourceArtifactPath": "artifacts/source-x1r-runtime-style-closure.html",
+            "sourceArtifactHash": "32bebccbf932e1baab6bb9ebd386715295625792198ae378566d0bc11ca2a3a9",
+            "sourceLocator": "/sections/interfaces/ProvisionalMonaSourceClosureManifest",
+            "contractRefs": [
+              "X1-R",
+              "G5-R.implementationOutputRules",
+              "C04",
+              "C10"
+            ],
+            "commandRecordHash": "f3d29672c38e84ebe9e13f318287f4e369f354ca5d8c7ba65b783483ac3e2794",
+            "orderedLeafHashes": [
+              "091001b5df4973037669e712bd3083404c97d638acdb347681d4034c27a501a8"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "ProvisionalMonaSourceClosureManifest",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "SOURCE_CLOSURE occurrences=exact unmanifestedSources=0 state=provisional"
+            ]
+          }
+        ],
+        "consumes": [
+          {
+            "id": "MonaFiniteIntrinsics"
+          },
+          {
+            "id": "MonaRuntimeLocaleSnapshot"
+          },
+          {
+            "id": "MonaCacheRegistry"
+          }
+        ]
+      },
+      "stages": [
+        {
+          "name": "preflight",
+          "steps": [
+            {
+              "kind": "controller-action",
+              "action": "begin-task"
+            }
+          ]
+        },
+        {
+          "name": "test-authoring",
+          "steps": [
+            {
+              "kind": "authoring-operation",
+              "operation": "Tests/PlanStructureTests/SourceRuntimeStyleTests.mjs"
+            }
+          ]
+        },
+        {
+          "name": "red",
+          "steps": [
+            {
+              "kind": "verification-command",
+              "command": {
+                "commandID": "P07-T008.RED.001",
+                "kind": "process",
+                "networkMode": "forbidden",
+                "timeoutMs": 120000,
+                "stage": "red",
+                "expectedExit": 1,
+                "expectedOutputIncludes": [
+                  "SOURCE_OCCURRENCE_UNMAPPED profile=binary64"
+                ],
+                "leaves": [
+                  {
+                    "leafID": "P07-T008.RED.001.PROC.001",
+                    "executable": "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+                    "toolchainRow": "node-26.7.0",
+                    "args": [
+                      "--test",
+                      "--test-name-pattern",
+                      "missing-occurrence",
+                      "Tests/PlanStructureTests/SourceRuntimeStyleTests.mjs"
+                    ],
+                    "timeoutMs": 120000,
+                    "form": "node-test",
+                    "stage": "red",
+                    "optionReorder": true,
+                    "declaredPaths": [
+                      "Tests/PlanStructureTests/SourceRuntimeStyleTests.mjs"
+                    ]
+                  }
+                ],
+                "failureClass": "structural"
+              }
+            }
+          ]
+        },
+        {
+          "name": "implementation",
+          "steps": [
+            {
+              "kind": "implementation-operation",
+              "operation": "Enumerate every product source file, generated source, resource, license, finite runtime substitution, native style projection, and explicit cut."
+            },
+            {
+              "kind": "implementation-operation",
+              "operation": "Verify X1-R set-equality counts 956, 98, 1281, 3120, 84, and 8221 plus all 2120 localization messages."
+            },
+            {
+              "kind": "implementation-operation",
+              "operation": "Reject source or resource paths that are absent from the manifest and reject forbidden runtime classes."
+            },
+            {
+              "kind": "implementation-operation",
+              "operation": "Emit a provisional source-closure manifest pending Phase 08 release regeneration."
+            }
+          ]
+        },
+        {
+          "name": "green",
+          "steps": [
+            {
+              "kind": "verification-command",
+              "command": {
+                "commandID": "P07-T008.GREEN.001",
+                "kind": "process",
+                "networkMode": "forbidden",
+                "timeoutMs": 120000,
+                "stage": "green",
+                "expectedExit": 0,
+                "expectedOutputIncludes": [
+                  "SOURCE_CLOSURE occurrences=exact unmanifestedSources=0 state=provisional"
+                ],
+                "leaves": [
+                  {
+                    "leafID": "P07-T008.GREEN.001.PROC.001",
+                    "executable": "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+                    "toolchainRow": "node-26.7.0",
+                    "args": [
+                      "--test",
+                      "Tests/PlanStructureTests/SourceRuntimeStyleTests.mjs"
+                    ],
+                    "timeoutMs": 120000,
+                    "form": "node-test",
+                    "stage": "green",
+                    "optionReorder": false,
+                    "declaredPaths": [
+                      "Tests/PlanStructureTests/SourceRuntimeStyleTests.mjs"
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "commit",
+          "steps": [
+            {
+              "kind": "controller-action",
+              "action": "commit-task"
+            }
+          ]
+        },
+        {
+          "name": "evidence",
+          "steps": [
+            {
+              "kind": "controller-action",
+              "action": "finalize-evidence"
+            }
+          ]
+        }
+      ],
+      "testContract": {
+        "contractID": "P07-T008",
+        "cases": [
+          {
+            "caseID": "P07-T008.CASE.001",
+            "file": {
+              "path": "Tests/PlanStructureTests/SourceRuntimeStyleTests.mjs",
+              "availability": "local"
+            },
+            "checker": "node --test Tests/PlanStructureTests/SourceRuntimeStyleTests.mjs --test-name-pattern missing-occurrence",
+            "target": "Tests/PlanStructureTests/SourceRuntimeStyleTests.mjs",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "SOURCE_OCCURRENCE_UNMAPPED profile=binary64",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P07-T008.RED.001.PROC.001",
+            "greenLeafID": "P07-T008.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/PlanStructureTests/SourceRuntimeStyleTests.mjs",
+            "source": "baseline"
+          }
+        ]
+      },
+      "redScaffold": [],
+      "sourceAcquisitions": [],
+      "evidence": {
+        "paths": [
+          "artifacts/acceptance-evidence/g6-r/phase-07/P07-T008.json"
+        ],
+        "fromRevision": "g5-r",
+        "toRevision": "g6-r",
+        "stagedEvidencePath": "artifacts/acceptance-evidence/g6-r/phase-07/P07-T008.json"
+      },
+      "completion": [
+        "Every X1-R occurrence is mapped.",
+        "Every production source and resource is enumerated.",
+        "The candidate output remains provisional until release source freezes."
+      ],
+      "commits": {
+        "product": {
+          "author": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "committer": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "message": "monacode: complete P07-T008",
+          "stagedProductPaths": [
+            "Tools/Candidates/build-source-closure-manifest.mjs",
+            "Tests/PlanStructureTests/SourceClosureTests.mjs",
+            "Tests/PlanStructureTests/SourceRuntimeStyleTests.mjs"
+          ],
+          "hooksDisabled": true,
+          "signingDisabled": true,
+          "evidenceExcluded": true
+        },
+        "evidence": {
+          "author": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "committer": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "message": "evidence(monacode): complete P07-T008",
+          "firstParentSuccessor": "immediate",
+          "stagedEvidencePath": "artifacts/acceptance-evidence/g6-r/phase-07/P07-T008.json",
+          "laterFirstParentTouches": 0,
+          "hooksDisabled": true,
+          "signingDisabled": true,
+          "selectorMode": "external-git",
+          "prohibitsSelfEmbedding": true,
+          "evidenceSchema": "task-evidence.schema.json",
+          "verifiedAssertions": [
+            "Every X1-R occurrence is mapped.",
+            "Every production source and resource is enumerated.",
+            "The candidate output remains provisional until release source freezes."
+          ]
+        }
+      },
+      "recordSha256": "2380077556c78dbdca05892c949b32c0e5ec68b08e01371a7e9486543b43bc73"
+    },
+    {
+      "id": "P07-T009",
+      "phase": "07",
+      "title": "Deliver diff and multi-diff views, SwiftUI wrappers, and sample-host activation",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P04-T015",
+        "P07-T002",
+        "P07-T005"
+      ],
+      "contractRefs": [
+        "C09",
+        "G5-R.deliveryScope.requiredSwiftUITypes",
+        "G5-R.deliveryScope.requiredViews",
+        "H1-R.multiDiffData"
+      ],
+      "ownership": [
+        "public-view:MonaDiffEditorView",
+        "public-view:MonaMultiDiffEditorView",
+        "public-swiftui:MonaDiffEditor",
+        "public-swiftui:MonaMultiDiffEditor"
+      ],
+      "paths": {
+        "productTarget": null,
+        "create": [
+          "Sources/MonaCodeAppKit/Views/MonaDiffEditorView.swift",
+          "Sources/MonaCodeAppKit/Views/MonaMultiDiffEditorView.swift",
+          "Sources/MonaCodeSwiftUI/MonaDiffEditor.swift",
+          "Sources/MonaCodeSwiftUI/MonaMultiDiffEditor.swift"
+        ],
+        "modify": [
+          "Sources/MonaCodeSample/main.swift"
+        ],
+        "test": [
+          "Tests/MonaCodeAppKitTests/Views/MonaDiffViewLifecycleTests.swift"
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "MonaDiffEditorView",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/model-m1r2-public-surface-closure.html",
+            "sourceArtifactHash": "eaaa4ed865d56b0eabc745a38af7ab4dde8598d079e6e7788d4f0b44eebf9666",
+            "sourceLocator": "/sections/interfaces/MonaDiffEditorView",
+            "contractRefs": [
+              "G5-R.deliveryScope.requiredViews",
+              "G5-R.deliveryScope.requiredSwiftUITypes",
+              "H1-R.multiDiffData",
+              "C09"
+            ],
+            "declarationText": "// MonaDiffEditorView declaration authored by P07-T009",
+            "target": "MonaCodeAppKit",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "public-view:MonaDiffEditorView",
+              "public-view:MonaMultiDiffEditorView",
+              "public-swiftui:MonaDiffEditor",
+              "public-swiftui:MonaMultiDiffEditor"
+            ],
+            "sendable": true
+          },
+          {
+            "id": "MonaMultiDiffEditorView",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/model-m1r2-public-surface-closure.html",
+            "sourceArtifactHash": "eaaa4ed865d56b0eabc745a38af7ab4dde8598d079e6e7788d4f0b44eebf9666",
+            "sourceLocator": "/sections/interfaces/MonaMultiDiffEditorView",
+            "contractRefs": [
+              "G5-R.deliveryScope.requiredViews",
+              "G5-R.deliveryScope.requiredSwiftUITypes",
+              "H1-R.multiDiffData",
+              "C09"
+            ],
+            "declarationText": "// MonaMultiDiffEditorView declaration authored by P07-T009",
+            "target": "MonaCodeAppKit",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "public-view:MonaDiffEditorView",
+              "public-view:MonaMultiDiffEditorView",
+              "public-swiftui:MonaDiffEditor",
+              "public-swiftui:MonaMultiDiffEditor"
+            ],
+            "sendable": true
+          },
+          {
+            "id": "MonaDiffEditor",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/model-m1r2-public-surface-closure.html",
+            "sourceArtifactHash": "eaaa4ed865d56b0eabc745a38af7ab4dde8598d079e6e7788d4f0b44eebf9666",
+            "sourceLocator": "/sections/interfaces/MonaDiffEditor",
+            "contractRefs": [
+              "G5-R.deliveryScope.requiredViews",
+              "G5-R.deliveryScope.requiredSwiftUITypes",
+              "H1-R.multiDiffData",
+              "C09"
+            ],
+            "declarationText": "// MonaDiffEditor declaration authored by P07-T009",
+            "target": "MonaCodeSwiftUI",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "public-view:MonaDiffEditorView",
+              "public-view:MonaMultiDiffEditorView",
+              "public-swiftui:MonaDiffEditor",
+              "public-swiftui:MonaMultiDiffEditor"
+            ],
+            "sendable": true
+          },
+          {
+            "id": "MonaMultiDiffEditor",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/model-m1r2-public-surface-closure.html",
+            "sourceArtifactHash": "eaaa4ed865d56b0eabc745a38af7ab4dde8598d079e6e7788d4f0b44eebf9666",
+            "sourceLocator": "/sections/interfaces/MonaMultiDiffEditor",
+            "contractRefs": [
+              "G5-R.deliveryScope.requiredViews",
+              "G5-R.deliveryScope.requiredSwiftUITypes",
+              "H1-R.multiDiffData",
+              "C09"
+            ],
+            "declarationText": "// MonaMultiDiffEditor declaration authored by P07-T009",
+            "target": "MonaCodeSwiftUI",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "public-view:MonaDiffEditorView",
+              "public-view:MonaMultiDiffEditorView",
+              "public-swiftui:MonaDiffEditor",
+              "public-swiftui:MonaMultiDiffEditor"
+            ],
+            "sendable": true
+          }
+        ],
+        "consumes": [
+          {
+            "id": "MonaDiffCoordinator"
+          },
+          {
+            "id": "MonaCodeEditorView"
+          },
+          {
+            "id": "MonaHostContractSet"
+          }
+        ]
+      },
+      "stages": [
+        {
+          "name": "preflight",
+          "steps": [
+            {
+              "kind": "controller-action",
+              "action": "begin-task"
+            }
+          ]
+        },
+        {
+          "name": "test-authoring",
+          "steps": [
+            {
+              "kind": "authoring-operation",
+              "operation": "Tests/MonaCodeAppKitTests/Views/MonaDiffViewLifecycleTests.swift"
+            }
+          ]
+        },
+        {
+          "name": "red",
+          "steps": [
+            {
+              "kind": "verification-command",
+              "command": {
+                "commandID": "P07-T009.RED.001",
+                "kind": "process",
+                "networkMode": "forbidden",
+                "timeoutMs": 600000,
+                "stage": "red",
+                "expectedExit": 1,
+                "expectedOutputIncludes": [
+                  "MULTI_DIFF_IDENTITY_DRIFT item=7"
+                ],
+                "leaves": [
+                  {
+                    "leafID": "P07-T009.RED.001.PROC.001",
+                    "executable": "/usr/bin/xcrun",
+                    "toolchainRow": "xcrun-swift-6.0-macos-26",
+                    "args": [
+                      "swift",
+                      "test",
+                      "--filter",
+                      "MonaDiffViewLifecycleTests/testMultiDiffStableIdentityAndDisposal",
+                      "--scratch-path",
+                      "/tmp/monacode-planctl/P07-T009.RED.001.PROC.001"
+                    ],
+                    "timeoutMs": 600000,
+                    "form": "swift-test",
+                    "stage": "red",
+                    "optionReorder": false,
+                    "declaredPaths": [
+                      "Package.swift"
+                    ]
+                  }
+                ],
+                "failureClass": "behavioral"
+              }
+            }
+          ]
+        },
+        {
+          "name": "implementation",
+          "steps": [
+            {
+              "kind": "implementation-operation",
+              "operation": "Compose original and modified editors over shared models and one diff coordinator."
+            },
+            {
+              "kind": "implementation-operation",
+              "operation": "Consume ordered multi-diff snapshots with stable item identity and synchronous change events."
+            },
+            {
+              "kind": "implementation-operation",
+              "operation": "Wrap both native views with lifecycle-only SwiftUI types."
+            },
+            {
+              "kind": "implementation-operation",
+              "operation": "Activate all three products in the sample host without adding production dependencies."
+            }
+          ]
+        },
+        {
+          "name": "green",
+          "steps": [
+            {
+              "kind": "verification-command",
+              "command": {
+                "commandID": "P07-T009.GREEN.001",
+                "kind": "process",
+                "networkMode": "forbidden",
+                "timeoutMs": 600000,
+                "stage": "green",
+                "expectedExit": 0,
+                "expectedOutputIncludes": [
+                  "DIFF_VIEWS appKit=2 swiftUI=2 stableIdentity=pass"
+                ],
+                "leaves": [
+                  {
+                    "leafID": "P07-T009.GREEN.001.PROC.001",
+                    "executable": "/usr/bin/xcrun",
+                    "toolchainRow": "xcrun-swift-6.0-macos-26",
+                    "args": [
+                      "swift",
+                      "test",
+                      "--filter",
+                      "MonaDiffViewLifecycleTests",
+                      "--scratch-path",
+                      "/tmp/monacode-planctl/P07-T009.GREEN.001.PROC.001"
+                    ],
+                    "timeoutMs": 600000,
+                    "form": "swift-test",
+                    "stage": "green",
+                    "optionReorder": false,
+                    "declaredPaths": [
+                      "Package.swift"
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "commit",
+          "steps": [
+            {
+              "kind": "controller-action",
+              "action": "commit-task"
+            }
+          ]
+        },
+        {
+          "name": "evidence",
+          "steps": [
+            {
+              "kind": "controller-action",
+              "action": "finalize-evidence"
+            }
+          ]
+        }
+      ],
+      "testContract": {
+        "contractID": "P07-T009",
+        "cases": [
+          {
+            "caseID": "P07-T009.CASE.001",
+            "file": {
+              "path": "Tests/MonaCodeAppKitTests/Views/MonaDiffViewLifecycleTests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter MonaDiffViewLifecycleTests/testMultiDiffStableIdentityAndDisposal",
+            "target": "Tests/MonaCodeAppKitTests/Views/MonaDiffViewLifecycleTests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "MULTI_DIFF_IDENTITY_DRIFT item=7",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P07-T009.RED.001.PROC.001",
+            "greenLeafID": "P07-T009.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/MonaCodeAppKitTests/Views/MonaDiffViewLifecycleTests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "redScaffold": [
+        {
+          "sourcePath": "Sources/MonaCodeAppKit/Views/MonaDiffEditorView.swift",
+          "marker": "G6_RED_SCAFFOLD:P07-T009:de263c86da209fbb08051adf5f6741a76f3c163faed1da6445fd159c74c15954",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        },
+        {
+          "sourcePath": "Sources/MonaCodeAppKit/Views/MonaMultiDiffEditorView.swift",
+          "marker": "G6_RED_SCAFFOLD:P07-T009:0c94e339716f9e0943c1347b0125662d9c6a67aa166b99bae930943c2f439ea4",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        },
+        {
+          "sourcePath": "Sources/MonaCodeSwiftUI/MonaDiffEditor.swift",
+          "marker": "G6_RED_SCAFFOLD:P07-T009:c108acce8a1152ebf377a94a0cca608598e13d3b1fdb718a78228f781ef3e201",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        },
+        {
+          "sourcePath": "Sources/MonaCodeSwiftUI/MonaMultiDiffEditor.swift",
+          "marker": "G6_RED_SCAFFOLD:P07-T009:483ca1c2ff920ac9f0a4413f68aa6bc41360722348dde8b758c1dca03e2eb593",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        }
+      ],
+      "sourceAcquisitions": [],
+      "evidence": {
+        "paths": [
+          "artifacts/acceptance-evidence/g6-r/phase-07/P07-T009.json"
+        ],
+        "fromRevision": "g5-r",
+        "toRevision": "g6-r",
+        "stagedEvidencePath": "artifacts/acceptance-evidence/g6-r/phase-07/P07-T009.json"
+      },
+      "completion": [
+        "All three required AppKit views exist.",
+        "All four required SwiftUI types exist.",
+        "Sample host exercises the three-product graph."
+      ],
+      "commits": {
+        "product": {
+          "author": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "committer": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "message": "monacode: complete P07-T009",
+          "stagedProductPaths": [
+            "Sources/MonaCodeAppKit/Views/MonaDiffEditorView.swift",
+            "Sources/MonaCodeAppKit/Views/MonaMultiDiffEditorView.swift",
+            "Sources/MonaCodeSwiftUI/MonaDiffEditor.swift",
+            "Sources/MonaCodeSwiftUI/MonaMultiDiffEditor.swift",
+            "Sources/MonaCodeSample/main.swift",
+            "Tests/MonaCodeAppKitTests/Views/MonaDiffViewLifecycleTests.swift"
+          ],
+          "hooksDisabled": true,
+          "signingDisabled": true,
+          "evidenceExcluded": true
+        },
+        "evidence": {
+          "author": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "committer": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "message": "evidence(monacode): complete P07-T009",
+          "firstParentSuccessor": "immediate",
+          "stagedEvidencePath": "artifacts/acceptance-evidence/g6-r/phase-07/P07-T009.json",
+          "laterFirstParentTouches": 0,
+          "hooksDisabled": true,
+          "signingDisabled": true,
+          "selectorMode": "external-git",
+          "prohibitsSelfEmbedding": true,
+          "evidenceSchema": "task-evidence.schema.json",
+          "verifiedAssertions": [
+            "All three required AppKit views exist.",
+            "All four required SwiftUI types exist.",
+            "Sample host exercises the three-product graph."
+          ]
+        }
+      },
+      "recordSha256": "b4ee5190c106407aba47d62fd16315e456fae56dd473cdfdf7a4ef7e6298ebfc"
+    },
+    {
+      "id": "P07-T010",
+      "phase": "07",
+      "title": "Close diff, service, host, cache, source, and view conformance",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P07-T004",
+        "P07-T006",
+        "P07-T007",
+        "P07-T008",
+        "P07-T009"
+      ],
+      "contractRefs": [
+        "C05",
+        "C09",
+        "D1-R",
+        "H1-R",
+        "H1-R2",
+        "H2-R",
+        "S1-R",
+        "X1-R"
+      ],
+      "ownership": [
+        "phase-gate:07"
+      ],
+      "paths": {
+        "productTarget": null,
+        "create": [],
+        "modify": [],
+        "test": [
+          "Tests/ConformanceAndFailureInjection/Phase07HostAndDiffConformanceTests.swift"
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "Phase07HostAndDiffGate",
+            "kind": "command-contract",
+            "sourceArtifactPath": "implementation-plan/phase-07-diff-services-host-source-closure.md",
+            "sourceArtifactHash": "ce4b171b39e3f49c1167869f708f4ca466f2670f30f842e10e498400762f0c23",
+            "sourceLocator": "/sections/interfaces/Phase07HostAndDiffGate",
+            "contractRefs": [
+              "D1-R",
+              "S1-R",
+              "H1-R",
+              "H1-R2",
+              "H2-R",
+              "X1-R",
+              "C05",
+              "C09"
+            ],
+            "commandRecordHash": "182a9d0dcbedc7a6e5c331d8cc37bc5fc63584363dd4637e24d4964dee1e9aa5",
+            "orderedLeafHashes": [
+              "0d5f0f5dc320a6febce9e018c88dc5254797936b527ed88bb0517355c024d5a4"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "Phase07HostAndDiffGate",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "PHASE07_HOST_DIFF_GATE C05=pass C09=pass partialCommits=0"
+            ]
+          }
+        ],
+        "consumes": [
+          {
+            "id": "MonaDiffCoordinator"
+          },
+          {
+            "id": "MonaStandaloneServices"
+          },
+          {
+            "id": "MonaHostContractSet"
+          },
+          {
+            "id": "MonaPreparedWorkspaceTransaction"
+          },
+          {
+            "id": "MonaCacheRegistry"
+          },
+          {
+            "id": "ProvisionalMonaSourceClosureManifest"
+          },
+          {
+            "id": "MonaMultiDiffEditorView"
+          }
+        ]
+      },
+      "stages": [
+        {
+          "name": "preflight",
+          "steps": [
+            {
+              "kind": "controller-action",
+              "action": "begin-task"
+            }
+          ]
+        },
+        {
+          "name": "test-authoring",
+          "steps": [
+            {
+              "kind": "authoring-operation",
+              "operation": "Tests/ConformanceAndFailureInjection/Phase07HostAndDiffConformanceTests.swift"
+            }
+          ]
+        },
+        {
+          "name": "red",
+          "steps": [
+            {
+              "kind": "verification-command",
+              "command": {
+                "commandID": "P07-T010.RED.001",
+                "kind": "process",
+                "networkMode": "forbidden",
+                "timeoutMs": 600000,
+                "stage": "red",
+                "expectedExit": 1,
+                "expectedOutputIncludes": [
+                  "PHASE07_HOST_DIFF_GATE_FAILED fixture=workspace-commit-failure"
+                ],
+                "leaves": [
+                  {
+                    "leafID": "P07-T010.RED.001.PROC.001",
+                    "executable": "/usr/bin/xcrun",
+                    "toolchainRow": "xcrun-swift-6.0-macos-26",
+                    "args": [
+                      "swift",
+                      "test",
+                      "--filter",
+                      "Phase07HostAndDiffConformanceTests/testSeededWorkspaceCommitFailure",
+                      "--scratch-path",
+                      "/tmp/monacode-planctl/P07-T010.RED.001.PROC.001"
+                    ],
+                    "timeoutMs": 600000,
+                    "form": "swift-test",
+                    "stage": "red",
+                    "optionReorder": false,
+                    "declaredPaths": [
+                      "Package.swift"
+                    ]
+                  }
+                ],
+                "failureClass": "behavioral"
+              }
+            }
+          ]
+        },
+        {
+          "name": "implementation",
+          "steps": [
+            {
+              "kind": "implementation-operation",
+              "operation": "Run diff, service, dialog, opener, workspace edit, command host, log sink, transport factory, multi-diff data, cache, source, and lifecycle matrices."
+            },
+            {
+              "kind": "implementation-operation",
+              "operation": "Inject timeout, stale diff, cache allocation, host rejection, opener fallthrough, external commit, reentry, and disposal failures."
+            },
+            {
+              "kind": "implementation-operation",
+              "operation": "Verify three views, four wrappers, seven host groups, ten concrete types, and all source occurrence counts."
+            }
+          ]
+        },
+        {
+          "name": "green",
+          "steps": [
+            {
+              "kind": "verification-command",
+              "command": {
+                "commandID": "P07-T010.GREEN.001",
+                "kind": "process",
+                "networkMode": "forbidden",
+                "timeoutMs": 600000,
+                "stage": "green",
+                "expectedExit": 0,
+                "expectedOutputIncludes": [
+                  "PHASE07_HOST_DIFF_GATE C05=pass C09=pass partialCommits=0"
+                ],
+                "leaves": [
+                  {
+                    "leafID": "P07-T010.GREEN.001.PROC.001",
+                    "executable": "/usr/bin/xcrun",
+                    "toolchainRow": "xcrun-swift-6.0-macos-26",
+                    "args": [
+                      "swift",
+                      "test",
+                      "--filter",
+                      "Phase07HostAndDiffConformanceTests",
+                      "--scratch-path",
+                      "/tmp/monacode-planctl/P07-T010.GREEN.001.PROC.001"
+                    ],
+                    "timeoutMs": 600000,
+                    "form": "swift-test",
+                    "stage": "green",
+                    "optionReorder": false,
+                    "declaredPaths": [
+                      "Package.swift"
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "commit",
+          "steps": [
+            {
+              "kind": "controller-action",
+              "action": "commit-task"
+            }
+          ]
+        },
+        {
+          "name": "evidence",
+          "steps": [
+            {
+              "kind": "controller-action",
+              "action": "finalize-evidence"
+            }
+          ]
+        }
+      ],
+      "testContract": {
+        "contractID": "P07-T010",
+        "cases": [
+          {
+            "caseID": "P07-T010.CASE.001",
+            "file": {
+              "path": "Tests/ConformanceAndFailureInjection/Phase07HostAndDiffConformanceTests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter Phase07HostAndDiffConformanceTests/testSeededWorkspaceCommitFailure",
+            "target": "Tests/ConformanceAndFailureInjection/Phase07HostAndDiffConformanceTests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "PHASE07_HOST_DIFF_GATE_FAILED fixture=workspace-commit-failure",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P07-T010.RED.001.PROC.001",
+            "greenLeafID": "P07-T010.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/ConformanceAndFailureInjection/Phase07HostAndDiffConformanceTests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "redScaffold": [],
+      "sourceAcquisitions": [],
+      "evidence": {
+        "paths": [
+          "artifacts/acceptance-evidence/g6-r/phase-07/P07-T010.json"
+        ],
+        "fromRevision": "g5-r",
+        "toRevision": "g6-r",
+        "stagedEvidencePath": "artifacts/acceptance-evidence/g6-r/phase-07/P07-T010.json"
+      },
+      "completion": [
+        "Diff and host correctness prerequisites pass.",
+        "All caches and source occurrences are closed provisionally.",
+        "Failure paths preserve transaction and lifetime invariants."
+      ],
+      "commits": {
+        "product": {
+          "author": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "committer": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "message": "monacode: complete P07-T010",
+          "stagedProductPaths": [
+            "Tests/ConformanceAndFailureInjection/Phase07HostAndDiffConformanceTests.swift"
+          ],
+          "hooksDisabled": true,
+          "signingDisabled": true,
+          "evidenceExcluded": true
+        },
+        "evidence": {
+          "author": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "committer": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "message": "evidence(monacode): complete P07-T010",
+          "firstParentSuccessor": "immediate",
+          "stagedEvidencePath": "artifacts/acceptance-evidence/g6-r/phase-07/P07-T010.json",
+          "laterFirstParentTouches": 0,
+          "hooksDisabled": true,
+          "signingDisabled": true,
+          "selectorMode": "external-git",
+          "prohibitsSelfEmbedding": true,
+          "evidenceSchema": "task-evidence.schema.json",
+          "verifiedAssertions": [
+            "Diff and host correctness prerequisites pass.",
+            "All caches and source occurrences are closed provisionally.",
+            "Failure paths preserve transaction and lifetime invariants."
+          ]
+        }
+      },
+      "recordSha256": "71e03e2b884442b83ee9c4f41ba128d067d01f108e343530768be5ab6563d9f6"
+    },
+    {
+      "id": "P07-T011",
+      "phase": "07",
+      "title": "Freeze the final public API closure before candidate generation",
+      "platformScope": [
+        "macOS-26-arm64"
+      ],
+      "dependencies": [
+        "P04-T014",
+        "P04-T015",
+        "P05-T001",
+        "P05-T012",
+        "P06-T004",
+        "P07-T009",
+        "P07-T010"
+      ],
+      "contractRefs": [
+        "F1-R4.publicDeclarations",
+        "G5-R.designClosure.candidateOrder",
+        "H1-R.publicTypes"
+      ],
+      "ownership": [
+        "public-api-closure"
+      ],
+      "paths": {
+        "productTarget": null,
+        "create": [],
+        "modify": [],
+        "test": [
+          "Tests/PlanStructureTests/PublicAPIClosureTests.mjs"
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "MonaPublicAPIClosure",
+            "kind": "command-contract",
+            "sourceArtifactPath": "artifacts/features-f1r4-public-declaration-closure.html",
+            "sourceArtifactHash": "97a8e4a8c1cb6d834117a5189dc7f8e0368cb637e38eb841518155ffb8cd7a35",
+            "sourceLocator": "/sections/interfaces/MonaPublicAPIClosure",
+            "contractRefs": [
+              "F1-R4.publicDeclarations",
+              "H1-R.publicTypes",
+              "G5-R.designClosure.candidateOrder"
+            ],
+            "commandRecordHash": "77fba3677160ddb349f993c57f5a597af4323d2e9097580698bd34ddd37e1634",
+            "orderedLeafHashes": [
+              "5bd11c83ef3f9cd8c4884cfa1735f16ef314bfb6248cef437c72c04263a84809"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "MonaPublicAPIClosure",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "PUBLIC_API_CLOSURE products=3 paths=555 lateSymbols=0"
+            ]
+          }
+        ],
+        "consumes": [
+          {
+            "id": "MonaPublicDeclarationGraph"
+          },
+          {
+            "id": "MonaCodeEditorView"
+          },
+          {
+            "id": "MonaCodeEditor"
+          },
+          {
+            "id": "MonaLSPClient"
+          },
+          {
+            "id": "MonaDiffEditorView"
+          },
+          {
+            "id": "MonaMultiDiffEditorView"
+          },
+          {
+            "id": "MonaDiffEditor"
+          },
+          {
+            "id": "MonaMultiDiffEditor"
+          }
+        ]
+      },
+      "stages": [
+        {
+          "name": "preflight",
+          "steps": [
+            {
+              "kind": "controller-action",
+              "action": "begin-task"
+            }
+          ]
+        },
+        {
+          "name": "test-authoring",
+          "steps": [
+            {
+              "kind": "authoring-operation",
+              "operation": "Tests/PlanStructureTests/PublicAPIClosureTests.mjs"
+            }
+          ]
+        },
+        {
+          "name": "red",
+          "steps": [
+            {
+              "kind": "verification-command",
+              "command": {
+                "commandID": "P07-T011.RED.001",
+                "kind": "process",
+                "networkMode": "forbidden",
+                "timeoutMs": 120000,
+                "stage": "red",
+                "expectedExit": 1,
+                "expectedOutputIncludes": [
+                  "PUBLIC_API_AFTER_CLOSURE symbol=MonaLateType"
+                ],
+                "leaves": [
+                  {
+                    "leafID": "P07-T011.RED.001.PROC.001",
+                    "executable": "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+                    "toolchainRow": "node-26.7.0",
+                    "args": [
+                      "--test",
+                      "--test-name-pattern",
+                      "late-public-symbol",
+                      "Tests/PlanStructureTests/PublicAPIClosureTests.mjs"
+                    ],
+                    "timeoutMs": 120000,
+                    "form": "node-test",
+                    "stage": "red",
+                    "optionReorder": true,
+                    "declaredPaths": [
+                      "Tests/PlanStructureTests/PublicAPIClosureTests.mjs"
+                    ]
+                  }
+                ],
+                "failureClass": "structural"
+              }
+            }
+          ]
+        },
+        {
+          "name": "implementation",
+          "steps": [
+            {
+              "kind": "implementation-operation",
+              "operation": "Generate symbol graphs and API digester baselines for all three products after every public producer."
+            },
+            {
+              "kind": "implementation-operation",
+              "operation": "Join every public declaration path to one native symbol or explicit cut disposition."
+            },
+            {
+              "kind": "implementation-operation",
+              "operation": "Freeze the public source set and reject every later public declaration or signature change."
+            }
+          ]
+        },
+        {
+          "name": "green",
+          "steps": [
+            {
+              "kind": "verification-command",
+              "command": {
+                "commandID": "P07-T011.GREEN.001",
+                "kind": "process",
+                "networkMode": "forbidden",
+                "timeoutMs": 120000,
+                "stage": "green",
+                "expectedExit": 0,
+                "expectedOutputIncludes": [
+                  "PUBLIC_API_CLOSURE products=3 paths=555 lateSymbols=0"
+                ],
+                "leaves": [
+                  {
+                    "leafID": "P07-T011.GREEN.001.PROC.001",
+                    "executable": "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+                    "toolchainRow": "node-26.7.0",
+                    "args": [
+                      "--test",
+                      "Tests/PlanStructureTests/PublicAPIClosureTests.mjs"
+                    ],
+                    "timeoutMs": 120000,
+                    "form": "node-test",
+                    "stage": "green",
+                    "optionReorder": false,
+                    "declaredPaths": [
+                      "Tests/PlanStructureTests/PublicAPIClosureTests.mjs"
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "commit",
+          "steps": [
+            {
+              "kind": "controller-action",
+              "action": "commit-task"
+            }
+          ]
+        },
+        {
+          "name": "evidence",
+          "steps": [
+            {
+              "kind": "controller-action",
+              "action": "finalize-evidence"
+            }
+          ]
+        }
+      ],
+      "testContract": {
+        "contractID": "P07-T011",
+        "cases": [
+          {
+            "caseID": "P07-T011.CASE.001",
+            "file": {
+              "path": "Tests/PlanStructureTests/PublicAPIClosureTests.mjs",
+              "availability": "local"
+            },
+            "checker": "node --test Tests/PlanStructureTests/PublicAPIClosureTests.mjs --test-name-pattern late-public-symbol",
+            "target": "Tests/PlanStructureTests/PublicAPIClosureTests.mjs",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "PUBLIC_API_AFTER_CLOSURE symbol=MonaLateType",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P07-T011.RED.001.PROC.001",
+            "greenLeafID": "P07-T011.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/PlanStructureTests/PublicAPIClosureTests.mjs",
+            "source": "baseline"
+          }
+        ]
+      },
+      "redScaffold": [],
+      "sourceAcquisitions": [],
+      "evidence": {
+        "paths": [
+          "artifacts/acceptance-evidence/g6-r/phase-07/P07-T011.json"
+        ],
+        "fromRevision": "g5-r",
+        "toRevision": "g6-r",
+        "stagedEvidencePath": "artifacts/acceptance-evidence/g6-r/phase-07/P07-T011.json"
+      },
+      "completion": [
+        "Public API closure is terminal in Phase 07.",
+        "All candidate finalizers depend on this closure where required.",
+        "No later phase adds public product source."
+      ],
+      "commits": {
+        "product": {
+          "author": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "committer": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "message": "monacode: complete P07-T011",
+          "stagedProductPaths": [
+            "Tests/PlanStructureTests/PublicAPIClosureTests.mjs"
+          ],
+          "hooksDisabled": true,
+          "signingDisabled": true,
+          "evidenceExcluded": true
+        },
+        "evidence": {
+          "author": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "committer": {
+            "name": "zhengrenzhe",
+            "email": "zhengrenzhe0416@outlook.com"
+          },
+          "message": "evidence(monacode): complete P07-T011",
+          "firstParentSuccessor": "immediate",
+          "stagedEvidencePath": "artifacts/acceptance-evidence/g6-r/phase-07/P07-T011.json",
+          "laterFirstParentTouches": 0,
+          "hooksDisabled": true,
+          "signingDisabled": true,
+          "selectorMode": "external-git",
+          "prohibitsSelfEmbedding": true,
+          "evidenceSchema": "task-evidence.schema.json",
+          "verifiedAssertions": [
+            "Public API closure is terminal in Phase 07.",
+            "All candidate finalizers depend on this closure where required.",
+            "No later phase adds public product source."
+          ]
+        }
+      },
+      "recordSha256": "dc09ff242f5618c0f8e917ea6ca570a1e65508e5511cb08393dc51727451d2b9"
+    }
+  ],
+  "commands": [
+    {
+      "commandID": "P07-T001.RED.001",
+      "kind": "process",
+      "networkMode": "forbidden",
+      "timeoutMs": 600000,
+      "stage": "red",
+      "expectedExit": 1,
+      "expectedOutputIncludes": [
+        "DIFF_DIFFERENTIAL_MISMATCH fixture=isolated-surrogate-moved-block"
+      ],
+      "leaves": [
+        {
+          "leafID": "P07-T001.RED.001.PROC.001",
+          "executable": "/usr/bin/xcrun",
+          "toolchainRow": "xcrun-swift-6.0-macos-26",
+          "args": [
+            "swift",
+            "test",
+            "--filter",
+            "MonaDiffEngineDifferentialTests/testIsolatedSurrogateAndMovedBlockMatrix",
+            "--scratch-path",
+            "/tmp/monacode-planctl/P07-T001.RED.001.PROC.001"
+          ],
+          "timeoutMs": 600000,
+          "form": "swift-test",
+          "stage": "red",
+          "optionReorder": false,
+          "declaredPaths": [
+            "Package.swift"
+          ]
+        }
+      ],
+      "failureClass": "behavioral"
+    },
+    {
+      "commandID": "P07-T001.GREEN.001",
+      "kind": "process",
+      "networkMode": "forbidden",
+      "timeoutMs": 600000,
+      "stage": "green",
+      "expectedExit": 0,
+      "expectedOutputIncludes": [
+        "DIFF_ENGINES legacy=exact advanced=exact"
+      ],
+      "leaves": [
+        {
+          "leafID": "P07-T001.GREEN.001.PROC.001",
+          "executable": "/usr/bin/xcrun",
+          "toolchainRow": "xcrun-swift-6.0-macos-26",
+          "args": [
+            "swift",
+            "test",
+            "--filter",
+            "MonaDiffEngineDifferentialTests",
+            "--scratch-path",
+            "/tmp/monacode-planctl/P07-T001.GREEN.001.PROC.001"
+          ],
+          "timeoutMs": 600000,
+          "form": "swift-test",
+          "stage": "green",
+          "optionReorder": false,
+          "declaredPaths": [
+            "Package.swift"
+          ]
+        }
+      ]
+    },
+    {
+      "commandID": "P07-T002.RED.001",
+      "kind": "process",
+      "networkMode": "forbidden",
+      "timeoutMs": 600000,
+      "stage": "red",
+      "expectedExit": 1,
+      "expectedOutputIncludes": [
+        "DIFF_TIMEOUT_BOUNDARY_MISMATCH boundary=T"
+      ],
+      "leaves": [
+        {
+          "leafID": "P07-T002.RED.001.PROC.001",
+          "executable": "/usr/bin/xcrun",
+          "toolchainRow": "xcrun-swift-6.0-macos-26",
+          "args": [
+            "swift",
+            "test",
+            "--filter",
+            "MonaDiffCoordinatorTests/testTimeoutTMinusOneTPlusOne",
+            "--scratch-path",
+            "/tmp/monacode-planctl/P07-T002.RED.001.PROC.001"
+          ],
+          "timeoutMs": 600000,
+          "form": "swift-test",
+          "stage": "red",
+          "optionReorder": false,
+          "declaredPaths": [
+            "Package.swift"
+          ]
+        }
+      ],
+      "failureClass": "behavioral"
+    },
+    {
+      "commandID": "P07-T002.GREEN.001",
+      "kind": "process",
+      "networkMode": "forbidden",
+      "timeoutMs": 600000,
+      "stage": "green",
+      "expectedExit": 0,
+      "expectedOutputIncludes": [
+        "DIFF_COORDINATOR timeout=exact cacheMax=11 external=unavailable"
+      ],
+      "leaves": [
+        {
+          "leafID": "P07-T002.GREEN.001.PROC.001",
+          "executable": "/usr/bin/xcrun",
+          "toolchainRow": "xcrun-swift-6.0-macos-26",
+          "args": [
+            "swift",
+            "test",
+            "--filter",
+            "MonaDiffCoordinatorTests",
+            "--scratch-path",
+            "/tmp/monacode-planctl/P07-T002.GREEN.001.PROC.001"
+          ],
+          "timeoutMs": 600000,
+          "form": "swift-test",
+          "stage": "green",
+          "optionReorder": false,
+          "declaredPaths": [
+            "Package.swift"
+          ]
+        }
+      ]
+    },
+    {
+      "commandID": "P07-T003.RED.001",
+      "kind": "process",
+      "networkMode": "forbidden",
+      "timeoutMs": 600000,
+      "stage": "red",
+      "expectedExit": 1,
+      "expectedOutputIncludes": [
+        "STANDALONE_SERVICE_SET_MISMATCH expected=40"
+      ],
+      "leaves": [
+        {
+          "leafID": "P07-T003.RED.001.PROC.001",
+          "executable": "/usr/bin/xcrun",
+          "toolchainRow": "xcrun-swift-6.0-macos-26",
+          "args": [
+            "swift",
+            "test",
+            "--filter",
+            "MonaStandaloneServiceTests/testExactServiceAndCacheBounds",
+            "--scratch-path",
+            "/tmp/monacode-planctl/P07-T003.RED.001.PROC.001"
+          ],
+          "timeoutMs": 600000,
+          "form": "swift-test",
+          "stage": "red",
+          "optionReorder": false,
+          "declaredPaths": [
+            "Package.swift"
+          ]
+        }
+      ],
+      "failureClass": "behavioral"
+    },
+    {
+      "commandID": "P07-T003.GREEN.001",
+      "kind": "process",
+      "networkMode": "forbidden",
+      "timeoutMs": 600000,
+      "stage": "green",
+      "expectedExit": 0,
+      "expectedOutputIncludes": [
+        "STANDALONE_SERVICES count=40 caches=300,200,50,20 persistence=0"
+      ],
+      "leaves": [
+        {
+          "leafID": "P07-T003.GREEN.001.PROC.001",
+          "executable": "/usr/bin/xcrun",
+          "toolchainRow": "xcrun-swift-6.0-macos-26",
+          "args": [
+            "swift",
+            "test",
+            "--filter",
+            "MonaStandaloneServiceTests",
+            "--scratch-path",
+            "/tmp/monacode-planctl/P07-T003.GREEN.001.PROC.001"
+          ],
+          "timeoutMs": 600000,
+          "form": "swift-test",
+          "stage": "green",
+          "optionReorder": false,
+          "declaredPaths": [
+            "Package.swift"
+          ]
+        }
+      ]
+    },
+    {
+      "commandID": "P07-T004.RED.001",
+      "kind": "process",
+      "networkMode": "forbidden",
+      "timeoutMs": 600000,
+      "stage": "red",
+      "expectedExit": 1,
+      "expectedOutputIncludes": [
+        "DIALOG_SITE_MISMATCH site=saveConflict"
+      ],
+      "leaves": [
+        {
+          "leafID": "P07-T004.RED.001.PROC.001",
+          "executable": "/usr/bin/xcrun",
+          "toolchainRow": "xcrun-swift-6.0-macos-26",
+          "args": [
+            "swift",
+            "test",
+            "--filter",
+            "MonaDialogServiceTests/testFourSiteOutcomeMatrix",
+            "--scratch-path",
+            "/tmp/monacode-planctl/P07-T004.RED.001.PROC.001"
+          ],
+          "timeoutMs": 600000,
+          "form": "swift-test",
+          "stage": "red",
+          "optionReorder": false,
+          "declaredPaths": [
+            "Package.swift"
+          ]
+        }
+      ],
+      "failureClass": "behavioral"
+    },
+    {
+      "commandID": "P07-T004.GREEN.001",
+      "kind": "process",
+      "networkMode": "forbidden",
+      "timeoutMs": 600000,
+      "stage": "green",
+      "expectedExit": 0,
+      "expectedOutputIncludes": [
+        "DIALOG_SITES count=4 outcomes=exact"
+      ],
+      "leaves": [
+        {
+          "leafID": "P07-T004.GREEN.001.PROC.001",
+          "executable": "/usr/bin/xcrun",
+          "toolchainRow": "xcrun-swift-6.0-macos-26",
+          "args": [
+            "swift",
+            "test",
+            "--filter",
+            "MonaDialogServiceTests",
+            "--scratch-path",
+            "/tmp/monacode-planctl/P07-T004.GREEN.001.PROC.001"
+          ],
+          "timeoutMs": 600000,
+          "form": "swift-test",
+          "stage": "green",
+          "optionReorder": false,
+          "declaredPaths": [
+            "Package.swift"
+          ]
+        }
+      ]
+    },
+    {
+      "commandID": "P07-T005.RED.001",
+      "kind": "process",
+      "networkMode": "forbidden",
+      "timeoutMs": 600000,
+      "stage": "red",
+      "expectedExit": 1,
+      "expectedOutputIncludes": [
+        "HOST_CONTRACT_SET_MISMATCH groups=7 concreteTypes=10"
+      ],
+      "leaves": [
+        {
+          "leafID": "P07-T005.RED.001.PROC.001",
+          "executable": "/usr/bin/xcrun",
+          "toolchainRow": "xcrun-swift-6.0-macos-26",
+          "args": [
+            "swift",
+            "test",
+            "--filter",
+            "MonaHostContractClosureTests/testSevenGroupsTenTypes",
+            "--scratch-path",
+            "/tmp/monacode-planctl/P07-T005.RED.001.PROC.001"
+          ],
+          "timeoutMs": 600000,
+          "form": "swift-test",
+          "stage": "red",
+          "optionReorder": false,
+          "declaredPaths": [
+            "Package.swift"
+          ]
+        }
+      ],
+      "failureClass": "behavioral"
+    },
+    {
+      "commandID": "P07-T005.GREEN.001",
+      "kind": "process",
+      "networkMode": "forbidden",
+      "timeoutMs": 600000,
+      "stage": "green",
+      "expectedExit": 0,
+      "expectedOutputIncludes": [
+        "HOST_CONTRACTS groups=7 concreteTypes=10 implicitAuthority=0"
+      ],
+      "leaves": [
+        {
+          "leafID": "P07-T005.GREEN.001.PROC.001",
+          "executable": "/usr/bin/xcrun",
+          "toolchainRow": "xcrun-swift-6.0-macos-26",
+          "args": [
+            "swift",
+            "test",
+            "--filter",
+            "MonaHostContractClosureTests",
+            "--scratch-path",
+            "/tmp/monacode-planctl/P07-T005.GREEN.001.PROC.001"
+          ],
+          "timeoutMs": 600000,
+          "form": "swift-test",
+          "stage": "green",
+          "optionReorder": false,
+          "declaredPaths": [
+            "Package.swift"
+          ]
+        }
+      ]
+    },
+    {
+      "commandID": "P07-T006.RED.001",
+      "kind": "process",
+      "networkMode": "forbidden",
+      "timeoutMs": 600000,
+      "stage": "red",
+      "expectedExit": 1,
+      "expectedOutputIncludes": [
+        "WORKSPACE_EDIT_PARTIAL_COMMIT outcome=externalRejected"
+      ],
+      "leaves": [
+        {
+          "leafID": "P07-T006.RED.001.PROC.001",
+          "executable": "/usr/bin/xcrun",
+          "toolchainRow": "xcrun-swift-6.0-macos-26",
+          "args": [
+            "swift",
+            "test",
+            "--filter",
+            "MonaWorkspaceEditTests/testFourOutcomeAndRollbackMatrix",
+            "--scratch-path",
+            "/tmp/monacode-planctl/P07-T006.RED.001.PROC.001"
+          ],
+          "timeoutMs": 600000,
+          "form": "swift-test",
+          "stage": "red",
+          "optionReorder": false,
+          "declaredPaths": [
+            "Package.swift"
+          ]
+        }
+      ],
+      "failureClass": "behavioral"
+    },
+    {
+      "commandID": "P07-T006.GREEN.001",
+      "kind": "process",
+      "networkMode": "forbidden",
+      "timeoutMs": 600000,
+      "stage": "green",
+      "expectedExit": 0,
+      "expectedOutputIncludes": [
+        "WORKSPACE_EDIT outcomes=4 partialCommits=0"
+      ],
+      "leaves": [
+        {
+          "leafID": "P07-T006.GREEN.001.PROC.001",
+          "executable": "/usr/bin/xcrun",
+          "toolchainRow": "xcrun-swift-6.0-macos-26",
+          "args": [
+            "swift",
+            "test",
+            "--filter",
+            "MonaWorkspaceEditTests",
+            "--scratch-path",
+            "/tmp/monacode-planctl/P07-T006.GREEN.001.PROC.001"
+          ],
+          "timeoutMs": 600000,
+          "form": "swift-test",
+          "stage": "green",
+          "optionReorder": false,
+          "declaredPaths": [
+            "Package.swift"
+          ]
+        }
+      ]
+    },
+    {
+      "commandID": "P07-T007.RED.001",
+      "kind": "process",
+      "networkMode": "forbidden",
+      "timeoutMs": 600000,
+      "stage": "red",
+      "expectedExit": 1,
+      "expectedOutputIncludes": [
+        "CACHE_BOUND_EXCEEDED cache=diff actual=12 max=11"
+      ],
+      "leaves": [
+        {
+          "leafID": "P07-T007.RED.001.PROC.001",
+          "executable": "/usr/bin/xcrun",
+          "toolchainRow": "xcrun-swift-6.0-macos-26",
+          "args": [
+            "swift",
+            "test",
+            "--filter",
+            "MonaCacheRegistryTests/testExactSetBoundsAndPlateau",
+            "--scratch-path",
+            "/tmp/monacode-planctl/P07-T007.RED.001.PROC.001"
+          ],
+          "timeoutMs": 600000,
+          "form": "swift-test",
+          "stage": "red",
+          "optionReorder": false,
+          "declaredPaths": [
+            "Package.swift"
+          ]
+        }
+      ],
+      "failureClass": "behavioral"
+    },
+    {
+      "commandID": "P07-T007.GREEN.001",
+      "kind": "process",
+      "networkMode": "forbidden",
+      "timeoutMs": 600000,
+      "stage": "green",
+      "expectedExit": 0,
+      "expectedOutputIncludes": [
+        "CACHE_REGISTRY exactSet=pass bounds=pass plateau=pass"
+      ],
+      "leaves": [
+        {
+          "leafID": "P07-T007.GREEN.001.PROC.001",
+          "executable": "/usr/bin/xcrun",
+          "toolchainRow": "xcrun-swift-6.0-macos-26",
+          "args": [
+            "swift",
+            "test",
+            "--filter",
+            "MonaCacheRegistryTests",
+            "--scratch-path",
+            "/tmp/monacode-planctl/P07-T007.GREEN.001.PROC.001"
+          ],
+          "timeoutMs": 600000,
+          "form": "swift-test",
+          "stage": "green",
+          "optionReorder": false,
+          "declaredPaths": [
+            "Package.swift"
+          ]
+        }
+      ]
+    },
+    {
+      "commandID": "P07-T008.RED.001",
+      "kind": "process",
+      "networkMode": "forbidden",
+      "timeoutMs": 120000,
+      "stage": "red",
+      "expectedExit": 1,
+      "expectedOutputIncludes": [
+        "SOURCE_OCCURRENCE_UNMAPPED profile=binary64"
+      ],
+      "leaves": [
+        {
+          "leafID": "P07-T008.RED.001.PROC.001",
+          "executable": "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+          "toolchainRow": "node-26.7.0",
+          "args": [
+            "--test",
+            "--test-name-pattern",
+            "missing-occurrence",
+            "Tests/PlanStructureTests/SourceRuntimeStyleTests.mjs"
+          ],
+          "timeoutMs": 120000,
+          "form": "node-test",
+          "stage": "red",
+          "optionReorder": true,
+          "declaredPaths": [
+            "Tests/PlanStructureTests/SourceRuntimeStyleTests.mjs"
+          ]
+        }
+      ],
+      "failureClass": "structural"
+    },
+    {
+      "commandID": "P07-T008.GREEN.001",
+      "kind": "process",
+      "networkMode": "forbidden",
+      "timeoutMs": 120000,
+      "stage": "green",
+      "expectedExit": 0,
+      "expectedOutputIncludes": [
+        "SOURCE_CLOSURE occurrences=exact unmanifestedSources=0 state=provisional"
+      ],
+      "leaves": [
+        {
+          "leafID": "P07-T008.GREEN.001.PROC.001",
+          "executable": "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+          "toolchainRow": "node-26.7.0",
+          "args": [
+            "--test",
+            "Tests/PlanStructureTests/SourceRuntimeStyleTests.mjs"
+          ],
+          "timeoutMs": 120000,
+          "form": "node-test",
+          "stage": "green",
+          "optionReorder": false,
+          "declaredPaths": [
+            "Tests/PlanStructureTests/SourceRuntimeStyleTests.mjs"
+          ]
+        }
+      ]
+    },
+    {
+      "commandID": "P07-T009.RED.001",
+      "kind": "process",
+      "networkMode": "forbidden",
+      "timeoutMs": 600000,
+      "stage": "red",
+      "expectedExit": 1,
+      "expectedOutputIncludes": [
+        "MULTI_DIFF_IDENTITY_DRIFT item=7"
+      ],
+      "leaves": [
+        {
+          "leafID": "P07-T009.RED.001.PROC.001",
+          "executable": "/usr/bin/xcrun",
+          "toolchainRow": "xcrun-swift-6.0-macos-26",
+          "args": [
+            "swift",
+            "test",
+            "--filter",
+            "MonaDiffViewLifecycleTests/testMultiDiffStableIdentityAndDisposal",
+            "--scratch-path",
+            "/tmp/monacode-planctl/P07-T009.RED.001.PROC.001"
+          ],
+          "timeoutMs": 600000,
+          "form": "swift-test",
+          "stage": "red",
+          "optionReorder": false,
+          "declaredPaths": [
+            "Package.swift"
+          ]
+        }
+      ],
+      "failureClass": "behavioral"
+    },
+    {
+      "commandID": "P07-T009.GREEN.001",
+      "kind": "process",
+      "networkMode": "forbidden",
+      "timeoutMs": 600000,
+      "stage": "green",
+      "expectedExit": 0,
+      "expectedOutputIncludes": [
+        "DIFF_VIEWS appKit=2 swiftUI=2 stableIdentity=pass"
+      ],
+      "leaves": [
+        {
+          "leafID": "P07-T009.GREEN.001.PROC.001",
+          "executable": "/usr/bin/xcrun",
+          "toolchainRow": "xcrun-swift-6.0-macos-26",
+          "args": [
+            "swift",
+            "test",
+            "--filter",
+            "MonaDiffViewLifecycleTests",
+            "--scratch-path",
+            "/tmp/monacode-planctl/P07-T009.GREEN.001.PROC.001"
+          ],
+          "timeoutMs": 600000,
+          "form": "swift-test",
+          "stage": "green",
+          "optionReorder": false,
+          "declaredPaths": [
+            "Package.swift"
+          ]
+        }
+      ]
+    },
+    {
+      "commandID": "P07-T010.RED.001",
+      "kind": "process",
+      "networkMode": "forbidden",
+      "timeoutMs": 600000,
+      "stage": "red",
+      "expectedExit": 1,
+      "expectedOutputIncludes": [
+        "PHASE07_HOST_DIFF_GATE_FAILED fixture=workspace-commit-failure"
+      ],
+      "leaves": [
+        {
+          "leafID": "P07-T010.RED.001.PROC.001",
+          "executable": "/usr/bin/xcrun",
+          "toolchainRow": "xcrun-swift-6.0-macos-26",
+          "args": [
+            "swift",
+            "test",
+            "--filter",
+            "Phase07HostAndDiffConformanceTests/testSeededWorkspaceCommitFailure",
+            "--scratch-path",
+            "/tmp/monacode-planctl/P07-T010.RED.001.PROC.001"
+          ],
+          "timeoutMs": 600000,
+          "form": "swift-test",
+          "stage": "red",
+          "optionReorder": false,
+          "declaredPaths": [
+            "Package.swift"
+          ]
+        }
+      ],
+      "failureClass": "behavioral"
+    },
+    {
+      "commandID": "P07-T010.GREEN.001",
+      "kind": "process",
+      "networkMode": "forbidden",
+      "timeoutMs": 600000,
+      "stage": "green",
+      "expectedExit": 0,
+      "expectedOutputIncludes": [
+        "PHASE07_HOST_DIFF_GATE C05=pass C09=pass partialCommits=0"
+      ],
+      "leaves": [
+        {
+          "leafID": "P07-T010.GREEN.001.PROC.001",
+          "executable": "/usr/bin/xcrun",
+          "toolchainRow": "xcrun-swift-6.0-macos-26",
+          "args": [
+            "swift",
+            "test",
+            "--filter",
+            "Phase07HostAndDiffConformanceTests",
+            "--scratch-path",
+            "/tmp/monacode-planctl/P07-T010.GREEN.001.PROC.001"
+          ],
+          "timeoutMs": 600000,
+          "form": "swift-test",
+          "stage": "green",
+          "optionReorder": false,
+          "declaredPaths": [
+            "Package.swift"
+          ]
+        }
+      ]
+    },
+    {
+      "commandID": "P07-T011.RED.001",
+      "kind": "process",
+      "networkMode": "forbidden",
+      "timeoutMs": 120000,
+      "stage": "red",
+      "expectedExit": 1,
+      "expectedOutputIncludes": [
+        "PUBLIC_API_AFTER_CLOSURE symbol=MonaLateType"
+      ],
+      "leaves": [
+        {
+          "leafID": "P07-T011.RED.001.PROC.001",
+          "executable": "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+          "toolchainRow": "node-26.7.0",
+          "args": [
+            "--test",
+            "--test-name-pattern",
+            "late-public-symbol",
+            "Tests/PlanStructureTests/PublicAPIClosureTests.mjs"
+          ],
+          "timeoutMs": 120000,
+          "form": "node-test",
+          "stage": "red",
+          "optionReorder": true,
+          "declaredPaths": [
+            "Tests/PlanStructureTests/PublicAPIClosureTests.mjs"
+          ]
+        }
+      ],
+      "failureClass": "structural"
+    },
+    {
+      "commandID": "P07-T011.GREEN.001",
+      "kind": "process",
+      "networkMode": "forbidden",
+      "timeoutMs": 120000,
+      "stage": "green",
+      "expectedExit": 0,
+      "expectedOutputIncludes": [
+        "PUBLIC_API_CLOSURE products=3 paths=555 lateSymbols=0"
+      ],
+      "leaves": [
+        {
+          "leafID": "P07-T011.GREEN.001.PROC.001",
+          "executable": "/opt/homebrew/Cellar/node/26.7.0/bin/node",
+          "toolchainRow": "node-26.7.0",
+          "args": [
+            "--test",
+            "Tests/PlanStructureTests/PublicAPIClosureTests.mjs"
+          ],
+          "timeoutMs": 120000,
+          "form": "node-test",
+          "stage": "green",
+          "optionReorder": false,
+          "declaredPaths": [
+            "Tests/PlanStructureTests/PublicAPIClosureTests.mjs"
+          ]
+        }
+      ]
+    }
+  ],
+  "interfaces": [
+    {
+      "id": "MonaDiffEngine",
+      "kind": "swift-declaration",
+      "sourceArtifactPath": "artifacts/diff-d1r-engine-closure.html",
+      "sourceArtifactHash": "c1b89a33b2be85d5ff9154f4ee10de83910136f4f3deca29c8425b2163be99ba",
+      "sourceLocator": "/sections/interfaces/MonaDiffEngine",
+      "contractRefs": [
+        "D1-R.engines",
+        "C05",
+        "P10"
+      ],
+      "declarationText": "// MonaDiffEngine declaration authored by P07-T001",
+      "target": "MonaCode",
+      "visibility": "public",
+      "availability": "local",
+      "actorIsolation": "none",
+      "ownership": [
+        "diff:legacy-engine",
+        "diff:advanced-engine"
+      ],
+      "sendable": true
+    },
+    {
+      "id": "MonaLegacyDiffEngine",
+      "kind": "swift-declaration",
+      "sourceArtifactPath": "artifacts/diff-d1r-engine-closure.html",
+      "sourceArtifactHash": "c1b89a33b2be85d5ff9154f4ee10de83910136f4f3deca29c8425b2163be99ba",
+      "sourceLocator": "/sections/interfaces/MonaLegacyDiffEngine",
+      "contractRefs": [
+        "D1-R.engines",
+        "C05",
+        "P10"
+      ],
+      "declarationText": "// MonaLegacyDiffEngine declaration authored by P07-T001",
+      "target": "MonaCode",
+      "visibility": "public",
+      "availability": "local",
+      "actorIsolation": "none",
+      "ownership": [
+        "diff:legacy-engine",
+        "diff:advanced-engine"
+      ],
+      "sendable": true
+    },
+    {
+      "id": "MonaAdvancedDiffEngine",
+      "kind": "swift-declaration",
+      "sourceArtifactPath": "artifacts/diff-d1r-engine-closure.html",
+      "sourceArtifactHash": "c1b89a33b2be85d5ff9154f4ee10de83910136f4f3deca29c8425b2163be99ba",
+      "sourceLocator": "/sections/interfaces/MonaAdvancedDiffEngine",
+      "contractRefs": [
+        "D1-R.engines",
+        "C05",
+        "P10"
+      ],
+      "declarationText": "// MonaAdvancedDiffEngine declaration authored by P07-T001",
+      "target": "MonaCode",
+      "visibility": "public",
+      "availability": "local",
+      "actorIsolation": "none",
+      "ownership": [
+        "diff:legacy-engine",
+        "diff:advanced-engine"
+      ],
+      "sendable": true
+    },
+    {
+      "id": "MonaDiffResult",
+      "kind": "swift-declaration",
+      "sourceArtifactPath": "artifacts/diff-d1r-engine-closure.html",
+      "sourceArtifactHash": "c1b89a33b2be85d5ff9154f4ee10de83910136f4f3deca29c8425b2163be99ba",
+      "sourceLocator": "/sections/interfaces/MonaDiffResult",
+      "contractRefs": [
+        "D1-R.engines",
+        "C05",
+        "P10"
+      ],
+      "declarationText": "// MonaDiffResult declaration authored by P07-T001",
+      "target": "MonaCode",
+      "visibility": "public",
+      "availability": "local",
+      "actorIsolation": "none",
+      "ownership": [
+        "diff:legacy-engine",
+        "diff:advanced-engine"
+      ],
+      "sendable": true
+    },
+    {
+      "id": "MonaDiffCoordinator",
+      "kind": "swift-declaration",
+      "sourceArtifactPath": "artifacts/diff-d1r-engine-closure.html",
+      "sourceArtifactHash": "c1b89a33b2be85d5ff9154f4ee10de83910136f4f3deca29c8425b2163be99ba",
+      "sourceLocator": "/sections/interfaces/MonaDiffCoordinator",
+      "contractRefs": [
+        "D1-R.timeout",
+        "D1-R.cache",
+        "D1-R.externalUnavailable",
+        "C05",
+        "P10"
+      ],
+      "declarationText": "// MonaDiffCoordinator declaration authored by P07-T002",
+      "target": "MonaCode",
+      "visibility": "public",
+      "availability": "local",
+      "actorIsolation": "none",
+      "ownership": [
+        "normativeLayer:diff-engine:D1-R",
+        "machineArtifact:D1-R-diff-engine"
+      ],
+      "sendable": true
+    },
+    {
+      "id": "MonaDiffCache",
+      "kind": "swift-declaration",
+      "sourceArtifactPath": "artifacts/diff-d1r-engine-closure.html",
+      "sourceArtifactHash": "c1b89a33b2be85d5ff9154f4ee10de83910136f4f3deca29c8425b2163be99ba",
+      "sourceLocator": "/sections/interfaces/MonaDiffCache",
+      "contractRefs": [
+        "D1-R.timeout",
+        "D1-R.cache",
+        "D1-R.externalUnavailable",
+        "C05",
+        "P10"
+      ],
+      "declarationText": "// MonaDiffCache declaration authored by P07-T002",
+      "target": "MonaCode",
+      "visibility": "public",
+      "availability": "local",
+      "actorIsolation": "none",
+      "ownership": [
+        "normativeLayer:diff-engine:D1-R",
+        "machineArtifact:D1-R-diff-engine"
+      ],
+      "sendable": true
+    },
+    {
+      "id": "MonaServiceCollection",
+      "kind": "swift-declaration",
+      "sourceArtifactPath": "artifacts/services-s1r-session-feedback-closure.html",
+      "sourceArtifactHash": "ced5a3a27ff1a8d0f9ff1abc43f15d5cb594d51c83c7d4a14fc977b4947d7ec0",
+      "sourceLocator": "/sections/interfaces/MonaServiceCollection",
+      "contractRefs": [
+        "S1-R.services",
+        "S1-R.sessionStore",
+        "C09",
+        "P11"
+      ],
+      "declarationText": "// MonaServiceCollection declaration authored by P07-T003",
+      "target": "MonaCode",
+      "visibility": "public",
+      "availability": "local",
+      "actorIsolation": "none",
+      "ownership": [
+        "normativeLayer:standalone-services-session-feedback:S1-R",
+        "machineArtifact:S1-R-standalone-services"
+      ],
+      "sendable": true
+    },
+    {
+      "id": "MonaStandaloneServices",
+      "kind": "swift-declaration",
+      "sourceArtifactPath": "artifacts/services-s1r-session-feedback-closure.html",
+      "sourceArtifactHash": "ced5a3a27ff1a8d0f9ff1abc43f15d5cb594d51c83c7d4a14fc977b4947d7ec0",
+      "sourceLocator": "/sections/interfaces/MonaStandaloneServices",
+      "contractRefs": [
+        "S1-R.services",
+        "S1-R.sessionStore",
+        "C09",
+        "P11"
+      ],
+      "declarationText": "// MonaStandaloneServices declaration authored by P07-T003",
+      "target": "MonaCode",
+      "visibility": "public",
+      "availability": "local",
+      "actorIsolation": "none",
+      "ownership": [
+        "normativeLayer:standalone-services-session-feedback:S1-R",
+        "machineArtifact:S1-R-standalone-services"
+      ],
+      "sendable": true
+    },
+    {
+      "id": "MonaSessionStore",
+      "kind": "swift-declaration",
+      "sourceArtifactPath": "artifacts/services-s1r-session-feedback-closure.html",
+      "sourceArtifactHash": "ced5a3a27ff1a8d0f9ff1abc43f15d5cb594d51c83c7d4a14fc977b4947d7ec0",
+      "sourceLocator": "/sections/interfaces/MonaSessionStore",
+      "contractRefs": [
+        "S1-R.services",
+        "S1-R.sessionStore",
+        "C09",
+        "P11"
+      ],
+      "declarationText": "// MonaSessionStore declaration authored by P07-T003",
+      "target": "MonaCode",
+      "visibility": "public",
+      "availability": "local",
+      "actorIsolation": "none",
+      "ownership": [
+        "normativeLayer:standalone-services-session-feedback:S1-R",
+        "machineArtifact:S1-R-standalone-services"
+      ],
+      "sendable": true
+    },
+    {
+      "id": "MonaFeedbackService",
+      "kind": "swift-declaration",
+      "sourceArtifactPath": "artifacts/services-s1r-session-feedback-closure.html",
+      "sourceArtifactHash": "ced5a3a27ff1a8d0f9ff1abc43f15d5cb594d51c83c7d4a14fc977b4947d7ec0",
+      "sourceLocator": "/sections/interfaces/MonaFeedbackService",
+      "contractRefs": [
+        "S1-R.services",
+        "S1-R.sessionStore",
+        "C09",
+        "P11"
+      ],
+      "declarationText": "// MonaFeedbackService declaration authored by P07-T003",
+      "target": "MonaCode",
+      "visibility": "public",
+      "availability": "local",
+      "actorIsolation": "none",
+      "ownership": [
+        "normativeLayer:standalone-services-session-feedback:S1-R",
+        "machineArtifact:S1-R-standalone-services"
+      ],
+      "sendable": true
+    },
+    {
+      "id": "MonaDialogService",
+      "kind": "swift-declaration",
+      "sourceArtifactPath": "artifacts/services-s1r-session-feedback-closure.html",
+      "sourceArtifactHash": "ced5a3a27ff1a8d0f9ff1abc43f15d5cb594d51c83c7d4a14fc977b4947d7ec0",
+      "sourceLocator": "/sections/interfaces/MonaDialogService",
+      "contractRefs": [
+        "S1-R.dialogSites",
+        "H1-R.hostBoundary",
+        "C09"
+      ],
+      "declarationText": "// MonaDialogService declaration authored by P07-T004",
+      "target": "MonaCodeAppKit",
+      "visibility": "public",
+      "availability": "local",
+      "actorIsolation": "none",
+      "ownership": [
+        "services:dialog-sites-four"
+      ],
+      "sendable": true
+    },
+    {
+      "id": "MonaHostContractSet",
+      "kind": "swift-declaration",
+      "sourceArtifactPath": "artifacts/host-h1r-native-embedding-closure.html",
+      "sourceArtifactHash": "6eb212e54af92ac3de2d2892276ef1bebe2eb9e112fcb2a9e91f9224a627cb49",
+      "sourceLocator": "/sections/interfaces/MonaHostContractSet",
+      "contractRefs": [
+        "H1-R",
+        "H1-R2",
+        "G5-R.deliveryScope.hostGroups",
+        "C09"
+      ],
+      "declarationText": "// MonaHostContractSet declaration authored by P07-T005",
+      "target": "MonaCode",
+      "visibility": "public",
+      "availability": "local",
+      "actorIsolation": "none",
+      "ownership": [
+        "normativeLayer:native-embedding-host:H1-R",
+        "normativeLayer:native-embedding-host:H1-R2",
+        "machineArtifact:H1-R-native-boundary",
+        "machineArtifact:H1-R2-host-group"
+      ],
+      "sendable": true
+    },
+    {
+      "id": "MonaOpenerRegistry",
+      "kind": "swift-declaration",
+      "sourceArtifactPath": "artifacts/host-h1r2-opener-count-closure.html",
+      "sourceArtifactHash": "896c75756af88d2050b94c0601a26a4a037b727c16697de95c78aa18e55012fb",
+      "sourceLocator": "/sections/interfaces/MonaOpenerRegistry",
+      "contractRefs": [
+        "H1-R",
+        "H1-R2",
+        "G5-R.deliveryScope.hostGroups",
+        "C09"
+      ],
+      "declarationText": "// MonaOpenerRegistry declaration authored by P07-T005",
+      "target": "MonaCode",
+      "visibility": "public",
+      "availability": "local",
+      "actorIsolation": "none",
+      "ownership": [
+        "normativeLayer:native-embedding-host:H1-R",
+        "normativeLayer:native-embedding-host:H1-R2",
+        "machineArtifact:H1-R-native-boundary",
+        "machineArtifact:H1-R2-host-group"
+      ],
+      "sendable": true
+    },
+    {
+      "id": "MonaAppKitHostAdapters",
+      "kind": "swift-declaration",
+      "sourceArtifactPath": "artifacts/host-h1r-native-embedding-closure.html",
+      "sourceArtifactHash": "6eb212e54af92ac3de2d2892276ef1bebe2eb9e112fcb2a9e91f9224a627cb49",
+      "sourceLocator": "/sections/interfaces/MonaAppKitHostAdapters",
+      "contractRefs": [
+        "H1-R",
+        "H1-R2",
+        "G5-R.deliveryScope.hostGroups",
+        "C09"
+      ],
+      "declarationText": "// MonaAppKitHostAdapters declaration authored by P07-T005",
+      "target": "MonaCodeAppKit",
+      "visibility": "public",
+      "availability": "local",
+      "actorIsolation": "none",
+      "ownership": [
+        "normativeLayer:native-embedding-host:H1-R",
+        "normativeLayer:native-embedding-host:H1-R2",
+        "machineArtifact:H1-R-native-boundary",
+        "machineArtifact:H1-R2-host-group"
+      ],
+      "sendable": true
+    },
+    {
+      "id": "MonaWorkspaceEdit",
+      "kind": "swift-declaration",
+      "sourceArtifactPath": "artifacts/host-h1r-native-embedding-closure.html",
+      "sourceArtifactHash": "6eb212e54af92ac3de2d2892276ef1bebe2eb9e112fcb2a9e91f9224a627cb49",
+      "sourceLocator": "/sections/interfaces/MonaWorkspaceEdit",
+      "contractRefs": [
+        "H1-R.workspaceEdit",
+        "R1.transactionRecovery",
+        "C07",
+        "C09"
+      ],
+      "declarationText": "// MonaWorkspaceEdit declaration authored by P07-T006",
+      "target": "MonaCode",
+      "visibility": "public",
+      "availability": "local",
+      "actorIsolation": "none",
+      "ownership": [
+        "host:workspace-edit",
+        "transaction:workspace-edit"
+      ],
+      "sendable": true
+    },
+    {
+      "id": "MonaPreparedWorkspaceTransaction",
+      "kind": "swift-declaration",
+      "sourceArtifactPath": "artifacts/host-h1r-native-embedding-closure.html",
+      "sourceArtifactHash": "6eb212e54af92ac3de2d2892276ef1bebe2eb9e112fcb2a9e91f9224a627cb49",
+      "sourceLocator": "/sections/interfaces/MonaPreparedWorkspaceTransaction",
+      "contractRefs": [
+        "H1-R.workspaceEdit",
+        "R1.transactionRecovery",
+        "C07",
+        "C09"
+      ],
+      "declarationText": "// MonaPreparedWorkspaceTransaction declaration authored by P07-T006",
+      "target": "MonaCode",
+      "visibility": "public",
+      "availability": "local",
+      "actorIsolation": "none",
+      "ownership": [
+        "host:workspace-edit",
+        "transaction:workspace-edit"
+      ],
+      "sendable": true
+    },
+    {
+      "id": "MonaWorkspaceEditOutcome",
+      "kind": "swift-declaration",
+      "sourceArtifactPath": "artifacts/host-h1r-native-embedding-closure.html",
+      "sourceArtifactHash": "6eb212e54af92ac3de2d2892276ef1bebe2eb9e112fcb2a9e91f9224a627cb49",
+      "sourceLocator": "/sections/interfaces/MonaWorkspaceEditOutcome",
+      "contractRefs": [
+        "H1-R.workspaceEdit",
+        "R1.transactionRecovery",
+        "C07",
+        "C09"
+      ],
+      "declarationText": "// MonaWorkspaceEditOutcome declaration authored by P07-T006",
+      "target": "MonaCode",
+      "visibility": "public",
+      "availability": "local",
+      "actorIsolation": "none",
+      "ownership": [
+        "host:workspace-edit",
+        "transaction:workspace-edit"
+      ],
+      "sendable": true
+    },
+    {
+      "id": "MonaCacheRegistry",
+      "kind": "swift-declaration",
+      "sourceArtifactPath": "artifacts/runtime-h2r-global-lifetime-resource-closure.html",
+      "sourceArtifactHash": "be66e6ec8e0d03b4561b3e93e2611b3750c0c4b2ca2868506727f0184a12cfea",
+      "sourceLocator": "/sections/interfaces/MonaCacheRegistry",
+      "contractRefs": [
+        "H2-R.cacheRegistry",
+        "S1-R.cacheBounds",
+        "D1-R.cache",
+        "C09"
+      ],
+      "declarationText": "// MonaCacheRegistry declaration authored by P07-T007",
+      "target": "MonaCode",
+      "visibility": "public",
+      "availability": "local",
+      "actorIsolation": "none",
+      "ownership": [
+        "machineArtifact:H2-R-runtime-resource",
+        "candidate-producer:MonaCacheManifest.json"
+      ],
+      "sendable": true
+    },
+    {
+      "id": "ProvisionalMonaCacheManifest",
+      "kind": "command-contract",
+      "sourceArtifactPath": "artifacts/runtime-h2r-global-lifetime-resource-closure.html",
+      "sourceArtifactHash": "be66e6ec8e0d03b4561b3e93e2611b3750c0c4b2ca2868506727f0184a12cfea",
+      "sourceLocator": "/sections/interfaces/ProvisionalMonaCacheManifest",
+      "contractRefs": [
+        "H2-R.cacheRegistry",
+        "S1-R.cacheBounds",
+        "D1-R.cache",
+        "C09"
+      ],
+      "commandRecordHash": "7a05ab3e19b3b23193e1f1cabef7fb3448f4e7fd94cb14d523673a63207fdebf",
+      "orderedLeafHashes": [
+        "19061dd9a242b845d6ea0d5734d8621da8cea53ef5c591695932a3d70bb1369a"
+      ],
+      "inputContractHashes": [],
+      "outputSchema": {
+        "id": "ProvisionalMonaCacheManifest",
+        "type": "object"
+      },
+      "expectedResultContract": [
+        "CACHE_REGISTRY exactSet=pass bounds=pass plateau=pass"
+      ]
+    },
+    {
+      "id": "ProvisionalMonaSourceClosureManifest",
+      "kind": "command-contract",
+      "sourceArtifactPath": "artifacts/source-x1r-runtime-style-closure.html",
+      "sourceArtifactHash": "32bebccbf932e1baab6bb9ebd386715295625792198ae378566d0bc11ca2a3a9",
+      "sourceLocator": "/sections/interfaces/ProvisionalMonaSourceClosureManifest",
+      "contractRefs": [
+        "X1-R",
+        "G5-R.implementationOutputRules",
+        "C04",
+        "C10"
+      ],
+      "commandRecordHash": "f3d29672c38e84ebe9e13f318287f4e369f354ca5d8c7ba65b783483ac3e2794",
+      "orderedLeafHashes": [
+        "091001b5df4973037669e712bd3083404c97d638acdb347681d4034c27a501a8"
+      ],
+      "inputContractHashes": [],
+      "outputSchema": {
+        "id": "ProvisionalMonaSourceClosureManifest",
+        "type": "object"
+      },
+      "expectedResultContract": [
+        "SOURCE_CLOSURE occurrences=exact unmanifestedSources=0 state=provisional"
+      ]
+    },
+    {
+      "id": "MonaDiffEditorView",
+      "kind": "swift-declaration",
+      "sourceArtifactPath": "artifacts/model-m1r2-public-surface-closure.html",
+      "sourceArtifactHash": "eaaa4ed865d56b0eabc745a38af7ab4dde8598d079e6e7788d4f0b44eebf9666",
+      "sourceLocator": "/sections/interfaces/MonaDiffEditorView",
+      "contractRefs": [
+        "G5-R.deliveryScope.requiredViews",
+        "G5-R.deliveryScope.requiredSwiftUITypes",
+        "H1-R.multiDiffData",
+        "C09"
+      ],
+      "declarationText": "// MonaDiffEditorView declaration authored by P07-T009",
+      "target": "MonaCodeAppKit",
+      "visibility": "public",
+      "availability": "local",
+      "actorIsolation": "none",
+      "ownership": [
+        "public-view:MonaDiffEditorView",
+        "public-view:MonaMultiDiffEditorView",
+        "public-swiftui:MonaDiffEditor",
+        "public-swiftui:MonaMultiDiffEditor"
+      ],
+      "sendable": true
+    },
+    {
+      "id": "MonaMultiDiffEditorView",
+      "kind": "swift-declaration",
+      "sourceArtifactPath": "artifacts/model-m1r2-public-surface-closure.html",
+      "sourceArtifactHash": "eaaa4ed865d56b0eabc745a38af7ab4dde8598d079e6e7788d4f0b44eebf9666",
+      "sourceLocator": "/sections/interfaces/MonaMultiDiffEditorView",
+      "contractRefs": [
+        "G5-R.deliveryScope.requiredViews",
+        "G5-R.deliveryScope.requiredSwiftUITypes",
+        "H1-R.multiDiffData",
+        "C09"
+      ],
+      "declarationText": "// MonaMultiDiffEditorView declaration authored by P07-T009",
+      "target": "MonaCodeAppKit",
+      "visibility": "public",
+      "availability": "local",
+      "actorIsolation": "none",
+      "ownership": [
+        "public-view:MonaDiffEditorView",
+        "public-view:MonaMultiDiffEditorView",
+        "public-swiftui:MonaDiffEditor",
+        "public-swiftui:MonaMultiDiffEditor"
+      ],
+      "sendable": true
+    },
+    {
+      "id": "MonaDiffEditor",
+      "kind": "swift-declaration",
+      "sourceArtifactPath": "artifacts/model-m1r2-public-surface-closure.html",
+      "sourceArtifactHash": "eaaa4ed865d56b0eabc745a38af7ab4dde8598d079e6e7788d4f0b44eebf9666",
+      "sourceLocator": "/sections/interfaces/MonaDiffEditor",
+      "contractRefs": [
+        "G5-R.deliveryScope.requiredViews",
+        "G5-R.deliveryScope.requiredSwiftUITypes",
+        "H1-R.multiDiffData",
+        "C09"
+      ],
+      "declarationText": "// MonaDiffEditor declaration authored by P07-T009",
+      "target": "MonaCodeSwiftUI",
+      "visibility": "public",
+      "availability": "local",
+      "actorIsolation": "none",
+      "ownership": [
+        "public-view:MonaDiffEditorView",
+        "public-view:MonaMultiDiffEditorView",
+        "public-swiftui:MonaDiffEditor",
+        "public-swiftui:MonaMultiDiffEditor"
+      ],
+      "sendable": true
+    },
+    {
+      "id": "MonaMultiDiffEditor",
+      "kind": "swift-declaration",
+      "sourceArtifactPath": "artifacts/model-m1r2-public-surface-closure.html",
+      "sourceArtifactHash": "eaaa4ed865d56b0eabc745a38af7ab4dde8598d079e6e7788d4f0b44eebf9666",
+      "sourceLocator": "/sections/interfaces/MonaMultiDiffEditor",
+      "contractRefs": [
+        "G5-R.deliveryScope.requiredViews",
+        "G5-R.deliveryScope.requiredSwiftUITypes",
+        "H1-R.multiDiffData",
+        "C09"
+      ],
+      "declarationText": "// MonaMultiDiffEditor declaration authored by P07-T009",
+      "target": "MonaCodeSwiftUI",
+      "visibility": "public",
+      "availability": "local",
+      "actorIsolation": "none",
+      "ownership": [
+        "public-view:MonaDiffEditorView",
+        "public-view:MonaMultiDiffEditorView",
+        "public-swiftui:MonaDiffEditor",
+        "public-swiftui:MonaMultiDiffEditor"
+      ],
+      "sendable": true
+    },
+    {
+      "id": "Phase07HostAndDiffGate",
+      "kind": "command-contract",
+      "sourceArtifactPath": "implementation-plan/phase-07-diff-services-host-source-closure.md",
+      "sourceArtifactHash": "ce4b171b39e3f49c1167869f708f4ca466f2670f30f842e10e498400762f0c23",
+      "sourceLocator": "/sections/interfaces/Phase07HostAndDiffGate",
+      "contractRefs": [
+        "D1-R",
+        "S1-R",
+        "H1-R",
+        "H1-R2",
+        "H2-R",
+        "X1-R",
+        "C05",
+        "C09"
+      ],
+      "commandRecordHash": "182a9d0dcbedc7a6e5c331d8cc37bc5fc63584363dd4637e24d4964dee1e9aa5",
+      "orderedLeafHashes": [
+        "0d5f0f5dc320a6febce9e018c88dc5254797936b527ed88bb0517355c024d5a4"
+      ],
+      "inputContractHashes": [],
+      "outputSchema": {
+        "id": "Phase07HostAndDiffGate",
+        "type": "object"
+      },
+      "expectedResultContract": [
+        "PHASE07_HOST_DIFF_GATE C05=pass C09=pass partialCommits=0"
+      ]
+    },
+    {
+      "id": "MonaPublicAPIClosure",
+      "kind": "command-contract",
+      "sourceArtifactPath": "artifacts/features-f1r4-public-declaration-closure.html",
+      "sourceArtifactHash": "97a8e4a8c1cb6d834117a5189dc7f8e0368cb637e38eb841518155ffb8cd7a35",
+      "sourceLocator": "/sections/interfaces/MonaPublicAPIClosure",
+      "contractRefs": [
+        "F1-R4.publicDeclarations",
+        "H1-R.publicTypes",
+        "G5-R.designClosure.candidateOrder"
+      ],
+      "commandRecordHash": "77fba3677160ddb349f993c57f5a597af4323d2e9097580698bd34ddd37e1634",
+      "orderedLeafHashes": [
+        "5bd11c83ef3f9cd8c4884cfa1735f16ef314bfb6248cef437c72c04263a84809"
+      ],
+      "inputContractHashes": [],
+      "outputSchema": {
+        "id": "MonaPublicAPIClosure",
+        "type": "object"
+      },
+      "expectedResultContract": [
+        "PUBLIC_API_CLOSURE products=3 paths=555 lateSymbols=0"
+      ]
+    }
+  ],
+  "evidence": [
+    {
+      "taskID": "P07-T001",
+      "stagedEvidencePath": "artifacts/acceptance-evidence/g6-r/phase-07/P07-T001.json",
+      "message": "evidence(monacode): complete P07-T001",
+      "verifiedAssertions": [
+        "Legacy and advanced fixture outputs match M0/M1.",
+        "Raw-unit inner changes remain exact.",
+        "Cancellation leaves no cached partial result."
+      ],
+      "selectorMode": "external-git",
+      "evidenceSchema": "task-evidence.schema.json"
+    },
+    {
+      "taskID": "P07-T002",
+      "stagedEvidencePath": "artifacts/acceptance-evidence/g6-r/phase-07/P07-T002.json",
+      "message": "evidence(monacode): complete P07-T002",
+      "verifiedAssertions": [
+        "Timeout boundaries match D1-R.",
+        "Cache never exceeds 11 entries.",
+        "Unavailable external paths never load external code."
+      ],
+      "selectorMode": "external-git",
+      "evidenceSchema": "task-evidence.schema.json"
+    },
+    {
+      "taskID": "P07-T003",
+      "stagedEvidencePath": "artifacts/acceptance-evidence/g6-r/phase-07/P07-T003.json",
+      "message": "evidence(monacode): complete P07-T003",
+      "verifiedAssertions": [
+        "Service identity set and lifetimes are exact.",
+        "All session stores remain memory-only and bounded.",
+        "Prohibited services are absent."
+      ],
+      "selectorMode": "external-git",
+      "evidenceSchema": "task-evidence.schema.json"
+    },
+    {
+      "taskID": "P07-T004",
+      "stagedEvidencePath": "artifacts/acceptance-evidence/g6-r/phase-07/P07-T004.json",
+      "message": "evidence(monacode): complete P07-T004",
+      "verifiedAssertions": [
+        "All four sites use explicit native outcomes.",
+        "Detached editors return unavailable.",
+        "No web dialog surface ships."
+      ],
+      "selectorMode": "external-git",
+      "evidenceSchema": "task-evidence.schema.json"
+    },
+    {
+      "taskID": "P07-T005",
+      "stagedEvidencePath": "artifacts/acceptance-evidence/g6-r/phase-07/P07-T005.json",
+      "message": "evidence(monacode): complete P07-T005",
+      "verifiedAssertions": [
+        "Seven host groups and ten concrete types are exact.",
+        "Every host action requires explicit attachment.",
+        "Opener fallthrough and disposal order match H1-R2."
+      ],
+      "selectorMode": "external-git",
+      "evidenceSchema": "task-evidence.schema.json"
+    },
+    {
+      "taskID": "P07-T006",
+      "stagedEvidencePath": "artifacts/acceptance-evidence/g6-r/phase-07/P07-T006.json",
+      "message": "evidence(monacode): complete P07-T006",
+      "verifiedAssertions": [
+        "All four outcomes are distinguishable.",
+        "External failure cannot partially mutate open models.",
+        "Cancellation and stale versions leave no side effects."
+      ],
+      "selectorMode": "external-git",
+      "evidenceSchema": "task-evidence.schema.json"
+    },
+    {
+      "taskID": "P07-T007",
+      "stagedEvidencePath": "artifacts/acceptance-evidence/g6-r/phase-07/P07-T007.json",
+      "message": "evidence(monacode): complete P07-T007",
+      "verifiedAssertions": [
+        "All cache identities and bounds are explicit.",
+        "Quiescent usage reaches the declared plateau.",
+        "The candidate output remains provisional."
+      ],
+      "selectorMode": "external-git",
+      "evidenceSchema": "task-evidence.schema.json"
+    },
+    {
+      "taskID": "P07-T008",
+      "stagedEvidencePath": "artifacts/acceptance-evidence/g6-r/phase-07/P07-T008.json",
+      "message": "evidence(monacode): complete P07-T008",
+      "verifiedAssertions": [
+        "Every X1-R occurrence is mapped.",
+        "Every production source and resource is enumerated.",
+        "The candidate output remains provisional until release source freezes."
+      ],
+      "selectorMode": "external-git",
+      "evidenceSchema": "task-evidence.schema.json"
+    },
+    {
+      "taskID": "P07-T009",
+      "stagedEvidencePath": "artifacts/acceptance-evidence/g6-r/phase-07/P07-T009.json",
+      "message": "evidence(monacode): complete P07-T009",
+      "verifiedAssertions": [
+        "All three required AppKit views exist.",
+        "All four required SwiftUI types exist.",
+        "Sample host exercises the three-product graph."
+      ],
+      "selectorMode": "external-git",
+      "evidenceSchema": "task-evidence.schema.json"
+    },
+    {
+      "taskID": "P07-T010",
+      "stagedEvidencePath": "artifacts/acceptance-evidence/g6-r/phase-07/P07-T010.json",
+      "message": "evidence(monacode): complete P07-T010",
+      "verifiedAssertions": [
+        "Diff and host correctness prerequisites pass.",
+        "All caches and source occurrences are closed provisionally.",
+        "Failure paths preserve transaction and lifetime invariants."
+      ],
+      "selectorMode": "external-git",
+      "evidenceSchema": "task-evidence.schema.json"
+    },
+    {
+      "taskID": "P07-T011",
+      "stagedEvidencePath": "artifacts/acceptance-evidence/g6-r/phase-07/P07-T011.json",
+      "message": "evidence(monacode): complete P07-T011",
+      "verifiedAssertions": [
+        "Public API closure is terminal in Phase 07.",
+        "All candidate finalizers depend on this closure where required.",
+        "No later phase adds public product source."
+      ],
+      "selectorMode": "external-git",
+      "evidenceSchema": "task-evidence.schema.json"
+    }
+  ],
+  "counts": {
+    "tasks": 11,
+    "commands": 22,
+    "producedInterfaces": 26,
+    "evidence": 11
+  }
+}
