@@ -76,10 +76,12 @@ function verifyGitModes() {
 }
 
 function verifyTruthfulPreAdoption() {
-  // Truthful pre-adoption state: the adoption files do NOT yet exist (Task 33
-  // writes them). Their absence is the truthful state for --candidate.
-  if (exists(path.join(CONTRACT_DIR, 'adoption-record.json'))) return 'adoption-record.json exists before Task 33';
-  if (exists(path.join(CONTRACT_DIR, 'SHA256SUMS'))) return 'SHA256SUMS exists before Task 33';
+  // Adoption consistency: SHA256SUMS and adoption-record.json must both exist
+  // (post-adoption) or both be absent (pre-adoption candidate). A partial state
+  // is a corruption signal.
+  const adoption = exists(path.join(CONTRACT_DIR, 'adoption-record.json'));
+  const sums = exists(path.join(CONTRACT_DIR, 'SHA256SUMS'));
+  if (adoption !== sums) return 'adoption-record.json and SHA256SUMS must both exist or both be absent';
   return null;
 }
 
@@ -133,6 +135,27 @@ function main() {
   }
 
   const result = runPlanAudit();
+
+  // In default mode with adoption files present, print the adoption summary
+  // line that selects the exact adopted revision and governance state.
+  if (!options.candidate && exists(path.join(CONTRACT_DIR, 'adoption-record.json'))) {
+    const adoption = loadJSON(path.join(CONTRACT_DIR, 'adoption-record.json'));
+    const contract = loadJSON(path.join(ARTIFACT_DIR, 'monacode-g6r-authoritative-manifest.json'));
+    const idxPath = path.join(PLAN_DIR, 'verification', 'payload-index.json');
+    const payloadIndex = exists(idxPath) ? loadJSON(idxPath) : null;
+    const rows = (payloadIndex && Array.isArray(payloadIndex.rows)) ? payloadIndex.rows : [];
+    const present = rows.filter((r) => r.presence === 'present').length;
+    const planned = rows.filter((r) => r.presence === 'planned').length;
+    const mode100644 = rows.filter((r) => r.gitMode === '100644').length;
+    const pg = contract.planGovernance || {};
+    const unresolvedFindings = result.findingCount;
+    process.stdout.write(
+      `adopted=true adoptedRevision=${adoption.promotedRevision} planState=${pg.planState || 'execution-ready'} present=${present} planned=${planned} mode100644=${mode100644} implementation=${pg.implementation || 'not-started'} unresolvedFindings=${unresolvedFindings}\n`
+    );
+    process.exitCode = result.findingCount === 0 ? 0 : 1;
+    return;
+  }
+
   const line = formatAuditStatus({ status: result.status, findingCount: result.findingCount, ...result.counts });
   process.stdout.write(line + '\n');
   process.exitCode = result.findingCount === 0 ? 0 : 1;

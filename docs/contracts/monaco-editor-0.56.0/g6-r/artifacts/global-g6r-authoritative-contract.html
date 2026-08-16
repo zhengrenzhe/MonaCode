@@ -8,7 +8,7 @@
     :root { color-scheme: light dark; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
     body { max-width: 1040px; margin: 0 auto; padding: 40px 24px 80px; line-height: 1.55; }
     h1, h2 { line-height: 1.2; }
-    .candidate { border: 1px solid #b45309; border-radius: 10px; padding: 14px 16px; background: color-mix(in srgb, #b45309 12%, transparent); }
+    .adopted { border: 1px solid #15803d; border-radius: 10px; padding: 14px 16px; background: color-mix(in srgb, #15803d 12%, transparent); }
     table { width: 100%; border-collapse: collapse; }
     th, td { border-bottom: 1px solid #8886; padding: 8px; text-align: left; vertical-align: top; }
     code { font-family: ui-monospace, SFMono-Regular, monospace; }
@@ -16,7 +16,7 @@
 </head>
 <body>
   <h1>MonaCode G6-R authoritative contract</h1>
-  <p class="candidate"><strong>Status:</strong> design-and-execution-plan-candidate. Revision <code>G6-R-execution-ready-candidate</code>. The design scope is frozen and the complete execution plan is assembled; product implementation has not started and release acceptance has not passed.</p>
+  <p class="adopted"><strong>Status:</strong> design-and-execution-plan-adopted. Revision <code>G6-R-execution-ready-final</code>. The design scope is frozen, the complete execution plan is adopted as execution-ready, and the immutable adoption record and checksum index select the exact contract, plan, audit, review, cold-checkout, and phase-index hashes; product implementation has not started and release acceptance has not passed.</p>
 
   <h2>Authority</h2>
   <ol>
@@ -64,16 +64,16 @@
   <table>
     <tr><th>macOS</th><td>26.6.1 build <code>25G76</code></td></tr>
     <tr><th>Xcode / SDK / Swift</th><td>26.6 build <code>17F113</code> / SDK 26.5 / Swift 6.3.3</td></tr>
-    <tr><th>Hardware class</th><td>arm64 MacBook Pro, Apple M4 Pro, 20 GPU cores, 48 GiB, Metal 4</td></tr>
-    <tr><th>Built-in display</th><td>3456 x 2234 pixels, 1728 x 1117 logical points, 2x, 120 Hz</td></tr>
+    <tr><th>Hardware class</th><td>arm64 undefined, Apple M4 Pro, 20 GPU cores, 48 GiB, Metal 4</td></tr>
+    <tr><th>Built-in display</th><td>3456x2234 pixels, 1728x1117 logical points, 2x, 120 Hz</td></tr>
     <tr><th>Chrome</th><td>151.0.7922.138; V8 15.1.206.17; Chromium ICU 78.2</td></tr>
   </table>
   <p>The dated 2026-08-15 observation contains one privacy-filtered, unqualified LG external-display slot. Every formal C/P run requires <code>externalDisplayCount == 0</code>. External-display behavior is excluded from the release verdict.</p>
 
   <h2>Plan governance added by G6-R</h2>
   <table>
-    <tr><th>Plan state</th><td>execution-ready-candidate</td></tr>
-    <tr><th>Adoption state</th><td>candidate</td></tr>
+    <tr><th>Plan state</th><td>execution-ready</td></tr>
+    <tr><th>Adoption state</th><td>adopted</td></tr>
     <tr><th>Implementation</th><td>not-started</td></tr>
     <tr><th>Release acceptance</th><td>not-passed</td></tr>
     <tr><th>Task-test contracts</th><td>200</td></tr>
@@ -94,8 +94,12 @@
     <tr><th>Audit producer</th><td>Task 26</td></tr>
     <tr><th>Adversarial review producer</th><td>Tasks 29-32</td></tr>
     <tr><th>Cold-checkout evidence producer</th><td>Task 28</td></tr>
+    <tr><th>Plan verifier SHA-256</th><td><code>7d4e8f83f43dd71445f063e4d0da179ea9f5eccd632f3a590ee5d1f481d36d09</code></td></tr>
+    <tr><th>Plan audit SHA-256</th><td><code>57febeed93d29070d2d7aa032bc6271f864e070fd0a601f852171721327eb634</code></td></tr>
+    <tr><th>Adversarial review SHA-256</th><td><code>48db289db5c3320d7acd45a8205b80cc4153fbe6cd874a15da67ab45d1909c57</code></td></tr>
+    <tr><th>Cold-checkout evidence SHA-256</th><td><code>d83abc3026c23a420c4e58b3721137cfd1431724704fc82ef55275c828f0ac5a</code></td></tr>
   </table>
-  <p>The plan verifier at <code>../implementation-plan/runtime/planctl.mjs</code> is declared by plan (availability <code>declared-by-plan</code>, producer <code>Task 26</code>); Task 33 requires the final file hash.</p>
+  <p>The plan verifier at <code>../implementation-plan/runtime/planctl.mjs</code> hash is <code>7d4e8f83f43dd71445f063e4d0da179ea9f5eccd632f3a590ee5d1f481d36d09</code>; the plan audit, adversarial review, and cold-checkout evidence hashes are selected above.</p>
 
   <h2>Empirical boundary</h2>
   <p>This revision creates documentation, machine contracts, verification tools, and the complete product execution plan only. It creates no product Swift source, generated product table, release package, C01-C10 result, or P00-P13 result.</p>

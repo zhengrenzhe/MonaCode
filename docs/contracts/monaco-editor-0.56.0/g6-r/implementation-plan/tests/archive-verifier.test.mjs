@@ -1,7 +1,7 @@
-// G6-R archive verifier tests (Task 26 Step 1). Proves the real pre-adoption
-// archive returns G6_ADOPTION_MISSING in default mode and passes in --candidate
-// mode, and that a synthetic adopted archive (with SHA256SUMS +
-// adoption-record.json) passes default mode.
+// G6-R archive verifier tests (Task 26 Step 1, updated Task 33). Proves the
+// real archive returns G6_ADOPTION_MISSING in default mode before adoption and
+// passes in --candidate mode, and that after adoption the default mode reports
+// adopted=true with zero findings.
 
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -14,21 +14,34 @@ import { fileURLToPath } from 'node:url';
 const NODE = '/opt/homebrew/Cellar/node/26.7.0/bin/node';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const VERIFY_CONTRACT = path.resolve(__dirname, '..', '..', 'verify-contract.mjs');
+const CONTRACT_DIR = path.resolve(__dirname, '..', '..');
+const ADOPTION_RECORD = path.join(CONTRACT_DIR, 'adoption-record.json');
+const SHA256SUMS = path.join(CONTRACT_DIR, 'SHA256SUMS');
+const adopted = fs.existsSync(ADOPTION_RECORD) && fs.existsSync(SHA256SUMS);
 
 function runVerifier(...args) {
   return spawnSync(NODE, [VERIFY_CONTRACT, ...args], { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
 }
 
-test('archive-verifier: --candidate passes on the real pre-adoption archive', () => {
+test('archive-verifier: --candidate passes on the real archive', () => {
   const r = runVerifier('--candidate');
   assert.equal(r.status, 0, `--candidate exit ${r.status}: ${r.stderr}\n${r.stdout}`);
   assert.match(r.stdout, /status=pass findingCount=0/);
 });
 
-test('archive-verifier: default mode returns G6_ADOPTION_MISSING on the real archive', () => {
+test('archive-verifier: default mode behavior on the real archive', () => {
   const r = runVerifier();
-  assert.equal(r.status, 1);
-  assert.equal(r.stdout.trim(), 'G6_ADOPTION_MISSING');
+  if (adopted) {
+    // Post-adoption: default mode reports adopted=true with zero findings.
+    assert.equal(r.status, 0, `adopted default exit ${r.status}: ${r.stderr}\n${r.stdout}`);
+    assert.match(r.stdout, /adopted=true/);
+    assert.match(r.stdout, /adoptedRevision=G6-R-execution-ready-final/);
+    assert.match(r.stdout, /unresolvedFindings=0/);
+  } else {
+    // Pre-adoption: default mode returns G6_ADOPTION_MISSING.
+    assert.equal(r.status, 1);
+    assert.equal(r.stdout.trim(), 'G6_ADOPTION_MISSING');
+  }
 });
 
 test('archive-verifier: a synthetic adopted archive with both adoption files is recognized', () => {

@@ -128,7 +128,7 @@ test('audit: payload-inventory category — wrong row count', () => {
   const badPayload = { rows: PAYLOAD.rows.slice(0, 100) };
   const r = auditPlan({
     contract: CONTRACT, plan: PLAN, commands: PLAN.commands, interfaces: PLAN.interfaces,
-    archiveRoot: ARCHIVE_ROOT, completedThroughTask: 26, payloadIndex: badPayload,
+    archiveRoot: ARCHIVE_ROOT, completedThroughTask: COMPLETED_THROUGH_TASK, payloadIndex: badPayload,
   });
   const c = countByCategory(r.findings);
   assert.equal(c['payload-inventory'], 1);
