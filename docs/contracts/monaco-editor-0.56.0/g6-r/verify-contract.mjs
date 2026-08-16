@@ -58,9 +58,15 @@ function verifyPayload() {
   for (const r of idx.rows) {
     if (r.gitMode !== '100644') return `row ${r.path} gitMode ${r.gitMode} != 100644`;
   }
+  // Presence must be consistent with the index's own completedThroughTask
+  // cursor: a row is present iff producerTask <= cursor, planned otherwise.
+  const cursor = Number.isInteger(idx.completedThroughTask) ? idx.completedThroughTask : 26;
+  const expectedPresent = idx.rows.filter((r) => (r.producerTask ?? 0) <= cursor).length;
+  const expectedPlanned = idx.rows.length - expectedPresent;
   const present = idx.rows.filter((r) => r.presence === 'present').length;
   const planned = idx.rows.filter((r) => r.presence === 'planned').length;
-  if (present !== 223 || planned !== 9) return `present/planned ${present}/${planned} != 223/9`;
+  if (present !== expectedPresent || planned !== expectedPlanned)
+    return `present/planned ${present}/${planned} != expected ${expectedPresent}/${expectedPlanned} for cursor ${cursor}`;
   return null;
 }
 
@@ -94,9 +100,11 @@ function runPlanAudit() {
   const contract = loadJSON(path.join(ARTIFACT_DIR, 'monacode-g6r-authoritative-manifest.json'));
   const idxPath = path.join(PLAN_DIR, 'verification', 'payload-index.json');
   const payloadIndex = exists(idxPath) ? loadJSON(idxPath) : null;
+  const completedThroughTask = (payloadIndex && Number.isInteger(payloadIndex.completedThroughTask))
+    ? payloadIndex.completedThroughTask : 26;
   const result = auditPlan({
     contract, plan, commands: plan.commands, interfaces: plan.interfaces,
-    archiveRoot: CONTRACT_DIR, completedThroughTask: 26, payloadIndex,
+    archiveRoot: CONTRACT_DIR, completedThroughTask, payloadIndex,
   });
   return result;
 }

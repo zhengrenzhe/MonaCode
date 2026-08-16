@@ -62,9 +62,11 @@ function main() {
   const idxPath = path.join(PLAN_DIR, 'verification', 'payload-index.json');
   const payloadIndex = exists(idxPath) ? loadJSON(idxPath) : null;
 
+  const completedThroughTask = (payloadIndex && Number.isInteger(payloadIndex.completedThroughTask))
+    ? payloadIndex.completedThroughTask : 26;
   const result = auditPlan({
     contract, plan, commands: plan.commands, interfaces: plan.interfaces,
-    archiveRoot: CONTRACT_DIR, completedThroughTask: 26, payloadIndex,
+    archiveRoot: CONTRACT_DIR, completedThroughTask, payloadIndex,
   });
 
   const line = formatAuditStatus({ status: result.status, findingCount: result.findingCount, ...result.counts });

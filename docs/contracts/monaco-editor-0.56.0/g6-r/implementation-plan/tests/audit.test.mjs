@@ -24,10 +24,13 @@ const CONTRACT = loadJSON(path.join(ARTIFACT_DIR, 'monacode-g6r-authoritative-ma
 const PAYLOAD_PATH = path.join(PLAN_DIR, 'verification', 'payload-index.json');
 const PAYLOAD = fs.existsSync(PAYLOAD_PATH) ? loadJSON(PAYLOAD_PATH) : null;
 
+const COMPLETED_THROUGH_TASK = (PAYLOAD && Number.isInteger(PAYLOAD.completedThroughTask))
+  ? PAYLOAD.completedThroughTask : 26;
+
 function run(plan) {
   return auditPlan({
     contract: CONTRACT, plan, commands: plan.commands ?? [], interfaces: plan.interfaces ?? [],
-    archiveRoot: ARCHIVE_ROOT, completedThroughTask: 26, payloadIndex: PAYLOAD,
+    archiveRoot: ARCHIVE_ROOT, completedThroughTask: COMPLETED_THROUGH_TASK, payloadIndex: PAYLOAD,
   });
 }
 
