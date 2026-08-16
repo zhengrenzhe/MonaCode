@@ -1,0 +1,1376 @@
+{
+  "tasks": {
+    "P05-T001": {
+      "testAuthoringOperation": "Tests/PlanStructureTests/PublicDeclarationGraphTests.mjs",
+      "testContract": {
+        "contractID": "P05-T001",
+        "cases": [
+          {
+            "caseID": "P05-T001.CASE.001",
+            "file": {
+              "path": "Tests/PlanStructureTests/PublicDeclarationGraphTests.mjs",
+              "availability": "local"
+            },
+            "checker": "node --test Tests/PlanStructureTests/PublicDeclarationGraphTests.mjs --test-name-pattern zero-selector",
+            "target": "Tests/PlanStructureTests/PublicDeclarationGraphTests.mjs",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "OWNERSHIP_SELECTOR_EMPTY selector=editor.missing",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P05-T001.RED.001.PROC.001",
+            "greenLeafID": "P05-T001.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/PlanStructureTests/PublicDeclarationGraphTests.mjs",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "MonaPublicDeclarationGraph",
+            "kind": "command-contract",
+            "sourceArtifactPath": "artifacts/features-f1r4-public-declaration-closure.html",
+            "sourceArtifactHash": "97a8e4a8c1cb6d834117a5189dc7f8e0368cb637e38eb841518155ffb8cd7a35",
+            "sourceLocator": "/sections/interfaces/MonaPublicDeclarationGraph",
+            "contractRefs": [
+              "F1-R4.publicDeclarations",
+              "F1-R5.nativeTypeSemantics",
+              "C04"
+            ],
+            "commandRecordHash": "492224d3b017396308cb0772e3d36270cfd33d88f7f6b4620df24c8dad9415cd",
+            "orderedLeafHashes": [
+              "7931e5fee63c8455e6c16a45aa5185f54b2200ee3354bf744fe4bff4d0a3edf9"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "MonaPublicDeclarationGraph",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "OWNERSHIP_SELECTOR_EMPTY selector=editor.missing"
+            ]
+          },
+          {
+            "id": "MonaContractRegistryGenerator",
+            "kind": "command-contract",
+            "sourceArtifactPath": "artifacts/features-f1r4-public-declaration-closure.html",
+            "sourceArtifactHash": "97a8e4a8c1cb6d834117a5189dc7f8e0368cb637e38eb841518155ffb8cd7a35",
+            "sourceLocator": "/sections/interfaces/MonaContractRegistryGenerator",
+            "contractRefs": [
+              "F1-R4.publicDeclarations",
+              "F1-R5.nativeTypeSemantics",
+              "C04"
+            ],
+            "commandRecordHash": "de1d3f2ed9d8b5f29615865f00f0164a1f1c7811a7c58d8e522308fe389cfdd5",
+            "orderedLeafHashes": [
+              "9709c3bc9951649008574625be444971be0e245a1829cc0370f67e52b88d198b"
+            ],
+            "inputContractHashes": [],
+            "outputSchema": {
+              "id": "MonaContractRegistryGenerator",
+              "type": "object"
+            },
+            "expectedResultContract": [
+              "OWNERSHIP_SELECTOR_EMPTY selector=editor.missing"
+            ]
+          }
+        ]
+      }
+    },
+    "P05-T002": {
+      "testAuthoringOperation": "Tests/MonaCodeTests/Registry/MonaCommandActionRegistryTests.swift",
+      "testContract": {
+        "contractID": "P05-T002",
+        "cases": [
+          {
+            "caseID": "P05-T002.CASE.001",
+            "file": {
+              "path": "Tests/MonaCodeTests/Registry/MonaCommandActionRegistryTests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter MonaCommandActionRegistryTests/testFrozenIdentityAndOrder",
+            "target": "Tests/MonaCodeTests/Registry/MonaCommandActionRegistryTests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "REGISTRY_IDENTITY_MISMATCH kind=command",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P05-T002.RED.001.PROC.001",
+            "greenLeafID": "P05-T002.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/MonaCodeTests/Registry/MonaCommandActionRegistryTests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "MonaCommandRegistry",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/features-f1r3-machine-manifest-closure.html",
+            "sourceArtifactHash": "49514151c4c91ad862176222603fa807e91a03319453316b57c1932f04dad0a1",
+            "sourceLocator": "/sections/interfaces/MonaCommandRegistry",
+            "contractRefs": [
+              "F1-R3.actions",
+              "F1-R3.commands",
+              "F1-R3.contributions",
+              "C04"
+            ],
+            "declarationText": "// MonaCommandRegistry declaration authored by P05-T002",
+            "target": "MonaCode",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "registry:actions",
+              "registry:pure-text-actions",
+              "registry:commands",
+              "registry:contributions"
+            ],
+            "sendable": true
+          },
+          {
+            "id": "MonaActionRegistry",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/features-f1r3-machine-manifest-closure.html",
+            "sourceArtifactHash": "49514151c4c91ad862176222603fa807e91a03319453316b57c1932f04dad0a1",
+            "sourceLocator": "/sections/interfaces/MonaActionRegistry",
+            "contractRefs": [
+              "F1-R3.actions",
+              "F1-R3.commands",
+              "F1-R3.contributions",
+              "C04"
+            ],
+            "declarationText": "// MonaActionRegistry declaration authored by P05-T002",
+            "target": "MonaCode",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "registry:actions",
+              "registry:pure-text-actions",
+              "registry:commands",
+              "registry:contributions"
+            ],
+            "sendable": true
+          },
+          {
+            "id": "MonaContributionRegistry",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/features-f1r3-machine-manifest-closure.html",
+            "sourceArtifactHash": "49514151c4c91ad862176222603fa807e91a03319453316b57c1932f04dad0a1",
+            "sourceLocator": "/sections/interfaces/MonaContributionRegistry",
+            "contractRefs": [
+              "F1-R3.actions",
+              "F1-R3.commands",
+              "F1-R3.contributions",
+              "C04"
+            ],
+            "declarationText": "// MonaContributionRegistry declaration authored by P05-T002",
+            "target": "MonaCode",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "registry:actions",
+              "registry:pure-text-actions",
+              "registry:commands",
+              "registry:contributions"
+            ],
+            "sendable": true
+          },
+          {
+            "id": "MonaContextKey",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/features-f1r3-machine-manifest-closure.html",
+            "sourceArtifactHash": "49514151c4c91ad862176222603fa807e91a03319453316b57c1932f04dad0a1",
+            "sourceLocator": "/sections/interfaces/MonaContextKey",
+            "contractRefs": [
+              "F1-R3.actions",
+              "F1-R3.commands",
+              "F1-R3.contributions",
+              "C04"
+            ],
+            "declarationText": "// MonaContextKey declaration authored by P05-T002",
+            "target": "MonaCode",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "registry:actions",
+              "registry:pure-text-actions",
+              "registry:commands",
+              "registry:contributions"
+            ],
+            "sendable": true
+          },
+          {
+            "id": "MonaFeatureRegistry",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/features-f1r3-machine-manifest-closure.html",
+            "sourceArtifactHash": "49514151c4c91ad862176222603fa807e91a03319453316b57c1932f04dad0a1",
+            "sourceLocator": "/sections/interfaces/MonaFeatureRegistry",
+            "contractRefs": [
+              "F1-R3.actions",
+              "F1-R3.commands",
+              "F1-R3.contributions",
+              "C04"
+            ],
+            "declarationText": "// MonaFeatureRegistry declaration authored by P05-T002",
+            "target": "MonaCode",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "registry:actions",
+              "registry:pure-text-actions",
+              "registry:commands",
+              "registry:contributions"
+            ],
+            "sendable": true
+          }
+        ]
+      },
+      "redScaffold": [
+        {
+          "sourcePath": "Sources/MonaCode/Registry/MonaCommandRegistry.swift",
+          "marker": "G6_RED_SCAFFOLD:P05-T002:1cd9a5626bf16fa13d842b847cd3d390c61720cb8993e6121474671488a61cb5",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        },
+        {
+          "sourcePath": "Sources/MonaCode/Registry/MonaActionRegistry.swift",
+          "marker": "G6_RED_SCAFFOLD:P05-T002:f28f6a7dbfa973056f8171269bf03daff68a917e2c4e3546579da81351f7e681",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        },
+        {
+          "sourcePath": "Sources/MonaCode/Registry/MonaContributionRegistry.swift",
+          "marker": "G6_RED_SCAFFOLD:P05-T002:253af003423f62cd27de2fda242bfd60bc7144828fa8edfd57af273a196ac177",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        },
+        {
+          "sourcePath": "Sources/MonaCode/Registry/MonaContextKey.swift",
+          "marker": "G6_RED_SCAFFOLD:P05-T002:7867b2e6da9fb569c93fd20602b57f98d18a5683c3031c083351149fcdac8fe0",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        },
+        {
+          "sourcePath": "Sources/MonaCode/Registry/MonaFeatureRegistry.swift",
+          "marker": "G6_RED_SCAFFOLD:P05-T002:7e69973fcda4946f4a3751140623da8ed259b3a2feb3b8bf820b0560f822711b",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        }
+      ]
+    },
+    "P05-T003": {
+      "testAuthoringOperation": "Tests/MonaCodeTests/Registry/MonaBuiltinKeybindingTests.swift",
+      "testContract": {
+        "contractID": "P05-T003",
+        "cases": [
+          {
+            "caseID": "P05-T003.CASE.001",
+            "file": {
+              "path": "Tests/MonaCodeTests/Registry/MonaBuiltinKeybindingTests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter MonaBuiltinKeybindingTests/testOrdinalCommandMatrix",
+            "target": "Tests/MonaCodeTests/Registry/MonaBuiltinKeybindingTests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "KEYBINDING_ROW_MISMATCH ordinal=000",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P05-T003.RED.001.PROC.001",
+            "greenLeafID": "P05-T003.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/MonaCodeTests/Registry/MonaBuiltinKeybindingTests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "MonaBuiltinKeybindings",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/features-f1r3-machine-manifest-closure.html",
+            "sourceArtifactHash": "49514151c4c91ad862176222603fa807e91a03319453316b57c1932f04dad0a1",
+            "sourceLocator": "/sections/interfaces/MonaBuiltinKeybindings",
+            "contractRefs": [
+              "F1-R3.keybindings",
+              "I3-R2.keybindingClosure",
+              "C04"
+            ],
+            "declarationText": "// MonaBuiltinKeybindings declaration authored by P05-T003",
+            "target": "MonaCode",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "registry:keybindings-379"
+            ],
+            "sendable": true
+          }
+        ]
+      },
+      "redScaffold": [
+        {
+          "sourcePath": "Sources/MonaCode/Generated/MonaBuiltinKeybindings.swift",
+          "marker": "G6_RED_SCAFFOLD:P05-T003:d5760dc9768e6123834c410e156ee3eadbf74d5c5e6e4245429334be0581bbe2",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        }
+      ]
+    },
+    "P05-T004": {
+      "testAuthoringOperation": "Tests/MonaCodeTests/Registry/MonaMenuRegistryTests.swift",
+      "testContract": {
+        "contractID": "P05-T004",
+        "cases": [
+          {
+            "caseID": "P05-T004.CASE.001",
+            "file": {
+              "path": "Tests/MonaCodeTests/Registry/MonaMenuRegistryTests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter MonaMenuRegistryTests/testMenuItemOrdinalMatrix",
+            "target": "Tests/MonaCodeTests/Registry/MonaMenuRegistryTests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "MENU_ITEM_MISMATCH menu=EditorContext ordinal=000",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P05-T004.RED.001.PROC.001",
+            "greenLeafID": "P05-T004.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/MonaCodeTests/Registry/MonaMenuRegistryTests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "MonaMenuRegistry",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/features-f1r3-machine-manifest-closure.html",
+            "sourceArtifactHash": "49514151c4c91ad862176222603fa807e91a03319453316b57c1932f04dad0a1",
+            "sourceLocator": "/sections/interfaces/MonaMenuRegistry",
+            "contractRefs": [
+              "F1-R3.menus",
+              "I3-R4.contextMenu",
+              "C04"
+            ],
+            "declarationText": "// MonaMenuRegistry declaration authored by P05-T004",
+            "target": "MonaCode",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "registry:menus",
+              "registry:menu-items",
+              "registry:menu-commands"
+            ],
+            "sendable": true
+          },
+          {
+            "id": "MonaMenuModel",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/features-f1r3-machine-manifest-closure.html",
+            "sourceArtifactHash": "49514151c4c91ad862176222603fa807e91a03319453316b57c1932f04dad0a1",
+            "sourceLocator": "/sections/interfaces/MonaMenuModel",
+            "contractRefs": [
+              "F1-R3.menus",
+              "I3-R4.contextMenu",
+              "C04"
+            ],
+            "declarationText": "// MonaMenuModel declaration authored by P05-T004",
+            "target": "MonaCode",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "registry:menus",
+              "registry:menu-items",
+              "registry:menu-commands"
+            ],
+            "sendable": true
+          }
+        ]
+      },
+      "redScaffold": [
+        {
+          "sourcePath": "Sources/MonaCode/Registry/MonaMenuRegistry.swift",
+          "marker": "G6_RED_SCAFFOLD:P05-T004:46d5490a4efcf47c92e3c89978379ee07bf26624f8cb411e81602d6a7d2bacdc",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        },
+        {
+          "sourcePath": "Sources/MonaCode/Generated/MonaBuiltinMenus.swift",
+          "marker": "G6_RED_SCAFFOLD:P05-T004:7cc9075046e43fb668b20286e70d5d14fa61fc5e76769a8c8c00e4ee0014e810",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        }
+      ]
+    },
+    "P05-T005": {
+      "testAuthoringOperation": "Tests/MonaCodeTests/Options/MonaEditorOptionTests.swift",
+      "testContract": {
+        "contractID": "P05-T005",
+        "cases": [
+          {
+            "caseID": "P05-T005.CASE.001",
+            "file": {
+              "path": "Tests/MonaCodeTests/Options/MonaEditorOptionTests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter MonaEditorOptionTests/testTMinusOneTPlusOneMatrix",
+            "target": "Tests/MonaCodeTests/Options/MonaEditorOptionTests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "OPTION_DOMAIN_MISMATCH option=stopRenderingLineAfter boundary=T",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P05-T005.RED.001.PROC.001",
+            "greenLeafID": "P05-T005.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/MonaCodeTests/Options/MonaEditorOptionTests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "MonaEditorOption",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/features-f1r3-machine-manifest-closure.html",
+            "sourceArtifactHash": "49514151c4c91ad862176222603fa807e91a03319453316b57c1932f04dad0a1",
+            "sourceLocator": "/sections/interfaces/MonaEditorOption",
+            "contractRefs": [
+              "F1-R2.optionDomains",
+              "F1-R3.options",
+              "C04",
+              "C05"
+            ],
+            "declarationText": "// MonaEditorOption declaration authored by P05-T005",
+            "target": "MonaCode",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "registry:options-174"
+            ],
+            "sendable": true
+          },
+          {
+            "id": "MonaOptionStore",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/features-f1r3-machine-manifest-closure.html",
+            "sourceArtifactHash": "49514151c4c91ad862176222603fa807e91a03319453316b57c1932f04dad0a1",
+            "sourceLocator": "/sections/interfaces/MonaOptionStore",
+            "contractRefs": [
+              "F1-R2.optionDomains",
+              "F1-R3.options",
+              "C04",
+              "C05"
+            ],
+            "declarationText": "// MonaOptionStore declaration authored by P05-T005",
+            "target": "MonaCode",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "registry:options-174"
+            ],
+            "sendable": true
+          },
+          {
+            "id": "MonaOptionSnapshot",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/features-f1r3-machine-manifest-closure.html",
+            "sourceArtifactHash": "49514151c4c91ad862176222603fa807e91a03319453316b57c1932f04dad0a1",
+            "sourceLocator": "/sections/interfaces/MonaOptionSnapshot",
+            "contractRefs": [
+              "F1-R2.optionDomains",
+              "F1-R3.options",
+              "C04",
+              "C05"
+            ],
+            "declarationText": "// MonaOptionSnapshot declaration authored by P05-T005",
+            "target": "MonaCode",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "registry:options-174"
+            ],
+            "sendable": true
+          }
+        ]
+      },
+      "redScaffold": [
+        {
+          "sourcePath": "Sources/MonaCode/Options/MonaEditorOption.swift",
+          "marker": "G6_RED_SCAFFOLD:P05-T005:58f62b5bab866a0504d4dabd6184834421036c65fe2cdce32f4f4e477dac61f7",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        },
+        {
+          "sourcePath": "Sources/MonaCode/Options/MonaOptionStore.swift",
+          "marker": "G6_RED_SCAFFOLD:P05-T005:001ca3d38c7a459d4cad0b00ad53a9e370ec56017bdb61a0977a8d2a46c4b8ff",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        },
+        {
+          "sourcePath": "Sources/MonaCode/Options/MonaOptionSnapshot.swift",
+          "marker": "G6_RED_SCAFFOLD:P05-T005:3e058913fe9a411a553122202ee069601a860d0c8546947bfd9ca25e0b49beca",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        },
+        {
+          "sourcePath": "Sources/MonaCode/Generated/MonaBuiltinOptions.swift",
+          "marker": "G6_RED_SCAFFOLD:P05-T005:407d15747aa8cacf0938e1a5f54e44c1d295c5a0f841f0644184f79b12bfe63b",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        }
+      ]
+    },
+    "P05-T006": {
+      "testAuthoringOperation": "Tests/MonaCodeTests/Theme/MonaThemeRegistryTests.swift",
+      "testContract": {
+        "contractID": "P05-T006",
+        "cases": [
+          {
+            "caseID": "P05-T006.CASE.001",
+            "file": {
+              "path": "Tests/MonaCodeTests/Theme/MonaThemeRegistryTests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter MonaThemeRegistryTests/testFrozenRegistryIdentitySets",
+            "target": "Tests/MonaCodeTests/Theme/MonaThemeRegistryTests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "THEME_REGISTRY_IDENTITY_MISMATCH kind=icon",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P05-T006.RED.001.PROC.001",
+            "greenLeafID": "P05-T006.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/MonaCodeTests/Theme/MonaThemeRegistryTests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "MonaThemeRegistry",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/theme-t1r-registry-token-icon-closure.html",
+            "sourceArtifactHash": "4ddbd09bd6c753de2f922918b42474e0150fd5cfcb35550caee1de27943369be",
+            "sourceLocator": "/sections/interfaces/MonaThemeRegistry",
+            "contractRefs": [
+              "T1-R",
+              "F1-R3.colors",
+              "F1-R3.icons",
+              "G5-R.licensingProfile.codiconArtworkAndFont",
+              "C04"
+            ],
+            "declarationText": "// MonaThemeRegistry declaration authored by P05-T006",
+            "target": "MonaCode",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "normativeLayer:theme-token-icon:T1-R",
+              "registry:colors",
+              "registry:icons",
+              "registry:themes"
+            ],
+            "sendable": true
+          },
+          {
+            "id": "MonaTokenTheme",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/theme-t1r-registry-token-icon-closure.html",
+            "sourceArtifactHash": "4ddbd09bd6c753de2f922918b42474e0150fd5cfcb35550caee1de27943369be",
+            "sourceLocator": "/sections/interfaces/MonaTokenTheme",
+            "contractRefs": [
+              "T1-R",
+              "F1-R3.colors",
+              "F1-R3.icons",
+              "G5-R.licensingProfile.codiconArtworkAndFont",
+              "C04"
+            ],
+            "declarationText": "// MonaTokenTheme declaration authored by P05-T006",
+            "target": "MonaCode",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "normativeLayer:theme-token-icon:T1-R",
+              "registry:colors",
+              "registry:icons",
+              "registry:themes"
+            ],
+            "sendable": true
+          },
+          {
+            "id": "MonaColorRegistry",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/theme-t1r-registry-token-icon-closure.html",
+            "sourceArtifactHash": "4ddbd09bd6c753de2f922918b42474e0150fd5cfcb35550caee1de27943369be",
+            "sourceLocator": "/sections/interfaces/MonaColorRegistry",
+            "contractRefs": [
+              "T1-R",
+              "F1-R3.colors",
+              "F1-R3.icons",
+              "G5-R.licensingProfile.codiconArtworkAndFont",
+              "C04"
+            ],
+            "declarationText": "// MonaColorRegistry declaration authored by P05-T006",
+            "target": "MonaCode",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "normativeLayer:theme-token-icon:T1-R",
+              "registry:colors",
+              "registry:icons",
+              "registry:themes"
+            ],
+            "sendable": true
+          },
+          {
+            "id": "MonaIconRegistry",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/theme-t1r-registry-token-icon-closure.html",
+            "sourceArtifactHash": "4ddbd09bd6c753de2f922918b42474e0150fd5cfcb35550caee1de27943369be",
+            "sourceLocator": "/sections/interfaces/MonaIconRegistry",
+            "contractRefs": [
+              "T1-R",
+              "F1-R3.colors",
+              "F1-R3.icons",
+              "G5-R.licensingProfile.codiconArtworkAndFont",
+              "C04"
+            ],
+            "declarationText": "// MonaIconRegistry declaration authored by P05-T006",
+            "target": "MonaCode",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "normativeLayer:theme-token-icon:T1-R",
+              "registry:colors",
+              "registry:icons",
+              "registry:themes"
+            ],
+            "sendable": true
+          }
+        ]
+      },
+      "redScaffold": [
+        {
+          "sourcePath": "Sources/MonaCode/Theme/MonaThemeRegistry.swift",
+          "marker": "G6_RED_SCAFFOLD:P05-T006:d8ff3dc016393451d67ca0f8abaa1b1377324cd3039a4d8751cbe3bfe413ebd4",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        },
+        {
+          "sourcePath": "Sources/MonaCode/Theme/MonaTokenTheme.swift",
+          "marker": "G6_RED_SCAFFOLD:P05-T006:cf7709c7c66efda988f9e4019d43d72f60fdfd383d6aaa10284025566a52a916",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        },
+        {
+          "sourcePath": "Sources/MonaCode/Theme/MonaColorRegistry.swift",
+          "marker": "G6_RED_SCAFFOLD:P05-T006:b4db6be76e6af53a5aec7ceedb4db073e2e48bcb2f6a43292f0669b3c1521f8e",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        },
+        {
+          "sourcePath": "Sources/MonaCode/Theme/MonaIconRegistry.swift",
+          "marker": "G6_RED_SCAFFOLD:P05-T006:ee54ab7c3174e08cc705cd71a6a42a00177366f59f0ed2d6057b2fd2e2780b86",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        },
+        {
+          "sourcePath": "Sources/MonaCode/Generated/MonaCodiconMap.swift",
+          "marker": "G6_RED_SCAFFOLD:P05-T006:f5373f48ab265d2787f6e668d18c9a3a78f4adc55ed68c374f9404eb045b8473",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        }
+      ]
+    },
+    "P05-T007": {
+      "testAuthoringOperation": "Tests/MonaCodeTests/Localization/MonaLocalizationTests.swift",
+      "testContract": {
+        "contractID": "P05-T007",
+        "cases": [
+          {
+            "caseID": "P05-T007.CASE.001",
+            "file": {
+              "path": "Tests/MonaCodeTests/Localization/MonaLocalizationTests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter MonaLocalizationTests/testProfileMessageIdentitySet",
+            "target": "Tests/MonaCodeTests/Localization/MonaLocalizationTests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "LOCALIZATION_MESSAGE_MISSING profile=zh-hans key=editor.action.clipboardCopyAction",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P05-T007.RED.001.PROC.001",
+            "greenLeafID": "P05-T007.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/MonaCodeTests/Localization/MonaLocalizationTests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "MonaLocalization",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/localization-n1r-ui-message-closure.html",
+            "sourceArtifactHash": "4648e1782a4c71352f4e6c13877447291469ab5c73089c21242355dfce7dd640",
+            "sourceLocator": "/sections/interfaces/MonaLocalization",
+            "contractRefs": [
+              "N1-R",
+              "E1-R.localeBoundary",
+              "C04",
+              "C07"
+            ],
+            "declarationText": "// MonaLocalization declaration authored by P05-T007",
+            "target": "MonaCode",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "normativeLayer:ui-localization:N1-R",
+              "machineArtifact:N1-R-localization",
+              "registry:localization-profiles"
+            ],
+            "sendable": true
+          },
+          {
+            "id": "MonaLocalizationProfileSet",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/localization-n1r-ui-message-closure.html",
+            "sourceArtifactHash": "4648e1782a4c71352f4e6c13877447291469ab5c73089c21242355dfce7dd640",
+            "sourceLocator": "/sections/interfaces/MonaLocalizationProfileSet",
+            "contractRefs": [
+              "N1-R",
+              "E1-R.localeBoundary",
+              "C04",
+              "C07"
+            ],
+            "declarationText": "// MonaLocalizationProfileSet declaration authored by P05-T007",
+            "target": "MonaCode",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "normativeLayer:ui-localization:N1-R",
+              "machineArtifact:N1-R-localization",
+              "registry:localization-profiles"
+            ],
+            "sendable": true
+          }
+        ]
+      },
+      "redScaffold": [
+        {
+          "sourcePath": "Sources/MonaCode/Localization/MonaLocalization.swift",
+          "marker": "G6_RED_SCAFFOLD:P05-T007:f8a54e3fae738d445e97c1684acab7c39889bc53540fe1995574d41285757b3a",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        },
+        {
+          "sourcePath": "Sources/MonaCode/Generated/MonaLocalizationProfiles.swift",
+          "marker": "G6_RED_SCAFFOLD:P05-T007:0676a84fc3ce76b0bc236ea5b2c20a2518aaef3a77f69626111793a0a8608ae7",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        }
+      ]
+    },
+    "P05-T008": {
+      "testAuthoringOperation": "Tests/MonaCodeTests/Language/MonaLanguageRegistryTests.swift",
+      "testContract": {
+        "contractID": "P05-T008",
+        "cases": [
+          {
+            "caseID": "P05-T008.CASE.001",
+            "file": {
+              "path": "Tests/MonaCodeTests/Language/MonaLanguageRegistryTests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter MonaLanguageRegistryTests/testBuiltinContentIsAbsent",
+            "target": "Tests/MonaCodeTests/Language/MonaLanguageRegistryTests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "BUILTIN_LANGUAGE_CONTENT_PRESENT id=typescript",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P05-T008.RED.001.PROC.001",
+            "greenLeafID": "P05-T008.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/MonaCodeTests/Language/MonaLanguageRegistryTests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "MonaLanguageRegistry",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/features-f1r3-machine-manifest-closure.html",
+            "sourceArtifactHash": "49514151c4c91ad862176222603fa807e91a03319453316b57c1932f04dad0a1",
+            "sourceLocator": "/sections/interfaces/MonaLanguageRegistry",
+            "contractRefs": [
+              "F1-R3.languageDescriptors",
+              "L2-R.plainTextFallback",
+              "G5-R.explicitCuts.builtinLanguageContent"
+            ],
+            "declarationText": "// MonaLanguageRegistry declaration authored by P05-T008",
+            "target": "MonaCode",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "registry:language-descriptors",
+              "language:plain-text-fallback"
+            ],
+            "sendable": true
+          },
+          {
+            "id": "MonaPlainTextLanguage",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/features-f1r3-machine-manifest-closure.html",
+            "sourceArtifactHash": "49514151c4c91ad862176222603fa807e91a03319453316b57c1932f04dad0a1",
+            "sourceLocator": "/sections/interfaces/MonaPlainTextLanguage",
+            "contractRefs": [
+              "F1-R3.languageDescriptors",
+              "L2-R.plainTextFallback",
+              "G5-R.explicitCuts.builtinLanguageContent"
+            ],
+            "declarationText": "// MonaPlainTextLanguage declaration authored by P05-T008",
+            "target": "MonaCode",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "registry:language-descriptors",
+              "language:plain-text-fallback"
+            ],
+            "sendable": true
+          }
+        ]
+      },
+      "redScaffold": [
+        {
+          "sourcePath": "Sources/MonaCode/Language/MonaLanguageRegistry.swift",
+          "marker": "G6_RED_SCAFFOLD:P05-T008:7c566d45495bcfa7e404bca16687630343d19b3b765cc93e6bd2de5c59cc4408",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        },
+        {
+          "sourcePath": "Sources/MonaCode/Language/MonaPlainTextLanguage.swift",
+          "marker": "G6_RED_SCAFFOLD:P05-T008:2cbe5c875a6198b5b4d62b8074333ae93a48941c78b616b96ec3bc8ce5ab3caf",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        }
+      ]
+    },
+    "P05-T009": {
+      "testAuthoringOperation": "Tests/MonaCodeAppKitTests/Colorize/MonaColorizeSourceTests.swift",
+      "testContract": {
+        "contractID": "P05-T009",
+        "cases": [
+          {
+            "caseID": "P05-T009.CASE.001",
+            "file": {
+              "path": "Tests/MonaCodeAppKitTests/Colorize/MonaColorizeSourceTests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter MonaColorizeSourceTests/testRawUTF16TokenProjection",
+            "target": "Tests/MonaCodeAppKitTests/Colorize/MonaColorizeSourceTests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "NATIVE_COLORIZE_MISMATCH path=editor.colorize",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P05-T009.RED.001.PROC.001",
+            "greenLeafID": "P05-T009.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/MonaCodeAppKitTests/Colorize/MonaColorizeSourceTests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "MonaColorizeSource",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/features-f1r4-public-declaration-closure.html",
+            "sourceArtifactHash": "97a8e4a8c1cb6d834117a5189dc7f8e0368cb637e38eb841518155ffb8cd7a35",
+            "sourceLocator": "/sections/interfaces/MonaColorizeSource",
+            "contractRefs": [
+              "F1-R4.editor.colorize",
+              "F1-R5.nativeReplacement",
+              "C04"
+            ],
+            "declarationText": "// MonaColorizeSource declaration authored by P05-T009",
+            "target": "MonaCodeAppKit",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "publicPath:editor.colorize",
+              "native-colorize:source"
+            ],
+            "sendable": true
+          }
+        ]
+      },
+      "redScaffold": [
+        {
+          "sourcePath": "Sources/MonaCodeAppKit/Colorize/MonaColorizeSource.swift",
+          "marker": "G6_RED_SCAFFOLD:P05-T009:133932aae6a473965c2bf8e73785b15fb4a57bd11b022b21abe4f59bb39db206",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        }
+      ]
+    },
+    "P05-T010": {
+      "testAuthoringOperation": "Tests/MonaCodeAppKitTests/Colorize/MonaColorizeViewTests.swift",
+      "testContract": {
+        "contractID": "P05-T010",
+        "cases": [
+          {
+            "caseID": "P05-T010.CASE.001",
+            "file": {
+              "path": "Tests/MonaCodeAppKitTests/Colorize/MonaColorizeViewTests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter MonaColorizeViewTests/testRecolorInvalidationAndDisposal",
+            "target": "Tests/MonaCodeAppKitTests/Colorize/MonaColorizeViewTests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "NATIVE_COLORIZE_MISMATCH path=editor.colorizeElement",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P05-T010.RED.001.PROC.001",
+            "greenLeafID": "P05-T010.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/MonaCodeAppKitTests/Colorize/MonaColorizeViewTests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "MonaColorizeView",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/features-f1r4-public-declaration-closure.html",
+            "sourceArtifactHash": "97a8e4a8c1cb6d834117a5189dc7f8e0368cb637e38eb841518155ffb8cd7a35",
+            "sourceLocator": "/sections/interfaces/MonaColorizeView",
+            "contractRefs": [
+              "F1-R4.editor.colorizeElement",
+              "F1-R5.nativeReplacement",
+              "C04"
+            ],
+            "declarationText": "// MonaColorizeView declaration authored by P05-T010",
+            "target": "MonaCodeAppKit",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "publicPath:editor.colorizeElement",
+              "native-colorize:view"
+            ],
+            "sendable": true
+          }
+        ]
+      },
+      "redScaffold": [
+        {
+          "sourcePath": "Sources/MonaCodeAppKit/Colorize/MonaColorizeView.swift",
+          "marker": "G6_RED_SCAFFOLD:P05-T010:f2d317a12575bb16da0e4ff1eb0430b859f9b2fbbe4fb4295347d99e0c8a5429",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        }
+      ]
+    },
+    "P05-T011": {
+      "testAuthoringOperation": "Tests/MonaCodeAppKitTests/Colorize/MonaColorizeModelLineTests.swift",
+      "testContract": {
+        "contractID": "P05-T011",
+        "cases": [
+          {
+            "caseID": "P05-T011.CASE.001",
+            "file": {
+              "path": "Tests/MonaCodeAppKitTests/Colorize/MonaColorizeModelLineTests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter MonaColorizeModelLineTests/testInjectedTextAndBidiRanges",
+            "target": "Tests/MonaCodeAppKitTests/Colorize/MonaColorizeModelLineTests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "NATIVE_COLORIZE_MISMATCH path=editor.colorizeModelLine",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P05-T011.RED.001.PROC.001",
+            "greenLeafID": "P05-T011.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/MonaCodeAppKitTests/Colorize/MonaColorizeModelLineTests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "MonaColorizeModelLine",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/features-f1r4-public-declaration-closure.html",
+            "sourceArtifactHash": "97a8e4a8c1cb6d834117a5189dc7f8e0368cb637e38eb841518155ffb8cd7a35",
+            "sourceLocator": "/sections/interfaces/MonaColorizeModelLine",
+            "contractRefs": [
+              "F1-R4.editor.colorizeModelLine",
+              "F1-R5.nativeReplacement",
+              "C04"
+            ],
+            "declarationText": "// MonaColorizeModelLine declaration authored by P05-T011",
+            "target": "MonaCodeAppKit",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "publicPath:editor.colorizeModelLine",
+              "native-colorize:model-line"
+            ],
+            "sendable": true
+          }
+        ]
+      },
+      "redScaffold": [
+        {
+          "sourcePath": "Sources/MonaCodeAppKit/Colorize/MonaColorizeModelLine.swift",
+          "marker": "G6_RED_SCAFFOLD:P05-T011:fb706ff8f4888ccd30f0d7685446b664d91a83d8fa0d6389ecf148bcdbf1f030",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        }
+      ]
+    },
+    "P05-T012": {
+      "testAuthoringOperation": "Tests/MonaCodeAppKitTests/Views/MonaEditorInstanceSurfaceTests.swift",
+      "testContract": {
+        "contractID": "P05-T012",
+        "cases": [
+          {
+            "caseID": "P05-T012.CASE.001",
+            "file": {
+              "path": "Tests/MonaCodeAppKitTests/Views/MonaEditorInstanceSurfaceTests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter MonaEditorInstanceSurfaceTests/testFiveFrozenSequences",
+            "target": "Tests/MonaCodeAppKitTests/Views/MonaEditorInstanceSurfaceTests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "INSTANCE_SEQUENCE_MISMATCH surface=ICodeEditor",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P05-T012.RED.001.PROC.001",
+            "greenLeafID": "P05-T012.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/MonaCodeAppKitTests/Views/MonaEditorInstanceSurfaceTests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "MonaEditorFactory",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/features-f1r4-public-declaration-closure.html",
+            "sourceArtifactHash": "97a8e4a8c1cb6d834117a5189dc7f8e0368cb637e38eb841518155ffb8cd7a35",
+            "sourceLocator": "/sections/interfaces/MonaEditorFactory",
+            "contractRefs": [
+              "F1-R2.instanceSurfaces",
+              "F1-R4.editorFactories",
+              "H1-R.editorView",
+              "C04"
+            ],
+            "declarationText": "// MonaEditorFactory declaration authored by P05-T012",
+            "target": "MonaCodeAppKit",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "public-surface:instance-sequences",
+              "public-factory:editor.create"
+            ],
+            "sendable": true
+          },
+          {
+            "id": "MonaEditorInstanceAdapters",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/features-f1r4-public-declaration-closure.html",
+            "sourceArtifactHash": "97a8e4a8c1cb6d834117a5189dc7f8e0368cb637e38eb841518155ffb8cd7a35",
+            "sourceLocator": "/sections/interfaces/MonaEditorInstanceAdapters",
+            "contractRefs": [
+              "F1-R2.instanceSurfaces",
+              "F1-R4.editorFactories",
+              "H1-R.editorView",
+              "C04"
+            ],
+            "declarationText": "// MonaEditorInstanceAdapters declaration authored by P05-T012",
+            "target": "MonaCodeAppKit",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "public-surface:instance-sequences",
+              "public-factory:editor.create"
+            ],
+            "sendable": true
+          }
+        ]
+      },
+      "redScaffold": [
+        {
+          "sourcePath": "Sources/MonaCodeAppKit/Views/MonaEditorFactory.swift",
+          "marker": "G6_RED_SCAFFOLD:P05-T012:175b757221ce87c7cb61467e4798d2eafadc465756284e4c86a5ec5181d60eb9",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        },
+        {
+          "sourcePath": "Sources/MonaCodeAppKit/Views/MonaEditorInstanceAdapters.swift",
+          "marker": "G6_RED_SCAFFOLD:P05-T012:a81771649c6107f16adc62711fc54c4b552a2d3742abd8a70dc0af4537f75fd7",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        }
+      ]
+    },
+    "P05-T013": {
+      "testAuthoringOperation": "Tests/MonaCodeTests/Language/MonaProviderExecutorTests.swift",
+      "testContract": {
+        "contractID": "P05-T013",
+        "cases": [
+          {
+            "caseID": "P05-T013.CASE.001",
+            "file": {
+              "path": "Tests/MonaCodeTests/Language/MonaProviderExecutorTests.swift",
+              "availability": "local"
+            },
+            "checker": "swift test --filter MonaProviderExecutorTests/testResolveCancelReleaseOrder",
+            "target": "Tests/MonaCodeTests/Language/MonaProviderExecutorTests.swift",
+            "testSymbol": "",
+            "fixtures": {
+              "kind": "inline",
+              "values": {}
+            },
+            "assertions": [
+              {
+                "id": "PROVIDER_EXECUTION_ORDER_MISMATCH fixture=resolve-cancel-release",
+                "operand": "equals"
+              }
+            ],
+            "redLeafID": "P05-T013.RED.001.PROC.001",
+            "greenLeafID": "P05-T013.GREEN.001.PROC.001",
+            "inheritedOutput": true,
+            "failureClass": "assertion",
+            "authoringOperation": "Tests/MonaCodeTests/Language/MonaProviderExecutorTests.swift",
+            "source": "baseline"
+          }
+        ]
+      },
+      "interfaces": {
+        "produces": [
+          {
+            "id": "MonaProviderExecutor",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/features-f1r5-native-type-semantics-closure.html",
+            "sourceArtifactHash": "0a988664e10743b5603ccfd2cf5a1a35bbf22c4ebbd860679127bddc2b911c82",
+            "sourceLocator": "/sections/interfaces/MonaProviderExecutor",
+            "contractRefs": [
+              "F1-R5.providerExecution",
+              "L2-R.providerOrdering",
+              "R1.asyncValidity"
+            ],
+            "declarationText": "// MonaProviderExecutor declaration authored by P05-T013",
+            "target": "MonaCode",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "provider:execution-model",
+              "runtime:microtask-queue"
+            ],
+            "sendable": true
+          },
+          {
+            "id": "MonaMicrotaskQueue",
+            "kind": "swift-declaration",
+            "sourceArtifactPath": "artifacts/features-f1r5-native-type-semantics-closure.html",
+            "sourceArtifactHash": "0a988664e10743b5603ccfd2cf5a1a35bbf22c4ebbd860679127bddc2b911c82",
+            "sourceLocator": "/sections/interfaces/MonaMicrotaskQueue",
+            "contractRefs": [
+              "F1-R5.providerExecution",
+              "L2-R.providerOrdering",
+              "R1.asyncValidity"
+            ],
+            "declarationText": "// MonaMicrotaskQueue declaration authored by P05-T013",
+            "target": "MonaCode",
+            "visibility": "public",
+            "availability": "local",
+            "actorIsolation": "none",
+            "ownership": [
+              "provider:execution-model",
+              "runtime:microtask-queue"
+            ],
+            "sendable": true
+          }
+        ]
+      },
+      "redScaffold": [
+        {
+          "sourcePath": "Sources/MonaCode/Language/MonaProviderExecutor.swift",
+          "marker": "G6_RED_SCAFFOLD:P05-T013:1ce44c97dc6cdfa3d9e35daa4cf8368f80d10e98fc6e7802a51eb010a699a5df",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        },
+        {
+          "sourcePath": "Sources/MonaCode/Runtime/MonaMicrotaskQueue.swift",
+          "marker": "G6_RED_SCAFFOLD:P05-T013:467bbfc6e5b8baf49bcaa42e008913eedc64e7421d1f3515c387f951275693aa",
+          "sentinelBehavior": "compile-fail",
+          "createOwner": "test-authoring",
+          "replacementOwner": "implementation"
+        }
+      ]
+    }
+  }
+}
