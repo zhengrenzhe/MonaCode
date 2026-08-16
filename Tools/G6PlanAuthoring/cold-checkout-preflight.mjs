@@ -507,6 +507,17 @@ function validatePayloadIndex(idx, blobs) {
 // Command execution.
 // ---------------------------------------------------------------------------
 
+// Normalize stdout to remove non-deterministic duration markers so that
+// `--repeat 2` determinism comparison is stable across runs.  The Node
+// `--test` default (spec) reporter appends per-test durations like
+// `(203.925917ms)` and a total `ℹ duration_ms 9518.149417` line; both vary
+// between runs even when test results are identical.
+function normalizeStdoutForHash(stdout) {
+  return stdout
+    .replace(/\([\d.]+ms\)/g, '')
+    .replace(/^.*duration_ms\s+[\d.]+.*$/gm, '');
+}
+
 function runCommand(name, cmd, args, opts = {}) {
   const r = spawnSync(cmd, args, {
     encoding: 'utf8',
@@ -519,13 +530,14 @@ function runCommand(name, cmd, args, opts = {}) {
   const stdout = r.stdout || '';
   const stderr = r.stderr || '';
   const exitCode = r.status;
+  const normalizedStdout = normalizeStdoutForHash(stdout);
 
   return {
     name,
     exitCode,
-    stdoutBytes: Buffer.byteLength(stdout, 'utf8'),
+    stdoutBytes: Buffer.byteLength(normalizedStdout, 'utf8'),
     stderrBytes: Buffer.byteLength(stderr, 'utf8'),
-    stdoutSha256: sha256(Buffer.from(stdout, 'utf8')),
+    stdoutSha256: sha256(Buffer.from(normalizedStdout, 'utf8')),
     stderrSha256: sha256(Buffer.from(stderr, 'utf8')),
     stdoutPreview: stdout.slice(0, 200),
   };
@@ -964,15 +976,17 @@ async function runRepeat(repoRoot, commit, outputPath) {
     process.exit(1);
   }
 
-  // Write the first run's result.
+  // Write the first run's result with repeat metadata.
   results[0].status = 'PASS';
+  results[0].repeats = 2;
+  results[0].deterministic = true;
   if (outputPath) {
     fs.mkdirSync(path.dirname(outputPath), { recursive: true });
     fs.writeFileSync(outputPath, canonicalJSONStringify(results[0]) + '\n');
   }
 
   const r = results[0];
-  const line = `COLD_CHECKOUT_PASS archiveRows=${r.archiveRows} present=${r.present} planned=${r.planned} commands=10 resourceCaps=${r.resourceCaps} findings=${r.findings} missingInputs=${r.missingInputs} interfaceErrors=${r.interfaceErrors} cleanup=${r.cleanup}`;
+  const line = `COLD_CHECKOUT_PASS archiveRows=${r.archiveRows} present=${r.present} planned=${r.planned} repeats=2 commandsPerRun=10 findings=${r.findings} deterministic=true cleanup=${r.cleanup}`;
   process.stdout.write(line + '\n');
   return r;
 }
