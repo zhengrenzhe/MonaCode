@@ -48,8 +48,24 @@ const COMMAND_FLAGS = {
   'verify-evidence': ['--task', '--path'],
 };
 
+// Optional flags: accepted by the parser but not required. --plan supplies the
+// assembled-plan authority path for audit commands (Task 28 cold-checkout
+// preflight). --candidate marks verify-archive as pre-adoption mode.
+const OPTIONAL_FLAGS = {
+  'verify-archive': ['--plan', '--candidate'],
+  'audit': ['--plan'],
+  'simulate': ['--plan'],
+  'render': ['--plan'],
+  'preflight --all': ['--plan'],
+  'interfaces compile': ['--plan'],
+};
+
+// Boolean flags carry no value (presence/absence is the value).
+const BOOLEAN_FLAGS = new Set(['--candidate']);
+
 const ALL_FLAGS = new Set();
 for (const flags of Object.values(COMMAND_FLAGS)) for (const f of flags) ALL_FLAGS.add(f);
+for (const flags of Object.values(OPTIONAL_FLAGS)) for (const f of flags) ALL_FLAGS.add(f);
 
 // ---------------------------------------------------------------------------
 // Argument parsing.
@@ -104,6 +120,8 @@ function parseArgv(argv) {
   // Parse --flag value pairs.
   const flags = {};
   const allowedFlags = COMMAND_FLAGS[command];
+  const optionalFlags = OPTIONAL_FLAGS[command] || [];
+  const acceptedFlags = new Set([...allowedFlags, ...optionalFlags]);
   for (let i = 0; i < rest.length; i++) {
     const tok = rest[i];
     if (!tok.startsWith('--') || tok.length <= 2) {
@@ -116,7 +134,7 @@ function parseArgv(argv) {
       if (rest[i + 1] && !rest[i + 1].startsWith('--')) i++;
       continue;
     }
-    if (!allowedFlags.includes(tok)) {
+    if (!acceptedFlags.has(tok)) {
       findings.push(dispatchFinding(`flag ${tok} is not valid for command ${command}`));
       if (rest[i + 1] && !rest[i + 1].startsWith('--')) i++;
       continue;
@@ -124,6 +142,10 @@ function parseArgv(argv) {
     if (tok in flags) {
       findings.push(dispatchFinding(`duplicate flag: ${tok}`));
       if (rest[i + 1] && !rest[i + 1].startsWith('--')) i++;
+      continue;
+    }
+    if (BOOLEAN_FLAGS.has(tok)) {
+      flags[tok] = true;
       continue;
     }
     const value = rest[i + 1];
@@ -219,11 +241,14 @@ function productionHandler(commandName) {
       const archiveRoot = path.dirname(path.dirname(planPath));
       const artifactDir = path.join(archiveRoot, 'artifacts');
       const contract = JSON.parse(fs.readFileSync(path.join(artifactDir, 'monacode-g6r-authoritative-manifest.json'), 'utf8'));
-      const idxPath = path.join(path.dirname(planPath), 'verification', 'payload-index.json');
+      const planDir = path.join(archiveRoot, 'implementation-plan');
+      const idxPath = path.join(planDir, 'verification', 'payload-index.json');
       const payloadIndex = fs.existsSync(idxPath) ? JSON.parse(fs.readFileSync(idxPath, 'utf8')) : null;
+      const completedThroughTask = (payloadIndex && Number.isInteger(payloadIndex.completedThroughTask))
+        ? payloadIndex.completedThroughTask : 26;
       const result = auditPlan({
         contract, plan, commands: plan.commands, interfaces: plan.interfaces,
-        archiveRoot, completedThroughTask: 26, payloadIndex,
+        archiveRoot, completedThroughTask, payloadIndex,
       });
       return {
         result: { status: result.status, findingCount: result.findingCount },
