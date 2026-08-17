@@ -38,7 +38,15 @@ let package = Package(
         .executableTarget(name: "sample-macOS-host", path: "Sources/MonaCodeSample"),
         .target(
             name: "conformance-and-failure-injection",
-            dependencies: ["MonaCode", "MonaCodeAppKit"],
+            // P04-T016: the Phase 04 closure suite exercises the SwiftUI
+            // lifecycle wrappers (P04-T015 `MonaCodeEditor` /
+            // `MonaSwiftUIEditorController`), so this target depends on
+            // MonaCodeSwiftUI alongside MonaCode + MonaCodeAppKit. Same
+            // controller ruling as P04-T015 (modify:none overridden by
+            // functional necessity; preserves products=3 / nonProductTargets=3;
+            // no cycle: MonaCodeSwiftUI already depends on MonaCodeAppKit +
+            // MonaCode, and this target is a non-product leaf).
+            dependencies: ["MonaCode", "MonaCodeAppKit", "MonaCodeSwiftUI"],
             path: "Tests/ConformanceAndFailureInjection"
         ),
         .target(name: "benchmark-harness", path: "Tests/BenchmarkHarness"),
