@@ -1,0 +1,49 @@
+{
+  "$schema": "monaco-provenance-v1",
+  "monacoVersion": "0.56.0",
+  "sourceCommit": "13f0c872dcf352815cc28d92dfff496c9839ea5c",
+  "description": "Pinned provenance metadata for the Monaco 0.56.0 M0 and M1 comparator oracles. The three archives are acquired at task-execution time (disposition=temporary) and are never committed; this record locks their URLs, SHA-256 digests, byte counts, and archive-entry counts so any downstream build or differential test can prove it consumed exactly these sources. The checker (verify-provenance.mjs) verifies this record is internally consistent under network=forbidden.",
+  "archives": [
+    {
+      "id": "monaco-editor-npm",
+      "label": "monaco-editor 0.56.0 npm archive (M0 comparator oracle)",
+      "url": "https://registry.npmjs.org/monaco-editor/-/monaco-editor-0.56.0.tgz",
+      "host": "registry.npmjs.org",
+      "disposition": "temporary",
+      "sha256": "b74bc4437205c194b779b0f21e5e7fcd3b4e9acbf3f7c8732a545d2059fb7412",
+      "bytes": 18276145,
+      "entries": 1909
+    },
+    {
+      "id": "monaco-editor-core-final-npm",
+      "label": "monaco-editor-core 0.56.0 npm archive (M1 comparator base)",
+      "url": "https://registry.npmjs.org/monaco-editor-core/-/monaco-editor-core-0.56.0.tgz",
+      "host": "registry.npmjs.org",
+      "disposition": "temporary",
+      "sha256": "78e222c77e7ef6402ea0bfb20e02caad7b63156f5d2798bc3c398a8bb396f4ed",
+      "bytes": 6853917,
+      "entries": 2112
+    },
+    {
+      "id": "monaco-source-tag",
+      "label": "monaco-editor source tag 13f0c872 (source commit identity)",
+      "url": "https://codeload.github.com/microsoft/monaco-editor/tar.gz/13f0c872dcf352815cc28d92dfff496c9839ea5c",
+      "host": "codeload.github.com",
+      "disposition": "temporary",
+      "sha256": "6f0cbd553b17588af4af5d38d151590b060914e3169043dcbb13e1de2938810a",
+      "bytes": 4148536,
+      "entries": 1293,
+      "regularFiles": 993,
+      "directories": 300
+    }
+  ],
+  "declarations": {
+    "monacoDts": {
+      "label": "package/monaco.d.ts TypeScript declarations from monaco-editor npm archive",
+      "archiveId": "monaco-editor-npm",
+      "path": "package/monaco.d.ts",
+      "sha256": "fbbab04ba04224a04b2bc3243e536d1af6e26d14eb00fe8b3177bf3daef8d3f2",
+      "bytes": 327877
+    }
+  }
+}
