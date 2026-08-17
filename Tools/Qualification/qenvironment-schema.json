@@ -1,0 +1,276 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://monacode.local/qualification/qenvironment-schema.json",
+  "title": "QEnvironmentID record",
+  "description": "Privacy-filtered qualification environment identity collected by Tools/Qualification/QEnvironmentCollector.swift. The record carries only non-identifying hardware classes, display geometry, locale, input-source identifiers, and toolchain or comparator provenance; serial, account, user, UUID and UDID values are rejected recursively by the collector before this record is emitted.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "status",
+    "qEnvironmentId",
+    "record",
+    "formalPreflight"
+  ],
+  "properties": {
+    "status": {
+      "type": "string",
+      "enum": [
+        "qualified",
+        "formal-preflight-rejected",
+        "privacy-violation",
+        "collection-error"
+      ]
+    },
+    "qEnvironmentId": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "SHA-256 over the canonical (sorted-key) JSON of the collected record, excluding the derived qEnvironmentId and formalPreflight fields."
+    },
+    "record": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "collectedAt",
+        "macOS",
+        "toolchain",
+        "architecture",
+        "hardwareClass",
+        "displays",
+        "inputSourceIDs",
+        "locale",
+        "runtimeLocale",
+        "chrome",
+        "externalDisplayCountRequired"
+      ],
+      "properties": {
+        "schemaVersion": { "type": "integer", "const": 1 },
+        "collectedAt": { "type": "string", "format": "date-time" },
+        "macOS": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["version", "build"],
+          "properties": {
+            "version": { "type": "string" },
+            "build": { "type": "string" }
+          }
+        },
+        "toolchain": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["xcode", "swift", "node", "macOSSDK"],
+          "properties": {
+            "xcode": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["version", "build"],
+              "properties": {
+                "version": { "type": "string" },
+                "build": { "type": "string" }
+              }
+            },
+            "swift": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["version"],
+              "properties": {
+                "version": { "type": "string" }
+              }
+            },
+            "node": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["version"],
+              "properties": {
+                "version": { "type": "string" }
+              }
+            },
+            "macOSSDK": { "type": "string" }
+          }
+        },
+        "architecture": { "type": "string" },
+        "hardwareClass": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "formFactor",
+            "modelClass",
+            "chipClass",
+            "memoryGiB",
+            "gpuCoreCount",
+            "metalVersion"
+          ],
+          "properties": {
+            "formFactor": { "type": "string" },
+            "modelClass": { "type": "string" },
+            "chipClass": { "type": "string" },
+            "memoryGiB": { "type": "integer", "minimum": 0 },
+            "gpuCoreCount": { "type": "integer", "minimum": 0 },
+            "metalVersion": { "type": "string" }
+          }
+        },
+        "displays": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["builtIn", "externalDisplayCount", "external"],
+          "properties": {
+            "builtIn": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/displaySlot" }
+            },
+            "externalDisplayCount": { "type": "integer", "minimum": 0 },
+            "external": {
+              "type": "array",
+              "items": { "$ref": "#/$defs/displaySlot" }
+            }
+          }
+        },
+        "inputSourceIDs": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "locale": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["appleLocale", "appleLanguages", "timeZone"],
+          "properties": {
+            "appleLocale": { "type": "string" },
+            "appleLanguages": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "timeZone": { "type": "string" }
+          }
+        },
+        "runtimeLocale": { "type": "string" },
+        "chrome": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "version",
+            "binarySha256",
+            "chromiumTagCommit",
+            "v8",
+            "icu",
+            "timeSource"
+          ],
+          "properties": {
+            "version": { "type": "string" },
+            "binarySha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+            "chromiumTagCommit": { "type": "string" },
+            "v8": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["version", "sourceCommit"],
+              "properties": {
+                "version": { "type": "string" },
+                "sourceCommit": { "type": "string" }
+              }
+            },
+            "icu": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["version", "sourceCommit", "dataSha256"],
+              "properties": {
+                "version": { "type": "string" },
+                "sourceCommit": { "type": "string" },
+                "dataSha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+              }
+            },
+            "timeSource": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["file", "sha256"],
+              "properties": {
+                "file": { "type": "string" },
+                "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+              }
+            }
+          }
+        },
+        "externalDisplayCountRequired": {
+          "type": "integer",
+          "const": 0,
+          "description": "Formal correctness and performance runs require externalDisplayCount equal to zero."
+        }
+      }
+    },
+    "formalPreflight": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required", "externalDisplayCount", "qualified", "privacy"],
+      "properties": {
+        "required": { "type": "integer", "const": 0 },
+        "externalDisplayCount": { "type": "integer", "minimum": 0 },
+        "qualified": { "type": "boolean" },
+        "privacy": { "type": "string", "enum": ["pass", "fail"] }
+      }
+    }
+  },
+  "$defs": {
+    "displaySlot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "label",
+        "connection",
+        "pixels",
+        "logicalPoints",
+        "backingScale",
+        "refreshHz"
+      ],
+      "properties": {
+        "label": { "type": "string" },
+        "connection": { "type": "string", "enum": ["built-in", "external"] },
+        "pixels": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["width", "height"],
+              "properties": {
+                "width": { "type": "integer", "minimum": 0 },
+                "height": { "type": "integer", "minimum": 0 }
+              }
+            }
+          ]
+        },
+        "logicalPoints": {
+          "oneOf": [
+            { "type": "null" },
+            {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["width", "height"],
+              "properties": {
+                "width": { "type": "integer", "minimum": 0 },
+                "height": { "type": "integer", "minimum": 0 }
+              }
+            }
+          ]
+        },
+        "backingScale": {
+          "oneOf": [
+            { "type": "null" },
+            { "type": "number", "minimum": 0 }
+          ]
+        },
+        "refreshHz": {
+          "oneOf": [
+            { "type": "null" },
+            { "type": "number", "minimum": 0 }
+          ]
+        }
+      }
+    }
+  },
+  "privacyPolicy": {
+    "forbiddenKeyPattern": "serial|uuid|udid|account|user",
+    "forbiddenValuePattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$",
+    "forbiddenValueClass": "UUID-shaped persistent identifiers",
+    "collectionRule": "Serialize only non-identifying hardware classes, display slots, locale, input-source identifiers, and toolchain or comparator provenance.",
+    "externalDisplayCountRequiredForFormalRuns": 0,
+    "enforcement": "The collector rejects any record containing a forbidden key or UUID-shaped value recursively before emitting a QEnvironmentID; a record with externalDisplayCount != 0 is emitted with status formal-preflight-rejected and qualified=false."
+  }
+}
