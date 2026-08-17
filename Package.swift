@@ -15,7 +15,13 @@ let package = Package(
         // --- Product library targets (referenced by products above) ---
         .target(name: "MonaCode", path: "Sources/MonaCode"),
         .target(name: "MonaCodeAppKit", path: "Sources/MonaCodeAppKit"),
-        .target(name: "MonaCodeSwiftUI", path: "Sources/MonaCodeSwiftUI"),
+        // P04-T015: MonaCodeSwiftUI wraps MonaCodeEditorView (P04-T014) and
+        // owns the model reference, so it depends on MonaCodeAppKit + MonaCode.
+        .target(
+            name: "MonaCodeSwiftUI",
+            dependencies: ["MonaCodeAppKit", "MonaCode"],
+            path: "Sources/MonaCodeSwiftUI"
+        ),
 
         // --- Non-product targets (not referenced by any product) ---
         // These three must be non-test targets so the package-graph checker
@@ -49,7 +55,9 @@ let package = Package(
         ),
         .testTarget(
             name: "MonaCodeAppKitTests",
-            dependencies: ["MonaCodeAppKit"],
+            // P04-T015: the SwiftUI lifecycle test `@testable import`s
+            // MonaCodeSwiftUI alongside MonaCodeAppKit.
+            dependencies: ["MonaCodeAppKit", "MonaCodeSwiftUI"],
             path: "Tests/MonaCodeAppKitTests"
         ),
     ]
