@@ -223,6 +223,19 @@ struct MonaWhenLexer {
                 }
                 if i < chars.count { i += 1 }
                 tokens.append(.string(s))
+            case "/":
+                // Regex literal: `/pattern/` (the form Monaco's when-clauses use
+                // on the RHS of `=~`). The pattern is scanned verbatim between
+                // the delimiters so regex metacharacters (`\s`, `\b`, `^`, …)
+                // are preserved for `NSRegularExpression`.
+                i += 1
+                var s = ""
+                while i < chars.count, chars[i] != "/" {
+                    s.append(chars[i])
+                    i += 1
+                }
+                if i < chars.count { i += 1 }
+                tokens.append(.string(s))
             default:
                 if c.isLetter || c.isNumber || c == "_" || c == "." {
                     var s = ""
