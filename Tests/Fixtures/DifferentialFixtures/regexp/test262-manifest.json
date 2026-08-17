@@ -1,0 +1,289 @@
+{
+  "manifestVersion": "1.0",
+  "source": "Test262-pinned",
+  "description": "Pinned Test262 inclusion/exclusion manifest exercising the ten MonaCode RegExp consumer profiles at T-1, T, and T+1 bounds. Each case is bound to a profile by profileID and carries the frozen RegExp occurrence (pattern + flags) inline; the binding is verified by MonaRegExpConsumerProfileTests.",
+  "profileIDs": [
+    "find-literal",
+    "navigation-next-match",
+    "replace-capture",
+    "word-boundary",
+    "transform-case",
+    "filter-prefix",
+    "configuration-wordpattern",
+    "validation-email",
+    "tokenization-number",
+    "highlight-bracket"
+  ],
+  "cases": [
+    {
+      "id": "find-literal-T",
+      "profileID": "find-literal",
+      "pattern": "hello",
+      "flags": "",
+      "input": "hello world",
+      "expectMatch": true,
+      "bound": "T"
+    },
+    {
+      "id": "find-literal-T-plus-1",
+      "profileID": "find-literal",
+      "pattern": "hello",
+      "flags": "",
+      "input": "say hello",
+      "expectMatch": true,
+      "bound": "T+1"
+    },
+    {
+      "id": "find-literal-T-minus-1",
+      "profileID": "find-literal",
+      "pattern": "hello",
+      "flags": "",
+      "input": "hell world",
+      "expectMatch": false,
+      "bound": "T-1"
+    },
+    {
+      "id": "navigation-next-match-T",
+      "profileID": "navigation-next-match",
+      "pattern": "\\bcat\\b",
+      "flags": "g",
+      "input": "cat",
+      "expectMatch": true,
+      "bound": "T"
+    },
+    {
+      "id": "navigation-next-match-T-plus-1",
+      "profileID": "navigation-next-match",
+      "pattern": "\\bcat\\b",
+      "flags": "g",
+      "input": "the cat sat",
+      "expectMatch": true,
+      "bound": "T+1"
+    },
+    {
+      "id": "navigation-next-match-T-minus-1",
+      "profileID": "navigation-next-match",
+      "pattern": "\\bcat\\b",
+      "flags": "g",
+      "input": "category",
+      "expectMatch": false,
+      "bound": "T-1"
+    },
+    {
+      "id": "replace-capture-T",
+      "profileID": "replace-capture",
+      "pattern": "(\\w+)@(\\w+)",
+      "flags": "",
+      "input": "user@host",
+      "expectMatch": true,
+      "bound": "T"
+    },
+    {
+      "id": "replace-capture-T-plus-1",
+      "profileID": "replace-capture",
+      "pattern": "(\\w+)@(\\w+)",
+      "flags": "",
+      "input": "  user@host",
+      "expectMatch": true,
+      "bound": "T+1"
+    },
+    {
+      "id": "replace-capture-T-minus-1",
+      "profileID": "replace-capture",
+      "pattern": "(\\w+)@(\\w+)",
+      "flags": "",
+      "input": "userhost",
+      "expectMatch": false,
+      "bound": "T-1"
+    },
+    {
+      "id": "word-boundary-T",
+      "profileID": "word-boundary",
+      "pattern": "\\bword\\b",
+      "flags": "",
+      "input": "a word here",
+      "expectMatch": true,
+      "bound": "T"
+    },
+    {
+      "id": "word-boundary-T-plus-1",
+      "profileID": "word-boundary",
+      "pattern": "\\bword\\b",
+      "flags": "",
+      "input": "  word",
+      "expectMatch": true,
+      "bound": "T+1"
+    },
+    {
+      "id": "word-boundary-T-minus-1",
+      "profileID": "word-boundary",
+      "pattern": "\\bword\\b",
+      "flags": "",
+      "input": "password",
+      "expectMatch": false,
+      "bound": "T-1"
+    },
+    {
+      "id": "transform-case-T",
+      "profileID": "transform-case",
+      "pattern": "[A-Z][a-z]+",
+      "flags": "g",
+      "input": "Hello",
+      "expectMatch": true,
+      "bound": "T"
+    },
+    {
+      "id": "transform-case-T-plus-1",
+      "profileID": "transform-case",
+      "pattern": "[A-Z][a-z]+",
+      "flags": "g",
+      "input": "say Hello World",
+      "expectMatch": true,
+      "bound": "T+1"
+    },
+    {
+      "id": "transform-case-T-minus-1",
+      "profileID": "transform-case",
+      "pattern": "[A-Z][a-z]+",
+      "flags": "g",
+      "input": "hello",
+      "expectMatch": false,
+      "bound": "T-1"
+    },
+    {
+      "id": "filter-prefix-T",
+      "profileID": "filter-prefix",
+      "pattern": "^prefix",
+      "flags": "m",
+      "input": "prefix line",
+      "expectMatch": true,
+      "bound": "T"
+    },
+    {
+      "id": "filter-prefix-T-plus-1",
+      "profileID": "filter-prefix",
+      "pattern": "^prefix",
+      "flags": "m",
+      "input": "x\nprefix",
+      "expectMatch": true,
+      "bound": "T+1"
+    },
+    {
+      "id": "filter-prefix-T-minus-1",
+      "profileID": "filter-prefix",
+      "pattern": "^prefix",
+      "flags": "m",
+      "input": "noprefix",
+      "expectMatch": false,
+      "bound": "T-1"
+    },
+    {
+      "id": "configuration-wordpattern-T",
+      "profileID": "configuration-wordpattern",
+      "pattern": "[a-zA-Z_][a-zA-Z0-9_]*",
+      "flags": "",
+      "input": "var_name",
+      "expectMatch": true,
+      "bound": "T"
+    },
+    {
+      "id": "configuration-wordpattern-T-plus-1",
+      "profileID": "configuration-wordpattern",
+      "pattern": "[a-zA-Z_][a-zA-Z0-9_]*",
+      "flags": "",
+      "input": "  count2",
+      "expectMatch": true,
+      "bound": "T+1"
+    },
+    {
+      "id": "configuration-wordpattern-T-minus-1",
+      "profileID": "configuration-wordpattern",
+      "pattern": "[a-zA-Z_][a-zA-Z0-9_]*",
+      "flags": "",
+      "input": "123",
+      "expectMatch": false,
+      "bound": "T-1"
+    },
+    {
+      "id": "validation-email-T",
+      "profileID": "validation-email",
+      "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+      "flags": "",
+      "input": "a@b.c",
+      "expectMatch": true,
+      "bound": "T"
+    },
+    {
+      "id": "validation-email-T-plus-1",
+      "profileID": "validation-email",
+      "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+      "flags": "",
+      "input": "user@host.com",
+      "expectMatch": true,
+      "bound": "T+1"
+    },
+    {
+      "id": "validation-email-T-minus-1",
+      "profileID": "validation-email",
+      "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$",
+      "flags": "",
+      "input": "user@host",
+      "expectMatch": false,
+      "bound": "T-1"
+    },
+    {
+      "id": "tokenization-number-T",
+      "profileID": "tokenization-number",
+      "pattern": "\\d+(\\.\\d+)?",
+      "flags": "g",
+      "input": "42",
+      "expectMatch": true,
+      "bound": "T"
+    },
+    {
+      "id": "tokenization-number-T-plus-1",
+      "profileID": "tokenization-number",
+      "pattern": "\\d+(\\.\\d+)?",
+      "flags": "g",
+      "input": "v 3.14",
+      "expectMatch": true,
+      "bound": "T+1"
+    },
+    {
+      "id": "tokenization-number-T-minus-1",
+      "profileID": "tokenization-number",
+      "pattern": "\\d+(\\.\\d+)?",
+      "flags": "g",
+      "input": "abc",
+      "expectMatch": false,
+      "bound": "T-1"
+    },
+    {
+      "id": "highlight-bracket-T",
+      "profileID": "highlight-bracket",
+      "pattern": "[(){}\\[\\]]",
+      "flags": "g",
+      "input": "()",
+      "expectMatch": true,
+      "bound": "T"
+    },
+    {
+      "id": "highlight-bracket-T-plus-1",
+      "profileID": "highlight-bracket",
+      "pattern": "[(){}\\[\\]]",
+      "flags": "g",
+      "input": "x [y]",
+      "expectMatch": true,
+      "bound": "T+1"
+    },
+    {
+      "id": "highlight-bracket-T-minus-1",
+      "profileID": "highlight-bracket",
+      "pattern": "[(){}\\[\\]]",
+      "flags": "g",
+      "input": "abc",
+      "expectMatch": false,
+      "bound": "T-1"
+    }
+  ]
+}
