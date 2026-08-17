@@ -1,0 +1,98 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://monacode/differential-fixture.schema.json",
+  "title": "MonaCode differential fixture",
+  "description": "A single differential case for the MonaCode differential harness (P00-T008). M0 (npm monaco-editor@0.56.0), M1 (built comparator), and the native MonaCode subject run against ONE identical injected environment trace. Raw UTF-16 inputs and outputs are persisted as arrays of 16-bit code units (0-65535) so that unpaired surrogates survive WITHOUT Unicode repair. Every fixture distinguishes the exact and native-adapted comparison domains.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "input", "expected", "environmentTrace"],
+  "properties": {
+    "id": {
+      "description": "Stable fixture identifier. Must match ^[A-Za-z0-9._-]+$ and be unique within a fixtures directory.",
+      "type": "string",
+      "pattern": "^[A-Za-z0-9._-]+$"
+    },
+    "input": {
+      "description": "Raw UTF-16 input as a sequence of 16-bit code units. Persisted without Unicode repair, so unpaired surrogates (e.g. 55296 for 0xD800) are representable.",
+      "type": "array",
+      "items": { "type": "integer", "minimum": 0, "maximum": 65535 }
+    },
+    "expected": {
+      "description": "The expected outputs per comparison domain. `exact` is byte-for-byte equality with the M0/M1 oracle. `nativeAdapted` is the documented native divergence permitted for the MonaCode subject.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["exact", "nativeAdapted"],
+      "properties": {
+        "exact": {
+          "type": "array",
+          "items": { "type": "integer", "minimum": 0, "maximum": 65535 }
+        },
+        "nativeAdapted": {
+          "type": "array",
+          "items": { "type": "integer", "minimum": 0, "maximum": 65535 }
+        }
+      }
+    },
+    "environmentTrace": {
+      "description": "The single identical injected environment trace shared by M0, M1, and the native subject. Carries every injected domain established in P00-T005/T006/T007: wall and high-resolution clocks, the shared random sequence, the crypto bytes, the runtime locale/calendar/numbering/time zone, and the explicit UI message profile.",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "wallMilliseconds",
+        "highResolutionMilliseconds",
+        "randomDoubles",
+        "cryptoBytes",
+        "localeIdentifier",
+        "calendarIdentifier",
+        "numberingSystem",
+        "timeZoneIdentifier",
+        "profileIdentifier"
+      ],
+      "properties": {
+        "wallMilliseconds": {
+          "description": "Wall-clock milliseconds since 1970-01-01T00:00:00Z (P00-T005 wall domain).",
+          "type": "number"
+        },
+        "highResolutionMilliseconds": {
+          "description": "Monotonic high-resolution milliseconds (P00-T005 high-resolution domain). Separate from, and never substituted for, wall-clock.",
+          "type": "number"
+        },
+        "randomDoubles": {
+          "description": "The shared deterministic random sequence (P00-T006). Each value is a binary64 Double in [0, 1).",
+          "type": "array",
+          "items": { "type": "number" }
+        },
+        "cryptoBytes": {
+          "description": "The shared cryptographic random bytes (P00-T006).",
+          "type": "array",
+          "items": { "type": "integer", "minimum": 0, "maximum": 255 }
+        },
+        "localeIdentifier": {
+          "description": "Runtime locale identifier captured at startup (P00-T007).",
+          "type": "string",
+          "minLength": 1
+        },
+        "calendarIdentifier": {
+          "description": "Runtime calendar identifier captured at startup (P00-T007).",
+          "type": "string",
+          "minLength": 1
+        },
+        "numberingSystem": {
+          "description": "Runtime numbering-system identifier captured at startup (P00-T007).",
+          "type": "string",
+          "minLength": 1
+        },
+        "timeZoneIdentifier": {
+          "description": "Runtime time-zone identifier captured at startup (P00-T007).",
+          "type": "string",
+          "minLength": 1
+        },
+        "profileIdentifier": {
+          "description": "The explicit UI message-profile identifier (P00-T007). Selected only from the explicit environment option; never derived from the locale.",
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}
