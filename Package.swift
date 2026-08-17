@@ -32,7 +32,7 @@ let package = Package(
         .executableTarget(name: "sample-macOS-host", path: "Sources/MonaCodeSample"),
         .target(
             name: "conformance-and-failure-injection",
-            dependencies: ["MonaCode"],
+            dependencies: ["MonaCode", "MonaCodeAppKit"],
             path: "Tests/ConformanceAndFailureInjection"
         ),
         .target(name: "benchmark-harness", path: "Tests/BenchmarkHarness"),
