@@ -14,7 +14,19 @@ let package = Package(
     targets: [
         // --- Product library targets (referenced by products above) ---
         .target(name: "MonaCode", path: "Sources/MonaCode"),
-        .target(name: "MonaCodeAppKit", path: "Sources/MonaCodeAppKit"),
+        // P05-T100 fix-forward: `MonaCodeAppKit` sources `import MonaCode`
+        // (e.g. `MonaAXAnnouncementBridge`), so the target must declare the
+        // dependency. Without it a fresh `swift build` after `swift package
+        // clean` races past the MonaCode module and fails with
+        // "no such module 'MonaCode'" in AppKit. This is a latent shared-
+        // mechanism (build-graph) defect, fixed minimally + tested (clean
+        // build) + recorded here. It does not change products/nonProductTargets
+        // counts (products=3, nonProductTargets=3, fixtureTargets=0).
+        .target(
+            name: "MonaCodeAppKit",
+            dependencies: ["MonaCode"],
+            path: "Sources/MonaCodeAppKit"
+        ),
         // P04-T015: MonaCodeSwiftUI wraps MonaCodeEditorView (P04-T014) and
         // owns the model reference, so it depends on MonaCodeAppKit + MonaCode.
         .target(
