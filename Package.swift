@@ -21,6 +21,14 @@ let package = Package(
         // These three must be non-test targets so the package-graph checker
         // counts them as nonProductTargets (test targets are a separate
         // SwiftPM category and excluded from that count).
+        //
+        // P00-T012 structural integration: `benchmark-harness` is intentionally
+        // a non-test `.target` (not `.testTarget`) so the package-graph
+        // invariant holds (products=3, nonProductTargets=3, fixtureTargets=0).
+        // Its XCTest sources compile as part of the module but are not
+        // discovered by `swift test --filter`; Phase 00 verifies their STRUCTURE
+        // (file existence + clean build) via the Node integration gate, not
+        // empirical execution. The output state is `structurally verified`.
         .executableTarget(name: "sample-macOS-host", path: "Sources/MonaCodeSample"),
         .target(name: "conformance-and-failure-injection", path: "Tests/ConformanceAndFailureInjection"),
         .target(name: "benchmark-harness", path: "Tests/BenchmarkHarness"),
