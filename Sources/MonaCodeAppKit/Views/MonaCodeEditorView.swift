@@ -117,6 +117,19 @@ public final class MonaCodeEditorView: NSView {
     /// notification text surface.
     internal private(set) var announcementBridge: MonaAXAnnouncementBridge!
 
+    // MARK: - Editor identity
+    //
+    // The editor id — the Swift counterpart of monaco's `editor.getId()`. It is
+    // a stable, unique string assigned once at construction (in each init,
+    // before `commonInit()`) so the `MonaEditorFactory` (P05-T012) can
+    // register, retrieve, and dispose editors by id (`getEditors` /
+    // `retrieve(id:)`). P05-T012 fix-forward: the factory's `retrieve(id:)`
+    // contract requires editors to carry a public id; this is the minimal
+    // addition that unblocks it.
+
+    /// The stable, unique editor id (assigned once at construction).
+    public let id: String
+
     // MARK: - The attachment helper (enforces the lifetime invariants)
 
     /// The attachment helper that attaches/detaches a model to this view. Owns
@@ -188,12 +201,17 @@ public final class MonaCodeEditorView: NSView {
 
     /// Creates the editor view with `frame`.
     public override init(frame: NSRect) {
+        // Assign the stable editor id (monaco `getId()` counterpart) before
+        // `commonInit()` — `id` is a `let`, so it must be assigned in the init
+        // body itself, not in the helper.
+        id = "monacode:editor:" + UUID().uuidString
         super.init(frame: frame)
         commonInit()
     }
 
     /// Creates the editor view from a decoder (Interface Builder / state restore).
     public required init?(coder: NSCoder) {
+        id = "monacode:editor:" + UUID().uuidString
         super.init(coder: coder)
         commonInit()
     }
