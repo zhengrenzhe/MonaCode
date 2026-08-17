@@ -23,9 +23,9 @@
 //   3. Marker ranges (lowest) — always added, except where they strictly
 //      overlap a manual or already-added base range.
 //
-// The feature is a Foundation-only surface (`import Foundation`, `import
-// MonaCode`). It performs the three implementation operations every retained
-// feature performs:
+// The feature is a Foundation-only surface (`import Foundation` only — the
+// folding types live in the MonaCode module). It performs the three
+// implementation operations every retained feature performs:
 //
 //   1. Feature-specific behavior — `combineRanges` / `collapse` / `expand` /
 //      `toggleFold` / `foldedRangesProjection`: combine the four sources with
@@ -42,7 +42,6 @@
 //      (degraded plain text). No parallel mechanisms are introduced.
 
 import Foundation
-import MonaCode
 
 /// The source of a folding range.
 public enum MonaFoldingRangeSource: String, Equatable, Hashable, Sendable {
