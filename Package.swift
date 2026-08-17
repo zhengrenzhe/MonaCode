@@ -30,14 +30,18 @@ let package = Package(
         // (file existence + clean build) via the Node integration gate, not
         // empirical execution. The output state is `structurally verified`.
         .executableTarget(name: "sample-macOS-host", path: "Sources/MonaCodeSample"),
-        .target(name: "conformance-and-failure-injection", path: "Tests/ConformanceAndFailureInjection"),
+        .target(
+            name: "conformance-and-failure-injection",
+            dependencies: ["MonaCode"],
+            path: "Tests/ConformanceAndFailureInjection"
+        ),
         .target(name: "benchmark-harness", path: "Tests/BenchmarkHarness"),
 
         // --- Product test targets (SwiftPM test targets; excluded from
         // nonProductTargets because isTestTarget is true) ---
         .testTarget(
             name: "MonaCodeTests",
-            dependencies: ["MonaCode"],
+            dependencies: ["MonaCode", "conformance-and-failure-injection"],
             path: "Tests/MonaCodeTests",
             resources: [
                 .copy("Fixtures/DifferentialFixtures"),
