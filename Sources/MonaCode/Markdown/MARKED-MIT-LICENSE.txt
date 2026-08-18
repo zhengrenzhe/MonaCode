@@ -1,0 +1,85 @@
+The MIT License (MIT)
+
+Copyright (c) 2011-2024, MarkedJS (Christopher Jeffrey)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+Marked 14.0.0 — pinned source provenance (MD1-R contract baseline)
+  file:    esm/vs/base/common/marked/marked.js
+  sha256:  75746ae6ff08f4e9b94090ed018e5ac1bf7dbb7e8fcdb4ec48784bd6569d9fda
+  version: 14.0.0
+  defaults: async=false, breaks=false, gfm=true, pedantic=false, silent=false,
+            extensions=null, hooks=null, tokenizer=null, walkTokens=null,
+            renderer=null
+
+MonaCode modification record (deviations from the upstream Marked 14.0.0
+synchronous GFM tokenizer, recorded per the MD1-R license contract):
+
+  This directory ports the pinned Marked 14.0.0 synchronous GFM default
+  grammar subset into Swift (MonaMarkdownParser.swift). The port produces an
+  immutable semantic tree (MonaMarkdownAST) instead of an HTML string, and
+  applies the native sanitizer before presentation (MonaMarkdownPresentation).
+
+  1. Output model. The port emits typed semantic nodes, never an HTML
+     string. No HTML serialization, DOM, WebView, DOMPurify, or Trusted Types
+     type becomes production truth. DOMPurify 3.4.8 remains an oracle-only
+     comparator component and is absent from production.
+
+  2. Raw HTML. Raw HTML tokens (block and inline) are captured as `rawHtml`
+     AST nodes and then rejected by the native sanitizer before presentation.
+     This is Monaco's supportHtml=false default behavior; the `supportHtml`
+     member is cut from the Swift public API entirely. The trusted single-span
+     exception (span open/close whose class/style passes the exact Monaco
+     predicates) is retained only for admitted trusted spans and maps to native
+     attributes — it never creates arbitrary elements.
+
+  3. Media / images. Markdown image syntax contributes its parsed alt text only.
+     The src URI is parsed and immediately discarded; it never appears in
+     presentation output and is never fetched. Media loading/playback (image,
+     audio, video, source) is an explicit feature cut — no data/file/http/
+     host byte is ever read.
+
+  4. Command links. Command-URI links survive only when trusted: isTrusted=true
+     (fully trusted) or the command id is on the enabledCommands allowlist
+     (selected commands). Untrusted command links are dropped from the tree at
+     build time. The always-dropped command target
+     `command:_workbench.downloadResource` is rejected unconditionally. Trusted
+     command activation is routed through the component command registry then
+     the host command fallback — never through implicit navigation, NSWorkspace,
+     filesystem, or URLSession.
+
+  5. Link schemes. Non-command activation is inert until user gesture and host
+     opener handling. The admitted untrusted schemes (http, https, mailto,
+     file, vscode-file, vscode-remote, vscode-remote-resource,
+     vscode-notebook-cell, private) produce ordinary links. The always-dropped
+     schemes (data, javascript) are rejected. Unknown schemes are rejected
+     (conservative default).
+
+  6. Grammar scope. Only the GFM grammar subset required for text, code
+     (fenced and inline), lists (ordered/unordered/nested/task), tables,
+     headings, blockquotes, thematic breaks, links, theme icons, and trusted
+     command metadata is ported. Pedantic mode, async mode, extensions, hooks,
+     custom tokenizers, walkTokens, and the full raw-HTML/browser-tag
+     allowlist are absent (the pinned defaults).
+
+  7. Value cap. The raw value is capped at 100000 UTF-16 code units; the
+     100001st unit onward is replaced by the truncation suffix "…" (matching
+     Monaco's baseMarkdownRenderer valueLimit).
