@@ -1,0 +1,1094 @@
+{
+  "counts": {
+    "activeNormalizationCaches": 2,
+    "collationProfiles": 5,
+    "cutTreeSitterHighResolutionStopWatchSites": 2,
+    "dateNowOccurrences": 90,
+    "defaultCaseOccurrences": 138,
+    "directGlobalIdentifiers": 84,
+    "directGlobalReferences": 8221,
+    "ecmascriptIntrinsicIdentifiers": 41,
+    "ecmascriptIntrinsicReferences": 7523,
+    "finiteIntrinsicProfiles": 12,
+    "importEdges": 6275,
+    "inputLatencyPerformanceCalls": 25,
+    "localeCaseOccurrences": 16,
+    "localeCompareOccurrences": 11,
+    "mathRandomOccurrences": 8,
+    "microtaskOccurrences": 11,
+    "newDateOccurrences": 14,
+    "normalizationOccurrences": 1,
+    "platformIdentifiers": 43,
+    "platformReferences": 698,
+    "reachableJavaScriptFiles": 956,
+    "reachableStyleResources": 98,
+    "retainedHighResolutionStopWatchSites": 13,
+    "retainedWallClockStopWatchSites": 6,
+    "stopWatchConstructionSites": 21,
+    "timerOccurrences": 94,
+    "totalImportedFiles": 1054
+  },
+  "finiteIntrinsicProfiles": [
+    {
+      "name": "Array",
+      "referenceCount": 250
+    },
+    {
+      "name": "Object",
+      "referenceCount": 638
+    },
+    {
+      "name": "Reflect",
+      "referenceCount": 618
+    },
+    {
+      "name": "Map",
+      "referenceCount": 230
+    },
+    {
+      "name": "Set",
+      "referenceCount": 176
+    },
+    {
+      "name": "Promise",
+      "referenceCount": 192
+    },
+    {
+      "name": "Math",
+      "referenceCount": 1099
+    },
+    {
+      "name": "Number",
+      "referenceCount": 107
+    },
+    {
+      "name": "String",
+      "referenceCount": 131
+    },
+    {
+      "name": "JSON",
+      "referenceCount": 73
+    },
+    {
+      "name": "RegExp",
+      "referenceCount": 74
+    },
+    {
+      "name": "Symbol",
+      "referenceCount": 39
+    }
+  ],
+  "frozenApiClosure": {
+    "frozenAt": "P07-T011",
+    "path": "/Users/bytedance/Documents/ChatGPT/MonaCode/docs/contracts/monaco-editor-0.56.0/g6-r/artifacts/monacode-p07-t011-public-api-closure-manifest.json",
+    "sourceCount": 251,
+    "sourceSetDigest": "152c63ffc32ce2a632ff2a2caa2d3ee25063a1150c6f51bb44d5405aa30a1f36"
+  },
+  "frozenBaselines": {
+    "e1r": {
+      "closureSha256": "920e102184648cd1a08d589944708ceb62b4f3f6c091b4b100378f989709637b",
+      "path": "/Users/bytedance/Documents/ChatGPT/MonaCode/docs/contracts/monaco-editor-0.56.0/g6-r/artifacts/parent/g5-r/artifacts/monacode-e1r-environment-intl-clock-entropy-manifest.json",
+      "revision": "E1-R-environment-intl-clock-entropy-closure",
+      "sha256": "ecc1e42b7061baf4ade5bd3fd5e3c1c2ee89d46f96b3aafc4c94dba5edb78dc9"
+    },
+    "x1r": {
+      "closureSha256": "32bebccbf932e1baab6bb9ebd386715295625792198ae378566d0bc11ca2a3a9",
+      "path": "/Users/bytedance/Documents/ChatGPT/MonaCode/docs/contracts/monaco-editor-0.56.0/g6-r/artifacts/parent/g5-r/artifacts/monacode-x1r-source-runtime-style-manifest.json",
+      "revision": "X1-R-source-runtime-style-closure",
+      "sha256": "516c91d905532e9c54e2b3691e74024c81f5887203e6b1cb9184e2c981aaa280"
+    }
+  },
+  "generatedInputs": {
+    "chromeTimeSource": {
+      "file": "base/time/time_apple.mm",
+      "sha256": "0015cb2fa5ee082bb61f07e24c150d161b08a7148143914d43c58f4850c68134",
+      "timeTicks": "mach_absolute_time converted to integer microseconds"
+    },
+    "chromeVersion": "151.0.7922.109",
+    "chromiumTagCommit": "28a7a6c409e03c701d3474ef9e3b1f0be6249039",
+    "coreTarSha256": "78e222c77e7ef6402ea0bfb20e02caad7b63156f5d2798bc3c398a8bb396f4ed",
+    "e1rSourceFiles": [
+      {
+        "file": "esm/vs/base/common/platform.js",
+        "sha256": "21bb096d6321015dacb27a22e907cf0e4123f538bd192647714043a75848c9ab"
+      },
+      {
+        "file": "esm/vs/nls.js",
+        "sha256": "3b10738753e95a8561148d23f8a2deca339ad18b3d65ab6373118b79b7ed8e59"
+      },
+      {
+        "file": "esm/vs/base/common/comparers.js",
+        "sha256": "d6f63e720cddab0c7bc8e8077e18ccfb7788eb0b6800bef17f54b9f084dfc037"
+      },
+      {
+        "file": "esm/vs/base/common/date.js",
+        "sha256": "dc0fd046fa24138bd2384aab1b303a7a020c377f9adbb39b5fcdc6321fca87dd"
+      },
+      {
+        "file": "esm/vs/editor/contrib/linesOperations/browser/linesOperations.js",
+        "sha256": "75849ad78c4a739727b94a57e90372e02f48147ae898e4f8dcb813226ff5c440"
+      },
+      {
+        "file": "esm/vs/editor/contrib/linesOperations/browser/sortLinesCommand.js",
+        "sha256": "3ba57922d887c5a2230975d92e343a6f880ccf990c3475c59827bcaf022f2c47"
+      },
+      {
+        "file": "esm/vs/editor/contrib/unicodeHighlighter/browser/unicodeHighlighter.js",
+        "sha256": "1902958f93972f6c23ad41a4ba99202dbb401f0d6879f3eb407c7d8de52634d2"
+      },
+      {
+        "file": "esm/vs/base/common/normalization.js",
+        "sha256": "d5fef8ac7ad4c1f2ced7938ce51011e2c24f266763f39872c55d13486f56e381"
+      },
+      {
+        "file": "esm/vs/base/common/map.js",
+        "sha256": "9d52a310d0e5394fa6fa5dd7957add9111a495643eaf7c69803a75949137decc"
+      },
+      {
+        "file": "esm/vs/base/common/arrays.js",
+        "sha256": "8285463b9357a71385f92ee73e8db0c0f67df8d781780c6dd01c155e45fe26a2"
+      },
+      {
+        "file": "esm/vs/base/browser/ui/animations/animations.js",
+        "sha256": "4af490f05f096a5ad2e34399473341188b61d87b7121a8da75a8f792199a5491"
+      },
+      {
+        "file": "esm/vs/editor/contrib/suggest/browser/suggestController.js",
+        "sha256": "8b0d6ab70a366fea19c10d3eb0dbe4cd1bdec6acf8f903c0fe92b2c3e5d4fdbd"
+      },
+      {
+        "file": "esm/vs/editor/contrib/suggest/browser/suggestModel.js",
+        "sha256": "bac6b7fd9fd4eed9fda0a34ad8f8f1e6a4fbb9db924fccb6cf36a91bdab080dc"
+      },
+      {
+        "file": "esm/vs/base/common/async.js",
+        "sha256": "7da94c0ece5e1c20e78d7284277c3e85d5c68cf0164a9061b8d46c19c7511d55"
+      },
+      {
+        "file": "esm/vs/base/common/event.js",
+        "sha256": "75abb13ffb04b10267ea8358f4d7181fb1dc43065a03aadbe9d59e2c49c6b56f"
+      },
+      {
+        "file": "esm/vs/base/browser/dom.js",
+        "sha256": "030a408afb6bc698197bfe2711d21916b57c6ec67b882d9e4f6312d5e9f7a872"
+      },
+      {
+        "file": "esm/vs/base/common/network.js",
+        "sha256": "5f1c7c6fe9e6d18bff7263237b92af0788b4c443389669c900d47b5b8cd71163"
+      },
+      {
+        "file": "esm/vs/base/common/stopwatch.js",
+        "sha256": "7df79844ab1f2f63920e0bab096d87e1ae65a6916ce658f4bb939d481d52d5cb"
+      },
+      {
+        "file": "esm/vs/base/browser/performance.js",
+        "sha256": "3536bcefd6d828732c658e4af84a0a9646b87d16005ade958f0ca41f5fbf441f"
+      }
+    ],
+    "ecma402": "ECMA-402 12th edition, June 2025",
+    "ecmascript": "ECMA-262 16th edition, June 2025",
+    "entry": {
+      "file": "esm/vs/editor/editor.main.js",
+      "sha256": "2b9a37b9c886162a724ac98dac24455a2bafb7e445dca37a1315f4afde14bad2"
+    },
+    "icuLicenseSha256": "e55522d81edc687a341a4411e0776e54ca654e90147f354a90458aaced4116af",
+    "icuReadmeSha256": "37bf2933cb60d27fbf6d813238fa799dd0b8bf86558b572b6b0750a982b72bf8",
+    "icuSubmoduleCommit": "d578f2e8b7bd5938e21cfb6bf15c079e0aa5b738",
+    "icuVersion": "78.2",
+    "localIcuDataBytes": 10876560,
+    "localIcuDataSha256": "9f48c7f9c7c94d516a14870707e910ab94d75ae640ff6842c4af53276cd26ebe",
+    "unicode": "Unicode 17.0.0",
+    "unicodeInputs": [
+      {
+        "bytes": 2198209,
+        "file": "UnicodeData.txt",
+        "sha256": "2e1efc1dcb59c575eedf5ccae60f95229f706ee6d031835247d843c11d96470c"
+      },
+      {
+        "bytes": 17049,
+        "file": "SpecialCasing.txt",
+        "sha256": "efc25faf19de21b92c1194c111c932e03d2a5eaf18194e33f1156e96de4c9588"
+      },
+      {
+        "bytes": 87539,
+        "file": "CaseFolding.txt",
+        "sha256": "ff8d8fefbf123574205085d6714c36149eb946d717a0c585c27f0f4ef58c4183"
+      },
+      {
+        "bytes": 2827429,
+        "file": "NormalizationTest.txt",
+        "sha256": "5019ffd530751a741900c849c0e010332f142a3612234639bd200b82138a87db"
+      },
+      {
+        "bytes": 1995,
+        "file": "license.txt",
+        "sha256": "e7a93b009565cfce55919a381437ac4db883e9da2126fa28b91d12732bc53d96"
+      }
+    ],
+    "x1rChromiumClock": {
+      "file": "base/time/time_apple.mm",
+      "sha256": "0015cb2fa5ee082bb61f07e24c150d161b08a7148143914d43c58f4850c68134",
+      "tag": "refs/tags/151.0.7922.109",
+      "tagCommit": "28a7a6c409e03c701d3474ef9e3b1f0be6249039",
+      "timeTicks": "mach_absolute_time converted to integer microseconds"
+    },
+    "x1rPackageInventory": {
+      "extensionlessLicenseFiles": 1,
+      "fileSetSha256": "a33511c8772d626e9244777c3fe1cd6c9858f7da57400b39995cc0ea0e539d31",
+      "files": 2112,
+      "fontFiles": 1,
+      "javascriptFileSetSha256": "21175ce9c5c7f2dc19e7355742139bf145d6e8b024f2b07dda2a455591969f02",
+      "javascriptFiles": 1008,
+      "jsonFiles": 4,
+      "markdownFiles": 1,
+      "nlsJavaScriptFileSetSha256": "181406e49d13fa99f848846ae09c0e6a6c379bb5c5921b8feaa0ad5b4381070e",
+      "nlsJavaScriptTables": 14,
+      "otherBinaryRuntimeAssets": 0,
+      "publicDeclarationFiles": 2,
+      "rule": "The 14 nls.messages JavaScript tables are N1-owned generated localization authority inputs, not executable product modules. The two public declaration files are F1-owned. Source maps, package metadata, README, version and notice files are oracle/provenance inputs and do not enter the signed native runtime. Codicon TTF is the sole non-source runtime asset in the fixed core package; the package contains no WASM file.",
+      "sourceMaps": 992,
+      "styleFiles": 101,
+      "textFiles": 2,
+      "vsJavaScriptFileSetSha256": "16b8cf052ef6c7e36f8a51cc2435da238fe7f5a326a4ff3485aae10c636c877a",
+      "vsJavaScriptFiles": 994
+    },
+    "x1rSourceFiles": [
+      {
+        "file": "esm/vs/base/common/stopwatch.js",
+        "sha256": "7df79844ab1f2f63920e0bab096d87e1ae65a6916ce658f4bb939d481d52d5cb"
+      },
+      {
+        "file": "esm/vs/base/browser/performance.js",
+        "sha256": "3536bcefd6d828732c658e4af84a0a9646b87d16005ade958f0ca41f5fbf441f"
+      },
+      {
+        "file": "esm/vs/base/common/hash.js",
+        "sha256": "cb4c3dc17fd975d9d51d9523fc6291ec55fabf975af7e4c73c7ce0a7c3896c07"
+      },
+      {
+        "file": "esm/vs/base/common/buffer.js",
+        "sha256": "2a0d552fd97a46052d2bce664c5edf71d6768057ca8e2f2394d8b567382a36c5"
+      },
+      {
+        "file": "esm/vs/editor/common/core/stringBuilder.js",
+        "sha256": "4c20000d26b6437a5f76d2bad4473d0fa221b2c285651814cb8f7e0a2d2fb587"
+      },
+      {
+        "file": "esm/vs/editor/common/languages/supports/richEditBrackets.js",
+        "sha256": "2a0be69d038b9616df589a901b19cb440d173a11e3cd2ac52b500db66fd762e2"
+      }
+    ],
+    "x1rSyntaxScan": {
+      "externalStaticImports": 0,
+      "importEdges": 6275,
+      "parser": "Acorn 8.18.0",
+      "reachableJavaScriptFiles": 956,
+      "reachableJavaScriptSetSha256": "0dd3fb5c14287788b9d5e4ebc2b990005adf6761abc5c4d9903e790c24dcf8fb",
+      "reachableStyleResourceSetSha256": "0b63cc441918733ded80464c17b3fbde1a5ded5b9136ea371dca93a403887c74",
+      "reachableStyleResources": 98,
+      "runtime": "Bun 1.3.14",
+      "scopeAnalyzer": "eslint-scope 9.1.2",
+      "totalImportedFiles": 1054
+    },
+    "x1rV8": {
+      "gitlinkCommit": "20ad8d002c17ccc7ccfbefc6c4dcf1242fe80921",
+      "ieee754File": "src/base/ieee754.cc",
+      "ieee754Sha256": "998f6f44757e62a5774fca533101145942f362c8739a247c12a37caf9fbea53f",
+      "use": "behavioral provenance for Chrome binary64 transcendental outputs only; no V8 runtime or source is linked into MonaCode"
+    }
+  },
+  "generatedOutputs": {
+    "caseTablesSha256": "0bd79b99924bdd3007eb56292a7d5ec607647843d047bf8fdfa96beb0d3077a8",
+    "collationTablesSha256": "a9f67e02323d0fa079d1a73a461f65466e54d03c4ad0ff622fc9e2a2abc5a491",
+    "generatorHash": "8ae1eef67ad61ce0b322d4e0502ad53aa555567e6f443dc75cf62624ec909be7",
+    "sourceVersion": "Unicode-16.0.0/ICU-78.2"
+  },
+  "identity": {
+    "baseline": "monaco-editor@0.56.0",
+    "final": true,
+    "finalReason": "The E1-R environment-intl-clock-entropy source contract and the X1-R source-runtime-style contract are frozen; the Phase 07 public API closure (P07-T011) is frozen; the regenerated clock, entropy, number-formatting, locale, calendar, numbering, time-zone, case, collation, normalization, and finite-intrinsic occurrence rows are set-equal to E1-R + X1-R plus the generated input and output hashes with zero drift; every environment-sensitive consumer appears and the notice input (LICENSE.md) is complete. This is the FINAL MonaEnvironmentManifest.",
+    "frozen": true,
+    "product": "MonaCode",
+    "revision": "P08-T012-final-environment-manifest"
+  },
+  "noticeInput": {
+    "licensePath": "/Users/bytedance/Documents/ChatGPT/MonaCode/Sources/MonaCode/Generated/LICENSE.md",
+    "licenseSha256": "374a5d176e807b424855a471c18342f18d3c5e9ebdffb6ec951221cabe424e56",
+    "notices": [
+      {
+        "label": "MonacoCode (MIT)",
+        "presentInLicense": true,
+        "profileKey": "monacoCode",
+        "profilePresent": true
+      },
+      {
+        "label": "Monaco localization (MIT)",
+        "presentInLicense": true,
+        "profileKey": "monacoLocalization",
+        "profilePresent": true
+      },
+      {
+        "label": "Marked (MIT)",
+        "presentInLicense": true,
+        "profileKey": "marked",
+        "profilePresent": true
+      },
+      {
+        "label": "LSP specification (CC BY 4.0)",
+        "presentInLicense": true,
+        "profileKey": "lspSpecification",
+        "profilePresent": true
+      },
+      {
+        "label": "Codicon artwork (CC BY 4.0)",
+        "presentInLicense": true,
+        "profileKey": "codiconArtworkAndFont",
+        "profilePresent": true
+      },
+      {
+        "label": "Codicon generator + code (MIT)",
+        "presentInLicense": true,
+        "profileKey": "codiconGeneratorAndCode",
+        "profilePresent": true
+      },
+      {
+        "label": "esbuild comparator (MIT)",
+        "presentInLicense": true,
+        "profileKey": "comparatorBuildTools",
+        "profilePresent": true
+      },
+      {
+        "label": "DOMPurify (oracle-only)",
+        "presentInLicense": true,
+        "profileKey": "domPurify",
+        "profilePresent": true
+      },
+      {
+        "label": "Unicode tables (Unicode-3.0)",
+        "presentInLicense": true,
+        "profileKey": "unicodeTables",
+        "profilePresent": true
+      },
+      {
+        "label": "Chromium ICU data",
+        "presentInLicense": true,
+        "profileKey": "chromiumIcuData",
+        "profilePresent": true
+      },
+      {
+        "label": "Test262 (BSD)",
+        "presentInLicense": true,
+        "profileKey": "test262",
+        "profilePresent": true
+      },
+      {
+        "label": "V8 / ICU runtime (oracle-only)",
+        "presentInLicense": true,
+        "profileKey": "v8AndIcu",
+        "profilePresent": true
+      },
+      {
+        "label": "vscode-unicode-data (excluded)",
+        "presentInLicense": true,
+        "profileKey": "vscodeUnicodeData",
+        "profilePresent": true
+      }
+    ],
+    "present": true
+  },
+  "occurrenceRows": [
+    {
+      "category": "clock",
+      "disposition": "retained",
+      "files": 39,
+      "identity": "dateNow",
+      "nativeSymbol": "MonaWallClock",
+      "occurrences": 90,
+      "source": "Date.now maps to an injected signed integer Unix-epoch millisecond wall clock. Production uses CLOCK_REALTIME semantics already fixed by M1-R3; it is never replaced by a monotonic clock.",
+      "sourceContract": "E1-R"
+    },
+    {
+      "category": "clock",
+      "disposition": "retained",
+      "files": 8,
+      "identity": "newDate",
+      "nativeSymbol": "MonaWallClock",
+      "occurrences": 14,
+      "source": "new Date maps to a value created from the same injected wall clock. Snippet calendar fields use the Gregorian calendar and the resolver's captured system time-zone snapshot.",
+      "sourceContract": "E1-R"
+    },
+    {
+      "category": "clock",
+      "cutTreeSitterHighResolution": 2,
+      "disposition": "retained + cut-tree-sitter",
+      "identity": "stopWatchConstructionSites",
+      "nativeSymbol": "MonaHighResolutionClock",
+      "occurrences": 21,
+      "retainedHighResolution": 13,
+      "retainedWallClock": 6,
+      "source": "The fixed graph has 21 StopWatch construction sites: 13 retained sites use MonaHighResolutionClock, six retained sites pass false and use the wall clock, and two high-resolution Tree-sitter sites are cut. Elapsed values retain their source roles in debounce adaptation, timeout decisions, diagnostics and measurement records. The 13 retained high-resolution StopWatch sites and the input-latency recorder use an injected mach_absolute_time-domain clock. Production converts the Mach timebase to binary64 milliseconds; system sleep is excluded exactly as in Chromium 151 TimeTicks on macOS.",
+      "sourceContract": "E1-R + X1-R"
+    },
+    {
+      "category": "clock",
+      "clearMarks": 8,
+      "clearMeasures": 4,
+      "disposition": "retained",
+      "files": 1,
+      "getEntriesByName": 1,
+      "identity": "inputLatencyPerformanceApi",
+      "mark": 8,
+      "measure": 4,
+      "nativeSymbol": "MonaHighResolutionClock",
+      "occurrences": 25,
+      "source": "The retained input-latency recorder implements eight marks, four measures, one duration read, eight mark clears and four measure clears over MonaHighResolutionClock; keydown, beforeinput, input, render, keyup and selection-change ordering is retained.",
+      "sourceContract": "E1-R + X1-R"
+    },
+    {
+      "category": "clock",
+      "disposition": "cut-tree-sitter",
+      "files": 1,
+      "identity": "directPerformanceNow",
+      "nativeSymbol": "UNAVAILABLE",
+      "occurrences": 4,
+      "source": "The four direct performance.now calls belong to the cut Tree-sitter path and have no native implementation.",
+      "sourceContract": "E1-R"
+    },
+    {
+      "category": "clock",
+      "disposition": "retained",
+      "freeClearTimeout": 25,
+      "freeSetTimeout": 63,
+      "identity": "timerCalls",
+      "memberClearInterval": 1,
+      "memberClearTimeout": 1,
+      "memberSetInterval": 1,
+      "memberSetTimeout": 3,
+      "nativeSymbol": "MonaScheduler",
+      "occurrences": 94,
+      "source": "All retained setTimeout, clearTimeout, setInterval and clearInterval sites use one cancellable MainActor scheduler with the exact source delay and source reschedule rule; deterministic fixtures inject the clock and drain order.",
+      "sourceContract": "E1-R"
+    },
+    {
+      "category": "clock",
+      "disposition": "retained (V1-R4)",
+      "files": 3,
+      "identity": "directAnimationFrameCalls",
+      "nativeSymbol": "MonaDisplayFrameScheduler",
+      "occurrences": 4,
+      "source": "V1-R4 owns display-frame scheduling, priority order and cancellation. Native callbacks use the qualified display's actual cadence and the same immutable view generation gate.",
+      "sourceContract": "E1-R"
+    },
+    {
+      "category": "clock",
+      "disposition": "retained",
+      "files": 2,
+      "identity": "idleCallbackCalls",
+      "nativeSymbol": "MonaIdleQueue",
+      "occurrences": 4,
+      "source": "Code-editor contribution construction and CodeLens old-key removal use a cancellable low-priority MainActor idle queue. Fixtures inject idle grants and assert source order; editor disposal cancels outstanding work.",
+      "sourceContract": "E1-R"
+    },
+    {
+      "category": "clock",
+      "disposition": "retained",
+      "files": 5,
+      "identity": "queueMicrotask",
+      "nativeSymbol": "MonaMicrotaskQueue",
+      "occurrences": 11,
+      "source": "All eleven queueMicrotask sites use the repository MainActor microtask queue and preserve FIFO order after the current synchronous stack.",
+      "sourceContract": "E1-R"
+    },
+    {
+      "category": "entropy",
+      "disposition": "retained",
+      "files": 5,
+      "identity": "mathRandom",
+      "nativeSymbol": "MonaRandomDoubleSource",
+      "occurrences": 8,
+      "source": "Each production draw returns one binary64 value x with 0 <= x < 1. The product does not promise the same seed or sequence as V8.",
+      "sourceContract": "E1-R"
+    },
+    {
+      "category": "entropy",
+      "disposition": "retained",
+      "identity": "cryptoRandomUUID",
+      "nativeSymbol": "MonaCryptoRandomSource",
+      "occurrences": 1,
+      "source": "Use system cryptographic random bytes, force RFC 4122 version-4 and variant bits, and emit the canonical lowercase 8-4-4-4-12 form. Conformance injects all 16 bytes.",
+      "sourceContract": "E1-R"
+    },
+    {
+      "category": "entropy",
+      "disposition": "retained",
+      "identity": "snippetVectors",
+      "nativeSymbol": "MonaRandomDoubleSource",
+      "occurrences": 4,
+      "snippetVectors": [
+        {
+          "double": "0.123456789",
+          "output": "456789",
+          "variable": "RANDOM"
+        },
+        {
+          "double": "0.5",
+          "output": "0.8",
+          "variable": "RANDOM_HEX"
+        },
+        {
+          "double": "0.9999999999999999",
+          "output": "999999",
+          "variable": "RANDOM"
+        },
+        {
+          "double": "0.00000123456789",
+          "output": "15e19b",
+          "variable": "RANDOM_HEX"
+        }
+      ],
+      "source": "A repository-owned ECMA-262 Number::toString implementation for radix 10 and 16 produces the raw source string; snippet RANDOM and RANDOM_HEX then take the final six UTF-16 code units exactly as the pinned source does.",
+      "sourceContract": "E1-R"
+    },
+    {
+      "category": "number-formatting",
+      "disposition": "retained",
+      "identity": "numberToString",
+      "nativeSymbol": "MonaNumberToString",
+      "occurrences": 1,
+      "source": "A repository-owned ECMA-262 Number::toString implementation for radix 10 and 16 produces the raw source string; snippet RANDOM and RANDOM_HEX then take the final six UTF-16 code units exactly as the pinned source does.",
+      "sourceContract": "E1-R"
+    },
+    {
+      "category": "number-formatting",
+      "disposition": "inactive-intl",
+      "identity": "intlNumberFormat",
+      "nativeSymbol": "UNAVAILABLE",
+      "occurrences": 0,
+      "source": "The active Unicode-highlighter call only resolves the default OS locale and is replaced by MonaRuntimeLocale; no number formatting runtime ships.",
+      "sourceContract": "E1-R"
+    },
+    {
+      "category": "locale",
+      "chromeResolved": "zh-CN",
+      "disposition": "retained",
+      "identity": "runtimeLocale",
+      "nativeSymbol": "MonaRuntimeLocale",
+      "occurrences": 1,
+      "qualifiedValue": "zh_CN",
+      "source": "MonaRuntimeLocale is a separate immutable process-start snapshot used only where the fixed source asks JavaScript or Intl for the default runtime locale. On the current qualified run it is zh-CN.",
+      "sourceContract": "E1-R"
+    },
+    {
+      "category": "locale",
+      "disposition": "retained",
+      "files": 2,
+      "identity": "toLocaleUpperCase",
+      "nativeSymbol": "MonaLocaleCaseConversion",
+      "occurrences": 6,
+      "source": "Repository-owned Swift algorithms implement the Chrome 151 observable ECMA-402 locale-sensitive conversion using MonaRuntimeLocale and generated immutable Chromium-ICU data. Foundation case conversion is not a semantic oracle.",
+      "sourceContract": "E1-R"
+    },
+    {
+      "category": "locale",
+      "disposition": "retained",
+      "files": 3,
+      "identity": "toLocaleLowerCase",
+      "nativeSymbol": "MonaLocaleCaseConversion",
+      "occurrences": 10,
+      "source": "Repository-owned Swift algorithms implement the Chrome 151 observable ECMA-402 locale-sensitive conversion using MonaRuntimeLocale and generated immutable Chromium-ICU data. Foundation case conversion is not a semantic oracle.",
+      "sourceContract": "E1-R"
+    },
+    {
+      "category": "calendar",
+      "disposition": "retained",
+      "identity": "runtimeCalendar",
+      "nativeSymbol": "MonaRuntimeCalendar",
+      "occurrences": 1,
+      "qualifiedValue": "gregory",
+      "source": "new Date maps to a value created from the same injected wall clock. Snippet calendar fields use the Gregorian calendar and the resolver's captured system time-zone snapshot.",
+      "sourceContract": "E1-R"
+    },
+    {
+      "category": "numbering",
+      "disposition": "retained",
+      "identity": "runtimeNumberingSystem",
+      "nativeSymbol": "MonaRuntimeNumberingSystem",
+      "occurrences": 1,
+      "qualifiedValue": "latn",
+      "source": "All operations accept and return raw UTF-16. Valid scalar subsequences are transformed according to the pinned tables; isolated high and low surrogates are copied unchanged; no implicit normalization occurs.",
+      "sourceContract": "E1-R"
+    },
+    {
+      "category": "time-zone",
+      "chromeResolved": "Asia/Shanghai",
+      "disposition": "retained",
+      "identity": "runtimeTimeZone",
+      "nativeSymbol": "MonaRuntimeTimeZone",
+      "occurrences": 1,
+      "qualifiedValue": "Asia/Shanghai",
+      "source": "Date.now maps to an injected signed integer Unix-epoch millisecond wall clock. Production uses CLOCK_REALTIME semantics already fixed by M1-R3; it is never replaced by a monotonic clock.",
+      "sourceContract": "E1-R"
+    },
+    {
+      "category": "case",
+      "disposition": "retained",
+      "files": 10,
+      "identity": "toUpperCase",
+      "nativeSymbol": "MonaDefaultCaseConversion",
+      "occurrences": 15,
+      "source": "Repository-owned Swift algorithms implement the Chrome 151 observable ECMA-262 default upper/lower conversion over the pinned Unicode data.",
+      "sourceContract": "E1-R"
+    },
+    {
+      "category": "case",
+      "disposition": "retained",
+      "files": 48,
+      "identity": "toLowerCase",
+      "nativeSymbol": "MonaDefaultCaseConversion",
+      "occurrences": 123,
+      "source": "Repository-owned Swift algorithms implement the Chrome 151 observable ECMA-262 default upper/lower conversion over the pinned Unicode data.",
+      "sourceContract": "E1-R"
+    },
+    {
+      "category": "case",
+      "disposition": "retained",
+      "identity": "caseActionFamilies",
+      "lineOperations": [
+        "uppercase",
+        "lowercase",
+        "titlecase",
+        "snakecase",
+        "camelcase",
+        "pascalcase",
+        "kebabcase"
+      ],
+      "nativeSymbol": "MonaCaseActionFamily",
+      "occurrences": 14,
+      "snippetFormats": [
+        "upcase",
+        "downcase",
+        "capitalize",
+        "pascalcase",
+        "camelcase",
+        "kebabcase",
+        "snakecase"
+      ],
+      "source": "Each family ports its own pinned source algorithm; equal names do not authorize sharing a different algorithm.",
+      "sourceContract": "E1-R"
+    },
+    {
+      "category": "collation",
+      "disposition": "retained",
+      "files": 8,
+      "identity": "localeCompare",
+      "nativeSymbol": "MonaLocaleCompare",
+      "occurrences": 11,
+      "source": "Generated immutable tables are derived from the exact Chrome 151 Chromium-ICU commit and local icudtl.dat hash for every locale supported by that baseline. The current release gate qualifies zh-CN; the product table set is not reduced to zh-CN.",
+      "sourceContract": "E1-R"
+    },
+    {
+      "category": "collation",
+      "disposition": "retained",
+      "files": 0,
+      "identity": "collationProfile:file-name-base-numeric",
+      "nativeSymbol": "MonaCollator",
+      "occurrences": 0,
+      "options": {
+        "numeric": true,
+        "sensitivity": "base"
+      },
+      "source": "Generated immutable tables are derived from the exact Chrome 151 Chromium-ICU commit and local icudtl.dat hash for every locale supported by that baseline. The current release gate qualifies zh-CN; the product table set is not reduced to zh-CN.",
+      "sourceContract": "E1-R",
+      "stable": false,
+      "tieBreak": "When collation returns zero and strings differ, raw JavaScript relational ordering breaks the tie."
+    },
+    {
+      "category": "collation",
+      "disposition": "retained",
+      "files": 0,
+      "identity": "collationProfile:file-name-numeric",
+      "nativeSymbol": "MonaCollator",
+      "occurrences": 0,
+      "options": {
+        "numeric": true
+      },
+      "source": "Generated immutable tables are derived from the exact Chrome 151 Chromium-ICU commit and local icudtl.dat hash for every locale supported by that baseline. The current release gate qualifies zh-CN; the product table set is not reduced to zh-CN.",
+      "sourceContract": "E1-R",
+      "stable": false,
+      "tieBreak": undefined
+    },
+    {
+      "category": "collation",
+      "disposition": "retained",
+      "files": 0,
+      "identity": "collationProfile:file-name-accent-numeric",
+      "nativeSymbol": "MonaCollator",
+      "occurrences": 0,
+      "options": {
+        "numeric": true,
+        "sensitivity": "accent"
+      },
+      "source": "Generated immutable tables are derived from the exact Chrome 151 Chromium-ICU commit and local icudtl.dat hash for every locale supported by that baseline. The current release gate qualifies zh-CN; the product table set is not reduced to zh-CN.",
+      "sourceContract": "E1-R",
+      "stable": false,
+      "tieBreak": undefined
+    },
+    {
+      "category": "collation",
+      "disposition": "retained",
+      "files": 0,
+      "identity": "collationProfile:sort-lines-default",
+      "nativeSymbol": "MonaCollator",
+      "occurrences": 0,
+      "options": {},
+      "source": "Generated immutable tables are derived from the exact Chrome 151 Chromium-ICU commit and local icudtl.dat hash for every locale supported by that baseline. The current release gate qualifies zh-CN; the product table set is not reduced to zh-CN.",
+      "sourceContract": "E1-R",
+      "stable": true,
+      "tieBreak": undefined
+    },
+    {
+      "category": "collation",
+      "disposition": "retained",
+      "files": 8,
+      "identity": "collationProfile:string-locale-compare-default",
+      "nativeSymbol": "MonaCollator",
+      "occurrences": 11,
+      "options": {},
+      "source": "Generated immutable tables are derived from the exact Chrome 151 Chromium-ICU commit and local icudtl.dat hash for every locale supported by that baseline. The current release gate qualifies zh-CN; the product table set is not reduced to zh-CN.",
+      "sourceContract": "E1-R",
+      "stable": false,
+      "tieBreak": undefined
+    },
+    {
+      "category": "normalization",
+      "disposition": "retained",
+      "files": 1,
+      "identity": "unicodeNormalize",
+      "nativeSymbol": "MonaNormalization",
+      "occurrences": 1,
+      "source": {
+        "baseCache": {
+          "capacity": 10000,
+          "type": "LRU"
+        },
+        "fastPath": "Empty strings and strings containing only U+0000 through U+0080 return without normalization.",
+        "form": "NFD only",
+        "nfcCache": "Baseline-inert allocation; absent in native code.",
+        "nfdCache": {
+          "capacity": 10000,
+          "type": "LRU"
+        },
+        "tryNormalizeToBase": "Apply NFD, remove only U+0300 through U+036F, accept the deaccented value only when raw UTF-16 length is unchanged, then apply locale-insensitive lowercase."
+      },
+      "sourceContract": "E1-R"
+    },
+    {
+      "cache": {
+        "capacity": 10000,
+        "type": "LRU"
+      },
+      "category": "normalization",
+      "disposition": "retained",
+      "identity": "nfdCache",
+      "nativeSymbol": "MonaNormalization",
+      "occurrences": 1,
+      "source": "Empty strings and strings containing only U+0000 through U+0080 return without normalization.",
+      "sourceContract": "E1-R"
+    },
+    {
+      "cache": {
+        "capacity": 10000,
+        "type": "LRU"
+      },
+      "category": "normalization",
+      "disposition": "retained",
+      "identity": "baseCache",
+      "nativeSymbol": "MonaNormalization",
+      "occurrences": 1,
+      "source": "Apply NFD, remove only U+0300 through U+036F, accept the deaccented value only when raw UTF-16 length is unchanged, then apply locale-insensitive lowercase.",
+      "sourceContract": "E1-R"
+    },
+    {
+      "category": "finite-intrinsic",
+      "disposition": "retained",
+      "identity": "intrinsic:Array",
+      "nativeSymbol": "MonaIntrinsic:Array",
+      "occurrences": 250,
+      "source": "MonaCode does not implement or expose a general JavaScript runtime. It implements the finite operation profiles exercised by retained source rows, with Chrome 151 as the observable oracle; cut, native-adapted and emitted-build rows do not create generic intrinsic APIs.",
+      "sourceContract": "X1-R"
+    },
+    {
+      "category": "finite-intrinsic",
+      "disposition": "retained",
+      "identity": "intrinsic:Object",
+      "nativeSymbol": "MonaIntrinsic:Object",
+      "occurrences": 638,
+      "source": "MonaCode does not implement or expose a general JavaScript runtime. It implements the finite operation profiles exercised by retained source rows, with Chrome 151 as the observable oracle; cut, native-adapted and emitted-build rows do not create generic intrinsic APIs.",
+      "sourceContract": "X1-R"
+    },
+    {
+      "category": "finite-intrinsic",
+      "disposition": "retained",
+      "identity": "intrinsic:Reflect",
+      "nativeSymbol": "MonaIntrinsic:Reflect",
+      "occurrences": 618,
+      "source": "MonaCode does not implement or expose a general JavaScript runtime. It implements the finite operation profiles exercised by retained source rows, with Chrome 151 as the observable oracle; cut, native-adapted and emitted-build rows do not create generic intrinsic APIs.",
+      "sourceContract": "X1-R"
+    },
+    {
+      "category": "finite-intrinsic",
+      "disposition": "retained",
+      "identity": "intrinsic:Map",
+      "nativeSymbol": "MonaIntrinsic:Map",
+      "occurrences": 230,
+      "source": "MonaCode does not implement or expose a general JavaScript runtime. It implements the finite operation profiles exercised by retained source rows, with Chrome 151 as the observable oracle; cut, native-adapted and emitted-build rows do not create generic intrinsic APIs.",
+      "sourceContract": "X1-R"
+    },
+    {
+      "category": "finite-intrinsic",
+      "disposition": "retained",
+      "identity": "intrinsic:Set",
+      "nativeSymbol": "MonaIntrinsic:Set",
+      "occurrences": 176,
+      "source": "MonaCode does not implement or expose a general JavaScript runtime. It implements the finite operation profiles exercised by retained source rows, with Chrome 151 as the observable oracle; cut, native-adapted and emitted-build rows do not create generic intrinsic APIs.",
+      "sourceContract": "X1-R"
+    },
+    {
+      "category": "finite-intrinsic",
+      "disposition": "retained",
+      "identity": "intrinsic:Promise",
+      "nativeSymbol": "MonaIntrinsic:Promise",
+      "occurrences": 192,
+      "source": "MonaCode does not implement or expose a general JavaScript runtime. It implements the finite operation profiles exercised by retained source rows, with Chrome 151 as the observable oracle; cut, native-adapted and emitted-build rows do not create generic intrinsic APIs.",
+      "sourceContract": "X1-R"
+    },
+    {
+      "category": "finite-intrinsic",
+      "disposition": "retained",
+      "identity": "intrinsic:Math",
+      "nativeSymbol": "MonaIntrinsic:Math",
+      "occurrences": 1099,
+      "source": "MonaCode does not implement or expose a general JavaScript runtime. It implements the finite operation profiles exercised by retained source rows, with Chrome 151 as the observable oracle; cut, native-adapted and emitted-build rows do not create generic intrinsic APIs.",
+      "sourceContract": "X1-R"
+    },
+    {
+      "category": "finite-intrinsic",
+      "disposition": "retained",
+      "identity": "intrinsic:Number",
+      "nativeSymbol": "MonaIntrinsic:Number",
+      "occurrences": 107,
+      "source": "MonaCode does not implement or expose a general JavaScript runtime. It implements the finite operation profiles exercised by retained source rows, with Chrome 151 as the observable oracle; cut, native-adapted and emitted-build rows do not create generic intrinsic APIs.",
+      "sourceContract": "X1-R"
+    },
+    {
+      "category": "finite-intrinsic",
+      "disposition": "retained",
+      "identity": "intrinsic:String",
+      "nativeSymbol": "MonaIntrinsic:String",
+      "occurrences": 131,
+      "source": "MonaCode does not implement or expose a general JavaScript runtime. It implements the finite operation profiles exercised by retained source rows, with Chrome 151 as the observable oracle; cut, native-adapted and emitted-build rows do not create generic intrinsic APIs.",
+      "sourceContract": "X1-R"
+    },
+    {
+      "category": "finite-intrinsic",
+      "disposition": "retained",
+      "identity": "intrinsic:JSON",
+      "nativeSymbol": "MonaIntrinsic:JSON",
+      "occurrences": 73,
+      "source": "MonaCode does not implement or expose a general JavaScript runtime. It implements the finite operation profiles exercised by retained source rows, with Chrome 151 as the observable oracle; cut, native-adapted and emitted-build rows do not create generic intrinsic APIs.",
+      "sourceContract": "X1-R"
+    },
+    {
+      "category": "finite-intrinsic",
+      "disposition": "retained",
+      "identity": "intrinsic:RegExp",
+      "nativeSymbol": "MonaIntrinsic:RegExp",
+      "occurrences": 74,
+      "source": "MonaCode does not implement or expose a general JavaScript runtime. It implements the finite operation profiles exercised by retained source rows, with Chrome 151 as the observable oracle; cut, native-adapted and emitted-build rows do not create generic intrinsic APIs.",
+      "sourceContract": "X1-R"
+    },
+    {
+      "category": "finite-intrinsic",
+      "disposition": "retained",
+      "identity": "intrinsic:Symbol",
+      "nativeSymbol": "MonaIntrinsic:Symbol",
+      "occurrences": 39,
+      "source": "MonaCode does not implement or expose a general JavaScript runtime. It implements the finite operation profiles exercised by retained source rows, with Chrome 151 as the observable oracle; cut, native-adapted and emitted-build rows do not create generic intrinsic APIs.",
+      "sourceContract": "X1-R"
+    },
+    {
+      "category": "finite-intrinsic",
+      "disposition": "retained",
+      "identity": "ecmascriptIntrinsicIdentifiers",
+      "names": [
+        "AggregateError",
+        "Array",
+        "ArrayBuffer",
+        "BigInt",
+        "Boolean",
+        "DataView",
+        "Date",
+        "decodeURIComponent",
+        "encodeURI",
+        "encodeURIComponent",
+        "Error",
+        "Float32Array",
+        "Function",
+        "Infinity",
+        "Int32Array",
+        "Intl",
+        "isFinite",
+        "isNaN",
+        "JSON",
+        "Map",
+        "Math",
+        "NaN",
+        "Number",
+        "Object",
+        "parseFloat",
+        "parseInt",
+        "Promise",
+        "Proxy",
+        "Reflect",
+        "RegExp",
+        "Set",
+        "String",
+        "Symbol",
+        "TypeError",
+        "Uint16Array",
+        "Uint32Array",
+        "Uint8Array",
+        "Uint8ClampedArray",
+        "undefined",
+        "WeakMap",
+        "WeakRef"
+      ],
+      "nativeSymbol": "MonaIntrinsicSet",
+      "occurrences": 41,
+      "references": 7523,
+      "source": "MonaCode does not implement or expose a general JavaScript runtime. It implements the finite operation profiles exercised by retained source rows, with Chrome 151 as the observable oracle; cut, native-adapted and emitted-build rows do not create generic intrinsic APIs.",
+      "sourceContract": "X1-R"
+    },
+    {
+      "category": "finite-intrinsic",
+      "disposition": "retained + cut",
+      "identity": "platformIdentifiers",
+      "names": [
+        "Animation",
+        "Blob",
+        "Buffer",
+        "CSS",
+        "CSSImportRule",
+        "CSSStyleRule",
+        "ClipboardItem",
+        "DOMRect",
+        "Element",
+        "GPUBufferUsage",
+        "GPUTextureUsage",
+        "HTMLAnchorElement",
+        "HTMLElement",
+        "IntersectionObserver",
+        "KeyboardEvent",
+        "MouseEvent",
+        "MutationObserver",
+        "Node",
+        "OffscreenCanvas",
+        "ResizeObserver",
+        "SVGElement",
+        "ShadowRoot",
+        "TextDecoder",
+        "TextEncoder",
+        "UIEvent",
+        "URL",
+        "URLSearchParams",
+        "Window",
+        "Worker",
+        "clearTimeout",
+        "console",
+        "crypto",
+        "customElements",
+        "document",
+        "globalThis",
+        "importScripts",
+        "navigator",
+        "performance",
+        "process",
+        "queueMicrotask",
+        "self",
+        "setTimeout",
+        "window"
+      ],
+      "nativeSymbol": "MonaPlatformEffectSet",
+      "occurrences": 43,
+      "references": 698,
+      "source": "document, window, DOM classes, customElements, Animation, observers and event constructors map only to the already frozen AppKit, Core Text, Core Graphics, I3, I4 and A2 state machines. DOM and CSS APIs do not ship.",
+      "sourceContract": "X1-R"
+    }
+  ],
+  "schemaVersion": 1,
+  "semanticConsumers": {
+    "allConsumersPresent": true,
+    "consumerCategories": [
+      "calendar",
+      "case",
+      "clock",
+      "collation",
+      "entropy",
+      "finite-intrinsic",
+      "locale",
+      "normalization",
+      "number-formatting",
+      "numbering",
+      "time-zone"
+    ],
+    "postFinalizationProductConsumerExists": false
+  },
+  "sourceArtifacts": {
+    "Sources/MonaCode/Generated/Environment/MonaCaseTables.swift": "0bd79b99924bdd3007eb56292a7d5ec607647843d047bf8fdfa96beb0d3077a8",
+    "Sources/MonaCode/Generated/Environment/MonaCollationTables.swift": "a9f67e02323d0fa079d1a73a461f65466e54d03c4ad0ff622fc9e2a2abc5a491",
+    "Sources/MonaCode/Generated/LICENSE.md": "374a5d176e807b424855a471c18342f18d3c5e9ebdffb6ec951221cabe424e56",
+    "docs/contracts/monaco-editor-0.56.0/g6-r/artifacts/monacode-p07-t011-public-api-closure-manifest.json": "0aca883079e7d0978f59ed1fe9de1d4b2614368e1450e0df2b8f204381a623c6",
+    "docs/contracts/monaco-editor-0.56.0/g6-r/artifacts/parent/g5-r/artifacts/environment-e1r-intl-clock-entropy-closure.html": "920e102184648cd1a08d589944708ceb62b4f3f6c091b4b100378f989709637b",
+    "docs/contracts/monaco-editor-0.56.0/g6-r/artifacts/parent/g5-r/artifacts/monacode-e1r-environment-intl-clock-entropy-manifest.json": "ecc1e42b7061baf4ade5bd3fd5e3c1c2ee89d46f96b3aafc4c94dba5edb78dc9",
+    "docs/contracts/monaco-editor-0.56.0/g6-r/artifacts/parent/g5-r/artifacts/monacode-x1r-source-runtime-style-manifest.json": "516c91d905532e9c54e2b3691e74024c81f5887203e6b1cb9184e2c981aaa280",
+    "docs/contracts/monaco-editor-0.56.0/g6-r/artifacts/parent/g5-r/artifacts/source-x1r-runtime-style-closure.html": "32bebccbf932e1baab6bb9ebd386715295625792198ae378566d0bc11ca2a3a9",
+    "docs/contracts/monaco-editor-0.56.0/g6-r/implementation-plan/phase-08-release-candidate-distribution.md": "bcdd9de61558e46e2535631342ed34371ddedf4be2aa1ada62fbf179d0610aad"
+  },
+  "sources": {
+    "e1rClosureHtml": "920e102184648cd1a08d589944708ceb62b4f3f6c091b4b100378f989709637b",
+    "e1rManifest": "ecc1e42b7061baf4ade5bd3fd5e3c1c2ee89d46f96b3aafc4c94dba5edb78dc9",
+    "frozenApiClosureManifest": "0aca883079e7d0978f59ed1fe9de1d4b2614368e1450e0df2b8f204381a623c6",
+    "implementationPlanPhase08": "bcdd9de61558e46e2535631342ed34371ddedf4be2aa1ada62fbf179d0610aad",
+    "x1rClosureHtml": "32bebccbf932e1baab6bb9ebd386715295625792198ae378566d0bc11ca2a3a9",
+    "x1rManifest": "516c91d905532e9c54e2b3691e74024c81f5887203e6b1cb9184e2c981aaa280"
+  },
+  "verifiedCounts": {
+    "activeNormalizationCaches": 2,
+    "collationProfiles": 5,
+    "cutTreeSitterHighResolutionStopWatchSites": 2,
+    "dateNowOccurrences": 90,
+    "defaultCaseOccurrences": 138,
+    "directGlobalIdentifiers": 84,
+    "directGlobalReferences": 8221,
+    "ecmascriptIntrinsicIdentifiers": 41,
+    "ecmascriptIntrinsicReferences": 7523,
+    "finiteIntrinsicProfiles": 12,
+    "importEdges": 6275,
+    "inputLatencyPerformanceCalls": 25,
+    "localeCaseOccurrences": 16,
+    "localeCompareOccurrences": 11,
+    "mathRandomOccurrences": 8,
+    "microtaskOccurrences": 11,
+    "newDateOccurrences": 14,
+    "normalizationOccurrences": 1,
+    "platformIdentifiers": 43,
+    "platformReferences": 698,
+    "reachableJavaScriptFiles": 956,
+    "reachableStyleResources": 98,
+    "retainedHighResolutionStopWatchSites": 13,
+    "retainedWallClockStopWatchSites": 6,
+    "stopWatchConstructionSites": 21,
+    "timerOccurrences": 94,
+    "totalImportedFiles": 1054
+  }
+}
