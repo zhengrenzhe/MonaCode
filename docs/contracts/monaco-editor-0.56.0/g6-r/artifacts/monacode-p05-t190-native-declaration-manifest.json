@@ -36523,7 +36523,7 @@
       "nativeSymbol": "MonaSnippetFeature",
       "owner": "P05-T151",
       "signature": "public final class MonaSnippetFeature: MonaDisposable {",
-      "sourceHash": "538cea0e509d317a75f0140db5bff223b0f4dea77eb59b01d090cf5a54f44366",
+      "sourceHash": "10cae9754536bb484b5de3bd4f9dc1e7507754b0bed681bd604da78a7eed2161",
       "sourcePath": "Sources/MonaCode/Features/MonaSnippetFeature.swift",
       "testOwner": "P05-T151"
     },
