@@ -36688,7 +36688,7 @@
       "nativeSymbol": "MonaInstanceDOMNode",
       "owner": "P05-T012",
       "signature": "public typealias MonaInstanceDOMNode = NSView",
-      "sourceHash": "e0b998645afa3a7d871fbd4b66f83df5c13250965c0b35e76fc6fb48d53e5c3b",
+      "sourceHash": "037eac032c6c35ede812f304b955777c14ccf8801739303594499e8ec9850a10",
       "sourcePath": "Sources/MonaCodeAppKit/Views/MonaEditorInstanceAdapters.swift",
       "testOwner": "P05-T012"
     },

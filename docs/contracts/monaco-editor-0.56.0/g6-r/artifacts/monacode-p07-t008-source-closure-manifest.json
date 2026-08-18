@@ -5,10 +5,10 @@
     "generatedSwift": 11,
     "licenseNotices": 3,
     "nativeStyleProjections": 8,
-    "productSwift": 240,
+    "productSwift": 244,
     "resources": 0,
     "runtimeStyleSubstitutions": 20,
-    "totalProductRows": 254
+    "totalProductRows": 258
   },
   "explicitCuts": [
     {
@@ -1649,6 +1649,12 @@
       "target": "MonaCodeAppKit"
     },
     {
+      "path": "Sources/MonaCodeAppKit/Views/MonaDiffEditorView.swift",
+      "role": "product-swift",
+      "sha256": "8f272e6e0860b9721da98e4caa7401081fc5e2e1e98ed763f9fa13f490624bfd",
+      "target": "MonaCodeAppKit"
+    },
+    {
       "path": "Sources/MonaCodeAppKit/Views/MonaEditorAttachment.swift",
       "role": "product-swift",
       "sha256": "586b4a59cdf5b682339a6f79ef36ea1fedb4251d68324381e2fe22815bf0b1ec",
@@ -1663,7 +1669,13 @@
     {
       "path": "Sources/MonaCodeAppKit/Views/MonaEditorInstanceAdapters.swift",
       "role": "product-swift",
-      "sha256": "e0b998645afa3a7d871fbd4b66f83df5c13250965c0b35e76fc6fb48d53e5c3b",
+      "sha256": "037eac032c6c35ede812f304b955777c14ccf8801739303594499e8ec9850a10",
+      "target": "MonaCodeAppKit"
+    },
+    {
+      "path": "Sources/MonaCodeAppKit/Views/MonaMultiDiffEditorView.swift",
+      "role": "product-swift",
+      "sha256": "494ed8b824c20abf2956642182aab04d2d8336e73e3361f5ba6ff5eb7d1d9d00",
       "target": "MonaCodeAppKit"
     },
     {
@@ -1676,6 +1688,18 @@
       "path": "Sources/MonaCodeSwiftUI/MonaCodeEditor.swift",
       "role": "product-swift",
       "sha256": "8e729ff3376276734b95fe38cd1f8df4aa4edd170473c0d80072445d0882b18f",
+      "target": "MonaCodeSwiftUI"
+    },
+    {
+      "path": "Sources/MonaCodeSwiftUI/MonaDiffEditor.swift",
+      "role": "product-swift",
+      "sha256": "a58ea84c2590553a94b6a1d379a32f5f7b2dac3b42a1ed10f6cf7c928f58ea1e",
+      "target": "MonaCodeSwiftUI"
+    },
+    {
+      "path": "Sources/MonaCodeSwiftUI/MonaMultiDiffEditor.swift",
+      "role": "product-swift",
+      "sha256": "2d36147e8b9284c13be08fa1ec60e8bafb333a7ffa01e3d4cfd3d928313d49d5",
       "target": "MonaCodeSwiftUI"
     },
     {
