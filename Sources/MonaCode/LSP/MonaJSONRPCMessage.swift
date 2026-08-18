@@ -39,7 +39,7 @@ public enum MonaJSONRPCRequestID: Equatable, Hashable {
 
 /// The `error` object carried by a JSON-RPC error response:
 /// `{ code: Int, message: String, data?: JSONValue }`.
-public struct MonaJSONRPCErrorPayload: Equatable {
+public struct MonaJSONRPCErrorPayload: Error, Equatable {
 
     /// The JSON-RPC error code (e.g. `-32600` for InvalidRequest).
     public let code: Int
