@@ -6,9 +6,9 @@
     "licenseNotices": 3,
     "nativeStyleProjections": 8,
     "productSwift": 244,
-    "resources": 0,
+    "resources": 1,
     "runtimeStyleSubstitutions": 20,
-    "totalProductRows": 258
+    "totalProductRows": 259
   },
   "explicitCuts": [
     {
@@ -584,6 +584,12 @@
       "path": "Sources/MonaCode/Generated/Environment/MonaCollationTables.swift",
       "role": "generated-swift",
       "sha256": "a9f67e02323d0fa079d1a73a461f65466e54d03c4ad0ff622fc9e2a2abc5a491",
+      "target": "MonaCode"
+    },
+    {
+      "path": "Sources/MonaCode/Generated/LICENSE.md",
+      "role": "resource",
+      "sha256": "374a5d176e807b424855a471c18342f18d3c5e9ebdffb6ec951221cabe424e56",
       "target": "MonaCode"
     },
     {
