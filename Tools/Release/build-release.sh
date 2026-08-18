@@ -113,11 +113,15 @@ gate_unsigned_input() {
 
 # stale-source: the committed source must not have drifted since the P07-T011
 # freeze. Compares the freeze commit to HEAD for Sources/ + Package.swift.
+# Non-source Generated resources (license notices: *.md/*.txt) are added
+# post-freeze (e.g. P08-T003 LICENSE.md) without changing the public API; the
+# P07-T011 PublicAPIClosureTests digest is the authoritative API-freeze gate,
+# so they are excluded from this source-diff proxy.
 gate_stale_source() {
   if ! git cat-file -e "${FREEZE_COMMIT}" 2>/dev/null; then
     reject "stale-source (freeze commit ${FREEZE_COMMIT:0:12} not found in this repository)"
   fi
-  if ! git diff --quiet "${FREEZE_COMMIT}" HEAD -- Sources Package.swift 2>/dev/null; then
+  if ! git diff --quiet "${FREEZE_COMMIT}" HEAD -- Sources Package.swift ':(exclude)*.md' ':(exclude)*.txt' 2>/dev/null; then
     reject 'stale-source (source drifted since the P07-T011 freeze)'
   fi
 }

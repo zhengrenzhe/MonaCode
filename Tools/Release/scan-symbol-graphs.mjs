@@ -229,8 +229,13 @@ for (const g of symbolGraphs) {
 
 // Source immutability -> API immutability -> the frozen symbol graphs remain
 // valid for this release build. This is the authoritative freeze enforcement.
+// Non-source Generated resources (license notices: *.md/*.txt) are added
+// post-freeze (e.g. P08-T003 LICENSE.md) without changing the public API; the
+// P07-T011 PublicAPIClosureTests digest is the authoritative API-freeze gate,
+// so they are excluded from this source-diff proxy.
 const freezeCheck = runShell('/usr/bin/git', [
   'diff', '--quiet', FREEZE_COMMIT, 'HEAD', '--', 'Sources', 'Package.swift',
+  ':(exclude)*.md', ':(exclude)*.txt',
 ]);
 const sourceFreezeClean = freezeCheck.status === 0;
 
