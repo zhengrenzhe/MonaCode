@@ -86,7 +86,7 @@ public struct MonaSnippetSessionTabstop: Equatable {
 
 /// A snippet session: the inserted snippet's identity, model version, insert
 /// range, tab stops, the current tab-stop index, and the last insert outcome.
-public struct MonaSnippetSession: Equatable {
+public struct MonaSnippetSessionRecord: Equatable {
 
     /// The session id (a UUID string).
     public let id: String
@@ -224,7 +224,7 @@ public final class MonaSnippetFeature: MonaDisposable {
     // MARK: - Routing state
 
     /// The retained snippet sessions by session id.
-    private var sessions: [String: MonaSnippetSession] = [:]
+    private var sessions: [String: MonaSnippetSessionRecord] = [:]
 
     /// The currently active session id (the last inserted / navigated session).
     private var _activeSessionId: String?
@@ -270,7 +270,7 @@ public final class MonaSnippetFeature: MonaDisposable {
         modelVersion: Int,
         gateway: MonaTransactionGateway,
         engine: MonaSnippetEngineAttachment? = nil
-    ) -> MonaSnippetSession? {
+    ) -> MonaSnippetSessionRecord? {
         guard !isDisposed else { return nil }
         let insertRange = MonaRange(startPosition: position, endPosition: position)
         let expandedText = engine?.expandSnippet(text) ?? text
@@ -280,7 +280,7 @@ public final class MonaSnippetFeature: MonaDisposable {
         let tabstops = engine?.parseSnippet(text, insertRange: insertRange) ?? [
             MonaSnippetSessionTabstop(index: 0, range: insertRange, placeholders: [])
         ]
-        let session = MonaSnippetSession(
+        let session = MonaSnippetSessionRecord(
             id: UUID().uuidString,
             modelVersion: modelVersion,
             insertRange: insertRange,
@@ -298,7 +298,7 @@ public final class MonaSnippetFeature: MonaDisposable {
 
     /// The retained session for `sessionId`, or `nil` when no session is
     /// retained with that id (or after disposal).
-    public func session(for sessionId: String) -> MonaSnippetSession? {
+    public func session(for sessionId: String) -> MonaSnippetSessionRecord? {
         _lock.lock(); defer { _lock.unlock() }
         return sessions[sessionId]
     }
@@ -405,10 +405,10 @@ public final class MonaSnippetFeature: MonaDisposable {
     /// drained (FIFO), after the publication ticket is validated.
     @discardableResult
     public func publishSnippetSession(
-        _ session: MonaSnippetSession,
+        _ session: MonaSnippetSessionRecord,
         executor: MonaProviderExecutor,
         ticket: MonaAsyncValidityTicket,
-        receive: @escaping (MonaSnippetSession) -> Void
+        receive: @escaping (MonaSnippetSessionRecord) -> Void
     ) -> Bool {
         return executor.publish(
             .synchronous(session),

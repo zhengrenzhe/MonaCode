@@ -322,7 +322,7 @@ final class MonaSnippetFeatureTests: XCTestCase {
         )!
         let ticket = gate.captureTicket()
 
-        var received: MonaSnippetSession?
+        var received: MonaSnippetSessionRecord?
         let accepted = feature.publishSnippetSession(
             session,
             executor: executor,
