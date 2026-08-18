@@ -100,32 +100,26 @@ public enum MonaEditorGoToDiffDestination: Sendable {
     case previous
 }
 
-// MARK: - Diff / multi-diff declaration slots (Phase 07 adapters)
+// MARK: - Diff / multi-diff view types (Phase 07 delivered)
 //
-// The diff editor and multi-file diff editor declaration slots are PRESERVED
-// here as native types. Their CONSTRUCTION is kept behind a Phase 07 adapter
-// in `MonaEditorFactory` (`createDiffEditor` / `createMultiFileDiffEditor`
-// throw `.phase07NotWired` until Phase 07 wires the diff engine). These slots
-// are never silent no-ops: the types exist so the public declaration graph
-// (P05-T001) records them, but no instance is constructible until Phase 07.
-
-/// The native diff editor view declaration slot (Phase 07 adapter).
-///
-/// Construction is behind `MonaEditorFactory.createDiffEditor`, which throws
-/// `.phase07NotWired` until the Phase 07 diff engine is wired. The slot is
-/// preserved so the declaration graph records the type.
-public final class MonaDiffEditorView: NSView {
-}
-
-/// The native multi-file diff editor view declaration slot (Phase 07 adapter).
-///
-/// This is the F1-R3 `multiFileDiff.nativeReturnType`
-/// (`MonaMultiDiffEditorView`). Construction is behind
-/// `MonaEditorFactory.createMultiFileDiffEditor`, which throws
-/// `.phase07NotWired` until Phase 07 wires the multi-diff navigator. The slot
-/// is preserved so the declaration graph records the type.
-public final class MonaMultiDiffEditorView: NSView {
-}
+// P07-T009 fix-forward (shared-mechanism, minimal, tested): the diff editor
+// and multi-file diff editor were PRESERVED here as empty `final class ...
+// : NSView {}` declaration slots by P05-T012 so the declaration graph
+// (P05-T001) recorded the types while their construction was behind a Phase
+// 07 adapter. P07-T009 DELIVERS the views, so the empty slots would now be
+// duplicate declarations of the real types that live in their own files
+// (`Views/MonaDiffEditorView.swift` / `Views/MonaMultiDiffEditorView.swift`).
+// The empty slot classes were removed here and replaced by the real
+// implementations in those files. This is a minimal shared-mechanism
+// (declaration-slot) fix-forward: it preserves every P05-T012 surface (the
+// five instance-interface protocols + the manifest counts are untouched),
+// and the types are still referenced by name — `MonaEditorFactory
+// .createDiffEditor` / `createMultiFileDiffEditor` return them, the manifest
+// records `multiFileDiffNativeReturnType` as `MonaMultiDiffEditorView`, and
+// `MonaEditorInstanceSurfaceTests` references the metatypes. The factory
+// construction adapter still throws `.phase07NotWired` (P07-T009 keeps the
+// slot — the view exists; full factory construction wiring is a later
+// concern).
 
 // MARK: - The five F1-R3 instance-interface surface protocols
 //

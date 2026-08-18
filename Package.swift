@@ -47,7 +47,18 @@ let package = Package(
         // discovered by `swift test --filter`; Phase 00 verifies their STRUCTURE
         // (file existence + clean build) via the Node integration gate, not
         // empirical execution. The output state is `structurally verified`.
-        .executableTarget(name: "sample-macOS-host", path: "Sources/MonaCodeSample"),
+        // P07-T009: the sample host activates all three products (MonaCode +
+        // MonaCodeAppKit + MonaCodeSwiftUI) — it constructs representatives from
+        // each. The sample is a NON-PRODUCT executable target, so adding these
+        // deps adds NO production dependencies (products=3 / nonProductTargets=3
+        // preserved — same modify:none-override rationale as P04-T015's
+        // `conformance-and-failure-injection` target; no cycle: the sample is a
+        // non-product leaf).
+        .executableTarget(
+            name: "sample-macOS-host",
+            dependencies: ["MonaCode", "MonaCodeAppKit", "MonaCodeSwiftUI"],
+            path: "Sources/MonaCodeSample"
+        ),
         .target(
             name: "conformance-and-failure-injection",
             // P04-T016: the Phase 04 closure suite exercises the SwiftUI
