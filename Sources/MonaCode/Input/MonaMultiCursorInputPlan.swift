@@ -389,6 +389,14 @@ public struct MonaMultiCursorInputPlan: Equatable {
     /// cumulativeShift`, where `cumulativeShift` is the net shift from edits at
     /// strictly smaller start offsets.
     ///
+    /// The caret offset is computed in POST-commit coordinate space, so it is
+    /// mapped to a `(line, column)` position through the POST-commit line
+    /// structure (built by applying the non-overlapping edits to the model's
+    /// text). Mapping through the pre-commit model would be wrong whenever the
+    /// cumulative shift pushes a caret offset across a line boundary or beyond
+    /// the pre-commit length — the pre-commit line structure does not reflect
+    /// the shift, so it would clamp or mis-place the caret.
+    ///
     /// The returned selections are in `allEdits` order (primary first).
     public func resultingSelections(model: MonaCodeModel) -> [MonaSelection] {
         struct Entry {
@@ -396,6 +404,7 @@ public struct MonaMultiCursorInputPlan: Equatable {
             let startOff: Int
             let insertCount: Int
             let deleteCount: Int
+            let insertText: String
         }
 
         var entries: [Entry] = []
@@ -409,7 +418,8 @@ public struct MonaMultiCursorInputPlan: Equatable {
                 originalIndex: i,
                 startOff: startOff,
                 insertCount: insertCount,
-                deleteCount: deleteCount
+                deleteCount: deleteCount,
+                insertText: edit.text
             ))
         }
 
@@ -420,14 +430,97 @@ public struct MonaMultiCursorInputPlan: Equatable {
             return a.originalIndex < b.originalIndex
         }
 
+        // Build the post-commit text + its line-start offsets so caret offsets
+        // (post-commit) map to correct (line, column) positions.
+        let postCommitText = Self.applyEditsToText(
+            model.getValue(),
+            ascendingEdits: ascending.map {
+                (startOff: $0.startOff, deleteCount: $0.deleteCount, insertText: $0.insertText)
+            }
+        )
+        let lineStarts = Self.utf16LineStartOffsets(of: postCommitText)
+        let postCommitUTF16Count = Array(postCommitText.utf16).count
+
         var selections = Array<MonaSelection?>(repeating: nil, count: entries.count)
         var cumulativeShift = 0
         for entry in ascending {
             let cursorOffset = entry.startOff + cumulativeShift + entry.insertCount
-            let cursorPos = model.getPositionAt(cursorOffset)
+            let cursorPos = Self.position(
+                atUTF16Offset: cursorOffset,
+                lineStarts: lineStarts,
+                textUTF16Count: postCommitUTF16Count
+            )
             selections[entry.originalIndex] = MonaSelection(anchor: cursorPos, activePosition: cursorPos)
             cumulativeShift += entry.insertCount - entry.deleteCount
         }
         return selections.compactMap { $0 }
+    }
+
+    // MARK: - Post-commit position mapping (private helpers)
+
+    /// Applies non-overlapping edits (in ascending start-offset order) to
+    /// `text`, returning the post-commit text. Single pass: O(text size + total
+    /// inserted text). Used to map post-commit caret offsets to positions.
+    private static func applyEditsToText(
+        _ text: String,
+        ascendingEdits: [(startOff: Int, deleteCount: Int, insertText: String)]
+    ) -> String {
+        if ascendingEdits.isEmpty { return text }
+        var result = ""
+        let units = Array(text.utf16)
+        var lastEnd = 0
+        for edit in ascendingEdits {
+            if edit.startOff > lastEnd {
+                result += String(decoding: units[lastEnd..<edit.startOff], as: UTF16.self)
+            }
+            result += edit.insertText
+            lastEnd = edit.startOff + edit.deleteCount
+        }
+        if lastEnd < units.count {
+            result += String(decoding: units[lastEnd..<units.count], as: UTF16.self)
+        }
+        return result
+    }
+
+    /// Returns the UTF-16 offset of the first character of each line (1-based
+    /// line indexing: line 1 starts at offset 0). `lineStarts[i]` is the offset
+    /// of line `i + 1`'s first character.
+    private static func utf16LineStartOffsets(of text: String) -> [Int] {
+        var lineStarts: [Int] = [0]
+        var offset = 0
+        for unit in text.utf16 {
+            if unit == 0x000A { // '\n' — next line starts after this unit.
+                lineStarts.append(offset + 1)
+            }
+            offset += 1
+        }
+        return lineStarts
+    }
+
+    /// Maps a UTF-16 `offset` to a 1-based `(line, column)` position within the
+    /// post-commit text. `lineStarts` is the output of `utf16LineStartOffsets`.
+    /// The offset is clamped to `[0, textUTF16Count]` so a caret resting at the
+    /// end of the text maps to the last line's max column.
+    private static func position(
+        atUTF16Offset offset: Int,
+        lineStarts: [Int],
+        textUTF16Count: Int
+    ) -> MonaPosition {
+        let clamped = min(max(offset, 0), textUTF16Count)
+        // Binary search for the last line whose start <= clamped.
+        var lo = 0
+        var hi = lineStarts.count
+        while lo < hi {
+            let mid = (lo + hi) / 2
+            if lineStarts[mid] <= clamped {
+                lo = mid + 1
+            } else {
+                hi = mid
+            }
+        }
+        let lineIndex = max(lo - 1, 0) // 0-based line index.
+        let lineStart = lineStarts[lineIndex]
+        let column = clamped - lineStart + 1 // 1-based column.
+        return MonaPosition(line: lineIndex + 1, column: column)
     }
 }

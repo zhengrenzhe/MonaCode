@@ -443,4 +443,50 @@ final class MonaModelInputBarrierTests: XCTestCase {
         // Cursor 1: inserted "X" at offset 3, shifted +1 by cursor 0 → offset 5 → col 6.
         XCTAssertEqual(selections[1].anchor, pos(1, 6))
     }
+
+    // MARK: - 14. Resulting selections: multi-line caret mapping (post-commit)
+
+    /// `resultingSelections` maps each cursor's post-commit caret offset through
+    /// the POST-commit line structure (not the pre-commit model). For cursors on
+    /// different lines, the cumulative shift from earlier-line edits must not
+    /// clamp or mis-place a later cursor's caret. Regression coverage for the
+    /// fix-forward to P05-T139.
+    func testResultingSelectionsMapsCaretsThroughPostCommitLineStructure() {
+        // Multi-line model: "ab\ncd". Insert "Z" at (1,1) and (2,1).
+        let model = makeModel("ab\ncd")
+        let plan = MonaMultiCursorInputPlan.replicateText(
+            cursorPositions: [pos(1, 1), pos(2, 1)],
+            text: "Z"
+        )
+
+        let selections = plan.resultingSelections(model: model)
+        XCTAssertEqual(selections.count, 2)
+        // Cursor 0: inserted "Z" at (1,1) → caret rests at (1,2) ('a').
+        XCTAssertEqual(selections[0].anchor, pos(1, 2))
+        // Cursor 1: inserted "Z" at (2,1); cursor 0's insertion shifted line 2's
+        // start down by one column in post-commit text "Zab\nZcd". Caret rests
+        // at (2,2) ('c'), NOT (2,3) — the pre-commit model would clamp the
+        // post-commit offset 5 to the end of line 2 ("cd") at (2,3).
+        XCTAssertEqual(selections[1].anchor, pos(2, 2))
+    }
+
+    /// `resultingSelections` maps the LAST cursor's caret correctly across many
+    /// lines — the cumulative shift from N−1 prior edits must not push the
+    /// caret offset beyond the pre-commit length (which would clamp to the last
+    /// line's end). Regression coverage for the fix-forward to P05-T139.
+    func testResultingSelectionsMapsLastCursorAcrossManyLines() {
+        // Three lines: "a\nb\nc". Insert "X" at the start of each line.
+        let model = makeModel("a\nb\nc")
+        let plan = MonaMultiCursorInputPlan.replicateText(
+            cursorPositions: [pos(1, 1), pos(2, 1), pos(3, 1)],
+            text: "X"
+        )
+
+        let selections = plan.resultingSelections(model: model)
+        XCTAssertEqual(selections.count, 3)
+        // Post-commit text: "Xa\nXb\nXc". Each caret rests one column in.
+        XCTAssertEqual(selections[0].anchor, pos(1, 2))
+        XCTAssertEqual(selections[1].anchor, pos(2, 2))
+        XCTAssertEqual(selections[2].anchor, pos(3, 2))
+    }
 }
