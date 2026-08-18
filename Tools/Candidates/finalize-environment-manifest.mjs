@@ -1212,6 +1212,11 @@ function readLicensingProfile() {
 function stableStringify(value, indent) {
   const ind = indent === undefined ? 0 : indent;
   const pad = ' '.repeat(ind * 2);
+  // Match JSON.stringify semantics: undefined array element -> null
+  // (JSON.stringify([undefined]) === '[null]'); undefined object value -> key
+  // omitted (JSON.stringify({a:undefined}) === '{}'). The previous version
+  // emitted the bare token `undefined`, producing invalid JSON.
+  if (value === undefined) return 'null';
   if (value === null || typeof value !== 'object') {
     return JSON.stringify(value);
   }
@@ -1221,7 +1226,7 @@ function stableStringify(value, indent) {
     const items = value.map((v) => inner + stableStringify(v, ind + 1));
     return '[\n' + items.join(',\n') + '\n' + pad + ']';
   }
-  const keys = Object.keys(value).sort();
+  const keys = Object.keys(value).filter((k) => value[k] !== undefined).sort();
   if (keys.length === 0) return '{}';
   const inner = ' '.repeat((ind + 1) * 2);
   const pairs = keys.map(

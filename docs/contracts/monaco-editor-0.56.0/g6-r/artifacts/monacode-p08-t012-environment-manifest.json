@@ -714,8 +714,7 @@
       },
       "source": "Generated immutable tables are derived from the exact Chrome 151 Chromium-ICU commit and local icudtl.dat hash for every locale supported by that baseline. The current release gate qualifies zh-CN; the product table set is not reduced to zh-CN.",
       "sourceContract": "E1-R",
-      "stable": false,
-      "tieBreak": undefined
+      "stable": false
     },
     {
       "category": "collation",
@@ -730,8 +729,7 @@
       },
       "source": "Generated immutable tables are derived from the exact Chrome 151 Chromium-ICU commit and local icudtl.dat hash for every locale supported by that baseline. The current release gate qualifies zh-CN; the product table set is not reduced to zh-CN.",
       "sourceContract": "E1-R",
-      "stable": false,
-      "tieBreak": undefined
+      "stable": false
     },
     {
       "category": "collation",
@@ -743,8 +741,7 @@
       "options": {},
       "source": "Generated immutable tables are derived from the exact Chrome 151 Chromium-ICU commit and local icudtl.dat hash for every locale supported by that baseline. The current release gate qualifies zh-CN; the product table set is not reduced to zh-CN.",
       "sourceContract": "E1-R",
-      "stable": true,
-      "tieBreak": undefined
+      "stable": true
     },
     {
       "category": "collation",
@@ -756,8 +753,7 @@
       "options": {},
       "source": "Generated immutable tables are derived from the exact Chrome 151 Chromium-ICU commit and local icudtl.dat hash for every locale supported by that baseline. The current release gate qualifies zh-CN; the product table set is not reduced to zh-CN.",
       "sourceContract": "E1-R",
-      "stable": false,
-      "tieBreak": undefined
+      "stable": false
     },
     {
       "category": "normalization",

@@ -51,7 +51,7 @@
       "leaf": "P08-T012",
       "path": "/Users/bytedance/Documents/ChatGPT/MonaCode/docs/contracts/monaco-editor-0.56.0/g6-r/artifacts/monacode-p08-t012-environment-manifest.json",
       "revision": "P08-T012-final-environment-manifest",
-      "sha256": "276cad3587313cf2ffc3db67bbb17848d5975e782fcdd9338764d7782d6882fd",
+      "sha256": "8e697cce63618f69963071ae87d4ef720ea399a03ddae2ee2068881ad1d98f45",
       "sourceRevision": "P07-T011"
     },
     {
@@ -190,7 +190,7 @@
     "metadataPath": "/Users/bytedance/Documents/ChatGPT/MonaCode/.build/arm64-apple-macosx/release/release-build-metadata.json",
     "present": true,
     "reproducible": true,
-    "sourceCommit": "d9f13387eedaec7c464884373ac0fd05e6bd6140"
+    "sourceCommit": "2a8e6a5bae5c96ade4c1ad68fddd32ce6c070369"
   },
   "resources": [
     "MonaCode.abi.json",
@@ -212,13 +212,13 @@
   ],
   "schemaVersion": 1,
   "sourceArtifacts": {
-    ".build/arm64-apple-macosx/release/release-build-metadata.json": "e583aa6dd297a26ff0ed6ed96cba9a8b513ab76a8414c416d363b71714347327",
+    ".build/arm64-apple-macosx/release/release-build-metadata.json": "6ead138ee5d5552d1e9f03159146b4885f9e4158afce81c727541c000cbed7b9",
     "Sources/MonaCode/Generated/LICENSE.md": "374a5d176e807b424855a471c18342f18d3c5e9ebdffb6ec951221cabe424e56",
     "docs/contracts/monaco-editor-0.56.0/g6-r/artifacts/monacode-g6r-authoritative-manifest.json": "eb3de0cec0a62f28439126f774aa7ad56a019e766a145c71fcb0349ee50dbd46",
     "docs/contracts/monaco-editor-0.56.0/g6-r/artifacts/monacode-p07-t011-public-api-closure-manifest.json": "0aca883079e7d0978f59ed1fe9de1d4b2614368e1450e0df2b8f204381a623c6",
     "docs/contracts/monaco-editor-0.56.0/g6-r/artifacts/monacode-p08-t010-native-declaration-manifest.json": "15b714218f054c89d022d64501f9446cdaa4d82279e38862eb8c72e1dc65b605",
     "docs/contracts/monaco-editor-0.56.0/g6-r/artifacts/monacode-p08-t011-regexp-unicode-manifest.json": "00e1540ae7cc4088350eb6f8e2c6192815cfca01e363ffd09e1f5f464a4146b5",
-    "docs/contracts/monaco-editor-0.56.0/g6-r/artifacts/monacode-p08-t012-environment-manifest.json": "276cad3587313cf2ffc3db67bbb17848d5975e782fcdd9338764d7782d6882fd",
+    "docs/contracts/monaco-editor-0.56.0/g6-r/artifacts/monacode-p08-t012-environment-manifest.json": "8e697cce63618f69963071ae87d4ef720ea399a03ddae2ee2068881ad1d98f45",
     "docs/contracts/monaco-editor-0.56.0/g6-r/artifacts/monacode-p08-t013-source-closure-manifest.json": "2802132c2cc3b979a82cdd2a6bed53a0ddd4d42a8216f4d035054f157e8e9a61",
     "docs/contracts/monaco-editor-0.56.0/g6-r/artifacts/monacode-p08-t014-cache-manifest.json": "f40ccdd13027630a8cc27ddea1f343bf3e5cc61767497050526db87e85a8855c",
     "docs/contracts/monaco-editor-0.56.0/g6-r/implementation-plan/phase-08-release-candidate-distribution.md": "bcdd9de61558e46e2535631342ed34371ddedf4be2aa1ada62fbf179d0610aad"
@@ -228,7 +228,7 @@
     "g6rAuthoritativeManifest": "eb3de0cec0a62f28439126f774aa7ad56a019e766a145c71fcb0349ee50dbd46",
     "implementationPlanPhase08": "bcdd9de61558e46e2535631342ed34371ddedf4be2aa1ada62fbf179d0610aad",
     "licenseNoticeFile": "374a5d176e807b424855a471c18342f18d3c5e9ebdffb6ec951221cabe424e56",
-    "releaseBuildMetadata": "e583aa6dd297a26ff0ed6ed96cba9a8b513ab76a8414c416d363b71714347327"
+    "releaseBuildMetadata": "6ead138ee5d5552d1e9f03159146b4885f9e4158afce81c727541c000cbed7b9"
   },
   "symbolGraphs": [
     {
