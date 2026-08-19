@@ -76,7 +76,7 @@ monaco-editor@0.56.0 + jsdom 在 Node 真能跑 `editor.trigger('keyboard', '<cm
 public final class MonaCommandDispatcher {
     private let model: MonaCodeModel
     private let inputBarrier: MonaModelInputBarrier
-    private let transactionGateway: MonaTransactionGateway   // 经 inputBarrier.gateway 可达（§8.4）
+    private let transactionGateway: MonaTransactionGateway   // = inputBarrier.gateway 同一实例（§8.4 public let :104）——不可另建，否则 edit（经 inputBarrier）与 selection（经 dispatcher）的 lastCommittedSelections 分叉
     private let caretOps: MonaCaretOperationsFeature         // 无状态（§8.7 init()）
     private var handlers: [String: (MonaCommandContext, Any?) -> Void] = [:]
     public init(model:, inputBarrier:, transactionGateway:, caretOps:)   // + register 9 core commands
@@ -91,7 +91,7 @@ public final class MonaCommandDispatcher {
 - 视图存 `internal private(set) var commandDispatcher: MonaCommandDispatcher?`（平级 `axMutationGateway` :165）。
 - `performDetach()`（:381）内 `commandDispatcher = nil`（平级 `axMutationGateway = nil` :387）。
 - `MonaEditorAttachment`（:132/188）编排生命周期，不构造 dispatcher。
-- 依赖：model（weak）、inputBarrier（weak，:332 已构造）、transactionGateway（经 `inputBarrier.gateway` :104/116，或直接注入）、caretOps（无状态 `init()` :172）。构造后宿主调 `register(_:handler:)` 注册（同 AX `registerPressHandler` :241）。
+- 依赖：model（weak）、inputBarrier（weak，:332 已构造）、**transactionGateway = `inputBarrier.gateway`（同一实例，`public let` :104，不可另建）**、caretOps（无状态 `init()` :172）。构造后宿主调 `register(_:handler:)` 注册（同 AX `registerPressHandler` :241）。
 - **dispatcher 是 Core 类型，由 AppKit 视图在 performAttach 构造**——Core 类型被 AppKit 宿主构造注入，与视图构造 `MonaModelInputBarrier`（Core）同形；TDD 时在 MonaCodeTests 直接构造 dispatcher（不经视图）。
 
 ### 4.2 MonaCommandContext value
@@ -100,7 +100,7 @@ public final class MonaCommandDispatcher {
 public struct MonaCommandContext {
     public let model: MonaCodeModel                  // getValue()/getLineCount()/getLineMaxColumn(_:)/getFullModelRange() — §8.5
     public let inputBarrier: MonaModelInputBarrier   // commit(_:overlapPolicy:) 便捷版 → .applied(selections:) — §8.2
-    public let transactionGateway: MonaTransactionGateway // lastCommittedSelections(public private(set)) — §8.4
+    public let transactionGateway: MonaTransactionGateway // = inputBarrier.gateway 同一实例；lastCommittedSelections(public private(set)) — §8.4
     public let caretOps: MonaCaretOperationsFeature   // commitCaretMove(_:target:gateway:lineCount:maxColumnOf:) — §8.7
     public let args: Any?                            // type 的 ["text":String] / cursorEnd 的 ["sticky":Bool]（§8.9 schema）
 }
@@ -203,8 +203,8 @@ caretOps.commitCaretMove(position, target: <映射>, gateway: transactionGateway
 ### 8.3 plan/edit（`MonaMultiCursorInputPlan.swift`）
 `MonaMultiCursorInputKind`：`.text`/`.snippet`/`.clipboard`/`.composition`(:37-49)。`MonaCursorInputEdit(range:text:kind:forceMoveMarkers:tabstops:)`，后三**均默认**(:123)。`MonaMultiCursorInputPlan(primary:secondary:)`，`secondary`**默认 `[]`**(:172)。
 
-### 8.4 transactionGateway（`MonaTransactionGateway.swift`）
-`public private(set) var lastCommittedSelections: [MonaSelection]`(~:63)；`beginTransaction()->MonaEditTransaction`(:93)；`commit(_:)`(117)/`rollback(_:)`(171)。`MonaEditTransaction.prepareSelections(_:)`(`MonaEditTransaction.swift:192`)+`prepareEdits(_:)`。
+### 8.4 transactionGateway（`MonaTransactionGateway.swift` + `MonaModelInputBarrier.swift`）
+`public private(set) var lastCommittedSelections: [MonaSelection]`(~:63)；`beginTransaction()->MonaEditTransaction`(:93)；`commit(_:)`(117)/`rollback(_:)`(171)。`MonaEditTransaction.prepareSelections(_:)`(`MonaEditTransaction.swift:192`)+`prepareEdits(_:)`。**`inputBarrier.gateway` 是 `public let`（`MonaModelInputBarrier.swift:104`）**——dispatcher 必须取此同一实例（edit 经 inputBarrier、selection 经 dispatcher 共享同一 `lastCommittedSelections` 真值）；inputBarrier 有 `init(model:)`（自建 gateway）与 `init(model:gateway:)`（注入）两构造器。
 
 ### 8.5 model 只读 API（`MonaCodeModel.swift`）
 `getValue()`(:129)/`getLineCount()`(:203)/`getLineContent(_:)`(:208)/`getLineLength(_:)`(:213)/`getLineMaxColumn(_:)`(:240)/`getFullModelRange()`(:331)。
