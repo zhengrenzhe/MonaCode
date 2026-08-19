@@ -122,6 +122,31 @@ final class MonaCommandDispatcherTests: XCTestCase {
         }
     }
 
+    // MARK: - cursorLeft / cursorRight
+
+    func testCursorLeft() {
+        let (dispatcher, _, _, gateway) = makeDispatcher(text: "abc")
+        seedSelections(gateway, [sel(1, 2, 1, 2)])
+        dispatcher.execute("cursorLeft")
+        XCTAssertEqual(gateway.lastCommittedSelections.first?.activePosition, MonaPosition(line: 1, column: 1))
+    }
+
+    func testCursorRight() {
+        let (dispatcher, _, _, gateway) = makeDispatcher(text: "abc")
+        seedSelections(gateway, [sel(1, 1, 1, 1)])
+        dispatcher.execute("cursorRight")
+        XCTAssertEqual(gateway.lastCommittedSelections.first?.activePosition, MonaPosition(line: 1, column: 2))
+    }
+
+    func testCursorLeftMatchesMonacoFixture() {
+        for case_ in loadFixture("cursorLeft") {
+            let (dispatcher, _, _, gateway) = makeDispatcher(text: case_.initialText)
+            seedSelections(gateway, case_.initialSelection.map { sel($0[0], $0[1], $0[2], $0[3]) })
+            dispatcher.execute("cursorLeft")
+            XCTAssertEqual(selectionsArray(gateway.lastCommittedSelections), case_.expected.selections)
+        }
+    }
+
     // MARK: - Shared test helpers (reused by T4–T8 command tests)
 
     /// Seeds `gateway.lastCommittedSelections` by committing a selections-only

@@ -51,6 +51,8 @@ public final class MonaCommandDispatcher {
         register("type") { ctx, args in Self.typeCommand(ctx, args: args) }
         register("deleteLeft") { ctx, _ in Self.deleteLeft(ctx) }
         register("deleteRight") { ctx, _ in Self.deleteRight(ctx) }
+        register("cursorLeft")  { ctx, _ in Self.cursorMove(ctx, target: .character(-1)) }
+        register("cursorRight") { ctx, _ in Self.cursorMove(ctx, target: .character(1)) }
     }
 
     // MARK: - type
@@ -185,5 +187,28 @@ public final class MonaCommandDispatcher {
         return s.isEmpty
             ? [MonaSelection(anchor: MonaPosition(line: 1, column: 1), activePosition: MonaPosition(line: 1, column: 1))]
             : s
+    }
+
+    // MARK: - cursorMove (reused by T7 cursorUp/Down + T8 cursorEnd/Home)
+
+    /// Moves the primary cursor's active position by `target` and commits the
+    /// resulting selection-only transaction on the gateway. v1 supports a
+    /// single cursor: only the first (primary) selection's active position is
+    /// moved; secondary selections are not yet carried. The actual movement
+    /// (including line wrapping and clamping) is delegated to
+    /// `caretOps.commitCaretMove`, which begins a transaction, prepares the
+    /// moved selection, and commits it, updating
+    /// `gateway.lastCommittedSelections`. Selection commands do NOT route
+    /// through `inputBarrier` — they commit a selection-only transaction
+    /// directly on the gateway.
+    private static func cursorMove(_ ctx: MonaCommandContext, target: MonaCaretMoveTarget) {
+        let sels = currentSelections(ctx)
+        guard let pos = sels.first?.activePosition else { return }       // v1: primary cursor only
+        _ = ctx.caretOps.commitCaretMove(
+            pos,
+            target: target,
+            gateway: ctx.transactionGateway,
+            lineCount: ctx.model.getLineCount(),
+            maxColumnOf: { ctx.model.getLineMaxColumn($0) })
     }
 }
