@@ -33,25 +33,27 @@ final class Soak4HourTests: XCTestCase {
 
         while Date().timeIntervalSince(startTime) < Double(soakSeconds) {
             // DERIVE cursor from the model every iteration (not self-tracked)
+            // getLineMaxColumn returns position AFTER last char (line.length + 1)
+            // Do NOT add + 1 — that makes the delete range empty (beyond line end)
             let lastLine = model.getLineCount()
-            let lastCol = model.getLineMaxColumn(lastLine) + 1
+            let maxCol = model.getLineMaxColumn(lastLine)
 
             let phase = totalActions % 4
 
             switch phase {
             case 0: // Insert "x" at end of document
                 let op = MonaModelEditOperation(
-                    range: MonaRange(startLine: lastLine, startColumn: lastCol,
-                                     endLine: lastLine, endColumn: lastCol),
+                    range: MonaRange(startLine: lastLine, startColumn: maxCol,
+                                     endLine: lastLine, endColumn: maxCol),
                     text: "x"
                 )
                 _ = model.applyEdits([op])
 
-            case 1: // Delete last char (backspace at end)
-                if lastCol > 1 {
+            case 1: // Delete last char (range: maxCol-1 → maxCol)
+                if maxCol > 1 {
                     let op = MonaModelEditOperation(
-                        range: MonaRange(startLine: lastLine, startColumn: lastCol - 1,
-                                         endLine: lastLine, endColumn: lastCol),
+                        range: MonaRange(startLine: lastLine, startColumn: maxCol - 1,
+                                         endLine: lastLine, endColumn: maxCol),
                         text: ""
                     )
                     _ = model.applyEdits([op])
