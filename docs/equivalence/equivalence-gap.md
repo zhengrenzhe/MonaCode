@@ -596,3 +596,58 @@ monaco-editor 的完整公共能力以 **monaco-editor@0.56.0 官方发布的 Ty
 - **性能非头对头**：5 个组件级基准是绝对阈值，非 monaco 同负载同机器对比。
 - **生成文件**：`Generated/MonaPublicAPI.swift` 是机器生成产物，其空壳可能随生成器变化而变；本文以当前 committed 状态为准。
 
+---
+
+## §6 缺口后果与功能影响
+
+> 每个缺口 → 造成什么后果 → 导致哪些 monaco 功能无法实现。
+
+### Tier A — 阻断可用编辑器（产品级，最高优先）
+
+| 缺口 | 后果 | 导致无法实现的功能 |
+|---|---|---|
+| **A1 驱动层未接** | `MonaCodeEditorView` 无 drawRect/keyDown/mouseDown/scrollWheel/interpretKeyEvents override；`observeContentChange` 不 `setNeedsDisplay`；scroll 事件无订阅者 | **整个编辑器 UX**：窗口画不出文本、键盘无反应、鼠标点击/拖选无效、滚轮无效、IME 无效。sample app 启动 = 空白 NSView |
+| **A2 ICodeEditor 94 成员无 conformance** | 行为面协议声明但 `MonaCodeEditorView` 只暴露 attach/detach | 通过 ICodeEditor API 的全部能力：`getValue/setValue`（程序化读写）、`setPosition/getPosition`、`scrollTo/revealLine/revealPosition`（跳转滚动）、`executeEdits`（批量编辑）、`addContentWidget/addOverlayWidget`（浮窗）、`getTargetAtClientPoint`（命中测试）、`render`。宿主只能直接改模型，屏幕不更新 |
+| **A3 commandId→edit 未接线** | 解析器返回 commandId 但无 dispatcher 执行 | **所有键绑定命令**：Cmd+C/V/X/Z/Y/A、Cmd+F、Cmd+S、自定义快捷键全不生效；连默认"打字插入字符"都断 |
+| **A4 diff 构造 throw `.phase07NotWired`** | `createDiffEditor` 一调就抛 | side-by-side 差异对比、行内 diff、multi-file diff 全不可用 |
+| **A5 IME/选区未接** | `interpretKeyEvents` 不转发 compositionSession；选区 provider 恒 (0,0) | ① 中日韩输入法（合成窗/候选词）无效；② 选区真值错 → 复制/粘贴范围、IME 插入点、AX 读选区全错 |
+
+### Tier B — 真实功能缺口（monaco 有、MonaCode 桩/缺）
+
+| 缺口 | 后果 | 导致无法实现的功能 |
+|---|---|---|
+| **B1a undo/redo 桩**（no-op/恒 false，无栈） | undo() 不还原、canUndo 恒 false | **撤销/重做完全失效**（Cmd+Z/Y）、cursor undo 导航、所有可逆编辑语义 |
+| **B1b findMatches/findNext/Prev 桩**（→[]/nil） | model 侧搜索返回空 | **查找/替换**：Cmd+F、找下一个/上一个、正则搜索、替换全部、高亮所有匹配、增量搜索 |
+| **B1c getWordAtPosition/Until 桩**（→nil） | 不识别词边界 | 双击选词、按词移动光标、Ctrl+Click 跳转、拼写/词边界特性 |
+| **B1d deltaDecorations + 13 decoration 成员桩** | 装饰读写返回空 | **所有基于 decoration 的视觉**：错误/警告波浪线、搜索高亮、断点、行号区图标、minimap/概览尺标记、注入文本、悬浮提示 |
+| **B2 marker 服务缺席**（IMarker 仅 3 字段，无写 API） | 无诊断载体 | **诊断显示**：LSP diagnostics、编译错误、squiggly 下划线、问题面板、F8 错误导航 |
+| **B3 全局模型注册缺席** | getModel(uri)/getModels() ⚫ | 跨编辑器按 URI 查模型、全局监听模型创建/销毁/语言变更、多编辑器共享模型、文件↔模型映射 |
+| **B4 Monarch tokenizer DSL 完全缺席** | 无声明式词法分析器 | **内置语言除 plaintext 外无语法高亮**（css/html/json/ts 靠 Monarch） |
+| **B5 cursor 事件无 concrete struct** | onDidChangeCursorPosition/Selection 发不出有效载荷 | 光标移动联动：状态栏行列号、面包屑、word highlight 触发、选区变更响应 |
+| **B6 widget/mouse-target 层全空壳** | IContentWidget/IOverlayWidget/IGlyphMarginWidget/IViewZone 空；MouseTargetType 14 case 空；getTargetAtClientPoint 无 impl | ① 内容 widget（hover/completion/参数提示/诊断浮窗/内联提示）；② overlay widget（find 栏/minimap/滚动指示）；③ glyph margin widget（折叠/断点/git 装饰）；④ view zone（折叠/sticky scroll/嵌入视图）；⑤ hit-test（点击命中、链接/折叠点击、光标定位） |
+| **B7 顶层值类型静态工具约半缺** | Uri/Position/Range/Selection 缺 toString/clone/with/from/parse(strict)/file/revive/joinPath/compare/containsRange/plusRange/intersectRanges/collapseTo* 等 | 宿主用 monaco 惯用 API 操作位置/范围时缺方法；**Uri.file/parse/joinPath 缺 → 文件 URI 构造/路径拼接失效**（打开文件、资源定位）。移植上游/扩展处处卡壳 |
+| **B8 languages 62 context/result 接口空壳** | LSP 请求/响应上下文与结果类型未实现 | LSP 集成完整性：SignatureHelpContext（triggerKind/isRetrigger）、CodeActionList/InlineCompletions/SignatureHelpResult/ILinksList（缺 items/dispose）等 |
+| **B9 无内置语言**（bundledLanguageServer=nil） | 仅 plaintext live | **开箱无语法高亮、无语言配置**（括号自动闭合/缩进/注释/折叠规则）、无语言感知补全/格式化/跳转。必须外接 LSP 但无语言接入 → .ts/.json/.css 都是纯文本 |
+| **B10 选项枚举多 case-less** | 选项值仅作 string 存在 MonaOptionValue 盒，无类型安全枚举 | 选项无编译期校验（拼错不报）；枚举渲染分支可能不完整（cursorStyle/minimap 回显 string 而非 enum case）。功能值在但类型安全 + 部分分支缺 |
+| **B11 布局/字体信息不全** | EditorLayoutInfo 仅 3 字段、FontInfo 4/11、wrappingInfo 3/4；layout 阶段（P0x-V1R）未做 | 精确像素布局算不出：区域宽度不准 → 自定义渲染对齐错位；FontInfo 缺 typicalHalfwidthCharacterWidth → 光标像素定位/等宽测算不准；换行分支不完整 |
+| **B12 contribution/action 框架空壳** | IEditorContribution/IEditorAction/ICommandDescriptor 空；全局 addCommand/addEditorAction/registerCommand ⚫ | **扩展模型**：第三方无法注册命令/快捷键/动作；contribution 生命周期（saveViewState/restoreViewState/dispose）无接口 |
+
+### Tier C — 类型/签名分歧（🟠）
+
+| 类别 | 后果 |
+|---|---|
+| Swift 惯用法（运算符 `==/</<=` 替代命名方法、OptionSet、值类型无 clone、命名/组合/静态分歧） | **移植摩擦**：把 monaco 上游 TS 代码或现有扩展搬到 Swift 时处处需改 API 形态。不阻断功能，但移植成本高、API 文档不一致 |
+| 真签名分歧（IEditorOptions 动态 store、ProviderResult 7-case enum、ITextSnapshot 物化 [UInt16]、hover/completion 类型收窄、IMarker/WorkspaceEdit 重设计） | 与 monaco 生态互操作摩擦：不能直接 `options.fontSize` 读取；provider 实现要适配 7-case enum；hover/completion 结构比 monaco 窄，承载不全上游语义 |
+
+### Tier D — 刻意 CUT（设计决定，非缺陷）
+
+| 缺口 | 后果 |
+|---|---|
+| worker 命名空间 + WebWorker CUT | **语言服务 worker 模式不可用**——monaco 重型语言特性（TS 语义补全/诊断）跑在 Web Worker 防阻塞；Swift 整片 CUT → 语言服务须主线程跑或不跑。结合 B9，重型语言智能不存在 |
+| css/html/json/typescript 旧别名 CUT | 旧全局别名不可用（上游已 deprecated，影响小） |
+| TS 类型 helper CUT（RequiredRecursive/FindEditorOptionsKeyById/...） | 泛型/条件类型查找 API 无 Swift 对应（TS-only，影响可忽略） |
+
+### 最致命的三条
+
+A1（驱动层）+ A2（ICodeEditor 未 conform）+ B1a（undo/redo 桩）——前两条让编辑器完全不可用，第三条让即使接通也"无 undo 不可用"。其次：A3（命令未接）+ B1d（decorations 桩）+ B2（marker 缺）+ B4（Monarch 缺）——分别断掉快捷键/视觉装饰/诊断/语法高亮。
+
