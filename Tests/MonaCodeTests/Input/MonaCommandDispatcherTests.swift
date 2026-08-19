@@ -57,6 +57,46 @@ final class MonaCommandDispatcherTests: XCTestCase {
         }
     }
 
+    // MARK: - deleteLeft
+
+    func testDeleteLeftChar() {
+        let (dispatcher, model, _, gateway) = makeDispatcher(text: "abc")
+        seedSelections(gateway, [sel(1, 2, 1, 2)])
+        dispatcher.execute("deleteLeft")
+        XCTAssertEqual(model.getValue(), "bc")
+    }
+
+    func testDeleteLeftCrossLineJoin() {
+        let (dispatcher, model, _, gateway) = makeDispatcher(text: "ab\ncd")
+        seedSelections(gateway, [sel(2, 1, 2, 1)])
+        dispatcher.execute("deleteLeft")
+        XCTAssertEqual(model.getValue(), "abcd")           // join
+        XCTAssertEqual(gateway.lastCommittedSelections.first?.activePosition, MonaPosition(line: 1, column: 3))
+    }
+
+    func testDeleteLeftAtDocStartNoop() {
+        let (dispatcher, model, _, gateway) = makeDispatcher(text: "abc")
+        seedSelections(gateway, [sel(1, 1, 1, 1)])
+        dispatcher.execute("deleteLeft")
+        XCTAssertEqual(model.getValue(), "abc")
+    }
+
+    func testDeleteLeftDeletesSelection() {
+        let (dispatcher, model, _, gateway) = makeDispatcher(text: "abc")
+        seedSelections(gateway, [sel(1, 1, 1, 3)])
+        dispatcher.execute("deleteLeft")
+        XCTAssertEqual(model.getValue(), "c")
+    }
+
+    func testDeleteLeftMatchesMonacoFixture() {
+        for case_ in loadFixture("deleteLeft") {
+            let (dispatcher, model, _, gateway) = makeDispatcher(text: case_.initialText)
+            seedSelections(gateway, case_.initialSelection.map { sel($0[0], $0[1], $0[2], $0[3]) })
+            dispatcher.execute("deleteLeft")
+            XCTAssertEqual(model.getValue(), case_.expected.value)
+        }
+    }
+
     // MARK: - Shared test helpers (reused by T4–T8 command tests)
 
     /// Seeds `gateway.lastCommittedSelections` by committing a selections-only

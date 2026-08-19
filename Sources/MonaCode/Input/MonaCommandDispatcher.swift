@@ -49,6 +49,7 @@ public final class MonaCommandDispatcher {
     /// owning tasks (T4–T8).
     private func registerCoreCommands() {
         register("type") { ctx, args in Self.typeCommand(ctx, args: args) }
+        register("deleteLeft") { ctx, _ in Self.deleteLeft(ctx) }
     }
 
     // MARK: - type
@@ -63,6 +64,59 @@ public final class MonaCommandDispatcher {
         guard let primary = sels.first.map({ MonaCursorInputEdit(range: MonaRange(startPosition: $0.anchor, endPosition: $0.activePosition), text: text) }) else { return }
         let secondary = sels.dropFirst().map { MonaCursorInputEdit(range: MonaRange(startPosition: $0.anchor, endPosition: $0.activePosition), text: text) }
         _ = ctx.inputBarrier.commit(MonaMultiCursorInputPlan(primary: primary, secondary: secondary), overlapPolicy: .reject)
+    }
+
+    // MARK: - deleteLeft
+
+    /// The `deleteLeft` command: deletes the character or selection to the left
+    /// of each active cursor. An empty selection at `(line, col)` deletes the
+    /// previous column on the same line; at column 1 with `line > 1` it joins
+    /// the previous line (deletes from the previous line's max column to the
+    /// current line's column 1, removing the newline); at line 1 column 1 it is
+    /// a no-op. A non-empty selection deletes its content. Mirrors Monaco's
+    /// `deleteLeft` command, which routes a backward delete through the cursor
+    /// controller's edit batch.
+    private static func deleteLeft(_ ctx: MonaCommandContext) {
+        let sels = currentSelections(ctx)
+        let lineCount = ctx.model.getLineCount()
+        let maxCol = { ctx.model.getLineMaxColumn($0) }
+        let edits = sels.compactMap { sel -> MonaCursorInputEdit? in
+            guard let range = deleteLeftRange(sel, lineCount: lineCount, maxColumnOf: maxCol) else { return nil }
+            return MonaCursorInputEdit(range: range, text: "")
+        }
+        guard let primary = edits.first else { return }
+        _ = ctx.inputBarrier.commit(
+            MonaMultiCursorInputPlan(primary: primary, secondary: Array(edits.dropFirst())),
+            overlapPolicy: .reject)
+    }
+
+    /// Pure: the range `deleteLeft` removes at the given selection, or `nil`
+    /// when it is a no-op.
+    ///
+    /// - Non-empty selection (`!range.isFolded`) → delete its content.
+    /// - Caret at `column > 1` → delete the previous column on the same line.
+    /// - Caret at column 1, `line > 1` → join the previous line: delete from
+    ///   the previous line's max column (EOL position, `length + 1`) to the
+    ///   current line's column 1, removing the newline.
+    /// - Caret at line 1 column 1 → `nil` (no-op).
+    static func deleteLeftRange(
+        _ sel: MonaSelection,
+        lineCount: Int,
+        maxColumnOf: (Int) -> Int
+    ) -> MonaRange? {
+        let range = MonaRange(startPosition: sel.anchor, endPosition: sel.activePosition)   // normalized
+        if !range.isFolded { return range }                                                 // delete selection content
+        let pos = sel.activePosition
+        if pos.column > 1 {
+            return MonaRange(startLine: pos.line, startColumn: pos.column - 1,
+                             endLine: pos.line, endColumn: pos.column)
+        }
+        if pos.line > 1 {
+            let prevMaxCol = maxColumnOf(pos.line - 1)                                       // length+1 (EOL position)
+            return MonaRange(startLine: pos.line - 1, startColumn: prevMaxCol,
+                             endLine: pos.line, endColumn: 1)
+        }
+        return nil                                                                            // line 1 col 1: no-op
     }
 
     // MARK: - Shared selection helpers (reused by T4–T8 handlers)
