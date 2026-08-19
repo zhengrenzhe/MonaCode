@@ -88,7 +88,8 @@ final class Soak4HourTests: XCTestCase {
                 cursorColumn = max(1, min(cursorColumn, model.getLineMaxColumn(cursorLine) + 1))
             case 5: // Search (literal)
                 let content = model.getLineContent(min(cursorLine, model.getLineCount()))
-                let needle = content.count > 10 ? String(content.prefix(10)) : "test"
+                let needleStr = content.count > 10 ? String(content.prefix(10)) : "test"
+                let needle = Array(needleStr.utf16)
                 let raw = Array(content.utf16)
                 _ = MonaLiteralSearch(needle: needle, matchCase: true).findAll(in: raw)
             default:
