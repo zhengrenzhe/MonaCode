@@ -167,3 +167,16 @@ the frozen contract. The API is frozen at `P07-T011`.
 # Run the verdict test suite:
 /opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/FinalReleaseVerdictTests.mjs
 ```
+
+---
+
+## Re-run on current device (2026-08-19)
+
+**Qualified-env re-run**: QEnvironmentID re-collected on the current device (1 external display, Chrome 151.0.7922.140).
+
+- **Verdict-time QEnvironmentID**: `f514979771ebf3376aeb919a64b5e28c1b9a4d64777336e2f820c5df8a42874b`
+- **Verdict-time qualified-set hash**: `ed509a618fac42a8e609ae80e19c55a4ef96b12aee74b79ae9b4a38ead9a2ccc`
+- **Qualified**: `false` (1 external display; Chrome .140 ≠ pinned .138)
+- **User directive**: "直接在这个设备上跑，不需要可溯源" — user accepts non-formal environment, provenance not required.
+
+The 8 passed prerequisites remain unchanged. The 3 blockers remain (formal-24h-soak, formal-performance-measurement, qualified-environment). The qualified-env blocker is now "user-accepted non-formal environment" — the environment is recorded + the verdict is current, but `qualified=false` (not the formal device).
