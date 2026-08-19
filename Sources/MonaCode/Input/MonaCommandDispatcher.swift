@@ -55,6 +55,8 @@ public final class MonaCommandDispatcher {
         register("cursorRight") { ctx, _ in Self.cursorMove(ctx, target: .character(1)) }
         register("cursorUp")   { ctx, _ in Self.cursorMove(ctx, target: .line(-1)) }
         register("cursorDown") { ctx, _ in Self.cursorMove(ctx, target: .line(1)) }
+        register("cursorEnd")  { ctx, _ in Self.cursorMove(ctx, target: .lineEnd) }   // sticky arg ignored (no API landing; = monaco default false)
+        register("cursorHome") { ctx, _ in Self.cursorMove(ctx, target: .lineStart) }
     }
 
     // MARK: - type

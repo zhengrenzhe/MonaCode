@@ -174,6 +174,33 @@ final class MonaCommandDispatcherTests: XCTestCase {
         }
     }
 
+    // MARK: - cursorEnd / cursorHome
+
+    func testCursorEnd() {
+        let (dispatcher, _, _, gateway) = makeDispatcher(text: "abc")
+        seedSelections(gateway, [sel(1, 1, 1, 1)])
+        dispatcher.execute("cursorEnd", args: ["sticky": true])   // sticky ignored
+        XCTAssertEqual(gateway.lastCommittedSelections.first?.activePosition, MonaPosition(line: 1, column: 4))  // maxCol
+    }
+
+    func testCursorHome() {
+        let (dispatcher, _, _, gateway) = makeDispatcher(text: "abc")
+        seedSelections(gateway, [sel(1, 3, 1, 3)])
+        dispatcher.execute("cursorHome")
+        XCTAssertEqual(gateway.lastCommittedSelections.first?.activePosition, MonaPosition(line: 1, column: 1))
+    }
+
+    func testCursorEndHomeMatchesMonacoFixture() {
+        for cmd in ["cursorEnd", "cursorHome"] {
+            for case_ in loadFixture(cmd) {
+                let (dispatcher, _, _, gateway) = makeDispatcher(text: case_.initialText)
+                seedSelections(gateway, case_.initialSelection.map { sel($0[0], $0[1], $0[2], $0[3]) })
+                dispatcher.execute(cmd)
+                XCTAssertEqual(selectionsArray(gateway.lastCommittedSelections), case_.expected.selections)
+            }
+        }
+    }
+
     // MARK: - Shared test helpers (reused by T4–T8 command tests)
 
     /// Seeds `gateway.lastCommittedSelections` by committing a selections-only
