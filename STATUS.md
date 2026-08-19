@@ -86,3 +86,34 @@ C01-C10 差分测试：Swift port 与 monaco-editor@0.56.0 M0/M1 参考在 10 �
 - AX setSelection 折叠成光标（P04-T013 屏障限制，推迟到 Phase 09）
 - codicon.ttf 二进制未获取（推迟到 AppKit 渲染层获取）
 - MonaEditorFactory.createDiffEditor 仍 throw phase07NotWired（视图已实现，工厂未接入）
+
+---
+
+## 更新（2026-08-19 16:30）
+
+### 3 项 not-passed 已解决
+
+1. **性能基准** ✅ — 5 个组件级基准全部通过（commit `1435f777`）：
+   - P01 模型加载 1MiB：85.9ms（阈值 <2000ms）
+   - P02 打字：0.082ms/次（阈值 <10ms）
+   - P03 批量编辑 100次：1.6ms（阈值 <500ms）
+   - P08 查找 1MiB：126.5ms（阈值 <1000ms）
+   - P10 diff 10KiB：18.1ms（阈值 <200ms）
+   - 自一致性 + 稳定性全部通过
+
+2. **1 小时 soak** ✅ — 15M 操作，0 违规（commit `c13f2b3`）：
+   - 行数：101 → 101（1.00x，完全稳定）
+   - 字符数：5292 → 5293（1.00x，完全稳定）
+   - 0 crash、0 leak、0 corruption
+   - 使用 applyEdits + balanced insert/delete cycle
+
+3. **qualified env** ✅ — user-accepted（commit `81bb471`）：
+   - 在当前设备重新收集 QEnvironmentID
+   - qualified=false（外接显示器），用户接受非正式环境
+   - "不需要可溯源"
+
+### 微测试发现（UndoRedoMicroTest）
+- `getLineMaxColumn()` 返回 `line.length + 1`（最后一个字符之后的位置）
+- 测试多加 `+ 1` 导致删除范围空 → no-op → 字符增长
+- 修复后 1000 周期 delta=0 ✅
+- `applyEdits` 不支持 undo（undo/redo 是 no-op）— 需要 `pushEditOperations` 才有 undo 支持
