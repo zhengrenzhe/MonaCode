@@ -1,0 +1,80 @@
+[
+  {
+    "command": "type",
+    "args": {
+      "text": "X"
+    },
+    "initialText": "",
+    "initialSelection": [
+      [
+        1,
+        1,
+        1,
+        1
+      ]
+    ],
+    "expected": {
+      "value": "X",
+      "selections": [
+        [
+          1,
+          2,
+          1,
+          2
+        ]
+      ]
+    }
+  },
+  {
+    "command": "type",
+    "args": {
+      "text": "X"
+    },
+    "initialText": "abc",
+    "initialSelection": [
+      [
+        1,
+        1,
+        1,
+        1
+      ]
+    ],
+    "expected": {
+      "value": "Xabc",
+      "selections": [
+        [
+          1,
+          2,
+          1,
+          2
+        ]
+      ]
+    }
+  },
+  {
+    "command": "type",
+    "args": {
+      "text": "X"
+    },
+    "initialText": "abc",
+    "initialSelection": [
+      [
+        1,
+        1,
+        1,
+        4
+      ]
+    ],
+    "expected": {
+      "value": "X",
+      "selections": [
+        [
+          1,
+          2,
+          1,
+          2
+        ]
+      ]
+    }
+  }
+]

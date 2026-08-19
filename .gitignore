@@ -1,2 +1,5 @@
 .DS_Store
 .superpowers/
+
+# dev tooling (Task 2: command-dispatcher oracle)
+Tools/CommandDispatcherOracle/node_modules/

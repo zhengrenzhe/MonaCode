@@ -1,0 +1,26 @@
+[
+  {
+    "command": "cursorRight",
+    "args": null,
+    "initialText": "abc",
+    "initialSelection": [
+      [
+        1,
+        1,
+        1,
+        1
+      ]
+    ],
+    "expected": {
+      "value": "abc",
+      "selections": [
+        [
+          1,
+          2,
+          1,
+          2
+        ]
+      ]
+    }
+  }
+]
