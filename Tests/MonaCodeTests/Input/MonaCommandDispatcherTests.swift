@@ -97,6 +97,31 @@ final class MonaCommandDispatcherTests: XCTestCase {
         }
     }
 
+    // MARK: - deleteRight
+
+    func testDeleteRightChar() {
+        let (dispatcher, model, _, gateway) = makeDispatcher(text: "abc")
+        seedSelections(gateway, [sel(1, 1, 1, 1)])
+        dispatcher.execute("deleteRight")
+        XCTAssertEqual(model.getValue(), "bc")
+    }
+
+    func testDeleteRightCrossLineJoin() {
+        let (dispatcher, model, _, gateway) = makeDispatcher(text: "ab\ncd")
+        seedSelections(gateway, [sel(1, 3, 1, 3)])            // end of line 1 (maxCol)
+        dispatcher.execute("deleteRight")
+        XCTAssertEqual(model.getValue(), "abcd")               // join next line
+    }
+
+    func testDeleteRightMatchesMonacoFixture() {
+        for case_ in loadFixture("deleteRight") {
+            let (dispatcher, model, _, gateway) = makeDispatcher(text: case_.initialText)
+            seedSelections(gateway, case_.initialSelection.map { sel($0[0], $0[1], $0[2], $0[3]) })
+            dispatcher.execute("deleteRight")
+            XCTAssertEqual(model.getValue(), case_.expected.value)
+        }
+    }
+
     // MARK: - Shared test helpers (reused by T4–T8 command tests)
 
     /// Seeds `gateway.lastCommittedSelections` by committing a selections-only
