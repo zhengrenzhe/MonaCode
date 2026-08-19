@@ -53,6 +53,8 @@ public final class MonaCommandDispatcher {
         register("deleteRight") { ctx, _ in Self.deleteRight(ctx) }
         register("cursorLeft")  { ctx, _ in Self.cursorMove(ctx, target: .character(-1)) }
         register("cursorRight") { ctx, _ in Self.cursorMove(ctx, target: .character(1)) }
+        register("cursorUp")   { ctx, _ in Self.cursorMove(ctx, target: .line(-1)) }
+        register("cursorDown") { ctx, _ in Self.cursorMove(ctx, target: .line(1)) }
     }
 
     // MARK: - type
