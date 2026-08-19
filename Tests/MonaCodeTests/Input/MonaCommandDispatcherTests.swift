@@ -201,6 +201,30 @@ final class MonaCommandDispatcherTests: XCTestCase {
         }
     }
 
+    // MARK: - Full monaco-oracle differential sweep (T9)
+
+    /// The authoritative oracle gate: every core command × every monaco fixture
+    /// scenario must match — both the post-command model value AND the post-command
+    /// selections. This subsumes the per-command `*MatchesMonacoFixture` tests
+    /// (which only spot-checked value or selections) by asserting both fields for
+    /// all 9 commands. `type` passes `["text": text]` (its handler reads
+    /// `args as? [String: String]?["text"]`); all other commands pass `nil`
+    /// (their handlers ignore args — deleteLeft/deleteRight/cursor* take no args;
+    /// cursorEnd ignores sticky).
+    func testAllCommandsMatchMonacoFixtures() {
+        for cmd in ["type", "deleteLeft", "deleteRight", "cursorLeft", "cursorRight",
+                    "cursorUp", "cursorDown", "cursorEnd", "cursorHome"] {
+            for case_ in loadFixture(cmd) {
+                let (dispatcher, model, _, gateway) = makeDispatcher(text: case_.initialText)
+                seedSelections(gateway, case_.initialSelection.map { sel($0[0], $0[1], $0[2], $0[3]) })
+                let execArgs: Any? = (cmd == "type") ? case_.args?.text.map { ["text": $0] } : nil
+                dispatcher.execute(cmd, args: execArgs)
+                XCTAssertEqual(model.getValue(), case_.expected.value, "\(cmd) value mismatch")
+                XCTAssertEqual(selectionsArray(gateway.lastCommittedSelections), case_.expected.selections, "\(cmd) selections mismatch")
+            }
+        }
+    }
+
     // MARK: - Shared test helpers (reused by T4–T8 command tests)
 
     /// Seeds `gateway.lastCommittedSelections` by committing a selections-only
