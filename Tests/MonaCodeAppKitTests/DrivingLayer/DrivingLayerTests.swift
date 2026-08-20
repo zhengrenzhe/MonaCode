@@ -11,6 +11,7 @@
 //     `NSGraphicsContext` in `drawRect` without rebuilding the image each frame.
 
 import XCTest
+import AppKit
 import CoreGraphics
 import CoreText
 import MonaCode
@@ -70,5 +71,36 @@ final class DrivingLayerTests: XCTestCase {
         XCTAssertNotNil(img1)
         XCTAssertNotNil(img2)
         XCTAssertEqual(img1, img2)
+    }
+
+    // MARK: - drawRect render pipeline (Task 2)
+
+    func testDrawRectRendersVisibleTiles() {
+        let model = MonaCodeModel(text: "line1\nline2\nline3\n", uri: MonaURI(scheme: "inmemory", path: "/t"))
+        let view = MonaCodeEditorView(frame: NSRect(x: 0, y: 0, width: 400, height: 300))
+        view.attach(model: model)
+        view.needsDisplay = true  // trigger draw
+
+        // Driving-layer overrides: NSView defaults are `isFlipped == false` and
+        // `wantsLayer == false`; the Task 2 override block flips both to `true`.
+        // `isFlipped` is the reliable detector for "the override block was added"
+        // (NSView's base isFlipped is `false`), so this assertion fails before
+        // the Task 2 implementation and passes after.
+        XCTAssertTrue(view.isFlipped, "isFlipped override: view y-down for AppKit text layout")
+        XCTAssertTrue(view.wantsLayer, "wantsLayer: layer-backed (Core Animation composites tiles)")
+
+        // draw(_:) override present + doesn't crash. In a headless test context
+        // there is no NSGraphicsContext, so draw early-returns at its ctx guard.
+        //
+        // API drift: the brief used `perform(NSSelectorFromString("draw:"))` to
+        // assert the override exists. In the macOS 26 SDK the ObjC selector for
+        // `NSView.draw(_:)` is `drawRect:` (the Swift overlay renamed
+        // `drawRect(_:)` to `draw(_:)` but kept the ObjC name — see
+        // NSView.h:206 `- (void)drawRect:(NSRect)dirtyRect;`). So `draw:` is
+        // never recognized, and `drawRect:` is always recognized (NSView's
+        // base) — `perform` cannot distinguish the override either way. A
+        // direct Swift call exercises the override via dynamic dispatch
+        // (lands on MonaCodeEditorView.draw).
+        view.draw(NSRect(x: 0, y: 0, width: 400, height: 300))
     }
 }

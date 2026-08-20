@@ -257,6 +257,14 @@ public final class MonaCodeEditorView: NSView {
 
         // The attachment helper (enforces the lifetime invariants).
         attachment = MonaEditorAttachment(view: self)
+
+        // Layer-backed rendering (driving layer — Task 2): make the view
+        // layer-backed so Core Animation composites the rasterized CG tiles on
+        // the GPU. Set here (after `super.init`) because the macOS 26 SDK
+        // exposes `wantsLayer` as a mutable ObjC property, not an overridable
+        // read-only computed property — see the `isFlipped`/`draw(_:)` section
+        // below for the drift note.
+        wantsLayer = true
     }
 
     // MARK: - Contract surface
@@ -403,6 +411,120 @@ public final class MonaCodeEditorView: NSView {
         // rebuilds from the view graph (which reads the live model).
         if let barrier = geometryBarrier {
             _ = barrier.publishGeneration(visibleViewLines: nil)
+        }
+    }
+
+    // MARK: - Layer-backed rendering (driving layer — Task 2)
+
+    /// Layer-backed: Core Animation composites the view's layer (and the
+    /// rasterized tiles blitted in `draw(_:)`) on the GPU. The layer hosts the
+    /// CG bitmap tiles painted by `MonaCoreGraphicsRenderer`.
+    ///
+    /// API drift: in the macOS 26 SDK `NSView.wantsLayer` is a mutable ObjC
+    /// `@property BOOL` (read-write), so it cannot be overridden as a read-only
+    /// computed property. The view is made layer-backed by setting
+    /// `wantsLayer = true` in `commonInit()` (the idiomatic AppKit pattern),
+    /// which achieves the same layer-backed compositing behavior the brief's
+    /// `override var wantsLayer: Bool { true }` intended.
+
+    /// The view's coordinate system is flipped (y-down), matching AppKit's text
+    /// layout convention (origin at the top-left). The renderer's tile bitmaps
+    /// are y-up (Core Graphics native space), so `draw(_:)` applies a y-flip
+    /// transform when blitting each tile.
+    override public var isFlipped: Bool { true }
+
+    /// The visible-tile blit pipeline. Renders the complete generation's
+    /// visible view-line records into generation-keyed tiles via the Core
+    /// Graphics renderer, then composites each tile's `cgImage` into the
+    /// current `NSGraphicsContext`.
+    ///
+    /// Algorithm (one snapshot per drawRect, not per tile):
+    ///   1. Compute the visible view-line range from scroll + viewport via
+    ///      `verticalIndex` (O(log n) bounds).
+    ///   2. `publishGeneration(visibleViewLines:)` — freeze the generation and
+    ///      pre-build the visible records.
+    ///   3. Advance the tile cache generation + invalidate stale tiles.
+    ///   4. `barrier.snapshot()` — read records + verticalIndex ONCE.
+    ///   5. Pre-compute visible lines + their `verticalOffsetForViewLine`.
+    ///   6. Per-tile: partition visible lines by tile y-band → tile-local
+    ///      records + lineOrigins (tile-local: `origin.y = offY - tileY*ts`,
+    ///      `origin.x = -tileX*ts`; subpixel phase 0 for v1 integer-pixel).
+    ///   7. `cgRenderer.tile(...)` → `tile.surface.cgImage` → `ctx.draw(...)`
+    ///      with a y-flip transform (tile bitmap is y-up, view is y-down).
+    ///
+    /// Subpixel phase is fixed at 0 for v1 integer-pixel rendering (maximizes
+    /// cache reuse; a subpixel phase change forces a re-rasterization).
+    override public func draw(_ dirtyRect: NSRect) {
+        guard let barrier = geometryBarrier, let cg = cgRenderer,
+              let scroll = scrollModel, let graph = viewGraph else { return }
+        guard let ctx = NSGraphicsContext.current?.cgContext else { return }
+        let scrollY = scroll.publishedScrollOffsetYInt
+        let scrollX = scroll.publishedScrollOffsetXInt
+        let vi = graph.verticalIndex
+        guard vi.viewLineCount > 0 else { return }
+        let firstLine = max(1, vi.viewLineAtVerticalOffset(scrollY))
+        let lastLine = max(firstLine, vi.viewLineAtVerticalOffset(scrollY + Int(bounds.height) - 1))
+        _ = barrier.publishGeneration(visibleViewLines: firstLine...lastLine)
+        let gen = barrier.currentGeneration ?? 1
+        renderTileCache.setCurrentGeneration(gen)
+        _ = renderTileCache.invalidate(olderThanGeneration: gen)
+        guard let snap = barrier.snapshot() else { return }
+        let records = snap.records
+        let ts = cg.tileSide
+        let scale = window?.backingScaleFactor ?? 1
+        // Pre-compute visible lines + their vertical offset ONCE (O(visible ×
+        // log n)) rather than per-tile. Lines without a record are skipped at
+        // the tile-partition step below.
+        var visibleLineInfo: [(viewLine: Int, offsetY: Int)] = []
+        for L in firstLine...lastLine {
+            visibleLineInfo.append((L, vi.verticalOffsetForViewLine(L)))
+        }
+        let firstTileY = scrollY / ts
+        let lastTileY = (scrollY + Int(bounds.height)) / ts
+        let firstTileX = scrollX / ts
+        let lastTileX = (scrollX + Int(bounds.width)) / ts
+        for tileY in firstTileY...lastTileY {
+            for tileX in firstTileX...lastTileX {
+                // Partition: lines whose vertical offset falls in this tile's
+                // y-band `[tileY*ts, (tileY+1)*ts)`. Origins are TILE-LOCAL
+                // (the renderer paints in tile-local CG-native space):
+                //   origin.y = verticalOffsetForViewLine(L) - tileY * ts
+                //   origin.x = -tileX * ts
+                var tileRecords: [MonaLineLayoutRecord] = []
+                var tileOrigins: [CGPoint] = []
+                for (L, offY) in visibleLineInfo where offY >= tileY * ts && offY < (tileY + 1) * ts {
+                    if let rec = records[L] {
+                        tileRecords.append(rec)
+                        tileOrigins.append(CGPoint(x: CGFloat(-tileX * ts), y: CGFloat(offY - tileY * ts)))
+                    }
+                }
+                guard !tileRecords.isEmpty else { continue }
+                let key = MonaRenderTileKey(
+                    generation: gen,
+                    tileX: tileX,
+                    tileY: tileY,
+                    scale: scale,
+                    subpixelPhaseX: 0,
+                    subpixelPhaseY: 0
+                )
+                let tile = cg.tile(for: key, records: tileRecords, lineOrigins: tileOrigins, layerInputs: .init())
+                guard let img = tile.surface.cgImage else { continue }
+                // Destination in view space (scroll-adjusted). The tile bitmap
+                // is y-up (CG native); the view is y-down (`isFlipped`). Flip
+                // the bitmap around `dest.midY` so it composites upright.
+                let dest = CGRect(
+                    x: CGFloat(tileX * ts) - CGFloat(scrollX),
+                    y: CGFloat(tileY * ts) - CGFloat(scrollY),
+                    width: CGFloat(ts),
+                    height: CGFloat(ts)
+                )
+                ctx.saveGState()
+                ctx.translateBy(x: 0, y: dest.midY)
+                ctx.scaleBy(x: 1, y: -1)
+                ctx.translateBy(x: 0, y: -dest.midY)
+                ctx.draw(img, in: dest)
+                ctx.restoreGState()
+            }
         }
     }
 
