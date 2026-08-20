@@ -1060,6 +1060,48 @@ public final class MonaCodeEditorView: NSView {
         addCursorRect(bounds, cursor: NSCursor.iBeam)
     }
 
+    // MARK: - Responder chain (driving layer — Task 9)
+
+    /// `acceptsFirstResponder = true` — this view is a first-responder candidate
+    /// so AppKit's responder chain routes keyboard events to it (the editor owns
+    /// keyboard focus when attached). Without this the responder chain would skip
+    /// the view entirely and `keyDown(with:)` would never fire.
+    ///
+    /// API drift: in the macOS 26 SDK `NSResponder.acceptsFirstResponder` is a
+    /// read-only ObjC `@property (readonly) BOOL` (was a method
+    /// `- (BOOL)acceptsFirstResponder` in earlier SDKs). Read-only ObjC
+    /// properties are overridable as a computed `var` with a getter — unlike
+    /// `wantsLayer` (Task 2, a read-write property), no `commonInit()` assignment
+    /// is possible (the property has no setter to assign).
+    override public var acceptsFirstResponder: Bool { true }
+
+    /// `canBecomeKeyView = true` — the view may become the key view in the
+    /// responder chain (tab-navigation / focus-ring target). `NSView.canBecomeKeyView`
+    /// is a read-only ObjC `@property` in the macOS 26 SDK, so it is overridden
+    /// as a computed `var` (same pattern as `acceptsFirstResponder` above).
+    override public var canBecomeKeyView: Bool { true }
+
+    /// The view just became first responder (keyboard focus entered). Drive the
+    /// AX focus state machine (P04-T012) to `.editor` so the AX mutation gateway
+    /// (P04-T013) validates subsequent mutations against the editor focus, then
+    /// return `true` so AppKit accepts the focus assignment.
+    ///
+    /// `focusCoordinator` is created in `commonInit()` (model-independent), so it
+    /// is always non-nil by the time AppKit can call this — the optional chain is
+    /// a defensive guard for teardown ordering, not a normal path.
+    override public func becomeFirstResponder() -> Bool {
+        focusCoordinator?.transition(to: .editor)
+        return true
+    }
+
+    /// The view is resigning first responder (keyboard focus leaving). Release
+    /// any `.temporary` AX focus grab so the focus state machine restores the
+    /// prior mode, then forward to `super` so AppKit completes the resignation.
+    override public func resignFirstResponder() -> Bool {
+        focusCoordinator?.releaseTemporary()
+        return super.resignFirstResponder()
+    }
+
     // MARK: - Deinit (safety net)
 
     deinit {

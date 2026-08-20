@@ -270,4 +270,25 @@ final class DrivingLayerTests: XCTestCase {
         XCTAssertNotEqual(nextY, prevY, "scrollWheel moved publishedScrollY")
         XCTAssertGreaterThan(nextY, 0, "scroll down increases publishedScrollY")
     }
+
+    // MARK: - Responder chain overrides (Task 9)
+
+    /// `acceptsFirstResponder` + `canBecomeKeyView` are overridden to `true` so
+    /// AppKit's responder chain routes keyboard events to the editor (it is a
+    /// first-responder candidate AND a key-view candidate). Without these the
+    /// chain would skip the view and `keyDown(with:)` would never fire.
+    ///
+    /// API drift: the macOS 26 SDK imports both as read-only ObjC
+    /// `@property (readonly) BOOL` (was a method in earlier SDKs). Read-only
+    /// properties are overridable as computed `var` with a getter, so the
+    /// override is `override var acceptsFirstResponder: Bool { true }` (NOT a
+    /// `commonInit()` assignment — there is no setter to assign).
+    @MainActor
+    func testResponderChain() {
+        let model = MonaCodeModel(text: "hello", uri: MonaURI(scheme: "inmemory", path: "/t"))
+        let view = MonaCodeEditorView(frame: NSRect(x: 0, y: 0, width: 400, height: 300))
+        view.attach(model: model)
+        XCTAssertTrue(view.acceptsFirstResponder, "acceptsFirstResponder: view accepts keyboard focus")
+        XCTAssertTrue(view.canBecomeKeyView, "canBecomeKeyView: view is a key-view candidate")
+    }
 }
