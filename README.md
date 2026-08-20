@@ -1,14 +1,278 @@
 # MonaCode
 
-MonaCode is a native Swift code-editor component for Apple platforms. The current implementation target is arm64 macOS; iOS and iPadOS remain later global revisions.
+MonaCode is a native Swift code-editor component for Apple platforms, governed against the behavioral and public-surface baseline `monaco-editor@0.56.0`. The current release target is arm64 macOS; iOS and iPadOS remain later revisions.
 
-## Current status
+## Authority
 
-- G4-R full-scope and technical contract: adopted and frozen on 2026-08-14.
-- Implementation: not started.
-- Release acceptance: not passed.
-- Behavioral baseline: `monaco-editor@0.56.0`.
+| Concern | Sole authority | Meaning |
+| --- | --- | --- |
+| Current implementation progress | This README, inside the machine-delimited Tasks block | What is complete, active, blocked, and not started now |
+| Product scope and accepted cuts | [Frozen G6-R authoritative manifest](docs/contracts/monaco-editor-0.56.0/g6-r/artifacts/monacode-g6r-authoritative-manifest.json) and adoption record | What MonaCode must implement for the accepted macOS release |
+| Contributor rules | [Root AGENTS.md](AGENTS.md) | How future agents select, implement, prove, and update work |
+| Verification evidence | Source, tests, benchmark output, and source-set-bound evidence artifacts | Proof for a task state; never an independent progress claim |
+| Historical decisions and audits | Frozen contracts plus the [archive](docs/archive/README.md) | Context and provenance; never current status |
 
-The repository contract entry point is [docs/contracts/monaco-editor-0.56.0/g4-r/README.md](docs/contracts/monaco-editor-0.56.0/g4-r/README.md).
+## Verified snapshot
 
-Implementation phases must map back to G4-R. A phase cannot alter scope, cuts, native adaptations, architecture, host contracts, correctness gates, or performance thresholds. Any such change requires a new global contract revision.
+- Verification date: 2026-08-20.
+- Verification source-set digest: `2ee01a07cda11b0abcbcebf836c4d576e677af3615fcac459e17f8f09dee148e`.
+- Evidence: [task-evidence.json](artifacts/progress/2ee01a07cda11b0abcbcebf836c4d576e677af3615fcac459e17f8f09dee148e/task-evidence.json), SHA-256 `7f086a9ff3bc3e3c6e9fcdc93cef611e07bbdf0766ccff393717cdd7a3947242`.
+- The artifact records all seven commands below, their exit codes, output hashes, parsed integration findings, and task classifications.
+
+```bash
+/usr/bin/xcrun swift test --skip Soak4HourTests
+/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/ProjectGovernanceTests.mjs Tests/PlanStructureTests/ProductIntegrationProbeTests.mjs Tests/PlanStructureTests/FinalReleaseVerdictTests.mjs
+/opt/homebrew/Cellar/node/26.7.0/bin/node docs/contracts/monaco-editor-0.56.0/g4-r/verify-contract.mjs
+/opt/homebrew/Cellar/node/26.7.0/bin/node docs/contracts/monaco-editor-0.56.0/g5-r/verify-contract.mjs
+/opt/homebrew/Cellar/node/26.7.0/bin/node docs/contracts/monaco-editor-0.56.0/g6-r/verify-contract.mjs
+/opt/homebrew/Cellar/node/26.7.0/bin/node Comparators/probes/product-integration-probe.mjs
+/opt/homebrew/Cellar/node/26.7.0/bin/node Tools/Release/release-verdict.mjs
+```
+
+## Tasks
+
+<!-- MONACODE_TASKS:BEGIN -->
+| ID | State | Deliverable | Contract coverage | Acceptance | Evidence |
+| --- | --- | --- | --- | --- | --- |
+| VERIFY-001 | IN PROGRESS | Establish and verify single-source project governance | governance:single-source | <code>/opt/homebrew/Cellar/node/26.7.0/bin/node Tools/Docs/check-project-governance.mjs</code> ⇒ exit 0 | change:VERIFY-001<br>owner:zhengrenzhe |
+| SURFACE-001 | TODO | Create the exact SwiftPM product, target, and fixture-resource graph | plan:P00-T001/* | <code>set -o pipefail; /usr/bin/xcrun swift package dump-package &#124; /opt/homebrew/Cellar/node/26.7.0/bin/node docs/contracts/monaco-editor-0.56.0/g6-r/implementation-plan/runtime/assert-package-graph.mjs</code> ⇒ exit 0 | — |
+| VERIFY-002 | TODO | Enforce the Foundation-only MonaCode boundary | plan:P00-T002/* | <code>/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/ForbiddenCoreImportsTests.mjs</code> ⇒ exit 0 | — |
+| VERIFY-003 | TODO | Pin Monaco 0.56.0 M0 and M1 comparator provenance | plan:P00-T003/* | <code>/opt/homebrew/Cellar/node/26.7.0/bin/node Tools/PlanChecks/verify-provenance.mjs</code> ⇒ exit 0 | — |
+| SURFACE-002 | TODO | Reproduce frozen scope, declaration, and instance-surface manifests | plan:P00-T004/* | <code>/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/ScopeProbeTests.mjs</code> ⇒ exit 0 | — |
+| SERVICE-001 | TODO | Implement separate wall and high-resolution clock domains | plan:P00-T005/* | <code>/usr/bin/xcrun swift test --filter MonaClockTests --scratch-path /tmp/monacode-planctl/P00-T005.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| SERVICE-002 | TODO | Implement deterministic random, cryptographic random, and Number-to-string sources | plan:P00-T006/* | <code>/usr/bin/xcrun swift test --filter MonaEntropyTests --scratch-path /tmp/monacode-planctl/P00-T006.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| SERVICE-003 | TODO | Separate immutable UI localization profile from runtime locale | plan:P00-T007/* | <code>/usr/bin/xcrun swift test --filter MonaLocaleBoundaryTests --scratch-path /tmp/monacode-planctl/P00-T007.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| VERIFY-004 | TODO | Build the differential fixture and comparator harness | plan:P00-T008/* | <code>/usr/bin/xcrun swift test --filter DifferentialHarnessTests --scratch-path /tmp/monacode-planctl/P00-T008.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| VERIFY-005 | TODO | Implement the complete Q1-R3 statistical verdict engine | plan:P00-T009/* | <code>/usr/bin/xcrun swift test --filter BootstrapStatisticsTests --scratch-path /tmp/monacode-planctl/P00-T009.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| VERIFY-006 | TODO | Enforce font provenance, cold launch, display isolation, and refresh cells | plan:P00-T010/* | <code>/usr/bin/xcrun swift test --filter Q1R4ControlsTests --scratch-path /tmp/monacode-planctl/P00-T010.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| VERIFY-007 | TODO | Collect a privacy-filtered QEnvironmentID and enforce formal preflight | plan:P00-T011/* | <code>/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/QEnvironmentCollectorTests.mjs</code> ⇒ exit 0 | — |
+| VERIFY-008 | TODO | Integrate Phase 00 gates without claiming product evidence | plan:P00-T012/* | <code>/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/Phase00IntegrationTests.mjs</code> ⇒ exit 0 | — |
+| MODEL-001 | TODO | Implement raw UTF-16 positions and validation modes | plan:P01-T001/* | <code>/usr/bin/xcrun swift test --filter MonaPositionTests --scratch-path /tmp/monacode-planctl/P01-T001.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| MODEL-002 | TODO | Implement ranges and oriented selections | plan:P01-T002/* | <code>/usr/bin/xcrun swift test --filter MonaRangeTests --scratch-path /tmp/monacode-planctl/P01-T002.GREEN.001.PROC.001 &amp;&amp; /usr/bin/xcrun swift test --filter MonaSelectionTests --scratch-path /tmp/monacode-planctl/P01-T002.GREEN.001.PROC.002</code> ⇒ exit 0 | — |
+| MODEL-003 | TODO | Implement cache-observable Monaco URI semantics | plan:P01-T003/* | <code>/usr/bin/xcrun swift test --filter MonaURITests --scratch-path /tmp/monacode-planctl/P01-T003.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| MODEL-004 | TODO | Implement key, modifier, token, and marker value types | plan:P01-T004/* | <code>/usr/bin/xcrun swift test --filter MonaValueEnumTests --scratch-path /tmp/monacode-planctl/P01-T004.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| MODEL-005 | TODO | Implement deterministic events and idempotent disposal | plan:P01-T005/* | <code>/usr/bin/xcrun swift test --filter MonaEmitterTests --scratch-path /tmp/monacode-planctl/P01-T005.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| MODEL-006 | TODO | Implement cancellation tokens and sources | plan:P01-T006/* | <code>/usr/bin/xcrun swift test --filter MonaCancellationTests --scratch-path /tmp/monacode-planctl/P01-T006.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| MODEL-007 | TODO | Port the Piece Tree over raw UInt16 storage | plan:P01-T007/* | <code>/usr/bin/xcrun swift test --filter MonaPieceTreeDifferentialTests --scratch-path /tmp/monacode-planctl/P01-T007.GREEN.001.PROC.001 &amp;&amp; /usr/bin/xcrun swift test --filter MonaPieceTreeComplexityTests --scratch-path /tmp/monacode-planctl/P01-T007.GREEN.001.PROC.002</code> ⇒ exit 0 | — |
+| MODEL-008 | TODO | Implement all 70 retained text-model members on Piece Tree truth | plan:P01-T008/* | <code>/usr/bin/xcrun swift test --filter MonaCodeModelSurfaceTests --scratch-path /tmp/monacode-planctl/P01-T008.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| MODEL-009 | TODO | Make one edit transaction gateway own mutation and version truth | plan:P01-T009/* | <code>/usr/bin/xcrun swift test --filter MonaTransactionGatewayTests --scratch-path /tmp/monacode-planctl/P01-T009.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| MODEL-010 | TODO | Gate asynchronous publication with validity tickets | plan:P01-T010/* | <code>/usr/bin/xcrun swift test --filter MonaAsyncValidityTicketTests --scratch-path /tmp/monacode-planctl/P01-T010.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| MODEL-011 | TODO | Implement model construction and large-model state | plan:P01-T011/* | <code>/usr/bin/xcrun swift test --filter MonaModelFactoryTests --scratch-path /tmp/monacode-planctl/P01-T011.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| SERVICE-004 | TODO | Implement application-global and per-editor lifetime registries | plan:P01-T012/* | <code>/usr/bin/xcrun swift test --filter MonaLifetimeRegistryTests --scratch-path /tmp/monacode-planctl/P01-T012.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| VERIFY-009 | TODO | Close Phase 01 with full model differential and failure matrices | plan:P01-T013/* | <code>/usr/bin/xcrun swift test --filter Phase01ModelConformanceTests --scratch-path /tmp/monacode-planctl/P01-T013.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| MODEL-012 | TODO | Implement undo and redo elements on transaction truth | plan:P02-T001/* | <code>/usr/bin/xcrun swift test --filter MonaUndoRedoTests --scratch-path /tmp/monacode-planctl/P02-T001.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| MODEL-013 | TODO | Port decoration interval trees and stickiness semantics | plan:P02-T002/* | <code>/usr/bin/xcrun swift test --filter MonaDecorationTreeDifferentialTests --scratch-path /tmp/monacode-planctl/P02-T002.GREEN.001.PROC.001 &amp;&amp; /usr/bin/xcrun swift test --filter MonaDecorationTreeComplexityTests --scratch-path /tmp/monacode-planctl/P02-T002.GREEN.001.PROC.002</code> ⇒ exit 0 | — |
+| MODEL-014 | TODO | Implement word, grapheme, literal search, and replacement primitives | plan:P02-T003/* | <code>/usr/bin/xcrun swift test --filter MonaWordSearchTests --scratch-path /tmp/monacode-planctl/P02-T003.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| MODEL-015 | TODO | Implement the finite ECMAScript RegExp parser and compiler | plan:P02-T004/* | <code>/usr/bin/xcrun swift test --filter MonaRegExpParserCompilerTests --scratch-path /tmp/monacode-planctl/P02-T004.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| MODEL-016 | TODO | Generate six non-mergeable RegExp Unicode profiles | plan:P02-T005/* | <code>/usr/bin/xcrun swift test --filter MonaRegExpUnicodeProfileTests --scratch-path /tmp/monacode-planctl/P02-T005.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| MODEL-017 | TODO | Close ten RegExp consumer profiles with pinned Test262 vectors | plan:P02-T006/* | <code>/usr/bin/xcrun swift test --filter MonaRegExpConsumerProfileTests --scratch-path /tmp/monacode-planctl/P02-T006.GREEN.001.PROC.001 &amp;&amp; /usr/bin/xcrun swift test --filter MonaRegExpTest262Tests --scratch-path /tmp/monacode-planctl/P02-T006.GREEN.001.PROC.002</code> ⇒ exit 0 | — |
+| MODEL-018 | TODO | Implement fixed case conversion, collation, and normalization profiles | plan:P02-T007/* | <code>/usr/bin/xcrun swift test --filter MonaEnvironmentSemanticsTests --scratch-path /tmp/monacode-planctl/P02-T007.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| MODEL-019 | TODO | Implement finite ECMAScript intrinsics, codecs, and String SHA-1 | plan:P02-T008/* | <code>/usr/bin/xcrun swift test --filter MonaFiniteIntrinsicTests --scratch-path /tmp/monacode-planctl/P02-T008.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| VERIFY-010 | TODO | Validate provisional RegExp and environment candidate inputs | plan:P02-T009/* | <code>/usr/bin/xcrun swift test --filter Phase02SemanticConformanceTests --scratch-path /tmp/monacode-planctl/P02-T009.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| RENDER-001 | TODO | Build ViewGraph projection and logarithmic vertical indexes | plan:P03-T001/* | <code>/usr/bin/xcrun swift test --filter MonaViewGraphDifferentialTests --scratch-path /tmp/monacode-planctl/P03-T001.GREEN.001.PROC.001 &amp;&amp; /usr/bin/xcrun swift test --filter MonaVerticalIndexComplexityTests --scratch-path /tmp/monacode-planctl/P03-T001.GREEN.001.PROC.002</code> ⇒ exit 0 | — |
+| RENDER-002 | TODO | Shape mixed-script lines with Core Text and deterministic fallback | plan:P03-T002/* | <code>/usr/bin/xcrun swift test --filter MonaTextShaperTests --scratch-path /tmp/monacode-planctl/P03-T002.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| RENDER-003 | TODO | Freeze shared immutable LineLayoutRecord geometry | plan:P03-T003/* | <code>/usr/bin/xcrun swift test --filter MonaLineLayoutRecordTests --scratch-path /tmp/monacode-planctl/P03-T003.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| RENDER-004 | TODO | Define seven non-contradictory dependency stamp domains | plan:P03-T004/* | <code>/usr/bin/xcrun swift test --filter MonaDependencyStampTests --scratch-path /tmp/monacode-planctl/P03-T004.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| RENDER-005 | TODO | Implement scroll truth and dimension convergence | plan:P03-T005/* | <code>/usr/bin/xcrun swift test --filter MonaScrollModelTests --scratch-path /tmp/monacode-planctl/P03-T005.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| RENDER-006 | TODO | Complete the correct Core Graphics tiled renderer | plan:P03-T006/* | <code>/usr/bin/xcrun swift test --filter MonaCoreGraphicsRendererTests --scratch-path /tmp/monacode-planctl/P03-T006.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| RENDER-007 | TODO | Enforce the QueryGeometryBarrier for hit testing and native queries | plan:P03-T007/* | <code>/usr/bin/xcrun swift test --filter MonaQueryGeometryBarrierTests --scratch-path /tmp/monacode-planctl/P03-T007.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| RENDER-008 | TODO | Represent bounded Core Text failure with FailedLineRecord | plan:P03-T008/* | <code>/usr/bin/xcrun swift test --filter MonaFailedLineRecordTests --scratch-path /tmp/monacode-planctl/P03-T008.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| RENDER-009 | TODO | Instrument renderer-owned correctness and performance metrics | plan:P03-T009/* | <code>/usr/bin/xcrun swift test --filter MonaRendererMetricsTests --scratch-path /tmp/monacode-planctl/P03-T009.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| RENDER-010 | TODO | Resolve the renderer decision from complete Core Graphics evidence | plan:P03-T010/* | <code>/usr/bin/xcrun swift test --filter MonaRendererDecisionGateTests --scratch-path /tmp/monacode-planctl/P03-T010.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| RENDER-011 | TODO | Execute the conditional Metal branch entirely inside Phase 03 | plan:P03-T011/* | <code>/usr/bin/xcrun swift test --filter MonaMetalRendererParityTests --scratch-path /tmp/monacode-planctl/P03-T011.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| RENDER-012 | TODO | Close projection, geometry, and renderer parity before native input | plan:P03-T012/* | <code>/usr/bin/xcrun swift test --filter Phase03RendererConformanceTests --scratch-path /tmp/monacode-planctl/P03-T012.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| INPUT-001 | TODO | Define platform-neutral keyboard event semantics in Core | plan:P04-T001/* | <code>/usr/bin/xcrun swift test --filter MonaKeyEventTests --scratch-path /tmp/monacode-planctl/P04-T001.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| INPUT-002 | TODO | Translate AppKit key events through one native gateway | plan:P04-T002/* | <code>/usr/bin/xcrun swift test --filter MonaAppKeyEventGatewayTests --scratch-path /tmp/monacode-planctl/P04-T002.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| INPUT-003 | TODO | Port keybinding resolution and chord state to Core | plan:P04-T003/* | <code>/usr/bin/xcrun swift test --filter MonaKeybindingResolverTests --scratch-path /tmp/monacode-planctl/P04-T003.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| INPUT-004 | TODO | Implement marked-text input and composition arbitration | plan:P04-T004/* | <code>/usr/bin/xcrun swift test --filter MonaCompositionTests --scratch-path /tmp/monacode-planctl/P04-T004.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| INPUT-005 | TODO | Replicate multi-cursor input through ModelInputBarrier | plan:P04-T005/* | <code>/usr/bin/xcrun swift test --filter MonaModelInputBarrierTests --scratch-path /tmp/monacode-planctl/P04-T005.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| INPUT-006 | TODO | Project pointer, scroll, and context-menu events through AppKit | plan:P04-T006/* | <code>/usr/bin/xcrun swift test --filter MonaPointerScrollMenuTests --scratch-path /tmp/monacode-planctl/P04-T006.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| INPUT-007 | TODO | Implement public EventControl and native event adaptation | plan:P04-T007/* | <code>/usr/bin/xcrun swift test --filter MonaEventControlTests --scratch-path /tmp/monacode-planctl/P04-T007.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| INPUT-008 | TODO | Implement copy, cut, paste, and paste-edit pipelines | plan:P04-T008/* | <code>/usr/bin/xcrun swift test --filter MonaPasteboardTests --scratch-path /tmp/monacode-planctl/P04-T008.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| INPUT-009 | TODO | Implement drag, drop, and macOS Services transfer | plan:P04-T009/* | <code>/usr/bin/xcrun swift test --filter MonaDragDropServicesTests --scratch-path /tmp/monacode-planctl/P04-T009.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| INPUT-010 | TODO | Expose the raw UTF-16 native text accessibility surface | plan:P04-T010/* | <code>/usr/bin/xcrun swift test --filter MonaAXTextAreaTests --scratch-path /tmp/monacode-planctl/P04-T010.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| INPUT-011 | TODO | Implement accessibility controls, proxies, links, diagnostics, and actions | plan:P04-T011/* | <code>/usr/bin/xcrun swift test --filter MonaAXElementGraphTests --scratch-path /tmp/monacode-planctl/P04-T011.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| INPUT-012 | TODO | Implement focus modes and the localized announcement bridge | plan:P04-T012/* | <code>/usr/bin/xcrun swift test --filter MonaAXFocusAnnouncementTests --scratch-path /tmp/monacode-planctl/P04-T012.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| INPUT-013 | TODO | Route accessibility setters through ModelInputBarrier | plan:P04-T013/* | <code>/usr/bin/xcrun swift test --filter MonaAXMutationGatewayTests --scratch-path /tmp/monacode-planctl/P04-T013.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| EDITOR-001 | TODO | Deliver MonaCodeEditorView as the AppKit editor boundary | plan:P04-T014/* | <code>/usr/bin/xcrun swift test --filter MonaCodeEditorViewLifecycleTests --scratch-path /tmp/monacode-planctl/P04-T014.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| EDITOR-002 | TODO | Deliver MonaCodeEditor and MonaSwiftUIEditorController lifecycle wrappers | plan:P04-T015/* | <code>/usr/bin/xcrun swift test --filter MonaCodeEditorSwiftUILifecycleTests --scratch-path /tmp/monacode-planctl/P04-T015.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| VERIFY-011 | TODO | Close native input, transfer, accessibility, and editor embedding | plan:P04-T016/* | <code>/usr/bin/xcrun swift test --filter Phase04NativeBoundaryConformanceTests --scratch-path /tmp/monacode-planctl/P04-T016.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| SURFACE-003 | TODO | Generate the exact 555-path native public declaration graph | plan:P05-T001/* | <code>/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/PublicDeclarationGraphTests.mjs</code> ⇒ exit 0 | — |
+| COMMAND-001 | TODO | Implement command, action, contribution, and pure-text registries | plan:P05-T002/* | <code>/usr/bin/xcrun swift test --filter MonaCommandActionRegistryTests --scratch-path /tmp/monacode-planctl/P05-T002.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| COMMAND-002 | TODO | Populate all 379 keybinding rows over the Core resolver | plan:P05-T003/* | <code>/usr/bin/xcrun swift test --filter MonaBuiltinKeybindingTests --scratch-path /tmp/monacode-planctl/P05-T003.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| COMMAND-003 | TODO | Implement menu, menu-item, and menu-command registries | plan:P05-T004/* | <code>/usr/bin/xcrun swift test --filter MonaMenuRegistryTests --scratch-path /tmp/monacode-planctl/P05-T004.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| REGISTRY-001 | TODO | Implement all 174 editor options and computed option truth | plan:P05-T005/* | <code>/usr/bin/xcrun swift test --filter MonaEditorOptionTests --scratch-path /tmp/monacode-planctl/P05-T005.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| REGISTRY-002 | TODO | Implement theme, token, color, icon, and Codicon registries | plan:P05-T006/* | <code>/usr/bin/xcrun swift test --filter MonaThemeRegistryTests --scratch-path /tmp/monacode-planctl/P05-T006.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| REGISTRY-003 | TODO | Generate 15 immutable UI localization profiles with 2120 messages | plan:P05-T007/* | <code>/usr/bin/xcrun swift test --filter MonaLocalizationTests --scratch-path /tmp/monacode-planctl/P05-T007.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| LANG-001 | TODO | Retain only core language metadata and explicit plain-text fallback | plan:P05-T008/* | <code>/usr/bin/xcrun swift test --filter MonaLanguageRegistryTests --scratch-path /tmp/monacode-planctl/P05-T008.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| RENDER-013 | TODO | Implement editor.colorize as a native attributed-text replacement | plan:P05-T009/* | <code>/usr/bin/xcrun swift test --filter MonaColorizeSourceTests --scratch-path /tmp/monacode-planctl/P05-T009.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| RENDER-014 | TODO | Implement editor.colorizeElement as a native view mutation replacement | plan:P05-T010/* | <code>/usr/bin/xcrun swift test --filter MonaColorizeViewTests --scratch-path /tmp/monacode-planctl/P05-T010.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| RENDER-015 | TODO | Implement editor.colorizeModelLine from immutable layout geometry | plan:P05-T011/* | <code>/usr/bin/xcrun swift test --filter MonaColorizeModelLineTests --scratch-path /tmp/monacode-planctl/P05-T011.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| EDITOR-003 | TODO | Close editor factories and five instance-interface sequences | plan:P05-T012/* | <code>/usr/bin/xcrun swift test --filter MonaEditorInstanceSurfaceTests --scratch-path /tmp/monacode-planctl/P05-T012.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| LANG-002 | TODO | Implement deterministic provider execution and microtask publication | plan:P05-T013/* | <code>/usr/bin/xcrun swift test --filter MonaProviderExecutorTests --scratch-path /tmp/monacode-planctl/P05-T013.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| COMMAND-004 | TODO | Implement retained feature anchorSelect | plan:P05-T100/* | <code>/usr/bin/xcrun swift test --filter MonaAnchorSelectFeatureTests --scratch-path /tmp/monacode-planctl/P05-T100.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| EDITOR-004 | TODO | Implement retained feature bracketMatching | plan:P05-T101/* | <code>/usr/bin/xcrun swift test --filter MonaBracketMatchingFeatureTests --scratch-path /tmp/monacode-planctl/P05-T101.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| COMMAND-005 | TODO | Implement retained feature caretOperations | plan:P05-T102/* | <code>/usr/bin/xcrun swift test --filter MonaCaretOperationsFeatureTests --scratch-path /tmp/monacode-planctl/P05-T102.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| INPUT-014 | TODO | Implement retained feature clipboard | plan:P05-T103/* | <code>/usr/bin/xcrun swift test --filter MonaClipboardFeatureTests --scratch-path /tmp/monacode-planctl/P05-T103.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| LANG-003 | TODO | Implement retained feature codeAction | plan:P05-T104/* | <code>/usr/bin/xcrun swift test --filter MonaCodeActionFeatureTests --scratch-path /tmp/monacode-planctl/P05-T104.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| EDITOR-005 | TODO | Implement retained feature codeEditor | plan:P05-T105/* | <code>/usr/bin/xcrun swift test --filter MonaCodeEditorFeatureTests --scratch-path /tmp/monacode-planctl/P05-T105.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| LANG-004 | TODO | Implement retained feature codelens | plan:P05-T106/* | <code>/usr/bin/xcrun swift test --filter MonaCodelensFeatureTests --scratch-path /tmp/monacode-planctl/P05-T106.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| RENDER-016 | TODO | Implement retained feature codicon | plan:P05-T107/* | <code>/usr/bin/xcrun swift test --filter MonaCodiconFeatureTests --scratch-path /tmp/monacode-planctl/P05-T107.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| RENDER-017 | TODO | Implement retained feature colorPicker | plan:P05-T108/* | <code>/usr/bin/xcrun swift test --filter MonaColorPickerFeatureTests --scratch-path /tmp/monacode-planctl/P05-T108.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| COMMAND-006 | TODO | Implement retained feature comment | plan:P05-T109/* | <code>/usr/bin/xcrun swift test --filter MonaCommentFeatureTests --scratch-path /tmp/monacode-planctl/P05-T109.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| EDITOR-006 | TODO | Implement retained feature contextmenu | plan:P05-T110/* | <code>/usr/bin/xcrun swift test --filter MonaContextmenuFeatureTests --scratch-path /tmp/monacode-planctl/P05-T110.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| INPUT-015 | TODO | Implement retained feature cursorUndo | plan:P05-T111/* | <code>/usr/bin/xcrun swift test --filter MonaCursorUndoFeatureTests --scratch-path /tmp/monacode-planctl/P05-T111.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| DIFF-001 | TODO | Implement retained feature diffEditor | plan:P05-T112/* | <code>/usr/bin/xcrun swift test --filter MonaDiffEditorFeatureTests --scratch-path /tmp/monacode-planctl/P05-T112.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| DIFF-002 | TODO | Implement retained feature diffEditorBreadcrumbs | plan:P05-T113/* | <code>/usr/bin/xcrun swift test --filter MonaDiffEditorBreadcrumbsFeatureTests --scratch-path /tmp/monacode-planctl/P05-T113.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| INPUT-016 | TODO | Implement retained feature dnd | plan:P05-T114/* | <code>/usr/bin/xcrun swift test --filter MonaDndFeatureTests --scratch-path /tmp/monacode-planctl/P05-T114.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| LANG-005 | TODO | Implement retained feature documentSymbols | plan:P05-T115/* | <code>/usr/bin/xcrun swift test --filter MonaDocumentSymbolsFeatureTests --scratch-path /tmp/monacode-planctl/P05-T115.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| INPUT-017 | TODO | Implement retained feature dropOrPasteInto | plan:P05-T116/* | <code>/usr/bin/xcrun swift test --filter MonaDropOrPasteIntoFeatureTests --scratch-path /tmp/monacode-planctl/P05-T116.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| COMMAND-007 | TODO | Implement retained feature find | plan:P05-T117/* | <code>/usr/bin/xcrun swift test --filter MonaFindFeatureTests --scratch-path /tmp/monacode-planctl/P05-T117.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| RENDER-018 | TODO | Implement retained feature floatingMenu | plan:P05-T118/* | <code>/usr/bin/xcrun swift test --filter MonaFloatingMenuFeatureTests --scratch-path /tmp/monacode-planctl/P05-T118.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| LANG-006 | TODO | Implement retained feature folding | plan:P05-T119/* | <code>/usr/bin/xcrun swift test --filter MonaFoldingFeatureTests --scratch-path /tmp/monacode-planctl/P05-T119.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| RENDER-019 | TODO | Implement retained feature fontZoom | plan:P05-T120/* | <code>/usr/bin/xcrun swift test --filter MonaFontZoomFeatureTests --scratch-path /tmp/monacode-planctl/P05-T120.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| LANG-007 | TODO | Implement retained feature format | plan:P05-T121/* | <code>/usr/bin/xcrun swift test --filter MonaFormatFeatureTests --scratch-path /tmp/monacode-planctl/P05-T121.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| EDITOR-007 | TODO | Implement retained feature gotoError | plan:P05-T122/* | <code>/usr/bin/xcrun swift test --filter MonaGotoErrorFeatureTests --scratch-path /tmp/monacode-planctl/P05-T122.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| COMMAND-008 | TODO | Implement retained feature gotoLine | plan:P05-T123/* | <code>/usr/bin/xcrun swift test --filter MonaGotoLineFeatureTests --scratch-path /tmp/monacode-planctl/P05-T123.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| LANG-008 | TODO | Implement retained feature gotoSymbol | plan:P05-T124/* | <code>/usr/bin/xcrun swift test --filter MonaGotoSymbolFeatureTests --scratch-path /tmp/monacode-planctl/P05-T124.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| LANG-009 | TODO | Implement retained feature hover | plan:P05-T125/* | <code>/usr/bin/xcrun swift test --filter MonaHoverFeatureTests --scratch-path /tmp/monacode-planctl/P05-T125.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| LANG-010 | TODO | Implement retained feature indentation | plan:P05-T126/* | <code>/usr/bin/xcrun swift test --filter MonaIndentationFeatureTests --scratch-path /tmp/monacode-planctl/P05-T126.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| LANG-011 | TODO | Implement retained feature inlayHints | plan:P05-T127/* | <code>/usr/bin/xcrun swift test --filter MonaInlayHintsFeatureTests --scratch-path /tmp/monacode-planctl/P05-T127.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| LANG-012 | TODO | Implement retained feature inlineCompletions | plan:P05-T128/* | <code>/usr/bin/xcrun swift test --filter MonaInlineCompletionsFeatureTests --scratch-path /tmp/monacode-planctl/P05-T128.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| RENDER-020 | TODO | Implement retained feature inlineProgress | plan:P05-T129/* | <code>/usr/bin/xcrun swift test --filter MonaInlineProgressFeatureTests --scratch-path /tmp/monacode-planctl/P05-T129.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| COMMAND-009 | TODO | Implement retained feature inPlaceReplace | plan:P05-T130/* | <code>/usr/bin/xcrun swift test --filter MonaInPlaceReplaceFeatureTests --scratch-path /tmp/monacode-planctl/P05-T130.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| COMMAND-010 | TODO | Implement retained feature insertFinalNewLine | plan:P05-T131/* | <code>/usr/bin/xcrun swift test --filter MonaInsertFinalNewLineFeatureTests --scratch-path /tmp/monacode-planctl/P05-T131.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| RENDER-021 | TODO | Implement retained feature inspectTokens | plan:P05-T132/* | <code>/usr/bin/xcrun swift test --filter MonaInspectTokensFeatureTests --scratch-path /tmp/monacode-planctl/P05-T132.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| INPUT-018 | TODO | Implement retained feature lineSelection | plan:P05-T133/* | <code>/usr/bin/xcrun swift test --filter MonaLineSelectionFeatureTests --scratch-path /tmp/monacode-planctl/P05-T133.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| COMMAND-011 | TODO | Implement retained feature linesOperations | plan:P05-T134/* | <code>/usr/bin/xcrun swift test --filter MonaLinesOperationsFeatureTests --scratch-path /tmp/monacode-planctl/P05-T134.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| LANG-013 | TODO | Implement retained feature linkedEditing | plan:P05-T135/* | <code>/usr/bin/xcrun swift test --filter MonaLinkedEditingFeatureTests --scratch-path /tmp/monacode-planctl/P05-T135.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| RENDER-022 | TODO | Implement retained feature links | plan:P05-T136/* | <code>/usr/bin/xcrun swift test --filter MonaLinksFeatureTests --scratch-path /tmp/monacode-planctl/P05-T136.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| COMMAND-012 | TODO | Implement retained feature longLinesHelper | plan:P05-T137/* | <code>/usr/bin/xcrun swift test --filter MonaLongLinesHelperFeatureTests --scratch-path /tmp/monacode-planctl/P05-T137.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| COMMAND-013 | TODO | Implement retained feature middleScroll | plan:P05-T138/* | <code>/usr/bin/xcrun swift test --filter MonaMiddleScrollFeatureTests --scratch-path /tmp/monacode-planctl/P05-T138.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| INPUT-019 | TODO | Implement retained feature multicursor | plan:P05-T139/* | <code>/usr/bin/xcrun swift test --filter MonaMulticursorFeatureTests --scratch-path /tmp/monacode-planctl/P05-T139.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| LANG-014 | TODO | Implement retained feature parameterHints | plan:P05-T140/* | <code>/usr/bin/xcrun swift test --filter MonaParameterHintsFeatureTests --scratch-path /tmp/monacode-planctl/P05-T140.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| RENDER-023 | TODO | Implement retained feature placeholderText | plan:P05-T141/* | <code>/usr/bin/xcrun swift test --filter MonaPlaceholderTextFeatureTests --scratch-path /tmp/monacode-planctl/P05-T141.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| EDITOR-008 | TODO | Implement retained feature quickCommand | plan:P05-T142/* | <code>/usr/bin/xcrun swift test --filter MonaQuickCommandFeatureTests --scratch-path /tmp/monacode-planctl/P05-T142.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| EDITOR-009 | TODO | Implement retained feature quickHelp | plan:P05-T143/* | <code>/usr/bin/xcrun swift test --filter MonaQuickHelpFeatureTests --scratch-path /tmp/monacode-planctl/P05-T143.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| EDITOR-010 | TODO | Implement retained feature quickOutline | plan:P05-T144/* | <code>/usr/bin/xcrun swift test --filter MonaQuickOutlineFeatureTests --scratch-path /tmp/monacode-planctl/P05-T144.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| COMMAND-014 | TODO | Implement retained feature readOnlyMessage | plan:P05-T145/* | <code>/usr/bin/xcrun swift test --filter MonaReadOnlyMessageFeatureTests --scratch-path /tmp/monacode-planctl/P05-T145.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| LANG-015 | TODO | Implement retained feature referenceSearch | plan:P05-T146/* | <code>/usr/bin/xcrun swift test --filter MonaReferenceSearchFeatureTests --scratch-path /tmp/monacode-planctl/P05-T146.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| LANG-016 | TODO | Implement retained feature rename | plan:P05-T147/* | <code>/usr/bin/xcrun swift test --filter MonaRenameFeatureTests --scratch-path /tmp/monacode-planctl/P05-T147.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| RENDER-024 | TODO | Implement retained feature sectionHeaders | plan:P05-T148/* | <code>/usr/bin/xcrun swift test --filter MonaSectionHeadersFeatureTests --scratch-path /tmp/monacode-planctl/P05-T148.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| LANG-017 | TODO | Implement retained feature semanticTokens | plan:P05-T149/* | <code>/usr/bin/xcrun swift test --filter MonaSemanticTokensFeatureTests --scratch-path /tmp/monacode-planctl/P05-T149.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| LANG-018 | TODO | Implement retained feature smartSelect | plan:P05-T150/* | <code>/usr/bin/xcrun swift test --filter MonaSmartSelectFeatureTests --scratch-path /tmp/monacode-planctl/P05-T150.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| LANG-019 | TODO | Implement retained feature snippet | plan:P05-T151/* | <code>/usr/bin/xcrun swift test --filter MonaSnippetFeatureTests --scratch-path /tmp/monacode-planctl/P05-T151.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| RENDER-025 | TODO | Implement retained feature stickyScroll | plan:P05-T152/* | <code>/usr/bin/xcrun swift test --filter MonaStickyScrollFeatureTests --scratch-path /tmp/monacode-planctl/P05-T152.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| LANG-020 | TODO | Implement retained feature suggest | plan:P05-T153/* | <code>/usr/bin/xcrun swift test --filter MonaSuggestFeatureTests --scratch-path /tmp/monacode-planctl/P05-T153.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| RENDER-026 | TODO | Implement retained feature toggleHighContrast | plan:P05-T154/* | <code>/usr/bin/xcrun swift test --filter MonaToggleHighContrastFeatureTests --scratch-path /tmp/monacode-planctl/P05-T154.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| INPUT-020 | TODO | Implement retained feature toggleTabFocusMode | plan:P05-T155/* | <code>/usr/bin/xcrun swift test --filter MonaToggleTabFocusModeFeatureTests --scratch-path /tmp/monacode-planctl/P05-T155.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| LANG-021 | TODO | Implement retained feature tokenization | plan:P05-T156/* | <code>/usr/bin/xcrun swift test --filter MonaTokenizationFeatureTests --scratch-path /tmp/monacode-planctl/P05-T156.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| RENDER-027 | TODO | Implement retained feature unicodeHighlighter | plan:P05-T157/* | <code>/usr/bin/xcrun swift test --filter MonaUnicodeHighlighterFeatureTests --scratch-path /tmp/monacode-planctl/P05-T157.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| COMMAND-015 | TODO | Implement retained feature unusualLineTerminators | plan:P05-T158/* | <code>/usr/bin/xcrun swift test --filter MonaUnusualLineTerminatorsFeatureTests --scratch-path /tmp/monacode-planctl/P05-T158.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| RENDER-028 | TODO | Implement retained feature wordHighlighter | plan:P05-T159/* | <code>/usr/bin/xcrun swift test --filter MonaWordHighlighterFeatureTests --scratch-path /tmp/monacode-planctl/P05-T159.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| COMMAND-016 | TODO | Implement retained feature wordOperations | plan:P05-T160/* | <code>/usr/bin/xcrun swift test --filter MonaWordOperationsFeatureTests --scratch-path /tmp/monacode-planctl/P05-T160.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| COMMAND-017 | TODO | Implement retained feature wordPartOperations | plan:P05-T161/* | <code>/usr/bin/xcrun swift test --filter MonaWordPartOperationsFeatureTests --scratch-path /tmp/monacode-planctl/P05-T161.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| SURFACE-004 | TODO | Produce and validate the provisional native declaration manifest | plan:P05-T190/* | <code>/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/NativeDeclarationManifestTests.mjs</code> ⇒ exit 0 | — |
+| VERIFY-012 | TODO | Close the retained public surface, registries, options, themes, localization, and features | plan:P05-T200/* | <code>/usr/bin/xcrun swift test --filter Phase05PublicSurfaceConformanceTests --scratch-path /tmp/monacode-planctl/P05-T200.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| LANG-022 | TODO | Define a transport-neutral byte channel in Core | plan:P06-T001/* | <code>/usr/bin/xcrun swift test --filter MonaMessageTransportContractTests --scratch-path /tmp/monacode-planctl/P06-T001.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| LANG-023 | TODO | Implement streaming LSP frame decoding and encoding | plan:P06-T002/* | <code>/usr/bin/xcrun swift test --filter MonaLSPFrameCodecTests --scratch-path /tmp/monacode-planctl/P06-T002.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| LANG-024 | TODO | Implement deterministic JSON-RPC wire values and errors | plan:P06-T003/* | <code>/usr/bin/xcrun swift test --filter MonaJSONRPCCodecTests --scratch-path /tmp/monacode-planctl/P06-T003.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| LANG-025 | TODO | Implement LSP session state and 25 capability mappings | plan:P06-T004/* | <code>/usr/bin/xcrun swift test --filter MonaLSPClientCapabilityTests --scratch-path /tmp/monacode-planctl/P06-T004.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| LANG-026 | TODO | Close all 30 provider registries and five direct-only surfaces | plan:P06-T005/* | <code>/usr/bin/xcrun swift test --filter MonaProviderRegistryClosureTests --scratch-path /tmp/monacode-planctl/P06-T005.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| LANG-027 | TODO | Port the complete snippet parser and grammar | plan:P06-T006/* | <code>/usr/bin/xcrun swift test --filter MonaSnippetParserTests --scratch-path /tmp/monacode-planctl/P06-T006.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| LANG-028 | TODO | Implement snippet variables, resolvers, sessions, and multi-cursor ordering | plan:P06-T007/* | <code>/usr/bin/xcrun swift test --filter MonaSnippetSessionTests --scratch-path /tmp/monacode-planctl/P06-T007.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| LANG-029 | TODO | Port Markdown semantics into a native presentation tree | plan:P06-T008/* | <code>/usr/bin/xcrun swift test --filter MonaMarkdownSecurityTests --scratch-path /tmp/monacode-planctl/P06-T008.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| SERVICE-005 | TODO | Implement the macOS host byte-transport adapter outside Core | plan:P06-T009/* | <code>/usr/bin/xcrun swift test --filter MonaProcessMessageTransportTests --scratch-path /tmp/monacode-planctl/P06-T009.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| LANG-030 | TODO | Close LSP, provider, snippet, Markdown, and plain-text fallback behavior | plan:P06-T010/* | <code>/usr/bin/xcrun swift test --filter Phase06LanguageInfrastructureTests --scratch-path /tmp/monacode-planctl/P06-T010.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| DIFF-003 | TODO | Implement legacy and advanced diff engines over raw UTF-16 | plan:P07-T001/* | <code>/usr/bin/xcrun swift test --filter MonaDiffEngineDifferentialTests --scratch-path /tmp/monacode-planctl/P07-T001.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| DIFF-004 | TODO | Close diff timeouts, caches, maximum size, and unavailable external paths | plan:P07-T002/* | <code>/usr/bin/xcrun swift test --filter MonaDiffCoordinatorTests --scratch-path /tmp/monacode-planctl/P07-T002.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| SERVICE-006 | TODO | Implement 40 standalone services and bounded session state | plan:P07-T003/* | <code>/usr/bin/xcrun swift test --filter MonaStandaloneServiceTests --scratch-path /tmp/monacode-planctl/P07-T003.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| SERVICE-007 | TODO | Project four dialog sites into host-authorized native dialogs | plan:P07-T004/* | <code>/usr/bin/xcrun swift test --filter MonaDialogServiceTests --scratch-path /tmp/monacode-planctl/P07-T004.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| SERVICE-008 | TODO | Implement seven host groups and ten concrete host types | plan:P07-T005/* | <code>/usr/bin/xcrun swift test --filter MonaHostContractClosureTests --scratch-path /tmp/monacode-planctl/P07-T005.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| SERVICE-009 | TODO | Implement the four-outcome WorkspaceEdit transaction | plan:P07-T006/* | <code>/usr/bin/xcrun swift test --filter MonaWorkspaceEditTests --scratch-path /tmp/monacode-planctl/P07-T006.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| SERVICE-010 | TODO | Close the bounded cache registry and provisional cache manifest | plan:P07-T007/* | <code>/usr/bin/xcrun swift test --filter MonaCacheRegistryTests --scratch-path /tmp/monacode-planctl/P07-T007.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| SERVICE-011 | TODO | Close runtime-style substitutions and full source inventory | plan:P07-T008/* | <code>/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/SourceRuntimeStyleTests.mjs</code> ⇒ exit 0 | — |
+| DIFF-005 | TODO | Deliver diff and multi-diff views, SwiftUI wrappers, and sample-host activation | plan:P07-T009/* | <code>/usr/bin/xcrun swift test --filter MonaDiffViewLifecycleTests --scratch-path /tmp/monacode-planctl/P07-T009.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| VERIFY-013 | TODO | Close diff, service, host, cache, source, and view conformance | plan:P07-T010/* | <code>/usr/bin/xcrun swift test --filter Phase07HostAndDiffConformanceTests --scratch-path /tmp/monacode-planctl/P07-T010.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| SURFACE-005 | TODO | Freeze the final public API closure before candidate generation | plan:P07-T011/* | <code>/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/PublicAPIClosureTests.mjs</code> ⇒ exit 0 | — |
+| VERIFY-014 | TODO | Build the frozen three-product release package | plan:P08-T001/* | <code>/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/ReleaseBuildTests.mjs</code> ⇒ exit 0 | — |
+| VERIFY-015 | TODO | Scan package graph, symbols, links, resources, and forbidden runtimes | plan:P08-T002/* | <code>/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/DistributionScanTests.mjs</code> ⇒ exit 0 | — |
+| VERIFY-016 | TODO | Assemble exact license provenance and distribution notices | plan:P08-T003/* | <code>/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/LicenseNoticeTests.mjs</code> ⇒ exit 0 | — |
+| VERIFY-017 | TODO | Finalize MonaNativeDeclarationManifest after public API closure | plan:P08-T010/* | <code>/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/FinalNativeDeclarationManifestTests.mjs</code> ⇒ exit 0 | — |
+| VERIFY-018 | TODO | Finalize MonaRegExpUnicodeManifest after all semantic consumers | plan:P08-T011/* | <code>/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/FinalRegExpUnicodeManifestTests.mjs</code> ⇒ exit 0 | — |
+| VERIFY-019 | TODO | Finalize MonaEnvironmentManifest after every environment-sensitive consumer | plan:P08-T012/* | <code>/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/FinalEnvironmentManifestTests.mjs</code> ⇒ exit 0 | — |
+| VERIFY-020 | TODO | Finalize MonaSourceClosureManifest from the release source set | plan:P08-T013/* | <code>/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/FinalSourceClosureManifestTests.mjs</code> ⇒ exit 0 | — |
+| VERIFY-021 | TODO | Finalize MonaCacheManifest from all registered caches | plan:P08-T014/* | <code>/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/FinalCacheManifestTests.mjs</code> ⇒ exit 0 | — |
+| VERIFY-022 | TODO | Finalize MonaDistributionManifest after package and notice closure | plan:P08-T015/* | <code>/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/FinalDistributionManifestTests.mjs</code> ⇒ exit 0 | — |
+| VERIFY-023 | TODO | Validate the exact six-static-candidate release set | plan:P08-T016/* | <code>/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/SixStaticCandidateSetTests.mjs</code> ⇒ exit 0 | — |
+| VERIFY-024 | TODO | Recollect and finalize the per-run privacy-filtered QEnvironmentID | plan:P09-T001/* | <code>/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/FormalQEnvironmentPreflightTests.mjs</code> ⇒ exit 0 | — |
+| VERIFY-025 | TODO | Join all seven candidates into one qualified acceptance set | plan:P09-T002/* | <code>/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/QualifiedCandidateSetTests.mjs</code> ⇒ exit 0 | — |
+| VERIFY-026 | TODO | Run C01: model and exact semantic equivalence | plan:P09-T010/* | <code>/usr/bin/xcrun swift test --filter C01Tests --scratch-path /tmp/monacode-planctl/P09-T010.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| VERIFY-027 | TODO | Run C02: environment, locale, clock, entropy, and intrinsic equivalence | plan:P09-T011/* | <code>/usr/bin/xcrun swift test --filter C02Tests --scratch-path /tmp/monacode-planctl/P09-T011.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| VERIFY-028 | TODO | Run C03: projection, layout, scroll, and geometry equivalence | plan:P09-T012/* | <code>/usr/bin/xcrun swift test --filter C03Tests --scratch-path /tmp/monacode-planctl/P09-T012.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| VERIFY-029 | TODO | Run C04: public declarations, registries, options, themes, localization, and runtime-style closure | plan:P09-T013/* | <code>/usr/bin/xcrun swift test --filter C04Tests --scratch-path /tmp/monacode-planctl/P09-T013.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| VERIFY-030 | TODO | Run C05: retained feature and diff equivalence | plan:P09-T014/* | <code>/usr/bin/xcrun swift test --filter C05Tests --scratch-path /tmp/monacode-planctl/P09-T014.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| VERIFY-031 | TODO | Run C06: provider, LSP, snippet, and Markdown equivalence | plan:P09-T015/* | <code>/usr/bin/xcrun swift test --filter C06Tests --scratch-path /tmp/monacode-planctl/P09-T015.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| VERIFY-032 | TODO | Run C07: native input, transfer, accessibility, and workspace-edit equivalence | plan:P09-T016/* | <code>/usr/bin/xcrun swift test --filter C07Tests --scratch-path /tmp/monacode-planctl/P09-T016.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| VERIFY-033 | TODO | Run C08: renderer correctness and frozen branch parity | plan:P09-T017/* | <code>/usr/bin/xcrun swift test --filter C08Tests --scratch-path /tmp/monacode-planctl/P09-T017.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| VERIFY-034 | TODO | Run C09: delivery views, hosts, lifetimes, services, and resource bounds | plan:P09-T018/* | <code>/usr/bin/xcrun swift test --filter C09Tests --scratch-path /tmp/monacode-planctl/P09-T018.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| VERIFY-035 | TODO | Run C10: release package, API, dependency, resource, hash, and license closure | plan:P09-T019/* | <code>/usr/bin/xcrun swift test --filter C10Tests --scratch-path /tmp/monacode-planctl/P09-T019.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| VERIFY-036 | TODO | Run P00: cold startup | plan:P09-T030/* | <code>/usr/bin/xcrun swift test --filter P00WorkloadTests --scratch-path /tmp/monacode-planctl/P09-T030.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| VERIFY-037 | TODO | Run P01: model load | plan:P09-T031/* | <code>/usr/bin/xcrun swift test --filter P01WorkloadTests --scratch-path /tmp/monacode-planctl/P09-T031.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| VERIFY-038 | TODO | Run P02: typing and undo | plan:P09-T032/* | <code>/usr/bin/xcrun swift test --filter P02WorkloadTests --scratch-path /tmp/monacode-planctl/P09-T032.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| VERIFY-039 | TODO | Run P03: batch edits | plan:P09-T033/* | <code>/usr/bin/xcrun swift test --filter P03WorkloadTests --scratch-path /tmp/monacode-planctl/P09-T033.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| VERIFY-040 | TODO | Run P04: vertical scroll | plan:P09-T034/* | <code>/usr/bin/xcrun swift test --filter P04WorkloadTests --scratch-path /tmp/monacode-planctl/P09-T034.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| VERIFY-041 | TODO | Run P05: long line | plan:P09-T035/* | <code>/usr/bin/xcrun swift test --filter P05WorkloadTests --scratch-path /tmp/monacode-planctl/P09-T035.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| VERIFY-042 | TODO | Run P06: wrap and resize | plan:P09-T036/* | <code>/usr/bin/xcrun swift test --filter P06WorkloadTests --scratch-path /tmp/monacode-planctl/P09-T036.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| VERIFY-043 | TODO | Run P07: decorations | plan:P09-T037/* | <code>/usr/bin/xcrun swift test --filter P07WorkloadTests --scratch-path /tmp/monacode-planctl/P09-T037.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| VERIFY-044 | TODO | Run P08: find and replace | plan:P09-T038/* | <code>/usr/bin/xcrun swift test --filter P08WorkloadTests --scratch-path /tmp/monacode-planctl/P09-T038.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| VERIFY-045 | TODO | Run P09: multi-cursor and snippet | plan:P09-T039/* | <code>/usr/bin/xcrun swift test --filter P09WorkloadTests --scratch-path /tmp/monacode-planctl/P09-T039.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| VERIFY-046 | TODO | Run P10: diff and multi-diff | plan:P09-T040/* | <code>/usr/bin/xcrun swift test --filter P10WorkloadTests --scratch-path /tmp/monacode-planctl/P09-T040.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| VERIFY-047 | TODO | Run P11: provider and LSP | plan:P09-T041/* | <code>/usr/bin/xcrun swift test --filter P11WorkloadTests --scratch-path /tmp/monacode-planctl/P09-T041.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| VERIFY-048 | TODO | Run P12: shared model | plan:P09-T042/* | <code>/usr/bin/xcrun swift test --filter P12WorkloadTests --scratch-path /tmp/monacode-planctl/P09-T042.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| VERIFY-049 | TODO | Run P13: IME and accessibility queries | plan:P09-T043/* | <code>/usr/bin/xcrun swift test --filter P13WorkloadTests --scratch-path /tmp/monacode-planctl/P09-T043.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| VERIFY-050 | TODO | Run lifecycle, 24-hour soak, sanitizers, and validation layers | plan:P09-T050/* | <code>/usr/bin/xcrun swift test --filter LifecycleSoakSanitizerTests --scratch-path /tmp/monacode-planctl/P09-T050.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| VERIFY-051 | TODO | Run failure-injection and algorithmic complexity gates | plan:P09-T051/* | <code>/usr/bin/xcrun swift test --filter FailureAndComplexityTests --scratch-path /tmp/monacode-planctl/P09-T051.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| VERIFY-052 | TODO | Validate the frozen Phase 03 renderer decision without source changes | plan:P09-T052/* | <code>/usr/bin/xcrun swift test --filter RendererDecisionValidationTests --scratch-path /tmp/monacode-planctl/P09-T052.GREEN.001.PROC.001</code> ⇒ exit 0 | — |
+| VERIFY-053 | TODO | Aggregate the final all-or-nothing G5-R release verdict | plan:P09-T099/* | <code>/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/FinalReleaseVerdictTests.mjs</code> ⇒ exit 0 | — |
+| MOBILE-001 | TODO | iOS 26+ UIKit adapter | mobile:00/* | <code>/usr/bin/test -d Sources/MonaCodeMobile</code> ⇒ exit 0 | — |
+| MOBILE-002 | TODO | iPadOS 26+ UIKit adapter | mobile:01/* | <code>/usr/bin/test -d Sources/MonaCodeMobile</code> ⇒ exit 0 | — |
+| MOBILE-003 | TODO | touch and software-keyboard contracts | mobile:02/* | <code>/usr/bin/test -d Sources/MonaCodeMobile</code> ⇒ exit 0 | — |
+| MOBILE-004 | TODO | mobile clipboard, drag/drop, accessibility and device-performance baselines | mobile:03/* | <code>/usr/bin/test -d Sources/MonaCodeMobile</code> ⇒ exit 0 | — |
+<!-- MONACODE_TASKS:END -->
+
+## Definition of Done
+
+A task is `DONE` only when all applicable conditions pass for one verification source-set digest:
+
+1. Every owned contract identity has a production implementation or the exact accepted native adaptation fixed by G6-R.
+2. The implementation is connected to the public or host execution path; declaration-only, constructor-only, registry-only, fixture-only, and unreachable implementations do not satisfy completion.
+3. Automated behavior tests cover the success, boundary, and failure paths named in the row.
+4. Monaco differential probes pass where a Monaco oracle exists; platform-native acceptance passes for an accepted native replacement.
+5. Every required performance cell passes the frozen G6-R threshold on the qualified environment.
+6. Evidence records the same verification source-set digest and exact commands as this ledger.
+7. The governance checker, frozen-contract verifier, and relevant repository test gates pass.
+
+Plan construction, schema validation, generated declarations, passing shared gates, and historical release evidence prove only their own deliverables. They never establish product behavior by themselves.
+
+## Build and verify
+
+```bash
+/usr/bin/xcrun swift build
+/usr/bin/xcrun swift test --skip Soak4HourTests
+/opt/homebrew/Cellar/node/26.7.0/bin/node Tools/Docs/check-project-governance.mjs
+/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/ProjectGovernanceTests.mjs Tests/PlanStructureTests/ProductIntegrationProbeTests.mjs Tests/PlanStructureTests/FinalReleaseVerdictTests.mjs
+/opt/homebrew/Cellar/node/26.7.0/bin/node docs/contracts/monaco-editor-0.56.0/g4-r/verify-contract.mjs
+/opt/homebrew/Cellar/node/26.7.0/bin/node docs/contracts/monaco-editor-0.56.0/g5-r/verify-contract.mjs
+/opt/homebrew/Cellar/node/26.7.0/bin/node docs/contracts/monaco-editor-0.56.0/g6-r/verify-contract.mjs
+git diff --check
+```
+
+The exact accepted result for a command is the result named by its task row and digest-bound evidence. A nonzero product-gap probe or the currently bounded Swift Diff assertion set is not a repository-wide pass.
+
+## Contracts and history
+
+- [G6-R frozen contract and adoption entry](docs/contracts/monaco-editor-0.56.0/g6-r/README.md)
+- [G6-R implementation-plan manifest](docs/contracts/monaco-editor-0.56.0/g6-r/artifacts/monacode-g6r-implementation-plan-manifest.json)
+- [Implementation-phase provenance index](docs/implementation-phases/README.md)
+- [Non-authoritative archive index](docs/archive/README.md)
