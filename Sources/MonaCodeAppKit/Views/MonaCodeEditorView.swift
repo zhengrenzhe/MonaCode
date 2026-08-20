@@ -93,6 +93,19 @@ public final class MonaCodeEditorView: NSView {
     /// The keybinding resolver (P04-T003).
     internal private(set) var keybindingResolver: MonaKeybindingResolver!
 
+    /// The keybinding context — the set of monaco "when-clause" context keys
+    /// the resolver evaluates against. v1 sets the common static defaults
+    /// (per spec §3.2 Ruling #10): `editorTextFocus`, `editorReadonly`,
+    /// `editorHasMultipleSelections`, `editorLangId`. A future task will make
+    /// these reflect live editor state (focus, model read-only, language id).
+    private var keybindingContext: MonaKeybindingContext {
+        MonaKeybindingContext()
+            .with("editorTextFocus", .bool(true))
+            .with("editorReadonly", .bool(false))
+            .with("editorHasMultipleSelections", .bool(false))
+            .with("editorLangId", .string("plaintext"))
+    }
+
     /// The pointer gateway (P04-T006).
     internal private(set) var pointerGateway: MonaPointerGateway!
 
@@ -176,6 +189,12 @@ public final class MonaCodeEditorView: NSView {
     /// The IME composition arbiter (P04-T004) over the resolver/chord/session.
     internal private(set) var compositionArbiter: MonaCompositionArbiter?
 
+    /// The command dispatcher (A3) — the chokepoint every resolved keybinding
+    /// command routes through. `nil` when detached. The `transactionGateway`
+    /// is `inputBarrier.gateway` (same instance — the A3 spec §4.1 ownership
+    /// ruling: the barrier owns the gateway; the dispatcher borrows it).
+    internal private(set) var commandDispatcher: MonaCommandDispatcher?
+
     /// The AppKit text-input client (`NSTextInputClient`) over the geometry
     /// barrier. `nil` when detached.
     internal private(set) var textInputClient: MonaTextInputClient?
@@ -243,7 +262,11 @@ public final class MonaCodeEditorView: NSView {
         keyEventGateway = MonaAppKeyEventGateway()
         compositionSession = MonaCompositionSession(clock: clock)
         chordState = MonaChordState(clock: clock)
-        keybindingResolver = MonaKeybindingResolver()
+        // Driving layer (Task 4 / GAP-5): load the 379 builtin keybinding rows
+        // into the resolver so `keyDown` (future task) can resolve events to
+        // commands. Was `MonaKeybindingResolver()` (empty — no command could
+        // ever resolve); now `MonaBuiltinKeybindings.makeResolver()`.
+        keybindingResolver = MonaBuiltinKeybindings.makeResolver()
         pointerGateway = MonaPointerGateway()
         scrollGateway = MonaScrollGateway()
         contextMenuGateway = MonaContextMenuGateway()
@@ -373,6 +396,20 @@ public final class MonaCodeEditorView: NSView {
             announcementBridge: announcementBridge
         )
 
+        // Driving layer (Task 4 / GAP-5): the command dispatcher (A3) — the
+        // chokepoint every resolved keybinding command routes through.
+        // `transactionGateway` is `inputBarrier.gateway` (the SAME instance —
+        // the A3 spec §4.1 ownership ruling: the barrier owns the gateway; the
+        // dispatcher borrows it so commits land on the same transaction
+        // pipeline every other collaborator reads). `caretOps` is the
+        // stateless `MonaCaretOperationsFeature()` (no-arg init).
+        commandDispatcher = MonaCommandDispatcher(
+            model: model,
+            inputBarrier: inputBarrier!,
+            transactionGateway: inputBarrier!.gateway,
+            caretOps: MonaCaretOperationsFeature()
+        )
+
         // Transfer: clipboard + drag/drop + Services. The pasteboard gateway
         // and paste-edit pipeline are shared so a provider registered once
         // applies to clipboard paste, drop, AND Services.
@@ -415,6 +452,7 @@ public final class MonaCodeEditorView: NSView {
         servicesGateway = nil
         compositionArbiter = nil
         textInputClient = nil
+        commandDispatcher = nil
     }
 
     /// Hook invoked by the attachment when a model `onDidChangeContent` event

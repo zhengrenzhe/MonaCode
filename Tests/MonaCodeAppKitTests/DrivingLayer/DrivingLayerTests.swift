@@ -16,6 +16,7 @@ import CoreGraphics
 import CoreText
 import MonaCode
 import MonaCodeAppKit
+@testable import MonaCodeAppKit
 
 final class DrivingLayerTests: XCTestCase {
 
@@ -115,5 +116,17 @@ final class DrivingLayerTests: XCTestCase {
         model.applyEdits([MonaModelEditOperation(range: MonaRange(startLine: 1, startColumn: 1, endLine: 1, endColumn: 1), text: "X")])
         // observeContentChange should have set needsDisplay
         XCTAssertTrue(view.needsDisplay)
+    }
+
+    // MARK: - commandDispatcher wire-in (Task 4 / GAP-5)
+
+    @MainActor
+    func testDispatcherConstructedOnAttach() {
+        let model = MonaCodeModel(text: "hello", uri: MonaURI(scheme: "inmemory", path: "/t"))
+        let view = MonaCodeEditorView(frame: NSRect(x: 0, y: 0, width: 400, height: 300))
+        view.attach(model: model)
+        XCTAssertNotNil(view.commandDispatcher)
+        XCTAssertTrue(view.commandDispatcher!.contains("type"))
+        XCTAssertTrue(view.commandDispatcher!.contains("cursorLeft"))
     }
 }
