@@ -169,4 +169,54 @@ final class DrivingLayerTests: XCTestCase {
         view.dispatchKeyEvent(key, source: nil)
         XCTAssertEqual(model.getValue(), "X")
     }
+
+    // MARK: - mouseDown sets caret (Task 7 / §3.3 + §5 hard-truth #7)
+
+    /// `mouseDown` translates the event through `pointerGateway`, resolves the
+    /// viewport point to a model position through `geometryBarrier`, and sets an
+    /// ABSOLUTE collapsed caret via the low-level gateway path
+    /// (`beginTransaction → prepareSelections → commit`) — the spec §3.3 +
+    /// §5 hard-truth-#7 path (pointer sets absolute position → low-level
+    /// gateway, NOT `commitCaretMove` which is relative-only). The caret lands
+    /// on `inputBarrier.gateway.lastCommittedSelections` for the next input/AX
+    /// mutation to read.
+    @MainActor
+    func testMouseDownSetsCaret() {
+        let model = MonaCodeModel(text: "hello\nworld\n", uri: MonaURI(scheme: "inmemory", path: "/t"))
+        let view = MonaCodeEditorView(frame: NSRect(x: 0, y: 0, width: 400, height: 300))
+        view.attach(model: model)
+        // Publish a generation so the barrier has records to hit-test against.
+        _ = view.geometryBarrier?.publishGeneration(visibleViewLines: 1...2)
+
+        // API drift: the brief used `perform(NSSelectorFromString("mouseDown:"))`
+        // to assert the override exists. `perform(_:)` (the no-arg variant) on a
+        // selector that takes an `NSEvent` argument would crash (Swift imports
+        // `NSEvent` as non-optional), and it returns nil for void-returning
+        // methods — so it cannot distinguish override-present from NSView's
+        // base `mouseDown:`. Instead: construct a real mouse `NSEvent` (same
+        // pattern as `MonaPointerScrollMenuTests.mouseEvent`) and call the
+        // override directly via dynamic dispatch (lands on
+        // `MonaCodeEditorView.mouseDown`).
+        let event = NSEvent.mouseEvent(
+            with: .leftMouseDown,
+            location: CGPoint(x: 5, y: 5),
+            modifierFlags: [],
+            timestamp: 100.0,
+            windowNumber: 0,
+            context: nil,
+            eventNumber: 1,
+            clickCount: 1,
+            pressure: 1.0
+        )!
+        view.mouseDown(with: event)
+
+        // The override set a collapsed caret at the hit-tested position via the
+        // low-level gateway path; `lastCommittedSelections` now carries it.
+        let selections = view.inputBarrier?.gateway.lastCommittedSelections ?? []
+        XCTAssertFalse(selections.isEmpty, "mouseDown committed a caret selection")
+        // The caret is collapsed (anchor == activePosition) — a click, not a drag.
+        if let sel = selections.first {
+            XCTAssertEqual(sel.anchor, sel.activePosition, "mouseDown sets a collapsed caret")
+        }
+    }
 }

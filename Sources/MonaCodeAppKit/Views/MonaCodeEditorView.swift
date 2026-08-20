@@ -795,6 +795,148 @@ public final class MonaCodeEditorView: NSView {
         _ = keyEventGateway.apply(arbitration.dispatchOutcome)
     }
 
+    // MARK: - Mouse + flags overrides (driving layer — Task 7 / §3.3)
+    //
+    // The pointer entry points of the AppKit responder chain. Each override
+    // translates the native `NSEvent` into a platform-neutral `MonaPointerEvent`
+    // via `pointerGateway` (the single translation point — stateless pure,
+    // spec §8.3 :178), resolves the viewport point to a model position through
+    // `geometryBarrier` (`hitTest` — `resolvedPosition` nil = no generation /
+    // OOB → no-op :244-246), and acts on the resolved position.
+    //
+    // Selection-set path (spec §3.3 + §5 hard-truth #7 — NO cursor host):
+    // pointer sets an ABSOLUTE position, so it uses the LOW-LEVEL gateway path
+    // (`beginTransaction → prepareSelections → commit`) on the SAME
+    // `inputBarrier.gateway` instance every other collaborator reads — NOT
+    // `commitCaretMove` (relative-only, would need a cursor host to interpret
+    // a direction). For `mouseDown` the selection is a collapsed caret
+    // (`anchor == activePosition == pos`); for `mouseDragged` it extends from
+    // the stored `downPosition` to the current position. `lastCommittedSelections`
+    // is the post-commit truth the next input / AX mutation reads.
+
+    /// The model position captured at the last `mouseDown` — the anchor for
+    /// drag extension (`mouseDragged` builds `MonaSelection(anchor: downPosition,
+    /// activePosition: currentPos)`). Cleared on `mouseUp` so the next click
+    /// starts a fresh selection. `nil` when no drag is in progress.
+    private var downPosition: MonaPosition?
+
+    /// A button press. Translates the event, resolves the viewport point to a
+    /// model position through the geometry barrier, sets a collapsed caret at
+    /// that position via the low-level gateway path, schedules a redraw, and
+    /// stores the position for drag extension.
+    ///
+    /// No-op when not attached or when the barrier cannot resolve the position
+    /// (typed unavailable — no stale caret is synthesized).
+    override public func mouseDown(with event: NSEvent) {
+        guard isAttached,
+              let gw = pointerGateway,
+              let barrier = geometryBarrier,
+              let input = inputBarrier else { return }
+        let vp = convert(event.locationInWindow, from: nil)
+        let pe = gw.translate(event, phase: .down, viewportPoint: vp, resolvingPositionThrough: barrier)
+        guard let pos = pe.resolvedPosition else { return }
+        // GAP-5 / §5 hard-truth #7: pointer sets ABSOLUTE position → low-level
+        // gateway path (NOT commitCaretMove — relative-only, needs a cursor
+        // host). begin → prepareSelections([collapsed caret]) → commit on the
+        // SAME gateway every other collaborator reads (inputBarrier.gateway).
+        let sel = MonaSelection(anchor: pos, activePosition: pos)
+        let tx = input.gateway.beginTransaction()
+        tx.prepareSelections([sel])
+        _ = input.gateway.commit(tx)  // → lastCommittedSelections = [sel]
+        needsDisplay = true
+        downPosition = pos  // for drag extension
+    }
+
+    /// A movement with the button held. Translates the event (`.dragged`
+    /// phase), resolves the position, and extends the selection from the stored
+    /// `downPosition` to the current position. No-op when not attached, when no
+    /// `downPosition` is stored (no preceding `mouseDown`), or when the barrier
+    /// cannot resolve the position.
+    override public func mouseDragged(with event: NSEvent) {
+        guard isAttached,
+              let gw = pointerGateway,
+              let barrier = geometryBarrier,
+              let input = inputBarrier,
+              let down = downPosition else { return }
+        let vp = convert(event.locationInWindow, from: nil)
+        let pe = gw.translate(event, phase: .dragged, viewportPoint: vp, resolvingPositionThrough: barrier)
+        guard let pos = pe.resolvedPosition else { return }
+        // Extend the selection: anchor stays at the press position, active
+        // tracks the current position. Same low-level gateway path as mouseDown.
+        let sel = MonaSelection(anchor: down, activePosition: pos)
+        let tx = input.gateway.beginTransaction()
+        tx.prepareSelections([sel])
+        _ = input.gateway.commit(tx)
+        needsDisplay = true
+    }
+
+    /// A button release. The selection was already finalized by the last
+    /// `mouseDragged` (or by `mouseDown` itself when no drag followed); this
+    /// clears the stored `downPosition` so the next click starts a fresh
+    /// selection. monaco's `mouseUp` also dispatches selection-change / copy
+    /// events; those are deferred (B1 features).
+    override public func mouseUp(with event: NSEvent) {
+        guard isAttached else { return }
+        downPosition = nil
+    }
+
+    /// A right-button press. Translates the event, resolves the position, and
+    /// presents the context menu at the resolved caret rect via
+    /// `contextMenuGateway.present` (:223). The menu is NOT presented when the
+    /// barrier cannot resolve the position (no stale popup location).
+    ///
+    /// API drift: spec §3.3 used `MonaAppMenuModel.builtin` — no such static
+    /// exists. v1 presents an empty menu (the context-menu feature
+    /// `MonaContextmenuFeature.buildAppMenuModel(context:)` is not wired into
+    /// the view yet; a future task adapts the Core `MonaMenuModel` to
+    /// `MonaAppMenuModel`). The gateway still resolves the caret rect and pops
+    /// the menu — the path is exercised; only the content is empty.
+    override public func rightMouseDown(with event: NSEvent) {
+        guard isAttached,
+              let gw = pointerGateway,
+              let barrier = geometryBarrier,
+              let cmg = contextMenuGateway else { return }
+        let vp = convert(event.locationInWindow, from: nil)
+        let pe = gw.translate(event, phase: .down, viewportPoint: vp, resolvingPositionThrough: barrier)
+        guard let pos = pe.resolvedPosition else { return }
+        let menu = cmg.buildMenu(from: MonaAppMenuModel(items: []))
+        _ = cmg.present(menu: menu, at: pos, in: self, with: barrier)
+    }
+
+    /// A movement with no button held. Translates the event (`.moved` phase)
+    /// and resolves the position so the gateway is exercised; hover staging is
+    /// deferred (spec §3.3: "MonaHoverFeature — if available"). The view does
+    /// not yet own a `MonaHoverFeature`; a future task wires `stageHover` when
+    /// hover providers land. No redraw is scheduled (no region changed yet).
+    override public func mouseMoved(with event: NSEvent) {
+        guard isAttached,
+              let gw = pointerGateway,
+              let barrier = geometryBarrier else { return }
+        let vp = convert(event.locationInWindow, from: nil)
+        let pe = gw.translate(event, phase: .moved, viewportPoint: vp, resolvingPositionThrough: barrier)
+        // Hover feature not wired (§3.3 "if available"). v1: resolve the
+        // position so the pointer gateway is the single translation point;
+        // a future task stages a hover when MonaHoverFeature lands.
+        _ = pe.resolvedPosition
+    }
+
+    /// The pointer left the view. Clears hover state when a hover feature is
+    /// wired (§3.3 "if available"). v1: no-op (no hover feature yet).
+    override public func mouseExited(with event: NSEvent) {
+        guard isAttached else { return }
+        // Hover feature not wired (§3.3 "if available"). v1: no-op; a future
+        // task calls MonaHoverFeature.releaseHover / clears the staged hover.
+    }
+
+    /// A modifier-only key press/release (Shift/Cmd/Alt/Ctrl). No `keyText` →
+    /// no `type` command, but the modifier change may invalidate the active
+    /// chord's when-clause → re-evaluate the chord via `keybindingResolver`
+    /// (:254). Forwards to `super` when not attached.
+    override public func flagsChanged(with event: NSEvent) {
+        guard isAttached else { super.flagsChanged(with: event); return }
+        _ = keybindingResolver.reevaluateActiveChord(context: keybindingContext, chordState: chordState)
+    }
+
     // MARK: - Deinit (safety net)
 
     deinit {
