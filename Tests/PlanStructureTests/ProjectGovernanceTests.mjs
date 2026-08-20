@@ -434,11 +434,12 @@ test('root README directly validates as the canonical 205-row task ledger', () =
 
   assert.deepEqual(result.findings, []);
   assert.equal(result.rows.length, 205);
-  assert.deepEqual(
-    result.rows.reduce((counts, row) => {
-      counts[row.state] = (counts[row.state] ?? 0) + 1;
-      return counts;
-    }, {}),
-    { 'IN PROGRESS': 1, TODO: 204 },
+  const governance = result.rows.find((row) => row.id === 'VERIFY-001');
+  assert.equal(['IN PROGRESS', 'DONE'].includes(governance?.state), true);
+  assert.equal(
+    result.rows
+      .filter((row) => row.id !== 'VERIFY-001')
+      .every((row) => row.state === 'TODO'),
+    true,
   );
 });

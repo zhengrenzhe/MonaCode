@@ -15,8 +15,8 @@ MonaCode is a native Swift code-editor component for Apple platforms, governed a
 ## Verified snapshot
 
 - Verification date: 2026-08-20.
-- Verification source-set digest: `2ee01a07cda11b0abcbcebf836c4d576e677af3615fcac459e17f8f09dee148e`.
-- Evidence: [task-evidence.json](artifacts/progress/2ee01a07cda11b0abcbcebf836c4d576e677af3615fcac459e17f8f09dee148e/task-evidence.json), SHA-256 `7f086a9ff3bc3e3c6e9fcdc93cef611e07bbdf0766ccff393717cdd7a3947242`.
+- Verification source-set digest: `ca434479aab98cb2b756569879d55236131f4e9cda25ca4cc15a8998909d9622`.
+- Evidence: [task-evidence.json](artifacts/progress/ca434479aab98cb2b756569879d55236131f4e9cda25ca4cc15a8998909d9622/task-evidence.json), SHA-256 `4632e52be3853070418503f17ac3fd259e6cef708c12dfcee481f3d7c50331c7`.
 - The artifact records all seven commands below, their exit codes, output hashes, parsed integration findings, and task classifications.
 
 ```bash
@@ -34,7 +34,7 @@ MonaCode is a native Swift code-editor component for Apple platforms, governed a
 <!-- MONACODE_TASKS:BEGIN -->
 | ID | State | Deliverable | Contract coverage | Acceptance | Evidence |
 | --- | --- | --- | --- | --- | --- |
-| VERIFY-001 | IN PROGRESS | Establish and verify single-source project governance | governance:single-source | <code>/opt/homebrew/Cellar/node/26.7.0/bin/node Tools/Docs/check-project-governance.mjs</code> ⇒ exit 0 | change:VERIFY-001<br>owner:zhengrenzhe |
+| VERIFY-001 | DONE | Establish and verify single-source project governance | governance:single-source | <code>/opt/homebrew/Cellar/node/26.7.0/bin/node Tools/Docs/check-project-governance.mjs</code> ⇒ exit 0 | digest:ca434479aab98cb2b756569879d55236131f4e9cda25ca4cc15a8998909d9622<br>source:[governance checker](Tools/Docs/check-project-governance.mjs)<br>tests:[governance tests](Tests/PlanStructureTests/ProjectGovernanceTests.mjs)<br>results:[task evidence](artifacts/progress/ca434479aab98cb2b756569879d55236131f4e9cda25ca4cc15a8998909d9622/task-evidence.json) sha256:4632e52be3853070418503f17ac3fd259e6cef708c12dfcee481f3d7c50331c7 |
 | SURFACE-001 | TODO | Create the exact SwiftPM product, target, and fixture-resource graph | plan:P00-T001/* | <code>set -o pipefail; /usr/bin/xcrun swift package dump-package &#124; /opt/homebrew/Cellar/node/26.7.0/bin/node docs/contracts/monaco-editor-0.56.0/g6-r/implementation-plan/runtime/assert-package-graph.mjs</code> ⇒ exit 0 | — |
 | VERIFY-002 | TODO | Enforce the Foundation-only MonaCode boundary | plan:P00-T002/* | <code>/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/ForbiddenCoreImportsTests.mjs</code> ⇒ exit 0 | — |
 | VERIFY-003 | TODO | Pin Monaco 0.56.0 M0 and M1 comparator provenance | plan:P00-T003/* | <code>/opt/homebrew/Cellar/node/26.7.0/bin/node Tools/PlanChecks/verify-provenance.mjs</code> ⇒ exit 0 | — |
