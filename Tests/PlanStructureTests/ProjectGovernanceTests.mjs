@@ -1,4 +1,6 @@
 import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
+import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 import test from 'node:test';
@@ -18,6 +20,7 @@ import {
   validateEvidence,
 } from '../../Tools/Docs/task-ledger.mjs';
 import {
+  ARCHIVE_REQUIRED_ENTRIES,
   scanActiveProgressSources,
   validateArchiveIndex,
 } from '../../Tools/Docs/check-project-governance.mjs';
@@ -245,5 +248,51 @@ test('archive index binds every required original path to tracked byte evidence'
       repoRoot: REPO_ROOT,
     })),
     ['GOVERNANCE_ARCHIVE_CLASSIFICATION'],
+  );
+});
+
+test('the live Task 4 archive preserves every migrated path and G6 baseline reference', () => {
+  const archivePath = resolve(REPO_ROOT, 'docs/archive/README.md');
+  assert.equal(existsSync(archivePath), true, 'docs/archive/README.md must exist');
+
+  const tracked = new Set(
+    execFileSync('/usr/bin/git', ['ls-files', '-z'], { cwd: REPO_ROOT })
+      .toString('utf8')
+      .split('\0')
+      .filter(Boolean),
+  );
+  const task4Entries = ARCHIVE_REQUIRED_ENTRIES.slice(0, -2);
+  assert.equal(task4Entries.length, 14, 'Task 4 must migrate exactly fourteen indexed paths');
+  assert.deepEqual(
+    validateArchiveIndex({
+      markdown: readFileSync(archivePath, 'utf8'),
+      requiredEntries: task4Entries,
+      trackedPaths: tracked,
+      repoRoot: REPO_ROOT,
+    }),
+    [],
+  );
+
+  const baseline = readFileSync(
+    resolve(REPO_ROOT, 'Tools/G6PlanAuthoring/lib/baseline.mjs'),
+    'utf8',
+  );
+  assert.match(
+    baseline,
+    /const PLAN_FILE = 'docs\/archive\/decisions\/superpowers\/plans\/2026-08-15-monacode-g6r-execution-readiness\.md';/,
+  );
+
+  const sourceSet = computeVerificationSourceSet(REPO_ROOT);
+  assert.equal(
+    sourceSet.rows.some(
+      (row) => row.path === 'Comparators/Baselines/monaco-editor-0.56.0.editor.api.d.ts',
+    ),
+    true,
+  );
+  assert.equal(
+    sourceSet.rows.some(
+      (row) => row.path === 'docs/equivalence/monaco-editor-0.56.0.editor.api.d.ts',
+    ),
+    false,
   );
 });

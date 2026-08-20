@@ -7,7 +7,7 @@ import process from 'node:process';
 
 const GIT = '/usr/bin/git';
 const NODE_PATH = '/opt/homebrew/Cellar/node/26.7.0/bin/node';
-const PLAN_FILE = 'docs/superpowers/plans/2026-08-15-monacode-g6r-execution-readiness.md';
+const PLAN_FILE = 'docs/archive/decisions/superpowers/plans/2026-08-15-monacode-g6r-execution-readiness.md';
 const G5_PARENT_REL = 'docs/contracts/monaco-editor-0.56.0/g5-r';
 const G5_PLAN_MANIFEST = 'monacode-g5r-implementation-plan-manifest.json';
 const G5_PARENT_PREFIX = G5_PARENT_REL + '/';
