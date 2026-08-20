@@ -490,6 +490,19 @@ public final class MonaQueryGeometryBarrier {
         }
     }
 
+    /// Returns a fresh `MonaGeometrySnapshot` for the current complete
+    /// generation (the frozen projection + vertical index + records grown by
+    /// bounded completion + published scroll offset), or `nil` before the first
+    /// `publishGeneration`.
+    ///
+    /// The driving layer (`MonaCodeEditorView.drawRect`) consumes this to read
+    /// the ready geometry of one generation without observing partial state.
+    /// This is a thin public facade over `buildSnapshot()`; it performs no
+    /// extra work and builds nothing lazily.
+    public func snapshot() -> MonaGeometrySnapshot? {
+        return buildSnapshot()
+    }
+
     /// Builds a fresh `MonaGeometrySnapshot` from the frozen generation state
     /// plus the records grown by bounded completion.
     private func buildSnapshot() -> MonaGeometrySnapshot? {

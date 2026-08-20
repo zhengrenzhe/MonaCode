@@ -50,6 +50,18 @@ public final class MonaRenderSurface {
     /// The bitmap context the renderer paints into.
     public let bitmapContext: CGContext
 
+    /// A `CGImage` snapshot of the bitmap context, lazily derived once and
+    /// cached for the surface's lifetime.
+    ///
+    /// The driving layer reads this in `drawRect` to composite a finished tile
+    /// into the host `NSGraphicsContext`. Deriving the image from the bitmap
+    /// context is expensive and the image must stay stable per tile, so the
+    /// value is built on first access and never rebuilt. `private(set)` keeps
+    /// callers from replacing the cached image.
+    public private(set) lazy var cgImage: CGImage? = {
+        return bitmapContext.makeImage()
+    }()
+
     /// The bytes per row of the backing bitmap (at least `width * 4`).
     public let bytesPerRow: Int
 
