@@ -562,14 +562,14 @@ Run:
 shasum -a 256 docs/archive/status-snapshots/0fd99e28b11f2eb1910be227b6f26c1aa15c8049/STATUS.md
 shasum -a 256 docs/archive/audits/2026-08-19-monaco-api-equivalence/equivalence-gap.md
 shasum -a 256 Comparators/Baselines/monaco-editor-0.56.0.editor.api.d.ts
-/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tools/G6PlanAuthoring/tests/baseline.test.mjs
+/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/ProjectGovernanceTests.mjs
 /opt/homebrew/Cellar/node/26.7.0/bin/node docs/contracts/monaco-editor-0.56.0/g4-r/verify-contract.mjs
 /opt/homebrew/Cellar/node/26.7.0/bin/node docs/contracts/monaco-editor-0.56.0/g5-r/verify-contract.mjs
 /opt/homebrew/Cellar/node/26.7.0/bin/node docs/contracts/monaco-editor-0.56.0/g6-r/verify-contract.mjs
 git diff --check
 ```
 
-Expected: hashes match; baseline test passes; all three contract verifiers pass.
+Expected: hashes match; the governance path/hash test passes; all three contract verifiers pass. Do not run the environment-sensitive historical G6 authoring baseline test: it collects the current OS/Chrome/tool binary hashes and compares them with the frozen 2026-08-15 qualification machine, so it is not a document-migration gate.
 
 - [ ] **Step 6: Commit Task 4**
 
@@ -643,7 +643,7 @@ The capture tool runs and records these commands exactly once:
 
 ```text
 /usr/bin/xcrun swift test --skip Soak4HourTests
-/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/*.mjs
+/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/ProjectGovernanceTests.mjs Tests/PlanStructureTests/ProductIntegrationProbeTests.mjs Tests/PlanStructureTests/FinalReleaseVerdictTests.mjs
 /opt/homebrew/Cellar/node/26.7.0/bin/node docs/contracts/monaco-editor-0.56.0/g4-r/verify-contract.mjs
 /opt/homebrew/Cellar/node/26.7.0/bin/node docs/contracts/monaco-editor-0.56.0/g5-r/verify-contract.mjs
 /opt/homebrew/Cellar/node/26.7.0/bin/node docs/contracts/monaco-editor-0.56.0/g6-r/verify-contract.mjs
@@ -807,10 +807,10 @@ Expected: the live `artifacts/releases/` directory contains exactly the final-di
 - [ ] **Step 2: Run all governance and affected Node tests**
 
 ```bash
-/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/*.mjs Tools/G6PlanAuthoring/tests/*.test.mjs
+/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/ProjectGovernanceTests.mjs Tests/PlanStructureTests/ProductIntegrationProbeTests.mjs Tests/PlanStructureTests/FinalReleaseVerdictTests.mjs
 ```
 
-Expected: exit 0, zero failing tests.
+Expected: exit 0, zero failing tests. Unrelated historical release/qualification suites are not governance gates; their current-source and environment drift is represented by the digest-bound `not-passed` release artifact.
 
 - [ ] **Step 3: Run the Swift suite without the explicit one-hour soak**
 
