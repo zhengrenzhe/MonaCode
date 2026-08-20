@@ -662,14 +662,18 @@ public final class MonaCodeEditorView: NSView {
         let lastTileX = (scrollX + Int(bounds.width)) / ts
         for tileY in firstTileY...lastTileY {
             for tileX in firstTileX...lastTileX {
-                // Partition: lines whose vertical offset falls in this tile's
-                // y-band `[tileY*ts, (tileY+1)*ts)`. Origins are TILE-LOCAL
-                // (the renderer paints in tile-local CG-native space):
+                // Partition: lines whose `[offY, offY + lineHeight)` intersects
+                // this tile's y-band `[tileY*ts, (tileY+1)*ts)`. A line that
+                // SPANS a tile boundary is included in BOTH tiles — each tile's
+                // bitmap clips the line to its own y-band, so the full line
+                // renders across the boundary (no missing horizontal stripe).
+                // Origins are TILE-LOCAL (the renderer paints in tile-local
+                // CG-native space):
                 //   origin.y = verticalOffsetForViewLine(L) - tileY * ts
                 //   origin.x = -tileX * ts
                 var tileRecords: [MonaLineLayoutRecord] = []
                 var tileOrigins: [CGPoint] = []
-                for (L, offY) in visibleLineInfo where offY >= tileY * ts && offY < (tileY + 1) * ts {
+                for (L, offY) in visibleLineInfo where offY + lineHeight > tileY * ts && offY < (tileY + 1) * ts {
                     if let rec = records[L] {
                         tileRecords.append(rec)
                         tileOrigins.append(CGPoint(x: CGFloat(-tileX * ts), y: CGFloat(offY - tileY * ts)))
@@ -708,13 +712,15 @@ public final class MonaCodeEditorView: NSView {
     // MARK: - Live resize (driving layer — Task 3 / GAP-2)
 
     /// Pushed by AppKit after a live resize (window drag/edge resize) finishes.
-    /// Driving layer (Task 3 / GAP-2): the viewport dimensions changed, so push
-    /// the new bounds into `scrollModel`, converge so the clamp envelope + the
-    /// published scroll reflect the new viewport, republish the geometry
+    /// Driving layer (Task 3 / GAP-2 + I2 fix): the viewport dimensions changed,
+    /// so recompute content dimensions (`contentWidth = max(viewportWidth,
+    /// maxVisibleLineWidth)` changes with viewport size — without recomputing,
+    /// `scrollModel.contentWidth` is stale after a shrink/grow → horizontal
+    /// scroll into empty space on shrink or wrong clamp on grow), push the new
+    /// bounds into `scrollModel`, converge so the clamp envelope + the published
+    /// scroll reflect the new viewport + content, republish the geometry
     /// generation (the visible view-line range may have changed), and schedule
-    /// a redraw. Content dimensions are NOT recomputed here — content width/height
-    /// only change on content edits (handled by `observeContentChange`), not on
-    /// viewport resizes.
+    /// a redraw.
     ///
     /// API drift: the brief used `setNeedsDisplay(true)`. In the macOS 26 SDK
     /// `NSView.setNeedsDisplay(_:)` takes an `NSRect` (the dirty rect), not a
@@ -722,7 +728,11 @@ public final class MonaCodeEditorView: NSView {
     /// achieves the same "mark the whole view dirty" intent idiomatically.
     override public func viewDidEndLiveResize() {
         super.viewDidEndLiveResize()
-        if let sm = scrollModel {
+        if let sm = scrollModel, let vg = viewGraph {
+            _ = vg.getProjection()
+            let contentH = Double(vg.verticalIndex.totalHeight)
+            let contentW = Double(max(Int(bounds.width), maxVisibleLineWidth(in: geometryBarrier)))
+            sm.setContentDimensions(width: contentW, height: contentH)
             sm.setViewportDimensions(width: Double(bounds.width), height: Double(bounds.height))
             _ = sm.converge()
         }
@@ -865,6 +875,12 @@ public final class MonaCodeEditorView: NSView {
         let tx = input.gateway.beginTransaction()
         tx.prepareSelections([sel])
         _ = input.gateway.commit(tx)  // → lastCommittedSelections = [sel]
+        // I3 fix: sync the AX text area's `selectionRange` from the just-
+        // committed selection so `accessibilitySelectedTextRange()` returns the
+        // post-mouseDown caret (not the pre-mouseDown selection). Without this
+        // sync, AX clients reading the selection after a pointer-driven caret
+        // change see a stale range.
+        axElementGraph?.textArea.selectionRange = selectionToNSRange(sel)
         needsDisplay = true
         downPosition = pos  // for drag extension
     }
@@ -889,6 +905,10 @@ public final class MonaCodeEditorView: NSView {
         let tx = input.gateway.beginTransaction()
         tx.prepareSelections([sel])
         _ = input.gateway.commit(tx)
+        // I3 fix: sync the AX text area's `selectionRange` from the just-
+        // committed drag selection so `accessibilitySelectedTextRange()` returns
+        // the live post-drag selection (not the pre-mouseDown selection).
+        axElementGraph?.textArea.selectionRange = selectionToNSRange(sel)
         needsDisplay = true
     }
 
@@ -1217,8 +1237,9 @@ public final class MonaCodeEditorView: NSView {
 
     /// The selection as an AX integer range — delegates to
     /// `axElementGraph.textArea.selectionRange` (synced from
-    /// `lastCommittedSelections` on each content change by wiring gap 4).
-    /// Defaults to `(0,0)` when detached.
+    /// `lastCommittedSelections` on each content change by wiring gap 4, and on
+    /// each pointer-driven selection by the I3 fix in `mouseDown`/
+    /// `mouseDragged`). Defaults to `(0,0)` when detached.
     override public func accessibilitySelectedTextRange() -> NSRange {
         axElementGraph?.textArea.selectionRange ?? NSRange(location: 0, length: 0)
     }

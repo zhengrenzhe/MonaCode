@@ -420,4 +420,141 @@ final class DrivingLayerTests: XCTestCase {
         XCTAssertEqual(view.accessibilityNumberOfCharacters(), 5,
                        "accessibilityNumberOfCharacters: raw UTF-16 unit count")
     }
+
+    // MARK: - I2: viewDidEndLiveResize recomputes content dimensions
+
+    /// `viewDidEndLiveResize` must call `setContentDimensions` so
+    /// `scrollModel.contentWidth` reflects the post-resize viewport. Without
+    /// the fix, `contentWidth` is stale after a shrink → horizontal scroll into
+    /// empty space. Setup: short text ("hello") so `maxVisibleLineWidth` < the
+    /// viewport width → `contentWidth = max(viewportWidth, shortLineWidth) =
+    /// viewportWidth`. Shrinking the viewport from 400 → 200 must shrink
+    /// `contentWidth` from 400 → 200.
+    @MainActor
+    func testViewDidEndLiveResizeRecomputesContentWidth() {
+        let model = MonaCodeModel(text: "hello", uri: MonaURI(scheme: "inmemory", path: "/t"))
+        let view = MonaCodeEditorView(frame: NSRect(x: 0, y: 0, width: 400, height: 300))
+        view.attach(model: model)
+        // Initial contentWidth = max(400, ~short line) = 400 (from performAttach).
+        XCTAssertEqual(view.scrollModel?.contentWidth ?? 0, 400,
+                       "initial contentWidth = viewport width (400)")
+        // Shrink the viewport to 200 wide.
+        view.frame = NSRect(x: 0, y: 0, width: 200, height: 300)
+        view.viewDidEndLiveResize()
+        // I2 fix: contentWidth recomputed = max(200, short line) = 200.
+        // Before fix: contentWidth stayed stale at 400 (no setContentDimensions).
+        XCTAssertEqual(view.scrollModel?.contentWidth ?? 0, 200,
+                       "I2: viewDidEndLiveResize recomputed contentWidth to new viewport (200, not stale 400)")
+    }
+
+    // MARK: - I3: mouseDown syncs accessibilitySelectedTextRange
+
+    /// `mouseDown` commits a caret to `lastCommittedSelections` AND must sync
+    /// `axElementGraph.textArea.selectionRange` so
+    /// `accessibilitySelectedTextRange()` returns the post-click caret (not the
+    /// pre-click default `(0,0)`). Click at y=25 → line 2 (y=20..40) → resolves
+    /// to a non-zero UTF-16 offset (after "hello\n" = offset 6), so the test
+    /// distinguishes the synced AX range from the default.
+    @MainActor
+    func testMouseDownSyncsAccessibilitySelectedTextRange() {
+        let model = MonaCodeModel(text: "hello\nworld\n", uri: MonaURI(scheme: "inmemory", path: "/t"))
+        let view = MonaCodeEditorView(frame: NSRect(x: 0, y: 0, width: 400, height: 300))
+        view.attach(model: model)
+        _ = view.geometryBarrier?.publishGeneration(visibleViewLines: 1...2)
+
+        // Pre-mouseDown: AX selectionRange is the default (0,0) — never synced.
+        XCTAssertEqual(view.accessibilitySelectedTextRange(), NSRange(location: 0, length: 0),
+                       "pre-mouseDown: AX selectionRange is default (0,0)")
+
+        // Click at y=25 → line 2 (y=20..40, flipped). Resolves to a non-zero
+        // offset position so the synced AX range is distinguishable from default.
+        let event = NSEvent.mouseEvent(
+            with: .leftMouseDown,
+            location: CGPoint(x: 5, y: 25),
+            modifierFlags: [],
+            timestamp: 100.0,
+            windowNumber: 0,
+            context: nil,
+            eventNumber: 1,
+            clickCount: 1,
+            pressure: 1.0
+        )!
+        view.mouseDown(with: event)
+
+        // The committed caret.
+        guard let sel = view.inputBarrier?.gateway.lastCommittedSelections.first else {
+            return XCTFail("mouseDown committed a caret selection")
+        }
+        // I3 fix: AX selectionRange synced from the committed caret.
+        let expectedLoc = model.getOffsetAt(sel.activePosition)
+        let axRange = view.accessibilitySelectedTextRange()
+        XCTAssertEqual(axRange.location, expectedLoc,
+                       "I3: AX selectionRange synced from mouseDown caret (not stale)")
+        XCTAssertEqual(axRange.length, 0,
+                       "I3: AX selectionRange is collapsed (caret, not a drag)")
+        // The caret must have resolved to a non-zero offset — otherwise the test
+        // would pass even without the fix (default is also (0,0)).
+        XCTAssertGreaterThan(expectedLoc, 0,
+                       "I3: caret resolved to non-zero offset (test catches the stale-sync bug)")
+    }
+
+    // MARK: - I1: drawRect tile-boundary partition (regression)
+
+    /// `draw(_:)` partitions visible lines into tiles by y-band. The I1 fix
+    /// changed the partition from "line's offset is in tile's band" to "line's
+    /// `[offY, offY+lineHeight)` intersects tile's band" so a line spanning a
+    /// tile boundary is rendered in BOTH tiles (each tile's bitmap clips the
+    /// line to its own y-band → full line across the boundary, no missing
+    /// stripe). This test exercises the multi-tile render path (15 lines × 20px
+    /// = 300px content > 256px tile side → 2 tile rows → boundary at y=256)
+    /// with a real bitmap context so the partition + renderer pipeline runs to
+    /// completion (not just the headless ctx-guard early-return).
+    @MainActor
+    func testDrawRectAcrossTileBoundaries() {
+        // 15 lines × 20px = 300px content → tile row 0 [0,256) + row 1 [256,512).
+        // Line 13 at offY=240 → [240,260) spans the 256 boundary.
+        let lines = (1...15).map { "line\($0)" }.joined(separator: "\n") + "\n"
+        let model = MonaCodeModel(text: lines, uri: MonaURI(scheme: "inmemory", path: "/t"))
+        let view = MonaCodeEditorView(frame: NSRect(x: 0, y: 0, width: 400, height: 300))
+        view.attach(model: model)
+
+        // Provide a real bitmap context so draw(_:) passes its ctx guard and
+        // exercises the full tile-partition + render pipeline.
+        guard let bitmapRep = NSBitmapImageRep(
+            bitmapDataPlanes: nil,
+            pixelsWide: 400,
+            pixelsHigh: 300,
+            bitsPerSample: 8,
+            samplesPerPixel: 4,
+            hasAlpha: true,
+            isPlanar: false,
+            colorSpaceName: .deviceRGB,
+            bytesPerRow: 0,
+            bitsPerPixel: 0
+        ) else {
+            return XCTFail("could not create NSBitmapImageRep for draw context")
+        }
+        let ctx = NSGraphicsContext(bitmapImageRep: bitmapRep)
+        let previous = NSGraphicsContext.current
+        NSGraphicsContext.current = ctx
+        defer { NSGraphicsContext.current = previous }
+
+        // Must not crash — the partition condition handles lines spanning the
+        // tile boundary (line 13 at offY=240, [240,260) crosses y=256).
+        view.draw(NSRect(x: 0, y: 0, width: 400, height: 300))
+
+        // The render produced some non-transparent output (the tile pipeline
+        // ran, not just the ctx-guard early-return). A fully transparent bitmap
+        // would mean no tiles were drawn.
+        var drewSomething = false
+        for y in 0..<300 {
+            // Sample one pixel per scanline at x=10 (inside the text area).
+            if let pixel = bitmapRep.colorAt(x: 10, y: y), pixel.alphaComponent > 0 {
+                drewSomething = true
+                break
+            }
+        }
+        XCTAssertTrue(drewSomething,
+                      "I1: draw across tile boundaries produced rendered output (non-empty bitmap)")
+    }
 }
