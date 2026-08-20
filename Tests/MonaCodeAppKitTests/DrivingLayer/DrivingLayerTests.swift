@@ -129,4 +129,19 @@ final class DrivingLayerTests: XCTestCase {
         XCTAssertTrue(view.commandDispatcher!.contains("type"))
         XCTAssertTrue(view.commandDispatcher!.contains("cursorLeft"))
     }
+
+    // MARK: - IME insertText + NSTextInputClient conformance (Task 6 / GAP-5)
+
+    /// `insertText(_:replacementRange:)` on the text input client routes through
+    /// the command dispatcher's `type` command, inserting at the current
+    /// selection. With no committed selections the barrier defaults to a
+    /// collapsed caret at `(1,1)`, so "X" lands before "abc" → "Xabc".
+    @MainActor
+    func testInsertTextInsertsViaDispatcher() {
+        let model = MonaCodeModel(text: "abc", uri: MonaURI(scheme: "inmemory", path: "/t"))
+        let view = MonaCodeEditorView(frame: NSRect(x: 0, y: 0, width: 400, height: 300))
+        view.attach(model: model)
+        view.textInputClient?.insertText("X", replacementRange: .notFound)
+        XCTAssertEqual(model.getValue(), "Xabc")
+    }
 }

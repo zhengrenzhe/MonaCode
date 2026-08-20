@@ -69,6 +69,21 @@ extension MonaQueryGeometryBarrier: MonaCompositionGeometryProvider {}
 /// The client is not thread-safe; the editor pipeline that owns one client
 /// drives it from a single coordinator (the composition arbiter, which owns
 /// one session per editor).
+///
+/// Driving layer (Task 6 / GAP-5): the class owns the `NSTextInputClient`
+/// selector implementations but does NOT itself conform to the
+/// `NSTextInputClient` ObjC protocol. The macOS 26 SDK imports
+/// `hasMarkedText`/`markedRange`/`selectedRange` as protocol *methods*
+/// (`func hasMarkedText() -> Bool`, etc.), not properties — so making this
+/// class conform would force converting its property accessors to methods,
+/// breaking the P04-T004 composition tests that read them as properties
+/// (`client.hasMarkedText`, `client.markedRange`, `client.selectedRange`).
+/// Approach (a) (client conforms) is therefore blocked by API drift; approach
+/// (b) is used instead: `MonaCodeEditorView` (already an `NSView`/`NSObject`)
+/// conforms to `NSTextInputClient` and forwards every selector to this client.
+/// This task adds the one missing selector — `insertText(_:replacementRange:)`
+/// — routing it to the command dispatcher's `type` command via the injected
+/// `textInsertionProvider`, plus the `textInsertionProvider` dependency.
 public final class MonaTextInputClient {
 
     // MARK: - Dependencies
@@ -86,6 +101,11 @@ public final class MonaTextInputClient {
     /// `selectedRange` selector. Injected so the client does not own the
     /// selection.
     private let documentSelectionProvider: () -> NSRange
+
+    /// Routes `insertText(_:replacementRange:)` to the command dispatcher's
+    /// `type` command. Injected so the client does not own the dispatcher.
+    /// Driving layer (Task 6 / GAP-5).
+    private let textInsertionProvider: (String, NSRange) -> Void
 
     // MARK: - Marked-text state
 
@@ -112,14 +132,20 @@ public final class MonaTextInputClient {
     ///     attributed-substring and UTF-16 ↔ position conversion.
     ///   - documentSelectionProvider: Supplies the current document selection
     ///     (UTF-16 range) for the `selectedRange` selector.
+    ///   - textInsertionProvider: Routes `insertText(_:replacementRange:)` to
+    ///     the command dispatcher's `type` command. Driving layer (Task 6).
+    ///     Defaults to a no-op so existing P04-T004 composition-test call sites
+    ///     (which predate this parameter) compile unchanged.
     public init(
         geometryProvider: MonaCompositionGeometryProvider,
         documentTextProvider: @escaping () -> String,
-        documentSelectionProvider: @escaping () -> NSRange
+        documentSelectionProvider: @escaping () -> NSRange,
+        textInsertionProvider: @escaping (String, NSRange) -> Void = { _, _ in }
     ) {
         self.geometryProvider = geometryProvider
         self.documentTextProvider = documentTextProvider
         self.documentSelectionProvider = documentSelectionProvider
+        self.textInsertionProvider = textInsertionProvider
     }
 
     // MARK: - Marked text (NSTextInputClient: setMarkedText / unmarkText / hasMarkedText / markedRange)
@@ -178,6 +204,45 @@ public final class MonaTextInputClient {
     /// provider.
     public var selectedRange: NSRange {
         return documentSelectionProvider()
+    }
+
+    // MARK: - Insertion (NSTextInputClient: insertText(_:replacementRange:))
+
+    /// Inserts `string` at the replacement range, routing through
+    /// `textInsertionProvider` to the command dispatcher's `type` command.
+    ///
+    /// The `string` argument is `Any` (the ObjC `id`) per the
+    /// `NSTextInputClient` contract; it is coerced to a `String` (an
+    /// `NSAttributedString` contributes its `.string`). An empty string is a
+    /// no-op.
+    ///
+    /// `replacementRange` is the raw UTF-16 document range to replace. When
+    /// its location is `NSNotFound` (the common case — AppKit passes
+    /// `NSNotFound` when the input layer has no explicit replacement target),
+    /// the `type` command inserts at the current selection
+    /// (`gateway.lastCommittedSelections`; the barrier defaults to a collapsed
+    /// caret at `(1,1)` when none are committed). v1 ignores a specific range
+    /// and always inserts at the current selection — the `type` command's edit
+    /// plan derives its range from the committed selections, not from this
+    /// parameter; specific-range handling is deferred.
+    ///
+    /// - Parameters:
+    ///   - string: The text to insert, as a `String` or `NSAttributedString`.
+    ///   - replacementRange: The UTF-16 document range to replace. `NSNotFound`
+    ///     location means "insert at the current selection."
+    public func insertText(_ string: Any, replacementRange: NSRange) {
+        let text: String
+        if let s = string as? String {
+            text = s
+        } else if let attr = string as? NSAttributedString {
+            text = attr.string
+        } else {
+            // Defensive fallback — the NSTextInputClient contract guarantees
+            // String or NSAttributedString; mirror `coerceMarkedText`'s path.
+            text = "\(string)"
+        }
+        guard !text.isEmpty else { return }
+        textInsertionProvider(text, replacementRange)
     }
 
     // MARK: - Attributed substring (NSTextInputClient: attributedSubstringForProposedRange)

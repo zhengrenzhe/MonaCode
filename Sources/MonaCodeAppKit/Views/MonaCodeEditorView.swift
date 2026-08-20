@@ -429,11 +429,51 @@ public final class MonaCodeEditorView: NSView {
         )
 
         // The AppKit text-input client over the geometry barrier.
+        //
+        // Driving layer (Task 6 / GAP-5):
+        //   - `documentSelectionProvider` reads the REAL selection from
+        //     `inputBarrier.gateway.lastCommittedSelections` (was hardcoded to
+        //     `(0,0)`), converting the MonaSelection (line/column) to a UTF-16
+        //     NSRange via `selectionToNSRange`. Falls back to `(0,0)` when no
+        //     selection is committed or the view/model is tearing down.
+        //   - `textInsertionProvider` routes `insertText(_:replacementRange:)`
+        //     to the command dispatcher's `type` command — the same chokepoint
+        //     every resolved keybinding command routes through (Task 4).
         textInputClient = MonaTextInputClient(
             geometryProvider: geometryBarrier!,
             documentTextProvider: { model.getValue() },
-            documentSelectionProvider: { NSRange(location: 0, length: 0) }
+            documentSelectionProvider: { [weak self] in
+                guard let gw = self?.inputBarrier?.gateway,
+                      let sel = gw.lastCommittedSelections.first else {
+                    return NSRange(location: 0, length: 0)
+                }
+                return self?.selectionToNSRange(sel) ?? NSRange(location: 0, length: 0)
+            },
+            textInsertionProvider: { [weak self] text, _ in
+                self?.commandDispatcher?.execute("type", args: ["text": text])
+            }
         )
+    }
+
+    /// Converts a `MonaSelection` (anchor + active position) to a UTF-16
+    /// `NSRange` using the model's `getOffsetAt` (0-based UTF-16 offset, per
+    /// `MonaCodeModel.getOffsetAt` / Piece Tree `getOffsetAt`). The anchor +
+    /// active positions are normalized so the range is forward regardless of
+    /// the selection orientation — `NSTextInputClient` semantics are
+    /// orientation-agnostic.
+    ///
+    /// Driving layer (Task 6 / GAP-5): replaces the hardcoded `(0,0)` the
+    /// `selectedRange` selector used to report. Returns `(0,0)` when no model
+    /// is attached (the client is tearing down).
+    private func selectionToNSRange(_ sel: MonaSelection) -> NSRange {
+        guard let model = attachment.attachedModel else {
+            return NSRange(location: 0, length: 0)
+        }
+        let startOffset = model.getOffsetAt(sel.anchor)
+        let endOffset = model.getOffsetAt(sel.activePosition)
+        let loc = min(startOffset, endOffset)
+        let len = abs(endOffset - startOffset)
+        return NSRange(location: loc, length: len)
     }
 
     /// Releases the model-dependent subsystems (does NOT dispose the model —
@@ -675,5 +715,83 @@ public final class MonaCodeEditorView: NSView {
         // is idempotent: a no-op when not attached, and safe even if the
         // attachment already detached. The model is NEVER disposed here.
         detach()
+    }
+}
+
+// MARK: - NSTextInputClient conformance (driving layer — Task 6 / GAP-5)
+//
+// The view is the `NSTextInputClient` AppKit's `interpretKeyEvents` talks to
+// (approach (b) — see `MonaTextInputClient`'s class doc for why the client
+// itself cannot conform under the macOS 26 SDK: `hasMarkedText`/`markedRange`/
+// `selectedRange` are imported as protocol *methods*, which would force
+// converting the client's property accessors to methods and break the P04-T004
+// composition tests). Every selector is forwarded to the `MonaTextInputClient`
+// the view owns; the client owns the implementations, the view is the ObjC
+// boundary.
+//
+// `insertText(_:replacementRange:)` forwards to the client, whose
+// `textInsertionProvider` routes it to the command dispatcher's `type`
+// command — the same chokepoint every resolved keybinding command routes
+// through (Task 4). `doCommand(by:)` and `validAttributesForMarkedText()` have
+// no client counterpart and are v1 no-ops/stubs (default command handling and
+// marked-text attribute negotiation are deferred; `interpretKeyEvents` is not
+// yet wired from a `keyDown` override, so this conformance is dormant until a
+// future driving-layer task drives it).
+//
+// `@preconcurrency`: the `NSTextInputClient` ObjC protocol's requirements are
+// `nonisolated`, but `NSView` (and so this view's methods) are
+// `@MainActor`-isolated. Swift 6 would reject the cross-isolation conformance
+// as a data-race hazard; `@preconcurrency` downgrades it to a warning (AppKit
+// always calls these selectors synchronously on the main thread, so the
+// hazard is theoretical — the runtime contract matches the static isolation).
+extension MonaCodeEditorView: @preconcurrency NSTextInputClient {
+
+    public func setMarkedText(_ string: Any, selectedRange: NSRange, replacementRange: NSRange) {
+        textInputClient?.setMarkedText(string, selectedRange: selectedRange, replacementRange: replacementRange)
+    }
+
+    public func unmarkText() {
+        textInputClient?.unmarkText()
+    }
+
+    public func hasMarkedText() -> Bool {
+        return textInputClient?.hasMarkedText ?? false
+    }
+
+    public func markedRange() -> NSRange {
+        return textInputClient?.markedRange ?? .notFound
+    }
+
+    public func selectedRange() -> NSRange {
+        return textInputClient?.selectedRange ?? NSRange(location: 0, length: 0)
+    }
+
+    public func attributedSubstring(
+        forProposedRange range: NSRange,
+        actualRange: NSRangePointer?
+    ) -> NSAttributedString? {
+        return textInputClient?.attributedSubstring(forProposedRange: range, actualRange: actualRange)
+    }
+
+    public func firstRect(forCharacterRange range: NSRange, actualRange: NSRangePointer?) -> NSRect {
+        return textInputClient?.firstRect(forCharacterRange: range, actualRange: actualRange) ?? .zero
+    }
+
+    public func characterIndex(for point: NSPoint) -> Int {
+        return textInputClient?.characterIndex(for: point) ?? NSNotFound
+    }
+
+    /// Routes the inserted text to the command dispatcher's `type` command
+    /// via the client's `textInsertionProvider`. Forwards to the client, which
+    /// coerces the `Any` argument to a `String` and calls the provider.
+    public func insertText(_ string: Any, replacementRange: NSRange) {
+        textInputClient?.insertText(string, replacementRange: replacementRange)
+    }
+
+    /// v1 returns no attributes — the client's `coerceMarkedText` builds plain
+    /// `NSAttributedString(string:)` with no attribute keys, so `[]` is
+    /// honest. Rich marked-text attributes are deferred.
+    public func validAttributesForMarkedText() -> [NSAttributedString.Key] {
+        return []
     }
 }
