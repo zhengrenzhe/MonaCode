@@ -937,6 +937,115 @@ public final class MonaCodeEditorView: NSView {
         _ = keybindingResolver.reevaluateActiveChord(context: keybindingContext, chordState: chordState)
     }
 
+    // MARK: - scrollWheel + tracking areas + cursor rects (driving layer — Task 8 / §3.4 + §3.7)
+
+    /// A scroll-wheel (or trackpad) gesture. Translates the native `NSEvent`
+    /// into a platform-neutral `MonaScrollEvent` via `scrollGateway` (the single
+    /// translation point — stateless pure, spec §8.3 :185), then drives the
+    /// scroll model and the geometry barrier in the GAP-3 / GAP-4 order:
+    ///
+    ///   1. `requestScroll(x: published + deltaX, y: published + deltaY)` —
+    ///      accumulate the delta onto the LAST published position (NOT the
+    ///      requested position — `published` is the converged truth; `requested`
+    ///      may lag by one converge and would drop deltas on rapid input).
+    ///   2. `converge()` — pull-only (GAP-3: no emitter/onChange), so the caller
+    ///      invokes it and reads the returned `MonaScrollChangeEvent`.
+    ///   3. `setNeedsDisplay` ONLY when the published scroll actually moved
+    ///      (the request may have been clamped at the content boundary — no
+    ///      redraw for a no-op scroll). `prevX/prevY` are captured BEFORE
+    ///      `requestScroll` so the comparison sees the pre-converge position.
+    ///   4. `publishGeneration(visibleViewLines: nil)` — GAP-4 (critical): after
+    ///      `converge` moves `publishedScrollY`, the barrier's frozen
+    ///      `scrollOffsetX/Y` (captured at `publishGeneration` :285-286) are
+    ///      STALE until the next `publishGeneration`. Refresh them now so the
+    ///      next `mouseDown` hit-tests against the NEW scroll, not the stale one.
+    ///
+    /// Delta normalization is the gateway's job (precise ÷40, coarse verbatim,
+    /// direction NOT reversed — spec §8.3 :249/:277-279); the view never touches
+    /// `NSEvent.scrollingDeltaY`. No-op when not attached.
+    override public func scrollWheel(with event: NSEvent) {
+        guard isAttached,
+              let gw = scrollGateway,
+              let sm = scrollModel,
+              let barrier = geometryBarrier else { return }
+        let vp = convert(event.locationInWindow, from: nil)
+        let se = gw.translate(event, viewportPoint: vp, resolvingPositionThrough: barrier)
+        // GAP-3: converge is pull-only — the caller must invoke it + schedule
+        // the redraw. Capture the pre-converge published position so the redraw
+        // is gated on an ACTUAL move (clamped-at-boundary no-ops are skipped).
+        let prevX = sm.publishedScrollX
+        let prevY = sm.publishedScrollY
+        sm.requestScroll(x: prevX + se.deltaX, y: prevY + se.deltaY)
+        let evt = sm.converge()
+        if evt.publishedScrollX != prevX || evt.publishedScrollY != prevY {
+            needsDisplay = true  // scroll moved → redraw
+        }
+        // GAP-4: converge moved publishedScrollX/Y → the barrier's frozen
+        // scrollOffsetX/Y (captured at publishGeneration :285-286) are STALE
+        // until the next publishGeneration. Refresh so the next mouseDown
+        // hit-tests against the new scroll.
+        _ = barrier.publishGeneration(visibleViewLines: nil)
+    }
+
+    /// Refreshes the tracking areas + the frozen geometry + the scroll clamp
+    /// envelope on AppKit's schedule (view setup, live resize, layer geometry
+    /// change). Spec §3.7 order:
+    ///   1. remove the tracking areas this view owns (stale bounds),
+    ///   2. add one fresh `NSTrackingArea` over `bounds` with the options that
+    ///      feed `mouseMoved` / `mouseEnteredAndExited` (the hover staging
+    ///      surface, §3.3) while active in the key window, visible-rect-tracked,
+    ///      and enabled during a mouse drag (so drag-selection keeps receiving
+    ///      `mouseMoved`-class events),
+    ///   3. `publishGeneration(nil)` — refresh the barrier's frozen scroll +
+    ///      visible records for the current bounds,
+    ///   4. `setViewportDimensions(bounds)` — push the new viewport into the
+    ///      scroll clamp envelope,
+    ///   5. `converge()` — re-clamp + re-publish the scroll for the new viewport.
+    ///
+    /// `.inVisibleRect` keeps the tracking rect in sync with the visible
+    /// (scrolled) portion of the view automatically; the `rect: bounds` seed is
+    /// the full bounds, which `.inVisibleRect` then tracks.
+    ///
+    /// API drift: the brief used `.enabledDuringMouseDragged` (with a trailing
+    /// "d"). The macOS 26 SDK Swift overlay names the option
+    /// `.enabledDuringMouseDrag` (matching the ObjC
+    /// `NSTrackingEnabledDuringMouseDrag` minus the `NSTracking` prefix — no
+    /// trailing "d"); the "Dragged" form does not resolve.
+    override public func updateTrackingAreas() {
+        super.updateTrackingAreas()
+        // Remove the tracking areas this view owns (`owner === self`).
+        // `trackingAreas` returns a snapshot array, so mutation during
+        // iteration is safe.
+        for ta in trackingAreas where ta.owner === self {
+            removeTrackingArea(ta)
+        }
+        let area = NSTrackingArea(
+            rect: bounds,
+            options: [.mouseMoved, .mouseEnteredAndExited, .activeInKeyWindow, .inVisibleRect, .enabledDuringMouseDrag],
+            owner: self,
+            userInfo: nil
+        )
+        addTrackingArea(area)
+        _ = geometryBarrier?.publishGeneration(visibleViewLines: nil)
+        scrollModel?.setViewportDimensions(width: Double(bounds.width), height: Double(bounds.height))
+        _ = scrollModel?.converge()
+    }
+
+    /// Installs the I-beam cursor over the view bounds (the code-editor
+    /// convention: the pointer is a text caret wherever it hovers over text).
+    /// AppKit calls this on cursor rect invalidation; the override installs one
+    /// cursor rect covering the whole bounds so the I-beam is the default
+    /// pointer shape across the editor surface.
+    ///
+    /// API drift: the brief used `NSCursor.IBeamCursor`. In the macOS 26 SDK the
+    /// Swift overlay renamed the `IBeamCursor` class property to `iBeam` (the
+    /// ObjC name `IBeamCursor` is preserved in the header, but Swift imports it
+    /// as `iBeam`); `NSCursor.iBeam` is the renamed accessor.
+    override public func resetCursorRects() {
+        super.resetCursorRects()
+        addCursorRect(bounds, cursor: NSCursor.iBeam)
+    }
+
     // MARK: - Deinit (safety net)
 
     deinit {

@@ -219,4 +219,55 @@ final class DrivingLayerTests: XCTestCase {
             XCTAssertEqual(sel.anchor, sel.activePosition, "mouseDown sets a collapsed caret")
         }
     }
+
+    // MARK: - scrollWheel (Task 8 / §3.4)
+
+    /// `scrollWheel` translates the event through `scrollGateway`, requests the
+    /// scroll on `scrollModel`, converges (pull-only — GAP-3), schedules a
+    /// redraw when the published scroll actually moved, and refreshes the
+    /// barrier's frozen scroll (GAP-4) so the next mouseDown hit-tests against
+    /// the new scroll. After a scrollWheel with a nonzero vertical delta,
+    /// `publishedScrollY` must change from its baseline of zero.
+    ///
+    /// Setup: 30 lines × 20px = 600px content; viewport 300px → maxScrollY = 300,
+    /// so a positive delta moves the published scroll inside the clamp envelope
+    /// (no clamping to zero). The gateway carries coarse deltas verbatim, so
+    /// `wheel1: 10` → `deltaY: 10.0` → `requestScroll(y: 0 + 10)` → published 10.
+    @MainActor
+    func testScrollWheelChangesPublishedScroll() {
+        let lines = (1...30).map { "line\($0)" }.joined(separator: "\n") + "\n"
+        let model = MonaCodeModel(text: lines, uri: MonaURI(scheme: "inmemory", path: "/t"))
+        let view = MonaCodeEditorView(frame: NSRect(x: 0, y: 0, width: 400, height: 300))
+        view.attach(model: model)
+        // Publish a generation so the barrier has frozen geometry for the
+        // scroll gateway's position-resolution path (mirrors production order:
+        // scrollWheel assumes an attached, generation-published barrier).
+        _ = view.geometryBarrier?.publishGeneration(visibleViewLines: 1...5)
+
+        let prevY = view.scrollModel?.publishedScrollY ?? -1
+        XCTAssertEqual(prevY, 0, "baseline: published scroll starts at zero")
+
+        // API drift: the brief used `NSEvent.scrollWheel(...)`. No such factory
+        // exists on NSEvent — scrollWheel events are built via CoreGraphics
+        // `CGEvent(scrollWheelEvent2Source:...)` then wrapped in `NSEvent(cgEvent:)`
+        // (same pattern as `MonaPointerScrollMenuTests.testScrollGatewayTranslates*`).
+        guard let cg = CGEvent(
+            scrollWheelEvent2Source: nil,
+            units: .line,
+            wheelCount: 1,
+            wheel1: 10,
+            wheel2: 0,
+            wheel3: 0
+        ) else {
+            return XCTFail("could not build CGEvent scrollWheel")
+        }
+        guard let event = NSEvent(cgEvent: cg) else {
+            return XCTFail("could not wrap CGEvent as NSEvent")
+        }
+        view.scrollWheel(with: event)
+
+        let nextY = view.scrollModel?.publishedScrollY ?? -1
+        XCTAssertNotEqual(nextY, prevY, "scrollWheel moved publishedScrollY")
+        XCTAssertGreaterThan(nextY, 0, "scroll down increases publishedScrollY")
+    }
 }
