@@ -525,6 +525,28 @@ public final class MonaCodeEditorView: NSView {
             sm.setContentDimensions(width: contentW, height: contentH)
             _ = sm.converge()
         }
+        // Driving layer (Task 11 / §3.6 wiring gap 4): sync the AX text area's
+        // `selectionRange` from the live committed selections so AX clients
+        // reading `accessibilitySelectedTextRange` see the post-edit caret. The
+        // barrier's `lastCommittedSelections` is the post-commit truth; convert
+        // the first selection to a UTF-16 NSRange via `selectionToNSRange`.
+        if let sel = inputBarrier?.gateway.lastCommittedSelections.first {
+            axElementGraph?.textArea.selectionRange = selectionToNSRange(sel)
+        }
+        // Driving layer (Task 11 / §3.6 wiring gap 1): pump the announcement
+        // bridge. After a content change, drain the next serialized announcement
+        // (if any) and post it as an AX `.announcementRequested` notification so
+        // VoiceOver speaks it. The bridge deduplicates + serializes; the post is
+        // the host pump (the bridge itself carries no audio/NSAccessibility.post).
+        // In a headless test the post is a no-op (no AX subsystem); in production
+        // VoiceOver reads the text.
+        if let text = announcementBridge.nextAnnouncement() {
+            NSAccessibility.post(
+                element: self,
+                notification: .announcementRequested,
+                userInfo: [.announcement: text]
+            )
+        }
         needsDisplay = true
     }
 
@@ -985,6 +1007,15 @@ public final class MonaCodeEditorView: NSView {
         // until the next publishGeneration. Refresh so the next mouseDown
         // hit-tests against the new scroll.
         _ = barrier.publishGeneration(visibleViewLines: nil)
+        // Driving layer (Task 11 / §3.6 wiring gap 3): recycle the AX viewport
+        // on scroll so the element graph advances its viewport generation
+        // (preserving element identity across backing-view recycling — the
+        // stable-identity invariant VoiceOver depends on across scroll). v1
+        // passes an empty backing-views map (no gutter/widget backing views are
+        // wired yet — the recycle still advances the generation, which is the
+        // observable effect; a future task populates the map when widget/gutter
+        // backing views land).
+        axElementGraph?.recycleViewport(backingViews: [:])
     }
 
     /// Refreshes the tracking areas + the frozen geometry + the scroll clamp
@@ -1089,17 +1120,192 @@ public final class MonaCodeEditorView: NSView {
     /// `focusCoordinator` is created in `commonInit()` (model-independent), so it
     /// is always non-nil by the time AppKit can call this — the optional chain is
     /// a defensive guard for teardown ordering, not a normal path.
+    ///
+    /// Driving layer (Task 11 / §3.6 wiring gap 2): after the focus-state
+    /// transition, post `.focusedUIElementChanged` so VoiceOver/AX clients follow
+    /// the focus into the editor. In a headless test the post is a no-op (no AX
+    /// subsystem); in production VoiceOver reacts to the focus change.
     override public func becomeFirstResponder() -> Bool {
         focusCoordinator?.transition(to: .editor)
+        NSAccessibility.post(element: self, notification: .focusedUIElementChanged)
         return true
     }
 
     /// The view is resigning first responder (keyboard focus leaving). Release
     /// any `.temporary` AX focus grab so the focus state machine restores the
     /// prior mode, then forward to `super` so AppKit completes the resignation.
+    ///
+    /// Driving layer (Task 11 / §3.6 wiring gap 2): post
+    /// `.focusedUIElementChanged` so VoiceOver/AX clients follow the focus
+    /// leaving the editor (after the temporary-focus release restores the prior
+    /// mode). In a headless test the post is a no-op.
     override public func resignFirstResponder() -> Bool {
         focusCoordinator?.releaseTemporary()
+        NSAccessibility.post(element: self, notification: .focusedUIElementChanged)
         return super.resignFirstResponder()
+    }
+
+    // MARK: - Accessibility overrides (driving layer — Task 11 / §3.6 / GAP-6)
+    //
+    // The ~16 `accessibility*` overrides that make this view a first-class AX
+    // text area for macOS accessibility clients (VoiceOver, the AXUIElement API).
+    // Each delegates to an existing AX component built+verified in Phase 04 —
+    // NO new logic. The view is the AX container (isAccessibilityElement=false)
+    // that vends the element-graph tree (gutter/widget/proxy children); the
+    // native-text selectors delegate to `axElementGraph.textArea`
+    // (P04-T010 `MonaAXTextArea`), and AX-driven actions route through
+    // `axMutationGateway` (P04-T013 `MonaAXMutationGateway`).
+    //
+    // Prerequisite (T10, commit 30e8487): the 3 AX element classes
+    // (`MonaAXElementNode` / `MonaAXWidgetProxy` / `MonaAXDiagnosticElement`) now
+    // extend `NSAccessibilityElement` + conform `NSAccessibilityProtocol`, so the
+    // view can return them from `accessibilityChildren()` and VoiceOver can
+    // traverse them as first-class AX objects.
+
+    /// The editor's AX role: `.textArea`. Always `.textArea` (the view IS the
+    /// editor text area, attached or not).
+    override public func accessibilityRole() -> NSAccessibility.Role? { .textArea }
+
+    /// `false` — the view is an AX CONTAINER (it has children: the gutter,
+    /// widget, and proxy elements), not a leaf element. AX clients descend into
+    /// the children returned by `accessibilityChildren()`.
+    ///
+    /// API drift: the brief listed `override var isAccessibilityElement: Bool`.
+    /// In the macOS 26 SDK `NSView.isAccessibilityElement` is imported as a
+    /// METHOD (`func isAccessibilityElement() -> Bool`, the ObjC
+    /// `- (BOOL)isAccessibilityElement`), not a property — so the override is a
+    /// `func`, not a `var`.
+    override public func isAccessibilityElement() -> Bool { false }
+
+    /// The AX children of the editor: the element-graph root's children
+    /// (`axElementGraph.children(of: root.identity)` — the gutter, widget, and
+    /// proxy role elements). `nil` when no model is attached (no graph).
+    override public func accessibilityChildren() -> [Any]? {
+        guard let graph = axElementGraph else { return nil }
+        // `children(of:)` returns `[MonaAXRoleElement]`; bridge to `[Any]` for the
+        // ObjC AX runtime (the concrete classes are NSAccessibilityElement
+        // subclasses, so they're NSObject/Any-conformant).
+        return graph.children(of: graph.root.identity).map { $0 as Any }
+    }
+
+    /// The focused AX element: the element-graph root (the editor node). VoiceOver
+    /// focuses here when the editor gains keyboard focus. `nil` when detached.
+    ///
+    /// API drift: the brief used `func accessibilityFocusedUIElement()`. In the
+    /// macOS 26 SDK `NSView.accessibilityFocusedUIElement` is imported as a
+    /// read-only `var` (the ObjC `@property (nullable, readonly, strong) id`),
+    /// not a method — so the override is a computed `var`, not a `func`.
+    override public var accessibilityFocusedUIElement: Any? { axElementGraph?.root }
+
+    /// The AX parent of the editor view: its `superview`, or the `window` when
+    /// the view has no superview (the host window is the AX top-level container).
+    override public func accessibilityParent() -> Any? {
+        superview ?? window
+    }
+
+    /// The full document text as an `NSString` (raw UTF-16, no surrogate repair)
+    /// — delegates to `axElementGraph.textArea.value`. `nil` when detached.
+    override public func accessibilityValue() -> Any? {
+        axElementGraph?.textArea.value
+    }
+
+    /// The raw UTF-16 unit count of the full document — delegates to
+    /// `axElementGraph.textArea.numberOfCharacters`. `0` when detached.
+    override public func accessibilityNumberOfCharacters() -> Int {
+        axElementGraph?.textArea.numberOfCharacters ?? 0
+    }
+
+    /// The selection as an AX integer range — delegates to
+    /// `axElementGraph.textArea.selectionRange` (synced from
+    /// `lastCommittedSelections` on each content change by wiring gap 4).
+    /// Defaults to `(0,0)` when detached.
+    override public func accessibilitySelectedTextRange() -> NSRange {
+        axElementGraph?.textArea.selectionRange ?? NSRange(location: 0, length: 0)
+    }
+
+    /// The visible character range — delegates to
+    /// `axElementGraph.textArea.visibleRange` (hit-tests the viewport corners
+    /// through the geometry barrier; falls back to the full document range when
+    /// no complete generation). `(0,0)` when detached.
+    override public func accessibilityVisibleCharacterRange() -> NSRange {
+        axElementGraph?.textArea.visibleRange ?? NSRange(location: 0, length: 0)
+    }
+
+    /// The attributed substring for `range` (raw UTF-16, no surrogate repair) —
+    /// delegates to `axElementGraph.textArea.attributedSubstring(for:)`. `nil`
+    /// when `range` is out of bounds or the view is detached.
+    override public func accessibilityAttributedString(for range: NSRange) -> NSAttributedString? {
+        axElementGraph?.textArea.attributedSubstring(for: range)
+    }
+
+    /// Resolves a viewport-space `point` to the `NSRange` of the character at
+    /// that position — delegates to `axElementGraph.textArea.range(forPosition:)`
+    /// (routes through the geometry barrier's `hitTest`; the ObjC selector is
+    /// `accessibilityRangeForPosition:`). `(0,0)` when detached or unresolvable.
+    override public func accessibilityRange(for point: NSPoint) -> NSRange {
+        axElementGraph?.textArea.range(forPosition: point) ?? NSRange(location: 0, length: 0)
+    }
+
+    /// The bounding `NSRect` (viewport-space) for `range` — delegates to
+    /// `axElementGraph.textArea.bounds(forRange:)` (the barrier's `rangeRects`
+    /// union). `.zero` when detached or unresolvable.
+    ///
+    /// API drift: the brief used `accessibilityBounds(for:)`. In the macOS 26
+    /// SDK the AX text selector is `accessibilityFrameForRange:` (ObjC
+    /// `- (NSRect)accessibilityFrameForRange:(NSRange)range`), imported as
+    /// `accessibilityFrame(for:)` — there is no `accessibilityBoundsForRange:`.
+    /// The frame IS the bounds (a rect); renamed to match the SDK selector.
+    override public func accessibilityFrame(for range: NSRange) -> NSRect {
+        axElementGraph?.textArea.bounds(forRange: range) ?? .zero
+    }
+
+    /// Maps a UTF-16 character index to a 1-based line number — delegates to
+    /// `axElementGraph.textArea.line(forCharacterIndex:)`. `0` when detached.
+    override public func accessibilityLine(for index: Int) -> Int {
+        axElementGraph?.textArea.line(forCharacterIndex: index) ?? 0
+    }
+
+    /// Maps a 1-based line number to the `NSRange` spanning that line — delegates
+    /// to `axElementGraph.textArea.range(forLine:)`. `(0,0)` when detached or out
+    /// of range.
+    override public func accessibilityRange(forLine line: Int) -> NSRange {
+        axElementGraph?.textArea.range(forLine: line) ?? NSRange(location: 0, length: 0)
+    }
+
+    /// Routes an AX action through the AX mutation gateway (P04-T013) — the
+    /// chokepoint every AX-driven mutation routes through before it may touch the
+    /// text model. `.press` is translated into a `MonaAXMutationRequest` with a
+    /// `.press(command:at:)` action at the current caret position (from
+    /// `lastCommittedSelections`, defaulting to `(1,1)`) and routed through
+    /// `axMutationGateway.perform(_:)`, which validates the five preconditions
+    /// (focus / editability / version / range / generation) before commit. Other
+    /// actions (`.showMenu` etc.) are v1 no-ops — the context-menu path needs a
+    /// screen position and is handled by `rightMouseDown`, not the AX mutation
+    /// gateway. No-op when detached.
+    override public func accessibilityPerformAction(_ action: NSAccessibility.Action) {
+        guard let gateway = axMutationGateway,
+              let model = attachment.attachedModel else { return }
+        switch action {
+        case .press:
+            // Current caret position (post-edit truth); default to (1,1) when no
+            // selection is committed yet (the barrier's own default).
+            let pos = inputBarrier?.gateway.lastCommittedSelections.first?.activePosition
+                ?? MonaPosition(line: 1, column: 1)
+            let request = MonaAXMutationRequest(
+                action: .press(command: "", at: pos),
+                issuedModelVersion: model.getVersionId(),
+                issuedGeneration: geometryBarrier?.currentGeneration
+            )
+            // The gateway validates → translates → commits (folded empty edit at
+            // the caret → no-op on the model) → enqueues the announcement. The
+            // announcement is pumped by `observeContentChange` (wiring gap 1).
+            _ = gateway.perform(request)
+        default:
+            // `.showMenu` and other actions are v1 no-ops (the context-menu path
+            // needs a screen position; the AX mutation gateway handles mutations
+            // only). A future task adapts `.showMenu` to the context-menu gateway.
+            break
+        }
     }
 
     // MARK: - Deinit (safety net)

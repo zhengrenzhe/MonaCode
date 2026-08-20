@@ -377,4 +377,47 @@ final class DrivingLayerTests: XCTestCase {
         XCTAssertNil(diagElement?.accessibilityChildren(),
                      "diagnostic is an AX leaf for v1 (children nil)")
     }
+
+    // MARK: - AX view accessibility overrides (Task 11 / §3.6 / GAP-6)
+
+    /// The view's 16 `accessibility*` overrides delegate to the existing AX
+    /// components (`axElementGraph` + `axTextArea` + `axMutationGateway`). The
+    /// view reports `.textArea` as its AX role, is an AX CONTAINER (not a leaf —
+    /// `isAccessibilityElement == false`), and vends the element-graph children
+    /// (gutter + widget + proxy) from `accessibilityChildren()` after attach.
+    /// The value/numberOfCharacters/selectionRange/visibleRange selectors
+    /// delegate to `axElementGraph.textArea`; the performAction selector routes
+    /// through `axMutationGateway`.
+    ///
+    /// This is the Task 11 contract test: the overrides are present, the role is
+    /// `.textArea`, and children exist after attach (the graph built the
+    /// gutter/widget/proxy roots in `performAttach`).
+    @MainActor
+    func testAccessibilityRoleIsTextArea() {
+        let model = MonaCodeModel(text: "hello", uri: MonaURI(scheme: "inmemory", path: "/t"))
+        let view = MonaCodeEditorView(frame: NSRect(x: 0, y: 0, width: 400, height: 300))
+        view.attach(model: model)
+
+        // Role: the view reports `.textArea` (the editor role).
+        XCTAssertEqual(view.accessibilityRole(), .textArea,
+                       "accessibilityRole: view reports .textArea (the editor role)")
+        // Container: the view is NOT a leaf element — it has children.
+        // API drift: `isAccessibilityElement` is a METHOD in the macOS 26 SDK
+        // (ObjC `- (BOOL)isAccessibilityElement`), not a property — call it.
+        XCTAssertFalse(view.isAccessibilityElement(),
+                       "isAccessibilityElement(): false (container — has children)")
+        // Children: the gutter + widget + proxy roots the element graph built in
+        // performAttach (3 children of the editor identity). Non-empty after attach.
+        let children = view.accessibilityChildren() ?? []
+        XCTAssertGreaterThan(children.count, 0,
+                             "accessibilityChildren: present after attach (gutter + widget + proxy)")
+        XCTAssertEqual(children.count, 3,
+                       "accessibilityChildren: editor has exactly 3 children (gutter, widget, proxy)")
+        // Value: the full document text via the AX text area.
+        XCTAssertEqual(view.accessibilityValue() as? NSString, "hello" as NSString,
+                       "accessibilityValue: full document text via axTextArea.value")
+        // numberOfCharacters: raw UTF-16 unit count.
+        XCTAssertEqual(view.accessibilityNumberOfCharacters(), 5,
+                       "accessibilityNumberOfCharacters: raw UTF-16 unit count")
+    }
 }
