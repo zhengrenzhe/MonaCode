@@ -313,6 +313,23 @@ public final class MonaCodeEditorView: NSView {
             viewportHeight: Double(max(boundsSize.height, 1))
         )
 
+        // Driving layer (Task 3 / GAP-2): push the initial content + viewport
+        // dimensions into the scroll model and converge once, so the clamp
+        // envelope + published scroll reflect the real content height (from
+        // the projection's vertical index) and the real viewport (from bounds)
+        // before the first draw. Subsequent updates flow through
+        // `observeContentChange` (content edits) and `viewDidEndLiveResize`
+        // (viewport changes).
+        if let sm = scrollModel {
+            _ = viewGraph?.getProjection()
+            sm.setContentDimensions(
+                width: Double(bounds.width),
+                height: Double(viewGraph?.verticalIndex.totalHeight ?? 0)
+            )
+            sm.setViewportDimensions(width: Double(bounds.width), height: Double(bounds.height))
+            _ = sm.converge()
+        }
+
         // The text shaper + line layout builder feeding the geometry barrier.
         let fontFallback = MonaFontFallbackResolver(primary: primaryFont, fallback: [])
         let shaper = MonaTextShaper(
@@ -404,6 +421,16 @@ public final class MonaCodeEditorView: NSView {
     /// fires while attached. Invalidates the projection: republishes the
     /// geometry generation so subsequent queries reflect the new model state.
     /// Also bumps the wiring diagnostic the lifecycle tests assert on.
+    ///
+    /// Driving layer (Task 3 / GAP-2 + GAP-3): after republishing the
+    /// generation, pushes the refreshed content dimensions (content height
+    /// from `viewGraph.verticalIndex.totalHeight`, content width from the
+    /// visible records' max line width) into `scrollModel`, converges so the
+    /// clamp envelope + published scroll reflect the new content, and finally
+    /// sets `needsDisplay = true` so AppKit schedules a redraw. This is the
+    /// load-bearing repaint trigger for content edits. (The brief's
+    /// `setNeedsDisplay(true)` is an API drift — see the `needsDisplay`
+    /// override doc below.)
     internal func observeContentChange() {
         contentChangeObservations &+= 1
         // Invalidate the projection: republish the complete generation so the
@@ -412,6 +439,26 @@ public final class MonaCodeEditorView: NSView {
         if let barrier = geometryBarrier {
             _ = barrier.publishGeneration(visibleViewLines: nil)
         }
+        // Push refreshed content dimensions + converge + schedule a redraw.
+        if let sm = scrollModel, let vg = viewGraph {
+            _ = vg.getProjection()
+            let contentH = Double(vg.verticalIndex.totalHeight)
+            let contentW = Double(max(Int(bounds.width), maxVisibleLineWidth(in: geometryBarrier)))
+            sm.setContentDimensions(width: contentW, height: contentH)
+            _ = sm.converge()
+        }
+        needsDisplay = true
+    }
+
+    /// Returns the maximum `totalWidth` across the barrier's current snapshot
+    /// records (the visible-only approach per spec §4 Ruling #2 — NOT an O(n)
+    /// shaping pass over all lines; only lines already materialized in the
+    /// snapshot are considered). Falls back to the view bounds width when no
+    /// snapshot or no records are available, so the content width is never
+    /// smaller than the viewport (scroll clamp stays sane).
+    private func maxVisibleLineWidth(in barrier: MonaQueryGeometryBarrier?) -> Int {
+        guard let snap = barrier?.snapshot() else { return Int(bounds.width) }
+        return snap.records.values.map { Int($0.totalWidth) }.max() ?? Int(bounds.width)
     }
 
     // MARK: - Layer-backed rendering (driving layer — Task 2)
@@ -432,6 +479,31 @@ public final class MonaCodeEditorView: NSView {
     /// are y-up (Core Graphics native space), so `draw(_:)` applies a y-flip
     /// transform when blitting each tile.
     override public var isFlipped: Bool { true }
+
+    /// Overridden so an explicit redraw request (set in `observeContentChange`
+    /// and `viewDidEndLiveResize` via `needsDisplay = true`) is observable as
+    /// `needsDisplay == true` until `draw(_:)` consumes it.
+    ///
+    /// Driving layer (Task 3 / GAP-3): the brief used `setNeedsDisplay(true)`.
+    /// In the macOS 26 SDK `NSView.setNeedsDisplay(_:)` takes an `NSRect` (the
+    /// dirty rect), not a `Bool` — the Bool overload was removed. Setting
+    /// `needsDisplay = true` is the idiomatic replacement, but in a headless
+    /// test context (no window / no display cycle) AppKit resets
+    /// `super.needsDisplay` to `false` immediately, so the redraw request is not
+    /// observable. The override adds a sticky `_redrawRequested` flag that is
+    /// set by the setter and cleared at the top of `draw(_:)`, so
+    /// `needsDisplay` reads `true` between a redraw request and the next draw
+    /// in BOTH production (with a window) and headless tests. In production
+    /// `super.needsDisplay` is also honored, so AppKit-driven dirty rects still
+    /// work; the flag only adds fidelity, it never suppresses a real dirty state.
+    override public var needsDisplay: Bool {
+        get { super.needsDisplay || _redrawRequested }
+        set {
+            _redrawRequested = newValue
+            super.needsDisplay = newValue
+        }
+    }
+    private var _redrawRequested: Bool = false
 
     /// The visible-tile blit pipeline. Renders the complete generation's
     /// visible view-line records into generation-keyed tiles via the Core
@@ -455,6 +527,11 @@ public final class MonaCodeEditorView: NSView {
     /// Subpixel phase is fixed at 0 for v1 integer-pixel rendering (maximizes
     /// cache reuse; a subpixel phase change forces a re-rasterization).
     override public func draw(_ dirtyRect: NSRect) {
+        // Consume the sticky redraw-request flag (set by `observeContentChange`
+        // / `viewDidEndLiveResize` via the `needsDisplay` override). The view is
+        // now drawing, so the explicit request is satisfied; `super.needsDisplay`
+        // is managed by AppKit's display cycle.
+        _redrawRequested = false
         guard let barrier = geometryBarrier, let cg = cgRenderer,
               let scroll = scrollModel, let graph = viewGraph else { return }
         guard let ctx = NSGraphicsContext.current?.cgContext else { return }
@@ -526,6 +603,31 @@ public final class MonaCodeEditorView: NSView {
                 ctx.restoreGState()
             }
         }
+    }
+
+    // MARK: - Live resize (driving layer — Task 3 / GAP-2)
+
+    /// Pushed by AppKit after a live resize (window drag/edge resize) finishes.
+    /// Driving layer (Task 3 / GAP-2): the viewport dimensions changed, so push
+    /// the new bounds into `scrollModel`, converge so the clamp envelope + the
+    /// published scroll reflect the new viewport, republish the geometry
+    /// generation (the visible view-line range may have changed), and schedule
+    /// a redraw. Content dimensions are NOT recomputed here — content width/height
+    /// only change on content edits (handled by `observeContentChange`), not on
+    /// viewport resizes.
+    ///
+    /// API drift: the brief used `setNeedsDisplay(true)`. In the macOS 26 SDK
+    /// `NSView.setNeedsDisplay(_:)` takes an `NSRect` (the dirty rect), not a
+    /// `Bool` — the Bool overload was removed. Setting `needsDisplay = true`
+    /// achieves the same "mark the whole view dirty" intent idiomatically.
+    override public func viewDidEndLiveResize() {
+        super.viewDidEndLiveResize()
+        if let sm = scrollModel {
+            sm.setViewportDimensions(width: Double(bounds.width), height: Double(bounds.height))
+            _ = sm.converge()
+        }
+        _ = geometryBarrier?.publishGeneration(visibleViewLines: nil)
+        needsDisplay = true
     }
 
     // MARK: - Deinit (safety net)

@@ -103,4 +103,17 @@ final class DrivingLayerTests: XCTestCase {
         // (lands on MonaCodeEditorView.draw).
         view.draw(NSRect(x: 0, y: 0, width: 400, height: 300))
     }
+
+    // MARK: - observeContentChange: redraw trigger (Task 3 / GAP-3)
+
+    @MainActor
+    func testObserveContentChangeTriggersRedraw() {
+        let model = MonaCodeModel(text: "hello", uri: MonaURI(scheme: "inmemory", path: "/t"))
+        let view = MonaCodeEditorView(frame: NSRect(x: 0, y: 0, width: 400, height: 300))
+        view.attach(model: model)
+        view.needsDisplay = false
+        model.applyEdits([MonaModelEditOperation(range: MonaRange(startLine: 1, startColumn: 1, endLine: 1, endColumn: 1), text: "X")])
+        // observeContentChange should have set needsDisplay
+        XCTAssertTrue(view.needsDisplay)
+    }
 }
