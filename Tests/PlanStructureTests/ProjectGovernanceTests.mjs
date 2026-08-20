@@ -412,3 +412,33 @@ test('rendered initial task table is a complete valid 205-row ledger', () => {
     [],
   );
 });
+
+test('root README directly validates as the canonical 205-row task ledger', () => {
+  const catalog = loadContractCatalog(REPO_ROOT);
+  const definitions = deriveProjectTaskDefinitions(catalog);
+  const sourceSet = computeVerificationSourceSet(REPO_ROOT);
+  const tracked = new Set(
+    execFileSync('/usr/bin/git', ['ls-files', '-z'], { cwd: REPO_ROOT })
+      .toString('utf8')
+      .split('\0')
+      .filter(Boolean),
+  );
+  const result = validateTaskLedger({
+    markdown: readFileSync(resolve(REPO_ROOT, 'README.md'), 'utf8'),
+    definitions,
+    catalog,
+    repoRoot: REPO_ROOT,
+    currentDigest: sourceSet.digest,
+    trackedPaths: tracked,
+  });
+
+  assert.deepEqual(result.findings, []);
+  assert.equal(result.rows.length, 205);
+  assert.deepEqual(
+    result.rows.reduce((counts, row) => {
+      counts[row.state] = (counts[row.state] ?? 0) + 1;
+      return counts;
+    }, {}),
+    { 'IN PROGRESS': 1, TODO: 204 },
+  );
+});
