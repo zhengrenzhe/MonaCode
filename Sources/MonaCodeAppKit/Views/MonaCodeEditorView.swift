@@ -708,6 +708,93 @@ public final class MonaCodeEditorView: NSView {
         needsDisplay = true
     }
 
+    // MARK: - keyDown + dispatchKeyEvent (driving layer — Task 5)
+
+    /// The keyboard entry point of the AppKit responder chain.
+    ///
+    /// Driving layer (Task 5 / GAP-5): translates the native `NSEvent` into a
+    /// platform-neutral `MonaKeyEvent` via `keyEventGateway` (exactly once —
+    /// the gateway is the single translation point), then delegates the
+    /// 7-step dispatch to `dispatchKeyEvent(_:source:)`.
+    ///
+    /// When no model is attached the view is dormant: it forwards to
+    /// `super.keyDown(with:)` (the default NSResponder behavior) and returns —
+    /// none of the model-dependent collaborators (composition arbiter,
+    /// command dispatcher) exist yet.
+    ///
+    /// `isComposing` is sourced from the composition arbiter's
+    /// `hasActiveComposition` so the gateway stamps the event with the live IME
+    /// state (NSEvent itself carries no composition flag).
+    override public func keyDown(with event: NSEvent) {
+        guard isAttached else { super.keyDown(with: event); return }
+        let isComposing = compositionArbiter?.hasActiveComposition ?? false
+        let key = keyEventGateway.translateKeyDown(event, isComposing: isComposing)
+        dispatchKeyEvent(key, source: event)
+    }
+
+    /// The 7-step keyboard dispatch branch (spec §3.2).
+    ///
+    /// Routes one `MonaKeyEvent` through the composition arbiter and acts on
+    /// the returned `MonaCompositionArbitration`:
+    ///
+    ///   1. `.dispatched` — a command matched and no composition was active;
+    ///      execute the command via the dispatcher.
+    ///   2. `.committedThenDispatched` — a command matched during an active
+    ///      composition; the arbiter already committed the composition, so
+    ///      insert the committed text through the text-input client FIRST,
+    ///      then execute the command.
+    ///   3. `.passThrough` — no command matched and no composition; if the key
+    ///      produced text and is not an IME-composing event, route the text
+    ///      through the `type` command (the same chokepoint resolved
+    ///      keybindings use); otherwise fall back to `super.keyDown(with:)`.
+    ///   4. `.absorbedByComposition` — the IME owns the event; feed it to
+    ///      `interpretKeyEvents(_:)` so AppKit drives the marked-text
+    ///      selectors on this view (NSTextInputClient conformance from Task 6).
+    ///   5. `.noOp` — the session is disposed or unable to arbitrate; fall
+    ///      back to `super.keyDown(with:)`.
+    ///
+    /// Finally the derived `dispatchOutcome` is applied through the gateway
+    /// to obtain the native `MonaAppKeyDispatchAction`. The switch above
+    /// already honors `preventDefault` (no `super.keyDown` for the handled
+    /// cases) and `stopPropagation` (no `nextResponder` forwarding — implicit,
+    /// since `super` is not called for handled cases), so the resulting
+    /// `action` is the documented bridge value; its flags are not re-checked.
+    ///
+    /// `internal` (not `private`) so the driving-layer tests can drive it
+    /// directly via `@testable import` (constructing a `MonaKeyEvent` and
+    /// calling `dispatchKeyEvent(_:source:)` without synthesizing an
+    /// `NSEvent`).
+    func dispatchKeyEvent(_ key: MonaKeyEvent, source: NSEvent?) {
+        guard let arbiter = compositionArbiter, let dispatcher = commandDispatcher else { return }
+        let ctx = keybindingContext
+        let arbitration = arbiter.handleKey(key, context: ctx)
+        switch arbitration {
+        case .dispatched(let id):
+            _ = dispatcher.execute(id, args: nil)
+        case .committedThenDispatched(let id):
+            if let committed = compositionSession?.lastCommittedText {
+                textInputClient?.insertText(committed, replacementRange: compositionSession?.replacementRange ?? .notFound)
+            }
+            _ = dispatcher.execute(id, args: nil)
+        case .passThrough:
+            if let text = key.keyText, !key.isComposing {
+                _ = dispatcher.execute("type", args: ["text": text])
+            } else if let src = source {
+                super.keyDown(with: src)
+            }
+        case .absorbedByComposition:
+            if let src = source { interpretKeyEvents([src]) }
+        case .noOp:
+            if let src = source { super.keyDown(with: src) }
+        }
+        // Apply the derived dispatch outcome through the gateway (the single
+        // native-boundary translation point). The switch above already honors
+        // preventDefault/stopPropagation, so the resulting action's flags are
+        // not re-checked — the call documents the bridge and keeps the gateway
+        // the authoritative translator.
+        _ = keyEventGateway.apply(arbitration.dispatchOutcome)
+    }
+
     // MARK: - Deinit (safety net)
 
     deinit {

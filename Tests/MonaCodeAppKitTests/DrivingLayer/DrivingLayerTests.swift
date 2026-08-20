@@ -144,4 +144,29 @@ final class DrivingLayerTests: XCTestCase {
         view.textInputClient?.insertText("X", replacementRange: .notFound)
         XCTAssertEqual(model.getValue(), "Xabc")
     }
+
+    // MARK: - keyDown + dispatchKeyEvent 7-step branch (Task 5)
+
+    /// `dispatchKeyEvent` routes a pass-through key (no keybinding match, plain
+    /// keyText, not composing) through the `type` command. With an empty model
+    /// and a default caret at `(1,1)`, typing "X" yields `"X"`.
+    @MainActor
+    func testDispatchKeyTypeInsertsText() {
+        let model = MonaCodeModel(text: "", uri: MonaURI(scheme: "inmemory", path: "/t"))
+        let view = MonaCodeEditorView(frame: NSRect(x: 0, y: 0, width: 400, height: 300))
+        view.attach(model: model)
+        // keyCode 45 == MonaKeyCode.keyO; no plain (no-modifier) keybinding
+        // matches it, so the arbiter returns `.passThrough` and the
+        // `keyText` ("X") routes through the `type` command.
+        let key = MonaKeyEvent(
+            keyCode: MonaKeyCode.custom(45),
+            keyText: "X",
+            modifiers: [],
+            isRepeat: false,
+            isComposing: false,
+            timestamp: 0
+        )
+        view.dispatchKeyEvent(key, source: nil)
+        XCTAssertEqual(model.getValue(), "X")
+    }
 }
