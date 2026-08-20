@@ -28,10 +28,16 @@
 // verdict JSON to stdout and validates the RELEASE_VERDICT.md document.
 
 import { createHash } from 'node:crypto';
-import { readFileSync, existsSync, readdirSync } from 'node:fs';
+import {
+  existsSync,
+  mkdirSync,
+  readFileSync,
+  writeFileSync,
+} from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { finalizeQEnvironment } from '../Qualification/finalize-qenvironment.mjs';
+import { computeVerificationSourceSet } from '../Docs/source-set.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(here, '../..');
@@ -427,6 +433,8 @@ function verifyReleaseBuild() {
 // ---------------------------------------------------------------------------
 
 export function aggregateVerdict() {
+  const verificationSourceSet = computeVerificationSourceSet(REPO_ROOT);
+
   // --- Operation 1: verify one source revision, one seven-candidate set,
   // one exact qualified environment, and all C/P/cross-cutting evidence. ---
 
@@ -592,6 +600,17 @@ export function aggregateVerdict() {
       deferredTo: 'formal run on the formal device (24-hour soak)',
     });
   }
+  if (verificationSourceSet.digest !== FROZEN_SOURCE_SET_DIGEST) {
+    blockers.push({
+      id: 'current-source-evidence-stale',
+      status: 'not-passed',
+      reason:
+        `The current verification source-set digest (${verificationSourceSet.digest}) ` +
+        `does not match the frozen evidence source-set digest (${FROZEN_SOURCE_SET_DIGEST}). ` +
+        'Historical P07-T011 evidence cannot certify changed source bytes.',
+      deferredTo: 'fresh acceptance evidence bound to the current verification source-set digest',
+    });
+  }
   blockers.sort((a, b) => a.id.localeCompare(b.id));
 
   // The verdict: passed only when every prerequisite passes.
@@ -608,6 +627,8 @@ export function aggregateVerdict() {
     verdict,
     sourceRevision: FROZEN_SOURCE_REVISION,
     sourceSetDigest: FROZEN_SOURCE_SET_DIGEST,
+    evidenceSourceSetDigest: FROZEN_SOURCE_SET_DIGEST,
+    verificationSourceSetDigest: verificationSourceSet.digest,
     qualifiedSetHash: recordedQualifiedSetHash,
     candidates: sevenCandidates,
     qualifiedEnvironment: {
@@ -643,44 +664,88 @@ export function aggregateVerdict() {
 }
 
 // ---------------------------------------------------------------------------
-// Validate the RELEASE_VERDICT.md document against the verdict.
+// Digest-bound current evidence rendering and persistence.
 // ---------------------------------------------------------------------------
 
-export function validateVerdictDocument() {
-  const docPath = join(REPO_ROOT, 'RELEASE_VERDICT.md');
+export function releaseEvidenceDirectory(digest) {
+  if (!SHA256_RE.test(digest)) {
+    throw new Error(`release evidence digest must be 64 lowercase hexadecimal characters: ${digest}`);
+  }
+  return join(REPO_ROOT, 'artifacts', 'releases', digest);
+}
+
+export function renderVerdictDocument(verdict) {
+  const blockers = verdict.blockers.length === 0
+    ? 'None.\n'
+    : verdict.blockers
+        .map(
+          (row) =>
+            `### \`${row.id}\`\n\n` +
+            `- Status: \`${row.status}\`\n` +
+            `- Reason: ${row.reason}\n` +
+            `- Resolution: ${row.deferredTo}\n`,
+        )
+        .join('\n');
+  const passed = verdict.passedPrerequisites
+    .map(
+      (row) =>
+        `### \`${row.id}\`\n\n` +
+        `- Status: \`${row.status}\`\n` +
+        `- Evidence: ${row.evidence}\n`,
+    )
+    .join('\n');
+
+  return (
+    '# MonaCode release verdict\n\n' +
+    'This file is generated evidence. Its directory name binds it to the exact current verification source set.\n\n' +
+    `- Task: \`${verdict.task}\`\n` +
+    `- Record SHA-256: \`${verdict.recordSHA256}\`\n` +
+    `- Platform scope: \`${verdict.platformScope}\`\n` +
+    `- Frozen source revision: \`${verdict.sourceRevision}\`\n` +
+    `- Evidence source-set digest: \`${verdict.evidenceSourceSetDigest}\`\n` +
+    `- Verification source-set digest: \`${verdict.verificationSourceSetDigest}\`\n` +
+    `- Recorded acceptance-set hash: \`${verdict.qualifiedSetHash}\`\n\n` +
+    `## Verdict: \`${verdict.verdict}\`\n\n` +
+    'A historical passed verdict is not inherited when the current verification source bytes differ from the evidence source bytes.\n\n' +
+    '## Blockers (sorted)\n\n' +
+    blockers +
+    '\n## Passed prerequisites (historical evidence, sorted)\n\n' +
+    passed +
+    '\n## Frozen contract\n\n' +
+    `The G5-R contract remains frozen and unchanged: \`${verdict.contractUnchanged}\`.\n`
+  );
+}
+
+export function writeVerdictEvidence(verdict) {
+  const dir = releaseEvidenceDirectory(verdict.verificationSourceSetDigest);
+  mkdirSync(dir, { recursive: true });
+  const jsonPath = join(dir, 'release-verdict.json');
+  const markdownPath = join(dir, 'RELEASE_VERDICT.md');
+  writeFileSync(jsonPath, JSON.stringify(verdict, null, 2) + '\n');
+  writeFileSync(markdownPath, renderVerdictDocument(verdict));
+  return { jsonPath, markdownPath };
+}
+
+export function validateVerdictDocument(
+  verdict = aggregateVerdict(),
+  docPath = join(
+    releaseEvidenceDirectory(verdict.verificationSourceSetDigest),
+    'RELEASE_VERDICT.md',
+  ),
+) {
   if (!existsSync(docPath)) {
-    throw new Error('RELEASE_VERDICT.md does not exist');
+    throw new Error(`release verdict document does not exist: ${docPath}`);
   }
   const md = readFileSync(docPath, 'utf8');
-  const v = aggregateVerdict();
-
-  // The document records the verdict.
-  if (!md.includes(v.verdict)) {
-    throw new Error(`the document does not record the verdict "${v.verdict}"`);
-  }
-  // The document records the source revision + acceptance-set hash.
-  if (!md.includes(v.sourceRevision)) {
-    throw new Error('the document does not record the source revision');
-  }
-  if (!md.includes(v.qualifiedSetHash)) {
-    throw new Error('the document does not record the qualified-set hash');
-  }
-  // The document records every blocker + passed prerequisite.
-  for (const b of v.blockers) {
-    if (!md.includes(b.id)) {
-      throw new Error(`the document does not record blocker ${b.id}`);
-    }
-  }
-  for (const p of v.passedPrerequisites) {
-    if (!md.includes(p.id)) {
-      throw new Error(`the document does not record passed prerequisite ${p.id}`);
-    }
+  const expected = renderVerdictDocument(verdict);
+  if (md !== expected) {
+    throw new Error('release verdict document bytes do not match the rendered current verdict');
   }
   return true;
 }
 
 // ---------------------------------------------------------------------------
-// Main — print the verdict + validate the document.
+// Main — default is read-only; --write creates digest-bound evidence.
 // ---------------------------------------------------------------------------
 
 const isMain =
@@ -688,15 +753,19 @@ const isMain =
   process.argv[1]?.endsWith('release-verdict.mjs');
 if (isMain) {
   try {
+    const args = process.argv.slice(2);
+    if (args.some((arg) => arg !== '--write') || args.filter((arg) => arg === '--write').length > 1) {
+      throw new Error('usage: release-verdict.mjs [--write]');
+    }
     const v = aggregateVerdict();
     // Print the verdict as a single JSON line (consumed by the test harness).
     process.stdout.write(JSON.stringify(v) + '\n');
-    // Validate the RELEASE_VERDICT.md document.
-    if (existsSync(join(REPO_ROOT, 'RELEASE_VERDICT.md'))) {
-      validateVerdictDocument();
-      process.stderr.write('RELEASE_VERDICT.md validated.\n');
-    } else {
-      process.stderr.write('RELEASE_VERDICT.md not found (create it before validating).\n');
+    if (args.includes('--write')) {
+      const paths = writeVerdictEvidence(v);
+      validateVerdictDocument(v, paths.markdownPath);
+      process.stderr.write(
+        `release verdict evidence written: ${paths.jsonPath}\n${paths.markdownPath}\n`,
+      );
     }
     // Exit 0: the tool ran successfully and produced a valid verdict. The
     // verdict's pass/not-passed status is the OUTPUT, not the exit code.

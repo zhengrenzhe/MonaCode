@@ -36,19 +36,29 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { readFileSync, existsSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 // Statically importing the verdict tool makes a missing implementation fail with
 // ERR_MODULE_NOT_FOUND during the Red stage (before the tool is authored).
-import { aggregateVerdict } from '../../Tools/Release/release-verdict.mjs';
+import {
+  aggregateVerdict,
+  releaseEvidenceDirectory,
+  renderVerdictDocument,
+} from '../../Tools/Release/release-verdict.mjs';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(here, '../..');
 const NODE = '/opt/homebrew/Cellar/node/26.7.0/bin/node';
 const VERDICT_TOOL = resolve(REPO_ROOT, 'Tools/Release/release-verdict.mjs');
-const VERDICT_DOC = resolve(REPO_ROOT, 'RELEASE_VERDICT.md');
+const ARCHIVED_VERDICT = resolve(
+  REPO_ROOT,
+  'docs/archive/releases/P07-T011/RELEASE_VERDICT.md',
+);
+const ARCHIVED_VERDICT_SHA256 =
+  'e760ffb971149bbb3afb70c7e6d99aadf5499b25b8202085062584af3037d339';
 
 const SHA256_RE = /^[0-9a-f]{64}$/;
 
@@ -66,12 +76,10 @@ const FROZEN_SOURCE_SET_DIGEST =
 const RECORDED_QUALIFIED_SET_HASH =
   'f7ed2c5d3d6edbc8e9d6f7869041c9e67f9e3351d47eb71303e77edc22b676ce';
 
-// The complete expected blocker set (sorted). The verdict is passed — the
-// blocker set is empty. The three formal-acceptance items that were
-// previously deferred blockers are now resolved (empirical evidence +
-// user-accepted non-formal acceptance, 2026-08-19) and counted among the
-// passed prerequisites.
-const EXPECTED_BLOCKER_IDS = [];
+// The historical evidence can remain passed, but it cannot certify a changed
+// verification source set. The current source therefore has one mandatory
+// staleness blocker until evidence is recollected against its exact digest.
+const EXPECTED_BLOCKER_IDS = ['current-source-evidence-stale'];
 
 // The complete expected passed-prerequisite set (sorted, 11). Includes the
 // three resolved formal-device items.
@@ -93,6 +101,10 @@ const EXPECTED_PASSED_IDS = [
 
 function sortStrings(arr) {
   return [...arr].sort((a, b) => a.localeCompare(b));
+}
+
+function sha256(bytes) {
+  return createHash('sha256').update(bytes).digest('hex');
 }
 
 // ===========================================================================
@@ -121,6 +133,16 @@ test('Operation 1: aggregateVerdict returns a well-formed verdict object', () =>
   // Source revision + set digest (frozen P07-T011).
   assert.equal(v.sourceRevision, FROZEN_SOURCE_REVISION, 'sourceRevision must be P07-T011');
   assert.equal(v.sourceSetDigest, FROZEN_SOURCE_SET_DIGEST, 'sourceSetDigest must match');
+  assert.equal(
+    v.evidenceSourceSetDigest,
+    FROZEN_SOURCE_SET_DIGEST,
+    'evidenceSourceSetDigest must retain the frozen evidence binding',
+  );
+  assert.match(
+    v.verificationSourceSetDigest,
+    SHA256_RE,
+    'verificationSourceSetDigest must be a current 64-hex SHA-256',
+  );
 
   // The recorded acceptance-set hash consumed by every C/P task.
   assert.equal(
@@ -203,21 +225,19 @@ test('Operation 2: the passed-prerequisite set is complete and well-formed', () 
   }
 });
 
-test('Operation 2: the blocker set is empty (verdict passed) and well-formed', () => {
+test('Operation 2: the blocker set rejects stale evidence and is well-formed', () => {
   const v = aggregateVerdict();
   const blockers = v.blockers;
   assert.ok(Array.isArray(blockers), 'blockers must be an array');
-  assert.equal(blockers.length, EXPECTED_BLOCKER_IDS.length, 'blocker set must be empty');
+  assert.equal(blockers.length, EXPECTED_BLOCKER_IDS.length, 'complete blocker set must be present');
 
   const ids = blockers.map((b) => b.id);
   assert.deepEqual(
     sortStrings(ids),
     sortStrings(EXPECTED_BLOCKER_IDS),
-    'blocker ids must match the expected (empty) set',
+    'blocker ids must match the expected complete set',
   );
 
-  // With zero blockers, no per-blocker fields to validate. Any blocker that
-  // DID appear would have to be well-formed + sorted (defensive).
   for (const b of blockers) {
     assert.equal(b.status, 'not-passed', `blocker ${b.id} status must be not-passed`);
     assert.ok(b.reason && typeof b.reason === 'string', `blocker ${b.id} needs a reason`);
@@ -240,16 +260,23 @@ test('Operation 2: the blocker set is empty (verdict passed) and well-formed', (
 // blocker set: not-passed IFF blockers is non-empty.
 // ===========================================================================
 
-test('Operation 3: the verdict is passed with an empty blocker set', () => {
+test('Operation 3: current source cannot inherit the frozen passed verdict', () => {
   const v = aggregateVerdict();
 
-  // The verdict is passed — the three formal-device items are resolved
-  // (empirical evidence + user-accepted non-formal acceptance).
-  assert.equal(v.verdict, 'passed', 'the verdict must be passed');
-  assert.equal(v.blockers.length, 0, 'a passed verdict must have zero blockers');
+  assert.notEqual(
+    v.verificationSourceSetDigest,
+    v.evidenceSourceSetDigest,
+    'changed current source must not equal the frozen evidence source set',
+  );
+  assert.equal(v.verdict, 'not-passed', 'stale evidence must make the verdict not-passed');
+  assert.equal(
+    v.blockers.some((row) => row.id === 'current-source-evidence-stale'),
+    true,
+    'the stale-source blocker must be present',
+  );
   assert.ok(
     v.passedPrerequisites.length > 0,
-    'the passed prerequisites must be recorded',
+    'historically passed prerequisites must remain recorded',
   );
 
   // Internal consistency: passed IFF no blockers.
@@ -330,8 +357,8 @@ test('Operation 4: the frozen G5-R contract is unchanged (contractUnchanged=true
 });
 
 // ===========================================================================
-// Operation 4 — the verdict tool, run directly, produces a valid verdict and
-// validates the RELEASE_VERDICT.md document.
+// Operation 4 — the verdict tool, run directly, produces a valid current
+// verdict without treating the historical document as current evidence.
 // ===========================================================================
 
 test('Operation 4: the verdict tool runs directly and exits 0', () => {
@@ -340,30 +367,54 @@ test('Operation 4: the verdict tool runs directly and exits 0', () => {
   assert.ok(r.stdout.length > 0, 'verdict tool must print output');
   // The tool prints a JSON verdict line.
   const parsed = JSON.parse(r.stdout.split('\n').find((l) => l.startsWith('{')));
-  assert.equal(parsed.verdict, 'passed', 'the printed verdict must be passed');
+  assert.equal(parsed.verdict, 'not-passed', 'the printed verdict must reject stale evidence');
   assert.ok(Array.isArray(parsed.blockers), 'the printed verdict must carry a blockers array');
-  assert.equal(parsed.blockers.length, 0, 'a passed verdict must print zero blockers');
+  assert.equal(
+    parsed.blockers.some((row) => row.id === 'current-source-evidence-stale'),
+    true,
+    'the printed verdict must carry the stale-source blocker',
+  );
 });
 
 // ===========================================================================
-// Operation 4 — RELEASE_VERDICT.md exists and is internally consistent with
-// the verdict tool's output.
+// Operation 4 — the historical document is immutable; current evidence is
+// rendered into a digest-bound artifacts directory.
 // ===========================================================================
 
-test('Operation 4: RELEASE_VERDICT.md exists and is consistent with the verdict', () => {
-  assert.equal(existsSync(VERDICT_DOC), true, 'RELEASE_VERDICT.md must exist');
-  const md = readFileSync(VERDICT_DOC, 'utf8');
+test('Operation 4: the historical P07-T011 verdict is byte-preserved', () => {
+  assert.equal(existsSync(ARCHIVED_VERDICT), true, 'the archived verdict must exist');
+  assert.equal(
+    sha256(readFileSync(ARCHIVED_VERDICT)),
+    ARCHIVED_VERDICT_SHA256,
+    'the archived verdict bytes must remain unchanged',
+  );
+});
 
+test('Operation 4: current evidence path and Markdown are bound to the current digest', () => {
   const v = aggregateVerdict();
+  const evidenceDirectory = releaseEvidenceDirectory(v.verificationSourceSetDigest);
+  assert.equal(
+    evidenceDirectory,
+    resolve(REPO_ROOT, 'artifacts/releases', v.verificationSourceSetDigest),
+    'release evidence directory must be keyed by the current source digest',
+  );
 
-  // The document records the verdict as passed.
-  assert.ok(/## Verdict:\s*`passed`/.test(md), 'the document must record the passed verdict');
+  const md = renderVerdictDocument(v);
 
-  // The document records the source revision + acceptance-set hash.
+  assert.ok(/## Verdict:\s*`not-passed`/.test(md), 'current Markdown must record not-passed');
+
+  // Current and frozen evidence identities are both explicit.
   assert.ok(md.includes(FROZEN_SOURCE_REVISION), 'the document must record P07-T011');
+  assert.ok(
+    md.includes(v.verificationSourceSetDigest),
+    'the document must record the current verification source-set digest',
+  );
+  assert.ok(
+    md.includes(v.evidenceSourceSetDigest),
+    'the document must record the frozen evidence source-set digest',
+  );
   assert.ok(md.includes(RECORDED_QUALIFIED_SET_HASH), 'the document must record the qualified-set hash');
 
-  // The document records every blocker id (none, when passed).
   for (const b of v.blockers) {
     assert.ok(
       md.includes(b.id),
@@ -371,8 +422,6 @@ test('Operation 4: RELEASE_VERDICT.md exists and is consistent with the verdict'
     );
   }
 
-  // The document records every passed-prerequisite id (11, including the
-  // three resolved formal-device items).
   for (const p of v.passedPrerequisites) {
     assert.ok(
       md.includes(p.id),
@@ -380,9 +429,5 @@ test('Operation 4: RELEASE_VERDICT.md exists and is consistent with the verdict'
     );
   }
 
-  // The document is honest: it records that the formal-device ceremony was
-  // waived by user authority (not that it ran).
-  assert.ok(/waived|user-accept/i.test(md), 'the document must record the user-accepted resolution');
-  // The document records the frozen-contract-unchanged assertion.
   assert.ok(/frozen/i.test(md), 'the document must assert the contract is frozen');
 });

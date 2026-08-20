@@ -1,0 +1,253 @@
+{
+  "schemaVersion": 1,
+  "task": "P09-T099",
+  "recordSHA256": "41944f0c8c835b15a75a8e74e4b98cc5cbc39c0ae89aba39823af5d7d4147c9b",
+  "platformScope": "macOS-26-arm64",
+  "verdict": "not-passed",
+  "sourceRevision": "P07-T011",
+  "sourceSetDigest": "152c63ffc32ce2a632ff2a2caa2d3ee25063a1150c6f51bb44d5405aa30a1f36",
+  "evidenceSourceSetDigest": "152c63ffc32ce2a632ff2a2caa2d3ee25063a1150c6f51bb44d5405aa30a1f36",
+  "verificationSourceSetDigest": "55fa6a85c9c0b869caa09bb55d71d7da162a264ec1f2673abcd7a3c0c1edf3a4",
+  "qualifiedSetHash": "f7ed2c5d3d6edbc8e9d6f7869041c9e67f9e3351d47eb71303e77edc22b676ce",
+  "candidates": [
+    {
+      "name": "native-declaration",
+      "leaf": "P08-T010",
+      "hash": "15b714218f054c89d022d64501f9446cdaa4d82279e38862eb8c72e1dc65b605",
+      "sourceRevision": "P07-T011",
+      "sourceSetDigest": "152c63ffc32ce2a632ff2a2caa2d3ee25063a1150c6f51bb44d5405aa30a1f36",
+      "kind": "static"
+    },
+    {
+      "name": "regExpUnicode",
+      "leaf": "P08-T011",
+      "hash": "00e1540ae7cc4088350eb6f8e2c6192815cfca01e363ffd09e1f5f464a4146b5",
+      "sourceRevision": "P07-T011",
+      "sourceSetDigest": "152c63ffc32ce2a632ff2a2caa2d3ee25063a1150c6f51bb44d5405aa30a1f36",
+      "kind": "static"
+    },
+    {
+      "name": "environment",
+      "leaf": "P08-T012",
+      "hash": "8e697cce63618f69963071ae87d4ef720ea399a03ddae2ee2068881ad1d98f45",
+      "sourceRevision": "P07-T011",
+      "sourceSetDigest": "152c63ffc32ce2a632ff2a2caa2d3ee25063a1150c6f51bb44d5405aa30a1f36",
+      "kind": "static"
+    },
+    {
+      "name": "sourceClosure",
+      "leaf": "P08-T013",
+      "hash": "2802132c2cc3b979a82cdd2a6bed53a0ddd4d42a8216f4d035054f157e8e9a61",
+      "sourceRevision": "P07-T011",
+      "sourceSetDigest": "152c63ffc32ce2a632ff2a2caa2d3ee25063a1150c6f51bb44d5405aa30a1f36",
+      "kind": "static"
+    },
+    {
+      "name": "cache",
+      "leaf": "P08-T014",
+      "hash": "f40ccdd13027630a8cc27ddea1f343bf3e5cc61767497050526db87e85a8855c",
+      "sourceRevision": "P07-T011",
+      "sourceSetDigest": "152c63ffc32ce2a632ff2a2caa2d3ee25063a1150c6f51bb44d5405aa30a1f36",
+      "kind": "static"
+    },
+    {
+      "name": "distribution",
+      "leaf": "P08-T015",
+      "hash": "ccd053c64dc148001bd6556621f6f9d10a43a04123f960de5a62939ec63ae0c4",
+      "sourceRevision": "P07-T011",
+      "sourceSetDigest": "152c63ffc32ce2a632ff2a2caa2d3ee25063a1150c6f51bb44d5405aa30a1f36",
+      "kind": "static"
+    },
+    {
+      "name": "QEnvironmentID",
+      "leaf": "P09-T001",
+      "hash": "d9cf4fc0ea555d3bf5177de80d3c5dc8343f979230cfe5a2e517c14a4eae8fdb",
+      "sourceRevision": "P07-T011",
+      "sourceSetDigest": null,
+      "kind": "qenvironment"
+    }
+  ],
+  "qualifiedEnvironment": {
+    "recorded": {
+      "qualifiedSetHash": "f7ed2c5d3d6edbc8e9d6f7869041c9e67f9e3351d47eb71303e77edc22b676ce",
+      "boundUnderQualified": false
+    },
+    "verdictTime": {
+      "qualified": false,
+      "status": "formal-preflight-rejected",
+      "externalDisplayCount": 1,
+      "required": 0,
+      "qEnvironmentId": "d9cf4fc0ea555d3bf5177de80d3c5dc8343f979230cfe5a2e517c14a4eae8fdb",
+      "qualifiedSetHash": "38a710cc90120501ad17ed1545988d993b56b2b44a8cb9bbe8ad6f84aeee9c2e"
+    },
+    "userAccepted": true,
+    "prerequisitePasses": true
+  },
+  "passedPrerequisites": [
+    {
+      "id": "c01-c10-equivalence",
+      "status": "passed",
+      "evidence": "C01-C10 all passed with ZERO equivalence gaps; the Swift port matches monaco-editor M0/M1 across model+semantic, environment, projection, public-declarations, features+diff, provider+LSP+snippet+Markdown, native-input+a11y+workspace-edit, renderer, delivery, and release."
+    },
+    {
+      "id": "complexity-bounds",
+      "status": "passed",
+      "evidence": "ALL 10 subsystems' growth classes within Monaco bounds; zero worse-asymptotic-order (0); zero full-doc-scan (0)."
+    },
+    {
+      "id": "failure-injection",
+      "status": "passed",
+      "evidence": "ALL 13 recoverable failures typed+rollback/drop+zero-half-commit; ALL 10 subsystems growth classes within Monaco bounds; zero worse-asymptotic-order; zero full-doc-scan."
+    },
+    {
+      "id": "formal-24h-soak",
+      "status": "passed",
+      "evidence": "1000 lifecycle cycles EMPIRICAL (0 bound violations); 1-hour empirical soak PASSED (~15000000 balanced insert/delete/undo/redo actions, 0 violations, 0 crash/leak/corruption, line count 1.00x + char count 1.00x; commit c13f2b3); ASan+TSan+UBSan ALL ZERO findings; Metal absent branch NOT-APPLICABLE. The formal 24-hour soak ceremony on the formal device is WAIVED by user authority — the 1-hour empirical soak is accepted as covering the soak prerequisite."
+    },
+    {
+      "id": "formal-performance-measurement",
+      "status": "passed",
+      "evidence": "P00-P13 structural workloads present (14 suites) AND empirical component-level benchmarks PASSED (commit 1435f777; re-run 2026-08-19, 0 failures): P01 model load 1MiB 93.1ms (<2000ms), P02 typing 0.087ms/action (<10ms), P03 batch 100-edit 1.6ms (<500ms), P08 find 1MiB 137.3ms (<1000ms), P10 diff 10KiB 19.4ms (<200ms); each 30 runs + stability (CV<0.5) + self-consistency (|M0-M1|/max<0.5). The formal 50-launch/1000000-resample ceremony on the formal device is WAIVED by user authority — the empirical component-level benchmarks are accepted as covering the performance-measurement prerequisite."
+    },
+    {
+      "id": "license-provenance",
+      "status": "passed",
+      "evidence": "license provenance verified — 11 license sections present + 4 pinned hashes (LSP, Chromium ICU, Codicon artwork, Codicon code)."
+    },
+    {
+      "id": "qualified-environment",
+      "status": "passed",
+      "evidence": "User-accepted non-formal environment (2026-08-19 directive: \"直接在这个设备上跑，不需要可溯源\"). Recorded acceptance-set hash f7ed2c5d3d6edbc8e9d6f7869041c9e67f9e3351d47eb71303e77edc22b676ce bound under qualified=false (1 external display at evidence-collection time); verdict-time environment qualified=false, externalDisplayCount=1. The formal-device requirement (zero external displays) is WAIVED by user authority."
+    },
+    {
+      "id": "release-build",
+      "status": "passed",
+      "evidence": "release build is reproducible (build-release.sh passes -Xlinker -reproducible for a deterministic, content-derived LC_UUID; ReleaseBuildTests.mjs verifies the three products + content hashes)."
+    },
+    {
+      "id": "renderer-decision",
+      "status": "passed",
+      "evidence": "validated — frozen Phase-03 decision hash matches, CG predecessor, trigger scope correct (3 renderer-attributable metrics, 8 cross-domain banned), no cross-domain leak, CG fallback present; branch not-triggered-and-absent."
+    },
+    {
+      "id": "sanitizers",
+      "status": "passed",
+      "evidence": "1000 lifecycle cycles EMPIRICAL (0 bound violations); 1-hour empirical soak PASSED (~15000000 balanced insert/delete/undo/redo actions, 0 violations, 0 crash/leak/corruption, line count 1.00x + char count 1.00x; commit c13f2b3); ASan+TSan+UBSan ALL ZERO findings; Metal absent branch NOT-APPLICABLE. The formal 24-hour soak ceremony on the formal device is WAIVED by user authority — the 1-hour empirical soak is accepted as covering the soak prerequisite."
+    },
+    {
+      "id": "six-static-candidates",
+      "status": "passed",
+      "evidence": "all 6 static candidates finalized (frozen+final, baseline monaco-editor@0.56.0, source revision P07-T011, sourceSetDigest 152c63...)."
+    }
+  ],
+  "blockers": [
+    {
+      "id": "current-source-evidence-stale",
+      "status": "not-passed",
+      "reason": "The current verification source-set digest (55fa6a85c9c0b869caa09bb55d71d7da162a264ec1f2673abcd7a3c0c1edf3a4) does not match the frozen evidence source-set digest (152c63ffc32ce2a632ff2a2caa2d3ee25063a1150c6f51bb44d5405aa30a1f36). Historical P07-T011 evidence cannot certify changed source bytes.",
+      "deferredTo": "fresh acceptance evidence bound to the current verification source-set digest"
+    }
+  ],
+  "evidence": {
+    "contractFrozen": true,
+    "c01c10": {
+      "status": "passed",
+      "suites": [
+        "C01Tests.swift",
+        "C02Tests.swift",
+        "C03Tests.swift",
+        "C04Tests.swift",
+        "C05Tests.swift",
+        "C06Tests.swift",
+        "C07Tests.swift",
+        "C08Tests.swift",
+        "C09Tests.swift",
+        "C10Tests.swift"
+      ],
+      "count": 10,
+      "equivalenceGaps": 0,
+      "evidence": "C01-C10 all passed with ZERO equivalence gaps; the Swift port matches monaco-editor M0/M1 across model+semantic, environment, projection, public-declarations, features+diff, provider+LSP+snippet+Markdown, native-input+a11y+workspace-edit, renderer, delivery, and release."
+    },
+    "p00p13": {
+      "status": "passed",
+      "suites": [
+        "P00WorkloadTests.swift",
+        "P01WorkloadTests.swift",
+        "P02WorkloadTests.swift",
+        "P03WorkloadTests.swift",
+        "P04WorkloadTests.swift",
+        "P05WorkloadTests.swift",
+        "P06WorkloadTests.swift",
+        "P07WorkloadTests.swift",
+        "P08WorkloadTests.swift",
+        "P09WorkloadTests.swift",
+        "P10WorkloadTests.swift",
+        "P11WorkloadTests.swift",
+        "P12WorkloadTests.swift",
+        "P13WorkloadTests.swift"
+      ],
+      "count": 14,
+      "formalMeasurement": "completed-empirical",
+      "empiricalBenchmarks": 5,
+      "evidence": "P00-P13 structural workloads present (14 suites) AND empirical component-level benchmarks PASSED (commit 1435f777; re-run 2026-08-19, 0 failures): P01 model load 1MiB 93.1ms (<2000ms), P02 typing 0.087ms/action (<10ms), P03 batch 100-edit 1.6ms (<500ms), P08 find 1MiB 137.3ms (<1000ms), P10 diff 10KiB 19.4ms (<200ms); each 30 runs + stability (CV<0.5) + self-consistency (|M0-M1|/max<0.5). The formal 50-launch/1000000-resample ceremony on the formal device is WAIVED by user authority — the empirical component-level benchmarks are accepted as covering the performance-measurement prerequisite."
+    },
+    "t050": {
+      "status": "passed-empirical",
+      "lifecycleCycles": 1000,
+      "reducedSoakActions": 12000,
+      "empiricalSoakSeconds": 3600,
+      "empiricalSoakActions": 15000000,
+      "formalSoakSeconds": 86400,
+      "formalSoak": "completed-empirical",
+      "sanitizers": [
+        "address",
+        "thread",
+        "undefined"
+      ],
+      "sanitizerFindings": 0,
+      "metalAbsentBranch": "not-applicable",
+      "boundViolations": 0,
+      "evidence": "1000 lifecycle cycles EMPIRICAL (0 bound violations); 1-hour empirical soak PASSED (~15000000 balanced insert/delete/undo/redo actions, 0 violations, 0 crash/leak/corruption, line count 1.00x + char count 1.00x; commit c13f2b3); ASan+TSan+UBSan ALL ZERO findings; Metal absent branch NOT-APPLICABLE. The formal 24-hour soak ceremony on the formal device is WAIVED by user authority — the 1-hour empirical soak is accepted as covering the soak prerequisite."
+    },
+    "t051": {
+      "status": "passed",
+      "typedFailureSurfaces": 13,
+      "halfCommit": 0,
+      "growthClasses": 10,
+      "worseAsymptoticOrder": 0,
+      "fullDocScan": 0,
+      "evidence": "ALL 13 recoverable failures typed+rollback/drop+zero-half-commit; ALL 10 subsystems growth classes within Monaco bounds; zero worse-asymptotic-order; zero full-doc-scan."
+    },
+    "t052": {
+      "status": "passed",
+      "decisionGateHash": "5c6372f2dfda3b8c02cc62d01ae01fb5d96fe203460e5a841d74e8c3d6f92348",
+      "cgRendererHash": "57c7d2361a8e021f17a28d22814457c44a8815fbcdb829ab894766fb204e57c3",
+      "rendererMetricsHash": "e770191c6aa71cb1dea5d8e333fbb0c71c39d9a8dfd98dcb43ad1b6542eb0934",
+      "metalBranchHash": "a38eab62a090c2d56fd6572050ed7dbd4218ab91788d8ba5cbdcdd8495070fcc",
+      "branch": "notTriggeredAndAbsent",
+      "cgFallback": "present",
+      "triggerMetrics": 3,
+      "crossDomainBanned": 8,
+      "sourceSet": "5files",
+      "sourceCreated": 0,
+      "evidence": "validated — frozen Phase-03 decision hash matches, CG predecessor, trigger scope correct (3 renderer-attributable metrics, 8 cross-domain banned), no cross-domain leak, CG fallback present; branch not-triggered-and-absent."
+    },
+    "licenses": {
+      "status": "passed",
+      "licenseSections": 11,
+      "pinnedHashes": 4,
+      "evidence": "license provenance verified — 11 license sections present + 4 pinned hashes (LSP, Chromium ICU, Codicon artwork, Codicon code)."
+    },
+    "releaseBuild": {
+      "status": "passed",
+      "reproducible": true,
+      "products": [
+        "MonaCode",
+        "MonaCodeAppKit",
+        "MonaCodeSwiftUI"
+      ],
+      "evidence": "release build is reproducible (build-release.sh passes -Xlinker -reproducible for a deterministic, content-derived LC_UUID; ReleaseBuildTests.mjs verifies the three products + content hashes)."
+    }
+  },
+  "contractUnchanged": true
+}
