@@ -605,6 +605,7 @@ Tests cover these exact rules and task bindings:
 | `MODEL_RETAINED_MEMBERS_STUBBED` | search, word, decoration, undo/redo members still return empty/nil/false or no-op | `P01-T008`, `P02-T001`, `P02-T002`, `P02-T003` |
 | `INSTANCE_SURFACE_UNCONFORMED` | no concrete type conforms to `MonaInstanceIEditor`/`ICodeEditor`/standalone/diff protocols | `P05-T012`, `P07-T009` |
 | `DIFF_FACTORY_NOT_WIRED` | both diff constructors throw `.phase07NotWired` | `P05-T112`, `P07-T009`, `P07-T010` |
+| `SAMPLE_HOST_DIFF_ACTIVATION_ABSENT` | sample host constructs the code editor only; its lifecycle test has four missing diff-view/wrapper assertions | `P07-T009`, `P07-T010` |
 | `MARKER_SERVICE_ABSENT` | marker value type exists but global set/get/remove/change service is absent | `P05-T001`, `P05-T012`, `P05-T122` |
 | `GLOBAL_MODEL_REGISTRY_ABSENT` | URI model lookup/list/language-change registry is absent | `P01-T012`, `P05-T012` |
 | `CURSOR_EVENT_PAYLOADS_EMPTY` | cursor position/selection payload protocols have no concrete payload | `P04-T007`, `P05-T012` |
@@ -613,7 +614,7 @@ Tests cover these exact rules and task bindings:
 | `FEATURE_ACTIVATION_PATH_ABSENT` | editor attachment does not install a feature/contribution registry | every `P05-T100`…`P05-T161` task |
 | `CURRENT_RELEASE_EVIDENCE_STALE` | current digest differs from P07-T011 evidence digest | every P08/P09 task |
 
-Seeded fixtures remove or insert the exact source token for each rule and assert that the finding disappears or appears without relying on aggregate counts.
+Seeded fixtures remove or insert the exact source token for each rule and assert that the finding disappears or appears without relying on aggregate counts. The sample-host rule checks `Sources/MonaCodeSample/main.swift` for all four concrete names: `MonaDiffEditorView`, `MonaMultiDiffEditorView`, `MonaDiffEditor`, and `MonaMultiDiffEditor`.
 
 - [ ] **Step 2: Run probe tests and verify Red**
 
@@ -650,7 +651,7 @@ The capture tool runs and records these commands exactly once:
 /opt/homebrew/Cellar/node/26.7.0/bin/node Tools/Release/release-verdict.mjs
 ```
 
-The tool treats the integration probe’s exit 1 as parsed findings, not a capture failure. It treats any other nonzero command as a shared-gate failure. `Soak4HourTests` is excluded because its source fixes `soakSeconds = 3600` and says it runs only under an explicit filter; its owning long-soak task remains `TODO`. The tool writes canonical sorted JSON only with `--write`, then prints the generated file path, artifact SHA-256, digest, command results, integration findings, and exact task counts. Initial counts are exactly `done=0 inProgress=1 blocked=0 todo=204`; implementation findings explain known gaps but never infer completion from silence.
+The tool treats the integration probe’s exit 1 as parsed findings, not a capture failure. It accepts the Swift command’s exit 1 only when parsed output contains exactly `testSampleHostActivatesThreeProducts`, four assertion failures, and no other failing test; that known product failure binds `P07-T009` and `P07-T010`. Any different or additional Swift failure is a capture failure. `Soak4HourTests` is excluded because its source fixes `soakSeconds = 3600` and says it runs only under an explicit filter; its owning long-soak task remains `TODO`. All other nonzero commands are capture failures. The tool writes canonical sorted JSON only with `--write`, then prints the generated file path, artifact SHA-256, digest, command results, integration findings, and exact task counts. Initial counts are exactly `done=0 inProgress=1 blocked=0 todo=204`; implementation findings explain known gaps but never infer completion from silence.
 
 - [ ] **Step 5: Run tests and capture current evidence**
 
@@ -817,7 +818,7 @@ Expected: exit 0, zero failing tests.
 /usr/bin/xcrun swift test --skip Soak4HourTests
 ```
 
-Expected: exit 0, zero failing tests, and the output records `Soak4HourTests` as skipped by filter. The formal long-soak task remains `TODO` because its current-digest one-hour evidence did not run.
+Expected: exit 1 with exactly 2814 executed tests, one skipped test, and four assertions from the single existing `testSampleHostActivatesThreeProducts` failure; no other test fails. The output records `Soak4HourTests` as skipped by filter. The formal long-soak task remains `TODO` because its current-digest one-hour evidence did not run, and `P07-T009`/`P07-T010` remain `TODO` because sample-host diff activation is absent.
 
 - [ ] **Step 4: Verify all frozen contracts and archive hashes**
 
