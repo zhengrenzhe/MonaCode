@@ -989,18 +989,22 @@ public final class MonaCodeEditorView: NSView {
 
     /// Refreshes the tracking areas + the frozen geometry + the scroll clamp
     /// envelope on AppKit's schedule (view setup, live resize, layer geometry
-    /// change). Spec §3.7 order:
+    /// change). Spec §3.7 order (GAP-4-corrected: converge BEFORE
+    /// publishGeneration so the barrier freezes the POST-reclamp scroll):
     ///   1. remove the tracking areas this view owns (stale bounds),
     ///   2. add one fresh `NSTrackingArea` over `bounds` with the options that
     ///      feed `mouseMoved` / `mouseEnteredAndExited` (the hover staging
     ///      surface, §3.3) while active in the key window, visible-rect-tracked,
     ///      and enabled during a mouse drag (so drag-selection keeps receiving
     ///      `mouseMoved`-class events),
-    ///   3. `publishGeneration(nil)` — refresh the barrier's frozen scroll +
-    ///      visible records for the current bounds,
-    ///   4. `setViewportDimensions(bounds)` — push the new viewport into the
+    ///   3. `setViewportDimensions(bounds)` — push the new viewport into the
     ///      scroll clamp envelope,
-    ///   5. `converge()` — re-clamp + re-publish the scroll for the new viewport.
+    ///   4. `converge()` — re-clamp + re-publish the scroll for the new
+    ///      viewport (GAP-3: pull-only, caller invokes),
+    ///   5. `publishGeneration(nil)` — freeze the POST-converge scroll +
+    ///      visible records for the current bounds (GAP-4: must freeze the
+    ///      post-reclamp scroll, not the pre-reclamp one, so a mouseDown
+    ///      arriving before the next drawRect hit-tests against the new scroll).
     ///
     /// `.inVisibleRect` keeps the tracking rect in sync with the visible
     /// (scrolled) portion of the view automatically; the `rect: bounds` seed is
@@ -1026,9 +1030,19 @@ public final class MonaCodeEditorView: NSView {
             userInfo: nil
         )
         addTrackingArea(area)
-        _ = geometryBarrier?.publishGeneration(visibleViewLines: nil)
+        // GAP-4 (critical) order: converge BEFORE publishGeneration. The barrier's
+        // `publishGeneration` freezes `scrollOffsetX/Y` from the scroll model's
+        // `publishedScrollX/Y` (:285-286); it MUST freeze the POST-reclamp
+        // scroll, not the pre-reclamp one. So: push the new viewport into the
+        // clamp envelope → converge (re-clamp + re-publish for the new viewport)
+        // → publishGeneration (freeze the post-converge scroll). The reverse
+        // order (publish → setViewport → converge) would freeze the stale
+        // pre-converge scroll, so a mouseDown arriving before the next drawRect
+        // would hit-test against the old scroll. (scrollWheel already does
+        // converge-then-publishGeneration; this matches.)
         scrollModel?.setViewportDimensions(width: Double(bounds.width), height: Double(bounds.height))
         _ = scrollModel?.converge()
+        _ = geometryBarrier?.publishGeneration(visibleViewLines: nil)
     }
 
     /// Installs the I-beam cursor over the view bounds (the code-editor
