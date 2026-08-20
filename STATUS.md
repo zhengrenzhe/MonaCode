@@ -1,7 +1,7 @@
 # MonaCode — 项目状态
 
-**日期**: 2026-08-19
-**最后提交**: `e52b1b7` — equivalence-gap §6 后果与功能影响
+**日期**: 2026-08-20
+**最后提交**: `c475ce1` — driving layer 15 commits (SDD complete)
 
 ## 开发任务：200/200 完成 ✅
 
@@ -95,18 +95,48 @@ blocker 集为空。裁决工具 `Tools/Release/release-verdict.mjs` 计算 `pas
 
 **最致命**：A1 驱动层 + A2 ICodeEditor 未 conform + B1a undo/redo 桩——前两条让编辑器完全不可用，第三条让即使接通也无 undo。详见 `docs/equivalence/equivalence-gap.md` §6（每缺口 → 后果 → 无法实现的功能）。
 
-## 计划缺口：编辑器驱动层 ⚠️
+## Post-200 实现：A3 命令 dispatcher + 驱动层 ✅
 
-**问题**: MonaCodeEditorView 缺少驱动层（drawRect/keyDown/mouseDown → 网关 → 模型 → 渲染器）
+### A3 命令 dispatcher（2026-08-19，commits `77aac2e`..`d328974`，pushed）
 
-200 任务计划没有明确覆盖"将组件接入 NSView 的输入/绘制方法"：
-- P04-T014（MonaCodeEditorView）是**组合任务**（compose all collaborators + lifetime invariants）
-- 实现操作是 "Compose model attachment, projection, renderer branch, input, transfer, accessibility, widgets, and lifetime ownership in one native view."
-- **缺少**: `drawRect` → CG 渲染器、`keyDown` → keyEventGateway + keybindingResolver + inputBarrier → model、`mouseDown` → pointerGateway、`interpretKeyEvents` → compositionSession
+`MonaCommandDispatcher`（Core, Foundation-only）——把解析出的 `commandId` 执行成模型编辑或选区变更。9 个冻结命令 handler（type/deleteLeft/deleteRight/cursorLeft/Right/Up/Down/End/Home），edit 经 `MonaModelInputBarrier`（原子咽喉），selection 经 `MonaCaretOperationsFeature.commitCaretMove` + `MonaTransactionGateway`。
 
-**影响**: 组件全部存在且已验证（Piece Tree、RegExp、Core Text、CG 渲染器、键绑定、输入屏障、IME、无障碍等），但没有接入 NSView 形成可用的编辑器。验收范围是**组件级等价**（每个组件的输入/输出匹配 monaco-editor），不是**端到端编辑器 UX**。
+- 对抗式 spec（5 agent 深核 + 10 对抗发现收敛）→ plan → SDD（9 task，每 task review）。
+- **monaco@0.56.0+jsdom oracle 差分验证**：9 命令 × 13 场景，value + selections 双匹配 monaco。
+- spec: `docs/superpowers/specs/2026-08-19-monacode-command-dispatcher-design.md`；plan: `docs/superpowers/plans/2026-08-19-monacode-command-dispatcher.md`。
 
-**修复**: 需要一个新任务 — 实现 MonaCodeEditorView 的驱动层。
+### 驱动层（2026-08-20，commits `d328974`..`c475ce1`，pushed）
+
+`MonaCodeEditorView` 的全部 NSView override——把 `NSEvent` 接到已造好的 gateways + A3 dispatcher + renderer + AX。**15 commits，全 SDD review clean（含 2 fix round）。**
+
+| 能力 | 实现 | 性能 |
+|---|---|---|
+| 渲染 | layer-backed CG（`wantsLayer`）+ `drawRect` tile blit + tile-boundary 跨界修复 + `MonaRenderSurface` lazy cgImage + 整像素栅格（subpixelPhase=0 max cache reuse） | R01 帧时间 **3.15ms**（<16.67ms 60Hz，5.3x headroom） |
+| 键盘 | `keyDown` → `dispatchKeyEvent` 7-step 分支（dispatched/committedThenDispatched insert-first/passThrough 2-path/absorbedByComposition→interpretKeyEvents/noOp）→ A3 dispatcher | |
+| IME | view conform `NSTextInputClient` + `MonaTextInputClient.insertText` + `textInsertionProvider` → dispatcher.execute("type") + 选区 provider 接 `lastCommittedSelections` | |
+| 鼠标 | mouseDown/drag/up + rightMouseDown + mouseMoved/Exited + flagsChanged；选区经低层 gateway path（beginTransaction→prepareSelections→commit，非 commitCaretMove） | |
+| 滚动 | scrollWheel → scrollGateway → requestScroll+converge → setNeedsDisplay + publishGeneration（GAP-4 frozen-scroll refresh）；updateTrackingAreas + resetCursorRects | R02 滚动 **4.52ms/frame**（221fps cache steady-state） |
+| 响应链 | acceptsFirstResponder + canBecomeKeyView + become/resignFirstResponder（→focusCoordinator） | |
+| AX | 3 element classes extend `NSAccessibilityElement` + conform `NSAccessibilityProtocol`；view 16 accessibility overrides + 4 wiring gaps（announcement pump / focus posts / recycleViewport on scroll / selectionRange sync on cursor change） | |
+| 重绘 | observeContentChange → setNeedsDisplay + content dims push from projection（GAP-2/3） | R05 content-change repaint **7.31ms** |
+| GUI 宿主 | sample-macOS-host 改造为窗口化 app（NSApp+NSWindow+create→window+run） | R03 首屏 **71ms**（<100ms） |
+| 性能 gate | R01-R05（ContinuousClock 2×30-run + CV<0.5 + self-consistency<0.5） | R04 subpixel delta **0.95ms** |
+
+**架构**：layer-backed CG（Core Animation GPU 合成 CPU 位图免费）+ tile cache（generation-keyed LRU current-gen-protected 64 tiles/256MiB）+ visible-only record building + O(log n) vertical lookups + lazy CGImage cache + stateless gateways + A3 dispatcher Core + NSAccessibilityElement AX。**Metal 不触发**（hybrid 非全 GPU + 冻结契约 + layer-backed CG 更优——perf gates vindicated）。
+
+spec: `docs/superpowers/specs/2026-08-20-monacode-driving-layer-design.md`（5-agent 深核 + 10 对抗发现收敛，全事实 §8 附录）；plan: `docs/superpowers/plans/2026-08-20-monacode-driving-layer.md`。
+
+### 驱动层仍缺（feature 子项目，后续）
+
+- **undo/redo（B1a）**：`MonaUndoRedoStack` 存在但未接 model；编辑器能打字但不能撤销
+- **find/replace（B1b）**：model.findMatches 是桩
+- **decorations（B1d）**：deltaDecorations + 13 decoration 成员是桩
+- **Monarch tokenizer（B4）**：完全缺席；除 plaintext 无语法高亮
+- **markers（B2）**：服务缺席
+- **cursor 事件（B5）**：无 concrete struct
+- **widget/mouse-target（B6）**：空壳
+- **无内置语言（B9）**：bundledLanguageServer=nil
+- **端到端视觉验证**：build + 单测全绿，但未启动窗口视觉确认文本渲染
 
 ## 已通过的前置条件（11 项）
 
@@ -168,4 +198,24 @@ blocker 集为空。裁决工具 `Tools/Release/release-verdict.mjs` 计算 `pas
 - **结论**：`passed` 裁决是**组件级契约验收**，**不等于**与 monaco-editor 公共 API 能力对等。~59% 声明级条目为桩/空壳（两层模式虚高），驱动层未接 → 不可用编辑器，模型 undo/redo/search/decorations/marker/Monarch/worker/diff-构造/cursor-事件/widget-mouse-target 等子系统真缺。每缺口后果与无法实现的功能见 §6。
 
 提交：`7d19025`（§0–§5 + vendored ground truth）、`e52b1b7`（§6 后果）。
+
+---
+
+## 更新（2026-08-20 14:15）
+
+### A3 命令 dispatcher + 驱动层完成（post-200 实现）
+
+**A3 dispatcher**（commits `77aac2e`..`d328974`，pushed）：
+- `MonaCommandDispatcher`（Core/Foundation-only）——commandId→edit/selection 执行半边
+- 9 个冻结命令 handler + monaco@0.56.0+jsdom oracle 差分验证（9×13 场景双匹配）
+- 对抗式 spec → plan → SDD（9 task 全 review clean）
+
+**驱动层**（commits `d328974`..`c475ce1`，pushed）：
+- 全部 NSView override（drawRect/keyDown/mouseDown/scrollWheel/interpretKeyEvents/AX/flagsChanged/tracking/responder）
+- layer-backed CG 渲染 + tile cache + A3 dispatcher 接线 + IME NSTextInputClient + AX NSAccessibilityElement + perf gates R01-R05
+- 15 commits，全 SDD review clean（含 2 fix round：T8 GAP-4 ordering + final-fix I1/I2/I3）
+- 性能：R01 3.15ms / R02 4.52ms / R03 71ms / R04 0.95ms / R05 7.31ms（全 <16.67ms 60Hz）
+- 对抗式 spec（5-agent 深核 + 10 对抗发现收敛）→ plan → SDD（13 task）
+
+编辑器现在能：渲染文本 + 打字 + 选区 + 滚动 + IME + AX。还不能：undo/find/语法高亮/decorations/markers（feature 子项目）。deep spec + plan 已提交（`docs/superpowers/specs/` + `docs/superpowers/plans/`）。
 
