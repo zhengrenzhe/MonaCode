@@ -28,11 +28,16 @@ import Foundation
 /// in for via `attach(to:)`; the target is held weakly so the proxy never
 /// extends a disposed widget's lifetime. The proxy's identity (reference
 /// identity) is preserved across `recycleBacking(to:generation:)`.
-public final class MonaAXWidgetProxy: MonaAXRoleElement {
+///
+/// GAP-6 (spec §3.6): subclasses `NSAccessibilityElement` (an `NSObject`
+/// subclass conforming to `NSAccessibilityProtocol`) so macOS `AXUIElement`
+/// can traverse it. `accessibilityRole()` delegates to `descriptor.accessibilityRole`
+/// (`.unknown`); `accessibilityChildren()`/`accessibilityParent()` return `nil`
+/// (leaf behavior — the host view, Task 11, vends the tree).
+public final class MonaAXWidgetProxy: NSAccessibilityElement, MonaAXRoleElement {
 
     public let identity: MonaAXElementIdentity
     public var descriptor: MonaAXRoleDescriptor { .proxy }
-    public var accessibilityRole: NSAccessibility.Role { .unknown }
 
     /// The widget target this proxy stands in for. Held weakly so the proxy
     /// never extends a disposed widget's lifetime. `nil` when the proxy is
@@ -50,6 +55,7 @@ public final class MonaAXWidgetProxy: MonaAXRoleElement {
     public init(identity: MonaAXElementIdentity, target: AnyObject? = nil) {
         self.identity = identity
         self.targetWidget = target
+        super.init()
     }
 
     /// Attaches the proxy to a widget `target` (or detaches with `nil`).
@@ -61,4 +67,19 @@ public final class MonaAXWidgetProxy: MonaAXRoleElement {
         backingView = view
         viewportGeneration = generation
     }
+
+    // MARK: NSAccessibilityProtocol (GAP-6 bridge)
+
+    /// The `AXRole` for this proxy — delegates to `descriptor.accessibilityRole`
+    /// (`.unknown`). ObjC-runtime-visible selector macOS AX clients call.
+    public override func accessibilityRole() -> NSAccessibility.Role? {
+        descriptor.accessibilityRole
+    }
+
+    /// Leaf behavior for v1: the proxy reports no children (the host view,
+    /// Task 11, vends the tree structure).
+    public override func accessibilityChildren() -> [Any]? { nil }
+
+    /// The proxy's parent is reported by the host view (Task 11).
+    public override func accessibilityParent() -> Any? { nil }
 }

@@ -315,17 +315,26 @@ public struct MonaAXElementIdentity: Hashable, Sendable {
 ///
 /// Conforming types are `AnyObject` so identity (reference equality, `===`) is
 /// observable — this is what the stable-identity invariant is asserted against.
+///
+/// GAP-6 (spec §3.6): the concrete element classes (`MonaAXElementNode`,
+/// `MonaAXWidgetProxy`, `MonaAXDiagnosticElement`) subclass
+/// `NSAccessibilityElement` to gain the ObjC runtime + `NSAccessibilityProtocol`
+/// conformance (so macOS `AXUIElement` can traverse them). The element's
+/// `AXRole` is therefore reported via the `NSAccessibilityProtocol`
+/// `accessibilityRole()` method (returning `NSAccessibility.Role?`), delegating
+/// to `descriptor.accessibilityRole` — NOT via a property on this protocol.
+/// The non-optional role remains available via `descriptor.accessibilityRole`.
+/// This protocol stays `AnyObject`-rooted (a non-NSObject type could still
+/// conform); only the concrete classes pick up the AppKit base.
 public protocol MonaAXRoleElement: AnyObject {
 
     /// The stable semantic identity (role / line).
     var identity: MonaAXElementIdentity { get }
 
     /// The frozen role descriptor (selectors / attributes / parameterized
-    /// attributes / actions).
+    /// attributes / actions). The descriptor's `accessibilityRole` is the
+    /// non-optional role truth the `NSAccessibilityProtocol` method delegates to.
     var descriptor: MonaAXRoleDescriptor { get }
-
-    /// The `NSAccessibility.Role` the element reports.
-    var accessibilityRole: NSAccessibility.Role { get }
 
     /// The weak backing view. Replaced on viewport recycle; `nil` when the
     /// element has no current backing view (e.g. recycled out of view, or a
@@ -346,11 +355,19 @@ public protocol MonaAXRoleElement: AnyObject {
 /// widget, and link roles (the roles without role-specific state). The proxy
 /// and diagnostic roles have their own dedicated element types
 /// (`MonaAXWidgetProxy`, `MonaAXDiagnosticElement`).
-public final class MonaAXElementNode: MonaAXRoleElement {
+///
+/// GAP-6 (spec §3.6): subclasses `NSAccessibilityElement` (an `NSObject`
+/// subclass that conforms to `NSAccessibilityProtocol`) so macOS
+/// `AXUIElement`/VoiceOver can traverse the element as a first-class
+/// accessibility object. The element is a LEAF in the AX tree for v1 —
+/// `accessibilityChildren()` returns `nil` and `accessibilityParent()` returns
+/// `nil`; the host view (Task 11) vends the tree structure from its own
+/// `accessibilityChildren`. The `AXRole` delegates to
+/// `descriptor.accessibilityRole` (`.textArea` for the editor node).
+public final class MonaAXElementNode: NSAccessibilityElement, MonaAXRoleElement {
 
     public let identity: MonaAXElementIdentity
     public let descriptor: MonaAXRoleDescriptor
-    public var accessibilityRole: NSAccessibility.Role { descriptor.accessibilityRole }
 
     /// Weak backing-view reference. Replaced on viewport recycle; the element
     /// identity is unaffected.
@@ -361,12 +378,32 @@ public final class MonaAXElementNode: MonaAXRoleElement {
     public init(identity: MonaAXElementIdentity, descriptor: MonaAXRoleDescriptor) {
         self.identity = identity
         self.descriptor = descriptor
+        super.init()
     }
 
     public func recycleBacking(to view: NSView?, generation: Int) {
         backingView = view
         viewportGeneration = generation
     }
+
+    // MARK: NSAccessibilityProtocol (GAP-6 bridge)
+
+    /// The `AXRole` for this element — delegates to the frozen descriptor
+    /// (`.textArea` for editor, `.group` for gutter/widget, `.link` for link).
+    /// This is the ObjC-runtime-visible selector macOS AX clients call.
+    public override func accessibilityRole() -> NSAccessibility.Role? {
+        descriptor.accessibilityRole
+    }
+
+    /// Leaf behavior for v1: the element reports no children. The host view
+    /// (Task 11) vends the element-tree structure from its own
+    /// `accessibilityChildren()`. A future task can add per-node children
+    /// (weak graph ref or closure) if VoiceOver needs tree walking.
+    public override func accessibilityChildren() -> [Any]? { nil }
+
+    /// The element's parent is reported by the host view (Task 11); the node
+    /// itself reports `nil` so it is not its own AX container.
+    public override func accessibilityParent() -> Any? { nil }
 }
 
 // MARK: - MonaAXElementGraph

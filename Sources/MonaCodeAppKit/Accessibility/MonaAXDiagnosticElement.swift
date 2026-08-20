@@ -44,11 +44,16 @@ public enum MonaAXDiagnosticSeverity: String, Sendable {
 /// (`.diagnostic`). The diagnostic message is surfaced as `AXDescription`; the
 /// severity as `AXValue`. The element's identity is keyed on the semantic line
 /// it marks, so it survives viewport recycling of its marker view.
-public final class MonaAXDiagnosticElement: MonaAXRoleElement {
+///
+/// GAP-6 (spec §3.6): subclasses `NSAccessibilityElement` (an `NSObject`
+/// subclass conforming to `NSAccessibilityProtocol`) so macOS `AXUIElement`
+/// can traverse it. `accessibilityRole()` delegates to `descriptor.accessibilityRole`
+/// (`.group`); `accessibilityChildren()`/`accessibilityParent()` return `nil`
+/// (leaf behavior — the host view, Task 11, vends the tree).
+public final class MonaAXDiagnosticElement: NSAccessibilityElement, MonaAXRoleElement {
 
     public let identity: MonaAXElementIdentity
     public var descriptor: MonaAXRoleDescriptor { .diagnostic }
-    public var accessibilityRole: NSAccessibility.Role { .group }
 
     /// The diagnostic severity (error / warning / info / hint).
     public var severity: MonaAXDiagnosticSeverity
@@ -78,10 +83,27 @@ public final class MonaAXDiagnosticElement: MonaAXRoleElement {
         self.severity = severity
         self.message = message
         self.markerRange = markerRange
+        super.init()
     }
 
     public func recycleBacking(to view: NSView?, generation: Int) {
         backingView = view
         viewportGeneration = generation
     }
+
+    // MARK: NSAccessibilityProtocol (GAP-6 bridge)
+
+    /// The `AXRole` for this diagnostic — delegates to
+    /// `descriptor.accessibilityRole` (`.group`). ObjC-runtime-visible selector
+    /// macOS AX clients call.
+    public override func accessibilityRole() -> NSAccessibility.Role? {
+        descriptor.accessibilityRole
+    }
+
+    /// Leaf behavior for v1: the diagnostic reports no children (the host view,
+    /// Task 11, vends the tree structure).
+    public override func accessibilityChildren() -> [Any]? { nil }
+
+    /// The diagnostic's parent is reported by the host view (Task 11).
+    public override func accessibilityParent() -> Any? { nil }
 }

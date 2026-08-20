@@ -291,4 +291,90 @@ final class DrivingLayerTests: XCTestCase {
         XCTAssertTrue(view.acceptsFirstResponder, "acceptsFirstResponder: view accepts keyboard focus")
         XCTAssertTrue(view.canBecomeKeyView, "canBecomeKeyView: view is a key-view candidate")
     }
+
+    // MARK: - AX element bridge: NSObject + NSAccessibilityProtocol (Task 10 / GAP-6 / §3.6)
+
+    /// The 3 AX element classes (`MonaAXElementNode`, `MonaAXWidgetProxy`,
+    /// `MonaAXDiagnosticElement`) now extend `NSObject` (via
+    /// `NSAccessibilityElement`) + conform to `NSAccessibilityProtocol` so macOS
+    /// `AXUIElement`/VoiceOver can traverse them as first-class AX objects.
+    ///
+    /// The editor node responds to the ObjC `accessibilityRole` selector and
+    /// reports its frozen role `.textArea` (delegating to
+    /// `descriptor.accessibilityRole`). The proxy reports `.unknown`; the
+    /// diagnostic reports `.group`. All three are leaves in the AX tree for v1
+    /// (`accessibilityChildren()` returns `nil`) — the host view (Task 11) vends
+    /// the tree structure from its own `accessibilityChildren`.
+    ///
+    /// API drift (recorded): the brief specified `NSObject` as the base and
+    /// `NSAccessibilityProtocol` conformance "via an extension on each class".
+    /// Empirically (macOS 26 SDK), a plain `NSObject` subclass conforming to the
+    /// formal `NSAccessibilityProtocol` requires ~40 `@required` @property
+    /// stubs (Swift does not auto-synthesize ObjC protocol properties) — the
+    /// compiler emits only a generic "cannot conform … requirements that cannot
+    /// be satisfied" and refuses to enumerate them. `NSAccessibilityElement`
+    /// (Apple's designated `NSObject` subclass for non-view AX elements;
+    /// `@interface NSAccessibilityElement : NSObject <NSAccessibility>`)
+    /// already conforms via ObjC @property synthesis, so subclassing it needs
+    /// ZERO stubs — strictly better than the literal "NSObject + stubs" path
+    /// and still "extends NSObject" (NSAccessibilityElement : NSObject).
+    ///
+    /// Consequence: `NSAccessibilityElement` exposes `accessibilityRole` as an
+    /// `@objc` METHOD returning `NSAccessibility.Role?` (optional). That clashes
+    /// with the `MonaAXRoleElement` protocol's `var accessibilityRole:
+    /// NSAccessibility.Role` (non-optional property) — same Swift name,
+    /// incompatible kinds (var vs func) + return types (verified: declaring
+    /// both is "invalid redeclaration"). Resolution: the `accessibilityRole`
+    /// property was REMOVED from the `MonaAXRoleElement` protocol (the protocol
+    /// stays `AnyObject`-rooted — only the redundant property was dropped); the
+    /// concrete classes now expose the role via the @objc override, and the
+    /// non-optional role remains available via `descriptor.accessibilityRole`
+    /// (how existing tests already read it). No external caller read
+    /// `element.accessibilityRole` on the protocol type (grep-verified).
+    func testAXElementBridgeRespondsToAccessibilityRole() {
+        let model = MonaCodeModel(text: "hello", uri: MonaURI(scheme: "inmemory", path: "/t"))
+        let graph = MonaAXElementGraph(model: model)
+
+        // Editor node: the AX tree root.
+        let editor = graph.root
+        let selRole = NSSelectorFromString("accessibilityRole")
+        XCTAssertTrue(editor.responds(to: selRole),
+                      "MonaAXElementNode responds to ObjC accessibilityRole selector")
+        XCTAssertEqual(editor.accessibilityRole(), .textArea,
+                       "editor node reports .textArea AX role")
+        XCTAssertTrue(editor is NSAccessibilityProtocol,
+                      "MonaAXElementNode conforms to NSAccessibilityProtocol")
+        XCTAssertTrue(editor is NSObject,
+                      "MonaAXElementNode is an NSObject subclass (ObjC runtime)")
+
+        // Proxy: reports .unknown (the proxy descriptor's role).
+        let proxy = graph.proxy
+        XCTAssertTrue(proxy.responds(to: selRole),
+                      "MonaAXWidgetProxy responds to ObjC accessibilityRole selector")
+        XCTAssertEqual(proxy.accessibilityRole(), .unknown,
+                       "proxy element reports .unknown AX role")
+        XCTAssertTrue(proxy is NSAccessibilityProtocol,
+                      "MonaAXWidgetProxy conforms to NSAccessibilityProtocol")
+
+        // Diagnostic: lazily created for a line-scoped identity; reports .group.
+        let diag = graph.element(for: .init(role: .diagnostic, line: 1))
+        XCTAssertNotNil(diag, "diagnostic element lazily created for line 1")
+        let diagElement = diag as? MonaAXDiagnosticElement
+        XCTAssertNotNil(diagElement, "element is a MonaAXDiagnosticElement")
+        XCTAssertTrue(diagElement?.responds(to: selRole) == true,
+                      "MonaAXDiagnosticElement responds to ObjC accessibilityRole selector")
+        XCTAssertEqual(diagElement?.accessibilityRole(), .group,
+                       "diagnostic element reports .group AX role")
+        XCTAssertTrue(diag is NSAccessibilityProtocol,
+                      "MonaAXDiagnosticElement conforms to NSAccessibilityProtocol")
+
+        // Leaf behavior: all three report no children for v1 (the host view,
+        // Task 11, vends the tree structure). nil = AX leaf.
+        XCTAssertNil(editor.accessibilityChildren(),
+                     "editor node is an AX leaf for v1 (children nil)")
+        XCTAssertNil(proxy.accessibilityChildren(),
+                     "proxy is an AX leaf for v1 (children nil)")
+        XCTAssertNil(diagElement?.accessibilityChildren(),
+                     "diagnostic is an AX leaf for v1 (children nil)")
+    }
 }
