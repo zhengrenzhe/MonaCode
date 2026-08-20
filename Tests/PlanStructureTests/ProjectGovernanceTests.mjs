@@ -18,12 +18,21 @@ import {
   validateCoverage,
   validateDoneEvidence,
   validateEvidence,
+  validateTaskLedger,
 } from '../../Tools/Docs/task-ledger.mjs';
 import {
   ARCHIVE_REQUIRED_ENTRIES,
   scanActiveProgressSources,
   validateArchiveIndex,
 } from '../../Tools/Docs/check-project-governance.mjs';
+import {
+  CAPTURE_COMMANDS,
+  captureProjectEvidence,
+  renderTaskTable,
+} from '../../Tools/Docs/capture-project-evidence.mjs';
+import {
+  auditProductIntegration,
+} from '../../Comparators/probes/product-integration-probe.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(HERE, '..', '..');
@@ -34,6 +43,39 @@ const validLedger = `<!-- MONACODE_TASKS:BEGIN -->
 | --- | --- | --- | --- | --- | --- |
 | VERIFY-001 | TODO | Single-source governance | governance:single-source | \`node Tools/Docs/check-project-governance.mjs\` ⇒ exit 0 and findings=0 | — |
 <!-- MONACODE_TASKS:END -->`;
+
+const knownSwiftFailure = `
+/repo/Tests/MonaCodeAppKitTests/Views/MonaDiffViewLifecycleTests.swift:264: error: MonaDiffViewLifecycleTests.testSampleHostActivatesThreeProducts : XCTAssertTrue failed - MonaDiffEditorView
+/repo/Tests/MonaCodeAppKitTests/Views/MonaDiffViewLifecycleTests.swift:265: error: MonaDiffViewLifecycleTests.testSampleHostActivatesThreeProducts : XCTAssertTrue failed - MonaMultiDiffEditorView
+/repo/Tests/MonaCodeAppKitTests/Views/MonaDiffViewLifecycleTests.swift:266: error: MonaDiffViewLifecycleTests.testSampleHostActivatesThreeProducts : XCTAssertTrue failed - MonaDiffEditor
+/repo/Tests/MonaCodeAppKitTests/Views/MonaDiffViewLifecycleTests.swift:267: error: MonaDiffViewLifecycleTests.testSampleHostActivatesThreeProducts : XCTAssertTrue failed - MonaMultiDiffEditor
+Test Case '-[MonaCodeAppKitTests.MonaDiffViewLifecycleTests testSampleHostActivatesThreeProducts]' failed (0.001 seconds)
+Executed 2814 tests, with 1 test skipped and 4 failures (0 unexpected) in 1.000 (1.000) seconds
+`;
+
+function syntheticCaptureRunner(command) {
+  if (command.id === 'swift-tests') {
+    return { status: 1, stdout: knownSwiftFailure, stderr: '' };
+  }
+  if (command.id === 'product-integration-probe') {
+    return {
+      status: 1,
+      stdout: JSON.stringify(auditProductIntegration(REPO_ROOT)),
+      stderr: '',
+    };
+  }
+  if (command.id === 'release-verdict') {
+    return {
+      status: 0,
+      stdout: JSON.stringify({
+        verdict: 'not-passed',
+        blockers: [{ id: 'current-source-evidence-stale' }],
+      }),
+      stderr: '',
+    };
+  }
+  return { status: 0, stdout: `${command.id} passed\n`, stderr: '' };
+}
 
 test('verification source set is deterministic and excludes mutable truth and evidence files', () => {
   const first = computeVerificationSourceSet(REPO_ROOT);
@@ -294,5 +336,79 @@ test('the live Task 4 archive preserves every migrated path and G6 baseline refe
       (row) => row.path === 'docs/equivalence/monaco-editor-0.56.0.editor.api.d.ts',
     ),
     false,
+  );
+});
+
+test('evidence capture runs the seven approved commands exactly once and fails closed', () => {
+  const calls = [];
+  const evidence = captureProjectEvidence(REPO_ROOT, {
+    runCommand(command) {
+      calls.push(command.id);
+      return syntheticCaptureRunner(command);
+    },
+  });
+
+  assert.deepEqual(calls, CAPTURE_COMMANDS.map((command) => command.id));
+  assert.equal(new Set(calls).size, 7);
+  assert.deepEqual(evidence.taskCounts, {
+    blocked: 0,
+    done: 0,
+    inProgress: 1,
+    todo: 204,
+  });
+  assert.equal(evidence.taskResults.length, 205);
+  assert.equal(evidence.taskResults[0].id, 'VERIFY-001');
+  assert.equal(evidence.taskResults[0].state, 'IN PROGRESS');
+  assert.equal(evidence.integrationFindings.length, 11);
+  assert.equal(evidence.commands[0].status, 'accepted-known-product-failure');
+
+  let changedFailure;
+  assert.throws(
+    () => captureProjectEvidence(REPO_ROOT, {
+      runCommand(command) {
+        if (command.id !== 'swift-tests') return syntheticCaptureRunner(command);
+        return {
+          status: 1,
+          stdout: `${knownSwiftFailure}\nOtherTests.testUnexpected : XCTAssertEqual failed`,
+          stderr: '',
+        };
+      },
+    }),
+    (error) => {
+      changedFailure = error;
+      return /EVIDENCE_CAPTURE_SWIFT_FAILURE_SET_CHANGED/.test(error.message);
+    },
+  );
+  assert.match(changedFailure.message, /OtherTests\.testUnexpected/);
+});
+
+test('rendered initial task table is a complete valid 205-row ledger', () => {
+  const catalog = loadContractCatalog(REPO_ROOT);
+  const definitions = deriveProjectTaskDefinitions(catalog);
+  const evidence = captureProjectEvidence(REPO_ROOT, {
+    runCommand: syntheticCaptureRunner,
+  });
+  const markdown = renderTaskTable(definitions, evidence);
+  const parsed = parseTaskLedger(markdown);
+
+  assert.deepEqual(parsed.findings, []);
+  assert.equal(parsed.rows.length, 205);
+  assert.deepEqual(
+    parsed.rows.reduce((counts, row) => {
+      counts[row.state] = (counts[row.state] ?? 0) + 1;
+      return counts;
+    }, {}),
+    { 'IN PROGRESS': 1, TODO: 204 },
+  );
+  assert.deepEqual(
+    validateTaskLedger({
+      markdown,
+      definitions,
+      catalog,
+      repoRoot: REPO_ROOT,
+      currentDigest: evidence.digest,
+      trackedPaths: new Set(),
+    }).findings,
+    [],
   );
 });
