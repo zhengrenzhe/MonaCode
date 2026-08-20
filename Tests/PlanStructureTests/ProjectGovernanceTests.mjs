@@ -10,9 +10,27 @@ import {
   deriveProjectTaskDefinitions,
   loadContractCatalog,
 } from '../../Tools/Docs/contract-catalog.mjs';
+import {
+  buildCoverageCatalog,
+  parseTaskLedger,
+  validateCoverage,
+  validateDoneEvidence,
+  validateEvidence,
+} from '../../Tools/Docs/task-ledger.mjs';
+import {
+  scanActiveProgressSources,
+  validateArchiveIndex,
+} from '../../Tools/Docs/check-project-governance.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(HERE, '..', '..');
+const findingIDs = (findings) => findings.map((finding) => finding.id).sort();
+
+const validLedger = `<!-- MONACODE_TASKS:BEGIN -->
+| ID | State | Deliverable | Contract coverage | Acceptance | Evidence |
+| --- | --- | --- | --- | --- | --- |
+| VERIFY-001 | TODO | Single-source governance | governance:single-source | \`node Tools/Docs/check-project-governance.mjs\` ⇒ exit 0 and findings=0 | — |
+<!-- MONACODE_TASKS:END -->`;
 
 test('verification source set is deterministic and excludes mutable truth and evidence files', () => {
   const first = computeVerificationSourceSet(REPO_ROOT);
@@ -65,5 +83,167 @@ test('project task definitions contain governance, all G6 tasks, and four mobile
       .filter((row) => row.domain === 'MOBILE')
       .map((row) => row.sourceTaskID),
     ['MOBILE-00', 'MOBILE-01', 'MOBILE-02', 'MOBILE-03'],
+  );
+});
+
+test('parser accepts one marker pair and one six-column task table', () => {
+  const parsed = parseTaskLedger(validLedger);
+
+  assert.deepEqual(findingIDs(parsed.findings), []);
+  assert.equal(parsed.rows.length, 1);
+  assert.equal(parsed.rows[0].id, 'VERIFY-001');
+});
+
+test('parser rejects duplicate task IDs and invalid state text', () => {
+  const duplicate = validLedger.replace(
+    '<!-- MONACODE_TASKS:END -->',
+    '| VERIFY-001 | PARTIAL | Duplicate | governance:single-source | x ⇒ exit 0 | — |\n<!-- MONACODE_TASKS:END -->',
+  );
+
+  assert.deepEqual(
+    findingIDs(parseTaskLedger(duplicate).findings),
+    ['GOVERNANCE_STATE_INVALID', 'GOVERNANCE_TASK_ID_DUPLICATE'],
+  );
+});
+
+test('state-specific evidence grammar fails closed', () => {
+  assert.deepEqual(
+    findingIDs(validateEvidence({ state: 'TODO', evidence: 'remembered pass' })),
+    ['GOVERNANCE_TODO_EVIDENCE'],
+  );
+  assert.deepEqual(
+    findingIDs(validateEvidence({ state: 'IN PROGRESS', evidence: 'change:main' })),
+    ['GOVERNANCE_IN_PROGRESS_OWNER'],
+  );
+  assert.deepEqual(
+    findingIDs(validateEvidence({ state: 'BLOCKED', evidence: 'blocker:artifact.json' })),
+    ['GOVERNANCE_BLOCKED_UNBLOCK'],
+  );
+});
+
+test('coverage rejects missing, cut, unmatched, and duplicate ownership', () => {
+  const fixture = {
+    rows: [
+      {
+        id: 'VERIFY-001',
+        contractCoverage: 'governance:single-source<br>cut:editor.createWebWorker<br>plan:P00-T001/*',
+      },
+      {
+        id: 'SURFACE-001',
+        contractCoverage: 'plan:P00-T001/*<br>plan:missing/*',
+      },
+    ],
+    catalog: {
+      active: new Set([
+        'governance:single-source',
+        'plan:P00-T001/self',
+        'plan:P00-T002/self',
+      ]),
+      cuts: new Set(['cut:editor.createWebWorker']),
+    },
+  };
+
+  assert.deepEqual(
+    findingIDs(validateCoverage(fixture)),
+    [
+      'GOVERNANCE_COVERAGE_DUPLICATE',
+      'GOVERNANCE_COVERAGE_MISSING',
+      'GOVERNANCE_CUT_ACTIVE',
+      'GOVERNANCE_SELECTOR_UNMATCHED',
+    ],
+  );
+});
+
+test('canonical task selectors cover exactly 3556 active identities once', () => {
+  const catalog = loadContractCatalog(REPO_ROOT);
+  const coverageCatalog = buildCoverageCatalog(catalog);
+  const rows = deriveProjectTaskDefinitions(catalog).map((definition) => ({
+    id: definition.id,
+    contractCoverage: definition.selectors.join('<br>'),
+  }));
+
+  assert.equal(coverageCatalog.active.size, 3556);
+  assert.equal(coverageCatalog.cuts.size, 231);
+  assert.deepEqual(validateCoverage({ rows, catalog: coverageCatalog }), []);
+});
+
+test('DONE rejects stale digest, missing links, and result SHA mismatch', () => {
+  const findings = validateDoneEvidence({
+    row: {
+      state: 'DONE',
+      evidence: `digest:${'0'.repeat(64)}<br>source:[missing](Sources/missing.swift)<br>tests:[missing](Tests/missing.swift)<br>results:[result](artifacts/result.json) sha256:${'1'.repeat(64)}`,
+    },
+    currentDigest: '2'.repeat(64),
+    repoRoot: '/tmp/nonexistent-governance-fixture',
+    trackedPaths: new Set(),
+  });
+
+  assert.deepEqual(
+    findingIDs(findings),
+    [
+      'GOVERNANCE_DONE_DIGEST_STALE',
+      'GOVERNANCE_DONE_LINK_MISSING',
+      'GOVERNANCE_DONE_RESULT_HASH',
+    ],
+  );
+});
+
+test('repository scan rejects prohibited roots, duplicate ledgers, and archive status claims', () => {
+  const findings = scanActiveProgressSources({
+    files: new Map([
+      ['STATUS.md', '# Current status'],
+      ['RELEASE_VERDICT.md', '# Verdict'],
+      ['docs/second.md', '<!-- MONACODE_TASKS:BEGIN -->'],
+      ['docs/archive/README.md', '# Current status'],
+    ]),
+    exclusions: new Set(),
+  });
+
+  assert.deepEqual(
+    findingIDs(findings),
+    [
+      'GOVERNANCE_ARCHIVE_STATUS',
+      'GOVERNANCE_DUPLICATE_LEDGER',
+      'GOVERNANCE_ROOT_RELEASE_VERDICT',
+      'GOVERNANCE_ROOT_STATUS',
+    ],
+  );
+});
+
+test('archive index binds every required original path to tracked byte evidence', () => {
+  const requiredEntries = [{
+    originalPath: 'OLD.md',
+    archivedPath: 'Package.swift',
+  }];
+  const valid = `# MonaCode archive
+
+| Original path | Archived path | Bound revision/date | SHA-256 | Classification |
+| --- | --- | --- | --- | --- |
+| \`OLD.md\` | [Package.swift](../../Package.swift) | fixture | \`ee957b0b69f86531b45d0c9d15f88ecdd9811e7abcd158b8ef74b9c16912f20c\` | fixture; progress authority=false |`;
+
+  assert.deepEqual(validateArchiveIndex({
+    markdown: valid,
+    requiredEntries,
+    trackedPaths: new Set(['Package.swift']),
+    repoRoot: REPO_ROOT,
+  }), []);
+
+  assert.deepEqual(
+    findingIDs(validateArchiveIndex({
+      markdown: valid.replace('| `OLD.md` |', '| `OTHER.md` |'),
+      requiredEntries,
+      trackedPaths: new Set(['Package.swift']),
+      repoRoot: REPO_ROOT,
+    })),
+    ['GOVERNANCE_ARCHIVE_ENTRY_MISSING'],
+  );
+  assert.deepEqual(
+    findingIDs(validateArchiveIndex({
+      markdown: valid.replace('progress authority=false', 'current progress authority=true'),
+      requiredEntries,
+      trackedPaths: new Set(['Package.swift']),
+      repoRoot: REPO_ROOT,
+    })),
+    ['GOVERNANCE_ARCHIVE_CLASSIFICATION'],
   );
 });

@@ -113,7 +113,7 @@ export function loadContractCatalog(repoRoot) {
     ),
     cutIdentities: cutRows.map((row) => `cut:${ownershipIdentity(row)}`),
     laterIdentities: laterRows.map(
-      (row) => `mobile:ownership/${ownershipIdentity(row)}`,
+      (row) => `mobile:02/ownership:${ownershipIdentity(row)}`,
     ),
     mobileScope: authority.deliveryScope.laterRevisions.slice(),
     surfaceCounts: authority.surfaceCounts,
