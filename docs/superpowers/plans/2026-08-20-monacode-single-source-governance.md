@@ -641,7 +641,7 @@ The probe prints canonical JSON and exits 1 while findings exist. Exit 1 is the 
 The capture tool runs and records these commands exactly once:
 
 ```text
-/usr/bin/xcrun swift test
+/usr/bin/xcrun swift test --skip Soak4HourTests
 /opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/*.mjs
 /opt/homebrew/Cellar/node/26.7.0/bin/node docs/contracts/monaco-editor-0.56.0/g4-r/verify-contract.mjs
 /opt/homebrew/Cellar/node/26.7.0/bin/node docs/contracts/monaco-editor-0.56.0/g5-r/verify-contract.mjs
@@ -650,7 +650,7 @@ The capture tool runs and records these commands exactly once:
 /opt/homebrew/Cellar/node/26.7.0/bin/node Tools/Release/release-verdict.mjs
 ```
 
-The tool treats the integration probe’s exit 1 as parsed findings, not a capture failure. It treats any other nonzero command as a shared-gate failure. It writes canonical sorted JSON only with `--write`, then prints the generated file path, artifact SHA-256, digest, command results, integration findings, and exact task counts. Initial counts are exactly `done=0 inProgress=1 blocked=0 todo=204`; implementation findings explain known gaps but never infer completion from silence.
+The tool treats the integration probe’s exit 1 as parsed findings, not a capture failure. It treats any other nonzero command as a shared-gate failure. `Soak4HourTests` is excluded because its source fixes `soakSeconds = 3600` and says it runs only under an explicit filter; its owning long-soak task remains `TODO`. The tool writes canonical sorted JSON only with `--write`, then prints the generated file path, artifact SHA-256, digest, command results, integration findings, and exact task counts. Initial counts are exactly `done=0 inProgress=1 blocked=0 todo=204`; implementation findings explain known gaps but never infer completion from silence.
 
 - [ ] **Step 5: Run tests and capture current evidence**
 
@@ -811,13 +811,13 @@ Expected: the live `artifacts/releases/` directory contains exactly the final-di
 
 Expected: exit 0, zero failing tests.
 
-- [ ] **Step 3: Run the full Swift suite**
+- [ ] **Step 3: Run the Swift suite without the explicit one-hour soak**
 
 ```bash
-/usr/bin/xcrun swift test
+/usr/bin/xcrun swift test --skip Soak4HourTests
 ```
 
-Expected: exit 0, zero failing tests. Formal long-soak tasks remain non-DONE unless their current-digest evidence actually ran.
+Expected: exit 0, zero failing tests, and the output records `Soak4HourTests` as skipped by filter. The formal long-soak task remains `TODO` because its current-digest one-hour evidence did not run.
 
 - [ ] **Step 4: Verify all frozen contracts and archive hashes**
 
