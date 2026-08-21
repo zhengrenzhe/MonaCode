@@ -51,7 +51,7 @@ const knownSwiftFailure = `
 /repo/Tests/MonaCodeAppKitTests/Views/MonaDiffViewLifecycleTests.swift:266: error: MonaDiffViewLifecycleTests.testSampleHostActivatesThreeProducts : XCTAssertTrue failed - MonaDiffEditor
 /repo/Tests/MonaCodeAppKitTests/Views/MonaDiffViewLifecycleTests.swift:267: error: MonaDiffViewLifecycleTests.testSampleHostActivatesThreeProducts : XCTAssertTrue failed - MonaMultiDiffEditor
 Test Case '-[MonaCodeAppKitTests.MonaDiffViewLifecycleTests testSampleHostActivatesThreeProducts]' failed (0.001 seconds)
-Executed 2842 tests, with 1 test skipped and 4 failures (0 unexpected) in 1.000 (1.000) seconds
+Executed 2864 tests, with 1 test skipped and 4 failures (0 unexpected) in 1.000 (1.000) seconds
 `;
 
 function syntheticCaptureRunner(command) {

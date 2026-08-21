@@ -132,7 +132,7 @@ export function validateKnownSwiftFailure(result) {
   )];
   const summary = summaryMatches.at(-1);
   const exactSummary = summary !== undefined
-    && summary[1] === '2842'
+    && summary[1] === '2864'
     && summary[2] === '1'
     && summary[3] === '4';
 
@@ -155,7 +155,7 @@ export function validateKnownSwiftFailure(result) {
   }
 
   return {
-    executedTests: 2842,
+    executedTests: 2864,
     skippedTests: 1,
     assertionFailures: 4,
     failingTests: [target],
