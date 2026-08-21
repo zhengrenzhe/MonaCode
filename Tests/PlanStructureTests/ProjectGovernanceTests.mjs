@@ -51,7 +51,7 @@ const knownSwiftFailure = `
 /repo/Tests/MonaCodeAppKitTests/Views/MonaDiffViewLifecycleTests.swift:266: error: MonaDiffViewLifecycleTests.testSampleHostActivatesThreeProducts : XCTAssertTrue failed - MonaDiffEditor
 /repo/Tests/MonaCodeAppKitTests/Views/MonaDiffViewLifecycleTests.swift:267: error: MonaDiffViewLifecycleTests.testSampleHostActivatesThreeProducts : XCTAssertTrue failed - MonaMultiDiffEditor
 Test Case '-[MonaCodeAppKitTests.MonaDiffViewLifecycleTests testSampleHostActivatesThreeProducts]' failed (0.001 seconds)
-Executed 2814 tests, with 1 test skipped and 4 failures (0 unexpected) in 1.000 (1.000) seconds
+Executed 2825 tests, with 1 test skipped and 4 failures (0 unexpected) in 1.000 (1.000) seconds
 `;
 
 function syntheticCaptureRunner(command) {
@@ -364,7 +364,7 @@ test('evidence capture runs the seven approved commands exactly once and fails c
   assert.equal(evidence.taskResults.length, 205);
   assert.equal(evidence.taskResults[0].id, 'VERIFY-001');
   assert.equal(evidence.taskResults[0].state, 'DONE');
-  assert.equal(evidence.integrationFindings.length, 11);
+  assert.equal(evidence.integrationFindings.length, 10);
   assert.equal(evidence.commands[0].status, 'accepted-known-product-failure');
 
   let changedFailure;
