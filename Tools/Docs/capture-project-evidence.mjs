@@ -194,15 +194,18 @@ function validateProbeResult(result) {
   return parsed;
 }
 
-function validateReleaseResult(result) {
+export function validateReleaseResult(result) {
   if (result.status !== 0) {
     throw new Error(`EVIDENCE_CAPTURE_COMMAND_FAILED release-verdict exit=${result.status}`);
   }
   const parsed = parseJSONOutput('release-verdict', result.stdout);
+  const reboundOrStale = (blocker) =>
+    blocker.id === 'current-acceptance-rebound'
+    || blocker.id === 'current-source-evidence-stale';
   if (
     parsed.verdict !== 'not-passed'
     || !Array.isArray(parsed.blockers)
-    || !parsed.blockers.some((blocker) => blocker.id === 'current-source-evidence-stale')
+    || !parsed.blockers.some(reboundOrStale)
   ) {
     throw new Error('EVIDENCE_CAPTURE_RELEASE_NOT_CURRENTLY_BLOCKED');
   }
@@ -370,11 +373,25 @@ export function captureProjectEvidence(repoRoot, options = {}) {
   if (integrationFindings === null) {
     throw new Error('EVIDENCE_CAPTURE_PROBE_RESULT_MISSING');
   }
+  const acceptancePath = join(
+    repoRoot,
+    'artifacts',
+    'progress',
+    sourceSet.digest,
+    'task-acceptance.json',
+  );
+  const acceptanceByTask = new Map();
+  if (existsSync(acceptancePath)) {
+    const acc = JSON.parse(readFileSync(acceptancePath, 'utf8'));
+    for (const r of acc.taskResults ?? []) {
+      acceptanceByTask.set(r.taskID, r.passed === true);
+    }
+  }
   const taskResults = classifyTaskResults(
     definitions,
     catalog,
     integrationFindings,
-    new Map(),
+    acceptanceByTask,
   );
 
   return {
@@ -423,13 +440,13 @@ function renderAcceptance(value) {
     .join('<br>');
 }
 
-function evidenceForResult(result, evidence) {
+export function evidenceForResult(result, evidence) {
   if (result.state === 'TODO') return '—';
   if (result.state === 'IN PROGRESS') {
     return 'change:VERIFY-001<br>owner:zhengrenzhe';
   }
   if (result.state === 'BLOCKED') {
-    throw new Error(`GOVERNANCE_BLOCKED_EVIDENCE_UNDEFINED ${result.id}`);
+    return `blocker:${result.findingIDs.join(',')}<br>unblock:fill the corresponding product gap (subprojects A-D)`;
   }
   if (result.state === 'DONE') {
     if (

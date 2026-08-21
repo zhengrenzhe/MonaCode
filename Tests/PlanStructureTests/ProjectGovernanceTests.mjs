@@ -351,15 +351,19 @@ test('evidence capture runs the seven approved commands exactly once and fails c
 
   assert.deepEqual(calls, CAPTURE_COMMANDS.map((command) => command.id));
   assert.equal(new Set(calls).size, 7);
+  const blockedSet = new Set();
+  for (const finding of evidence.integrationFindings) {
+    for (const taskID of finding.taskIDs) blockedSet.add(taskID);
+  }
   assert.deepEqual(evidence.taskCounts, {
-    blocked: 0,
+    blocked: blockedSet.size,
     done: 0,
-    inProgress: 1,
-    todo: 204,
+    inProgress: 0,
+    todo: 205 - blockedSet.size,
   });
   assert.equal(evidence.taskResults.length, 205);
   assert.equal(evidence.taskResults[0].id, 'VERIFY-001');
-  assert.equal(evidence.taskResults[0].state, 'IN PROGRESS');
+  assert.equal(evidence.taskResults[0].state, 'TODO');
   assert.equal(evidence.integrationFindings.length, 11);
   assert.equal(evidence.commands[0].status, 'accepted-known-product-failure');
 
@@ -394,12 +398,16 @@ test('rendered initial task table is a complete valid 205-row ledger', () => {
 
   assert.deepEqual(parsed.findings, []);
   assert.equal(parsed.rows.length, 205);
+  const blockedSet = new Set();
+  for (const finding of evidence.integrationFindings) {
+    for (const taskID of finding.taskIDs) blockedSet.add(taskID);
+  }
   assert.deepEqual(
     parsed.rows.reduce((counts, row) => {
       counts[row.state] = (counts[row.state] ?? 0) + 1;
       return counts;
     }, {}),
-    { 'IN PROGRESS': 1, TODO: 204 },
+    { BLOCKED: blockedSet.size, TODO: 205 - blockedSet.size },
   );
   assert.deepEqual(
     validateTaskLedger({

@@ -6,6 +6,10 @@ import { loadContractCatalog } from '../../Tools/Docs/contract-catalog.mjs';
 import { loadGreenCommands } from '../../Tools/Docs/task-acceptance-runner.mjs';
 import { executeLeaf, rewriteScratch } from '../../Tools/Docs/task-acceptance-runner.mjs';
 import { synthesizeTask, runAllAcceptance } from '../../Tools/Docs/task-acceptance-runner.mjs';
+import {
+  evidenceForResult,
+  validateReleaseResult,
+} from '../../Tools/Docs/capture-project-evidence.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(HERE, '..', '..');
@@ -73,4 +77,40 @@ test('runAllAcceptance --limit 2 produces schema-correct task-acceptance.json', 
   assert.equal(out.taskResults.length, 2, 'limit respected');
   assert.ok(['passed'].includes('passed') || true); // shape guard
   assert.ok(out.taskResults[0].commandIDs.length > 0, 'commandIDs present');
+});
+
+test('validateReleaseResult accepts current-acceptance-rebound blocker', () => {
+  const result = {
+    status: 0,
+    stdout: JSON.stringify({
+      verdict: 'not-passed',
+      blockers: [
+        {
+          id: 'current-acceptance-rebound',
+          status: 'not-passed',
+          reason: 'x',
+          deferredTo: 'y',
+        },
+      ],
+    }),
+  };
+  const out = validateReleaseResult(result);
+  assert.equal(out.verdict, 'not-passed');
+  assert.ok(
+    out.blockerIDs.includes('current-acceptance-rebound'),
+    'blockerIDs must include current-acceptance-rebound',
+  );
+});
+
+test('evidenceForResult renders BLOCKED with blocker+unblock clauses', () => {
+  const out = evidenceForResult(
+    { state: 'BLOCKED', findingIDs: ['X'] },
+    {
+      artifactPath: 'p',
+      artifactSHA256: '0'.repeat(64),
+      digest: '1'.repeat(64),
+    },
+  );
+  assert.ok(out.startsWith('blocker:'), 'BLOCKED evidence must start with blocker:');
+  assert.ok(out.includes('unblock:'), 'BLOCKED evidence must contain unblock:');
 });
