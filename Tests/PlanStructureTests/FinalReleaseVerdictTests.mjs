@@ -78,8 +78,9 @@ const RECORDED_QUALIFIED_SET_HASH =
 
 // The historical evidence can remain passed, but it cannot certify a changed
 // verification source set. The current source therefore has one mandatory
-// staleness blocker until evidence is recollected against its exact digest.
-const EXPECTED_BLOCKER_IDS = ['current-source-evidence-stale'];
+// rebound blocker until acceptance evidence is recollected against its exact
+// digest and every task is DONE.
+const EXPECTED_BLOCKER_IDS = ['current-acceptance-rebound'];
 
 // The complete expected passed-prerequisite set (sorted, 11). Includes the
 // three resolved formal-device items.
@@ -270,9 +271,9 @@ test('Operation 3: current source cannot inherit the frozen passed verdict', () 
   );
   assert.equal(v.verdict, 'not-passed', 'stale evidence must make the verdict not-passed');
   assert.equal(
-    v.blockers.some((row) => row.id === 'current-source-evidence-stale'),
+    v.blockers.some((row) => row.id === 'current-acceptance-rebound'),
     true,
-    'the stale-source blocker must be present',
+    'the rebound blocker must be present when tasks remain undone',
   );
   assert.ok(
     v.passedPrerequisites.length > 0,
@@ -370,9 +371,9 @@ test('Operation 4: the verdict tool runs directly and exits 0', () => {
   assert.equal(parsed.verdict, 'not-passed', 'the printed verdict must reject stale evidence');
   assert.ok(Array.isArray(parsed.blockers), 'the printed verdict must carry a blockers array');
   assert.equal(
-    parsed.blockers.some((row) => row.id === 'current-source-evidence-stale'),
+    parsed.blockers.some((row) => row.id === 'current-acceptance-rebound'),
     true,
-    'the printed verdict must carry the stale-source blocker',
+    'the printed verdict must carry the rebound blocker',
   );
 });
 

@@ -78,6 +78,19 @@ export const FROZEN_SOURCE_REVISION = 'P07-T011';
 export const FROZEN_SOURCE_SET_DIGEST =
   '152c63ffc32ce2a632ff2a2caa2d3ee25063a1150c6f51bb44d5405aa30a1f36';
 
+// Reads the task-acceptance.json produced by task-acceptance-runner for the
+// given digest. Returns null when the file is absent or malformed — the
+// rebound prerequisite then fails with an "evidence missing" blocker reason.
+function readCurrentAcceptance(digest) {
+  const p = join(REPO_ROOT, 'artifacts', 'progress', digest, 'task-acceptance.json');
+  if (!existsSync(p)) return null;
+  try {
+    return JSON.parse(readFileSync(p, 'utf8'));
+  } catch {
+    return null;
+  }
+}
+
 // The six static candidate manifest files (P08-T010..T015).
 const SIX_STATIC_CANDIDATES = [
   {
@@ -512,6 +525,26 @@ export function aggregateVerdict() {
   // The 24-hour formal soak is deferred → blocker.
   const formalSoakPasses = t050.formalSoak !== 'deferred';
 
+  // current-acceptance-rebound: the historical P07-T011 evidence cannot
+  // certify a changed verification source set. When the current digest differs
+  // from the frozen digest, the rebound prerequisite passes only when the
+  // current-digest task-acceptance.json shows every applicable task DONE.
+  // Ruling G: reboundPassed===true → passedPrerequisites (status passed);
+  // reboundPassed===false → blockers (status not-passed, replacing the former
+  // current-source-evidence-stale push). No double-listing.
+  // Ruling 3: dead branch removed; only the `todo` count is kept.
+  const acceptance = readCurrentAcceptance(verificationSourceSet.digest);
+  let reboundPassed = false;
+  let undoneCounts = { todo: 0 };
+  if (verificationSourceSet.digest === FROZEN_SOURCE_SET_DIGEST) {
+    reboundPassed = true; // 源码恰回冻结点，历史证据直接适用
+  } else if (acceptance) {
+    const results = acceptance.taskResults ?? [];
+    const todo = results.filter((r) => r.passed !== true).length;
+    reboundPassed = results.length > 0 && todo === 0;
+    if (!reboundPassed) undoneCounts.todo = todo;
+  }
+
   // Build the passed-prerequisite set (sorted by id).
   const passedPrerequisites = [
     {
@@ -569,7 +602,17 @@ export function aggregateVerdict() {
       status: 'passed',
       evidence: `User-accepted non-formal environment (2026-08-19 directive: "直接在这个设备上跑，不需要可溯源"). Recorded acceptance-set hash ${recordedQualifiedSetHash} bound under qualified=false (1 external display at evidence-collection time); verdict-time environment qualified=${verdictTimeEnvPredicate.qualified}, externalDisplayCount=${qEnv.formalPreflight.externalDisplayCount}. The formal-device requirement (zero external displays) is WAIVED by user authority.`,
     },
-  ].sort((a, b) => a.id.localeCompare(b.id));
+  ];
+  // Ruling G: reboundPassed===true → add to passedPrerequisites (status passed).
+  // When false it goes to blockers instead — no double-listing.
+  if (reboundPassed) {
+    passedPrerequisites.push({
+      id: 'current-acceptance-rebound',
+      status: 'passed',
+      evidence: `All ${acceptance?.taskResults?.length ?? 0} applicable tasks DONE under current digest ${verificationSourceSet.digest.slice(0, 8)}.`,
+    });
+  }
+  passedPrerequisites.sort((a, b) => a.id.localeCompare(b.id));
 
   // Build the blocker set (sorted by id).
   const blockers = [];
@@ -600,15 +643,18 @@ export function aggregateVerdict() {
       deferredTo: 'formal run on the formal device (24-hour soak)',
     });
   }
-  if (verificationSourceSet.digest !== FROZEN_SOURCE_SET_DIGEST) {
+  // Ruling G: reboundPassed===false → push rebound blocker (status not-passed),
+  // replacing the former current-source-evidence-stale push. No double-listing.
+  if (verificationSourceSet.digest !== FROZEN_SOURCE_SET_DIGEST && !reboundPassed) {
     blockers.push({
-      id: 'current-source-evidence-stale',
+      id: 'current-acceptance-rebound',
       status: 'not-passed',
-      reason:
-        `The current verification source-set digest (${verificationSourceSet.digest}) ` +
-        `does not match the frozen evidence source-set digest (${FROZEN_SOURCE_SET_DIGEST}). ` +
-        'Historical P07-T011 evidence cannot certify changed source bytes.',
-      deferredTo: 'fresh acceptance evidence bound to the current verification source-set digest',
+      reason: acceptance
+        ? `Current verification source-set digest (${verificationSourceSet.digest}) has ${undoneCounts.todo} task(s) not DONE under the current digest. ${acceptance.taskResults.length} tasks recorded.`
+        : `Current verification source-set digest (${verificationSourceSet.digest}) differs from the frozen evidence digest (${FROZEN_SOURCE_SET_DIGEST}) and no task-acceptance.json found — run task-acceptance-runner first.`,
+      deferredTo: acceptance
+        ? 'fill remaining BLOCKED/TODO tasks (subprojects A-D) and re-run task-acceptance-runner'
+        : 'run task-acceptance-runner to generate current-digest acceptance evidence',
     });
   }
   blockers.sort((a, b) => a.id.localeCompare(b.id));
