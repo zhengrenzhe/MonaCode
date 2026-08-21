@@ -296,7 +296,13 @@ function acceptanceForDefinition(definition, tasksByID) {
     .join('<br>');
 }
 
-function classifyTaskResults(definitions, catalog, integrationFindings, governanceComplete) {
+export function classifyState(definition, findingIDs, acceptancePassed) {
+  if (findingIDs.length > 0) return 'BLOCKED';
+  if (acceptancePassed) return 'DONE';
+  return 'TODO';
+}
+
+function classifyTaskResults(definitions, catalog, integrationFindings, acceptanceByTask) {
   const tasksByID = new Map(catalog.planTasks.map((task) => [task.id, task]));
   const findingIDsByTask = new Map();
   for (const row of integrationFindings) {
@@ -306,16 +312,17 @@ function classifyTaskResults(definitions, catalog, integrationFindings, governan
       findingIDsByTask.set(taskID, ids);
     }
   }
-  return definitions.map((definition) => ({
-    id: definition.id,
-    sourceTaskID: definition.sourceTaskID,
-    state: definition.id === 'VERIFY-001'
-      ? (governanceComplete ? 'DONE' : 'IN PROGRESS')
-      : 'TODO',
-    acceptance: acceptanceForDefinition(definition, tasksByID),
-    findingIDs: (findingIDsByTask.get(definition.sourceTaskID) ?? [])
-      .sort(compareUTF8),
-  }));
+  return definitions.map((definition) => {
+    const findingIDs = (findingIDsByTask.get(definition.sourceTaskID) ?? []).sort(compareUTF8);
+    const acceptancePassed = acceptanceByTask.get(definition.sourceTaskID) ?? false;
+    return {
+      id: definition.id,
+      sourceTaskID: definition.sourceTaskID,
+      state: classifyState(definition, findingIDs, acceptancePassed),
+      acceptance: acceptanceForDefinition(definition, tasksByID),
+      findingIDs,
+    };
+  });
 }
 
 function taskCounts(taskResults) {
@@ -367,7 +374,7 @@ export function captureProjectEvidence(repoRoot, options = {}) {
     definitions,
     catalog,
     integrationFindings,
-    options.governanceComplete === true,
+    new Map(),
   );
 
   return {

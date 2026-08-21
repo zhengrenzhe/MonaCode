@@ -28,6 +28,7 @@ import {
 import {
   CAPTURE_COMMANDS,
   captureProjectEvidence,
+  classifyState,
   renderTaskTable,
 } from '../../Tools/Docs/capture-project-evidence.mjs';
 import {
@@ -442,4 +443,16 @@ test('root README directly validates as the canonical 205-row task ledger', () =
       .every((row) => row.state === 'TODO'),
     true,
   );
+});
+
+test('classifyState: DONE when acceptance passed and no probe finding', () => {
+  assert.equal(classifyState({ id: 'MODEL-001' }, [], true), 'DONE');
+});
+
+test('classifyState: BLOCKED when probe finding present even if acceptance passed', () => {
+  assert.equal(classifyState({ id: 'MODEL-008' }, ['MODEL_RETAINED_MEMBERS_STUBBED'], true), 'BLOCKED');
+});
+
+test('classifyState: TODO when acceptance not passed and no probe finding', () => {
+  assert.equal(classifyState({ id: 'MODEL-001' }, [], false), 'TODO');
 });
