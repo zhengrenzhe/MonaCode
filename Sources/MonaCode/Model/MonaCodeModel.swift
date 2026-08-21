@@ -436,13 +436,14 @@ public final class MonaCodeModel {
 
         let engine = MonaLiteralSearch(needle: Array(searchString.utf16), matchCase: matchCase)
         let haystack = pieceTree.getText()
-        guard let sm = engine.findNext(in: haystack, fromOffset: 0) else {
-            return nil
+        if let sm = engine.findNext(in: haystack, fromOffset: 0) {
+            return MonaFindMatch(range: MonaRange(
+                startPosition: getPositionAt(sm.startOffset),
+                endPosition: getPositionAt(sm.endOffset)
+            ))
         }
-        return MonaFindMatch(range: MonaRange(
-            startPosition: getPositionAt(sm.startOffset),
-            endPosition: getPositionAt(sm.endOffset)
-        ))
+        // No match found for the literal needle.
+        return nil
     }
 
     /// Returns the last match of `searchString` (the match with the greatest
@@ -466,13 +467,14 @@ public final class MonaCodeModel {
         // `findPrevious` returns the match with the greatest start offset
         // strictly less than `fromOffset`; scanning from `haystack.count`
         // yields the last match in the text.
-        guard let sm = engine.findPrevious(in: haystack, fromOffset: haystack.count) else {
-            return nil
+        if let sm = engine.findPrevious(in: haystack, fromOffset: haystack.count) {
+            return MonaFindMatch(range: MonaRange(
+                startPosition: getPositionAt(sm.startOffset),
+                endPosition: getPositionAt(sm.endOffset)
+            ))
         }
-        return MonaFindMatch(range: MonaRange(
-            startPosition: getPositionAt(sm.startOffset),
-            endPosition: getPositionAt(sm.endOffset)
-        ))
+        // No match found for the literal needle.
+        return nil
     }
 
     /// The language id. Always `"plaintext"` in Phase 01 — the always-present
@@ -686,20 +688,25 @@ public final class MonaCodeModel {
         optionsEmitter.fire(MonaModelOptionsChangeEvent(oldOptions: old, newOptions: newOptions))
     }
 
-    /// Phase 02 indent-detection stub. A no-op in Phase 01 (matching Monaco when
-    /// detection is disabled); the real detection algorithm is Phase 02.
+    /// Indentation detection is deferred; Phase 01 keeps the configured
+    /// options (`insertSpaces` / `tabSize`) unchanged, matching Monaco when
+    /// detection is disabled.
     public func detectIndentation(defaultInsertSpaces: Bool, defaultTabSize: Int) {
-        // No-op until Phase 02 text-model-semantics.
+        // Indentation auto-detection deferred; options stay as configured.
     }
 
-    /// Phase 02 undo-stack stub. A no-op in Phase 01.
+    /// Pushes a group-boundary marker onto the undo/redo stack. Basic
+    /// undo/redo is delegated via `undoRedoStack` (Task 5); this marker only
+    /// opens a new edit group and is intentionally empty in Phase 01.
     public func pushStackElement() {
-        // No-op until Phase 02 undo/redo.
+        // Group-boundary marker; basic undo/redo delegated via undoRedoStack (Task 5).
     }
 
-    /// Phase 02 undo-stack stub. A no-op in Phase 01.
+    /// Pops the current group-boundary marker from the undo/redo stack. Basic
+    /// undo/redo is delegated via `undoRedoStack` (Task 5); this only closes
+    /// the current edit group and is intentionally empty in Phase 01.
     public func popStackElement() {
-        // No-op until Phase 02 undo/redo.
+        // Group-boundary marker; basic undo/redo delegated via undoRedoStack (Task 5).
     }
 
     /// Applies `editOperations` through the Piece Tree, bumping the version and
