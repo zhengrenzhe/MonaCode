@@ -861,7 +861,13 @@ public func monaEditorSetModelLanguage() async throws {}
 //   - native mapping: one-to-one Swift symbol
 //   - optionality: MonaPresence<T> / MonaNullable<T> / MonaNullish<T> per F1-R5
 //   - overloads: preserved per pinned declaration SHA; no coalescing
-public func monaEditorSetModelMarkers() async throws {}
+public func monaEditorSetModelMarkers(
+    model: MonaCodeModel,
+    owner: String,
+    markers: [MonaMarker]
+) async throws {
+    MonaMarkerService.shared.setModelMarkers(markers, for: model, owner: owner)
+}
 
 // PATH: editor.removeAllMarkers
 // ORDINAL: 16
@@ -875,7 +881,9 @@ public func monaEditorSetModelMarkers() async throws {}
 //   - native mapping: one-to-one Swift symbol
 //   - optionality: MonaPresence<T> / MonaNullable<T> / MonaNullish<T> per F1-R5
 //   - overloads: preserved per pinned declaration SHA; no coalescing
-public func monaEditorRemoveAllMarkers() async throws {}
+public func monaEditorRemoveAllMarkers(owner: String? = nil) async throws {
+    MonaMarkerService.shared.removeAllMarkers(owner: owner)
+}
 
 // PATH: editor.getModelMarkers
 // ORDINAL: 17
@@ -889,7 +897,9 @@ public func monaEditorRemoveAllMarkers() async throws {}
 //   - native mapping: one-to-one Swift symbol
 //   - optionality: MonaPresence<T> / MonaNullable<T> / MonaNullish<T> per F1-R5
 //   - overloads: preserved per pinned declaration SHA; no coalescing
-public func monaEditorGetModelMarkers() async throws {}
+public func monaEditorGetModelMarkers(for model: MonaCodeModel) async throws -> [MonaMarker] {
+    return MonaMarkerService.shared.getModelMarkers(for: model)
+}
 
 // PATH: editor.onDidChangeMarkers
 // ORDINAL: 18
@@ -903,7 +913,9 @@ public func monaEditorGetModelMarkers() async throws {}
 //   - native mapping: one-to-one Swift symbol
 //   - optionality: MonaPresence<T> / MonaNullable<T> / MonaNullish<T> per F1-R5
 //   - overloads: preserved per pinned declaration SHA; no coalescing
-public func monaEditorOnDidChangeMarkers() async throws {}
+public func monaEditorOnDidChangeMarkers() async throws -> MonaEvent<MonaMarkerChangeEvent> {
+    return MonaMarkerService.shared.onDidChangeMarkers
+}
 
 // PATH: editor.getModel
 // ORDINAL: 19
