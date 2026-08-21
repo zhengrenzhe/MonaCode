@@ -833,7 +833,13 @@ public func monaEditorAddKeybindingRules() async throws {}
 //   - native mapping: one-to-one Swift symbol
 //   - optionality: MonaPresence<T> / MonaNullable<T> / MonaNullish<T> per F1-R5
 //   - overloads: preserved per pinned declaration SHA; no coalescing
-public func monaEditorCreateModel() async throws {}
+public func monaEditorCreateModel(
+    value: String,
+    language: String? = nil,
+    uri: MonaURI? = nil
+) async throws -> MonaCodeModel {
+    return MonaGlobalModelRegistry.shared.createModel(value: value, language: language, uri: uri)
+}
 
 // PATH: editor.setModelLanguage
 // ORDINAL: 14
@@ -847,7 +853,9 @@ public func monaEditorCreateModel() async throws {}
 //   - native mapping: one-to-one Swift symbol
 //   - optionality: MonaPresence<T> / MonaNullable<T> / MonaNullish<T> per F1-R5
 //   - overloads: preserved per pinned declaration SHA; no coalescing
-public func monaEditorSetModelLanguage() async throws {}
+public func monaEditorSetModelLanguage(model: MonaCodeModel, languageId: String) async throws {
+    MonaGlobalModelRegistry.shared.setLanguage(languageId, for: model)
+}
 
 // PATH: editor.setModelMarkers
 // ORDINAL: 15
@@ -929,7 +937,9 @@ public func monaEditorOnDidChangeMarkers() async throws -> MonaEvent<MonaMarkerC
 //   - native mapping: one-to-one Swift symbol
 //   - optionality: MonaPresence<T> / MonaNullable<T> / MonaNullish<T> per F1-R5
 //   - overloads: preserved per pinned declaration SHA; no coalescing
-public func monaEditorGetModel() async throws {}
+public func monaEditorGetModel(uri: MonaURI) async throws -> MonaCodeModel? {
+    return MonaGlobalModelRegistry.shared.model(for: uri)
+}
 
 // PATH: editor.getModels
 // ORDINAL: 20
@@ -943,7 +953,9 @@ public func monaEditorGetModel() async throws {}
 //   - native mapping: one-to-one Swift symbol
 //   - optionality: MonaPresence<T> / MonaNullable<T> / MonaNullish<T> per F1-R5
 //   - overloads: preserved per pinned declaration SHA; no coalescing
-public func monaEditorGetModels() async throws {}
+public func monaEditorGetModels() async throws -> [MonaCodeModel] {
+    return MonaGlobalModelRegistry.shared.models()
+}
 
 // PATH: editor.onDidCreateModel
 // ORDINAL: 21
