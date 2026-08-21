@@ -395,6 +395,11 @@ export function captureProjectEvidence(repoRoot, options = {}) {
       acceptanceByTask.set(r.taskID, r.passed === true);
     }
   }
+  // Ruling L: VERIFY-001 is the governance framework itself — its acceptance is
+  // the governance-node-tests gate (exit 0). It is not in planTasks, so the
+  // task-acceptance-runner does not run it; derive it from governance-node-tests.
+  const govCmd = commandResults.find((c) => c.id === 'governance-node-tests');
+  if (govCmd) acceptanceByTask.set('VERIFY-001', govCmd.exitCode === 0);
   const taskResults = classifyTaskResults(
     definitions,
     catalog,
