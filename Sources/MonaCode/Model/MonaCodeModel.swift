@@ -56,6 +56,33 @@ public final class MonaCodeModel {
     /// The always-present fallback language id. Phase 01 never changes it.
     private let languageIdValue: String = "plaintext"
 
+    // MARK: - Phase-02 primitive collaborators
+
+    /// The literal-search engine. Stored as a default (empty-needle) instance;
+    /// `findMatches` / `findNextMatch` / `findPreviousMatch` rebuild it per call
+    /// from `searchString` / `isRegex` / `matchCase` once Task 2 wires the
+    /// search members. `MonaLiteralSearch` has no default `init`, so the model
+    /// holds the simplest valid form (empty needle) until a real query runs.
+    private var searchEngine: MonaLiteralSearch = MonaLiteralSearch(needle: [])
+
+    /// The word classifier (Monaco's default word-separator profile). Backs
+    /// `getWordAtPosition` / `getWordUntilPosition` once Task 2 wires them.
+    private var wordResolver: MonaWordClassifier = MonaWordClassifier()
+
+    /// The decoration collection. Backs the 12 decoration members once Task 3
+    /// wires them; until then it is an empty, ready collection.
+    private var decorationStore: MonaDecorationCollection = MonaDecorationCollection()
+
+    /// The undo/redo stack. `MonaUndoRedoStack.init` requires a
+    /// `MonaTransactionGateway`, which itself wraps `self`; the gateway cannot
+    /// exist before `self` is fully initialized, so this property is `lazy` and
+    /// the stack + gateway are constructed on first access (once Task 4 wires
+    /// the undo/redo members). The surface test never accesses it, so no
+    /// gateway is built during Phase-01 member coverage.
+    private lazy var undoRedoStack: MonaUndoRedoStack = MonaUndoRedoStack(
+        gateway: MonaTransactionGateway(model: self)
+    )
+
     // MARK: - Identity / version
 
     /// The model URI (immutable).
