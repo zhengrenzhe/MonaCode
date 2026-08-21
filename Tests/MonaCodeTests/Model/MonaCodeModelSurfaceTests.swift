@@ -571,4 +571,47 @@ final class MonaCodeModelSurfaceTests: XCTestCase {
         XCTAssertEqual(readded.count, 1)
         XCTAssertTrue(Set(added).isDisjoint(with: readded), "the fresh id is not a reuse of a removed id")
     }
+
+    // MARK: - Undo / redo delegation (MODEL-008/012)
+
+    /// `canUndo` / `canRedo` / `undo` / `redo` delegate to `MonaUndoRedoStack`.
+    /// A fresh model has nothing to undo or redo. After `pushEditOperations`
+    /// (the undoable edit path — `applyEdits` is intentionally non-undoable,
+    /// matching Monaco), `canUndo()` is `true`. `undo()` reverts the text to its
+    /// pre-edit state and flips `canRedo()` to `true`. `redo()` re-applies the
+    /// edit. This is the exit-only behavior test (Ruling I): it drives the real
+    /// `undoRedoStack` → `MonaTransactionGateway` → `model.applyEdits` → Piece
+    /// Tree path, not a cached result.
+    func testCanUndoAfterEdit() {
+        let model = MonaCodeModel(text: "abc", uri: MonaURI(scheme: "inmemory", path: "/undo"))
+
+        // Fresh model: the undo/redo stacks are empty.
+        XCTAssertFalse(model.canUndo(), "a fresh model has nothing to undo")
+        XCTAssertFalse(model.canRedo(), "a fresh model has nothing to redo")
+
+        // pushEditOperations is the undoable edit path; it pushes an undo
+        // element onto the stack (applyEdits would not).
+        model.pushEditOperations(
+            [],
+            [MonaModelEditOperation(
+                range: MonaRange(startLine: 1, startColumn: 1, endLine: 1, endColumn: 1),
+                text: "X"
+            )]
+        )
+        XCTAssertEqual(model.getValue(), "Xabc", "the edit applied to the Piece Tree")
+        XCTAssertTrue(model.canUndo(), "canUndo is true after a pushed edit, not false")
+
+        // undo() delegates to undoRedoStack.undo(); the gateway replays the
+        // reverse edits through the model, reverting the text.
+        model.undo()
+        XCTAssertEqual(model.getValue(), "abc", "undo reverts the text to its pre-edit state")
+        XCTAssertTrue(model.canRedo(), "canRedo is true after undo")
+        XCTAssertFalse(model.canUndo(), "canUndo is false once the undo stack is drained")
+
+        // redo() delegates to undoRedoStack.redo(); the gateway replays the
+        // forward edits, re-applying the text.
+        model.redo()
+        XCTAssertEqual(model.getValue(), "Xabc", "redo re-applies the edit")
+        XCTAssertTrue(model.canUndo(), "canUndo is true again after redo")
+    }
 }

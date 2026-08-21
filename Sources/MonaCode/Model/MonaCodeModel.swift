@@ -703,19 +703,47 @@ public final class MonaCodeModel {
     }
 
     /// Applies `editOperations` through the Piece Tree, bumping the version and
-    /// firing `onDidChangeContent`. Cursor-state tracking and the undo stack are
-    /// Phase 02; in Phase 01 the edits are applied and the event is emitted.
+    /// firing `onDidChangeContent`, then pushes an undo/redo element capturing
+    /// the edit group onto the undo stack. This is the undoable edit path (the
+    /// Swift counterpart of Monaco's `pushEditOperations`); `applyEdits` is the
+    /// non-undoable counterpart and does NOT push.
+    ///
+    /// MODEL-008/012 (Task 5): the element captures the forward operations, the
+    /// inverse (reverse) operations returned by the Piece Tree, the before/after
+    /// version + alternative version, and the before/after cursor selections.
+    /// `undoRedoStack.push(_:)` owns the LIFO + redo-clear logic; the model only
+    /// constructs the immutable element and hands it over (wiring, not
+    /// reimplementation of the stack primitive).
     public func pushEditOperations(
         _ beforeCursorState: [MonaSelection],
         _ editOperations: [MonaModelEditOperation],
         _ cursorStateComputer: (([MonaModelEditOperation]) -> [MonaSelection])? = nil
     ) {
-        _ = applyOperationsInternal(
+        let beforeVersion = versionIdValue
+        let beforeAltVersion = alternativeVersionIdValue
+        let result = applyOperationsInternal(
             editOperations,
             isUndoing: false,
             isRedoing: false,
             isFlush: false
         )
+        let afterVersion = versionIdValue
+        let afterAltVersion = alternativeVersionIdValue
+        // The cursor-state computer receives the inverse (reverse) edit
+        // operations, matching Monaco's ICursorStateComputer contract.
+        let afterSelections = cursorStateComputer?(result.reverse) ?? []
+        let element = MonaUndoRedoElement(
+            label: "edit",
+            operations: editOperations,
+            reverseOperations: result.reverse,
+            beforeVersionId: beforeVersion,
+            afterVersionId: afterVersion,
+            beforeAlternativeVersionId: beforeAltVersion,
+            afterAlternativeVersionId: afterAltVersion,
+            beforeSelections: beforeCursorState,
+            afterSelections: afterSelections
+        )
+        undoRedoStack.push(element)
     }
 
     /// Changes the EOL sequence, bumps the version, and fires a content-change
@@ -745,24 +773,38 @@ public final class MonaCodeModel {
         fireContentChange(changes: [], isUndoing: false, isRedoing: false, isFlush: false)
     }
 
-    /// Phase 02 undo stub. A no-op in Phase 01.
+    /// Delegates undo to `MonaUndoRedoStack.undo()`. The stack routes the
+    /// replay through `MonaTransactionGateway`, which applies the element's
+    /// reverse operations to the Piece Tree via `model.applyEdits` (one version
+    /// bump, one content-change event) — so this method does not apply edits
+    /// itself; the gateway already did. The `MonaUndoRedoReplayOutcome`
+    /// returned by the stack is an enum (`.replayed` / `.replayFailed`) with no
+    /// edit payload to apply; on a clean replay the element moved to the redo
+    /// stack, and on a dropped/rolled-back replay the stack restored its
+    /// position and the model is untouched.
+    /// MODEL-008/012 (Task 5): replaces the Phase 01 no-op stub.
     public func undo() {
-        // No-op until Phase 02 undo/redo.
+        _ = undoRedoStack.undo()
     }
 
-    /// Phase 02 undo stub. Returns `false` in Phase 01 (no undo stack).
+    /// `true` when the undo stack has at least one element. Delegates to
+    /// `MonaUndoRedoStack.canUndo`. MODEL-008/012 (Task 5).
     public func canUndo() -> Bool {
-        return false
+        return undoRedoStack.canUndo
     }
 
-    /// Phase 02 redo stub. A no-op in Phase 01.
+    /// Delegates redo to `MonaUndoRedoStack.redo()`. The stack routes the
+    /// replay through `MonaTransactionGateway`, which applies the element's
+    /// forward operations to the Piece Tree via `model.applyEdits`. See `undo()`
+    /// for the outcome contract. MODEL-008/012 (Task 5).
     public func redo() {
-        // No-op until Phase 02 undo/redo.
+        _ = undoRedoStack.redo()
     }
 
-    /// Phase 02 redo stub. Returns `false` in Phase 01 (no redo stack).
+    /// `true` when the redo stack has at least one element. Delegates to
+    /// `MonaUndoRedoStack.canRedo`. MODEL-008/012 (Task 5).
     public func canRedo() -> Bool {
-        return false
+        return undoRedoStack.canRedo
     }
 
     // MARK: - Identity / version / events / lifecycle · 15 members
