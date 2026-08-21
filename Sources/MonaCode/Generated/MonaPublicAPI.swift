@@ -2515,7 +2515,10 @@ public enum MonaEditorCursorChangeReason {}
 //   - optionality: MonaPresence<T> / MonaNullable<T> / MonaNullish<T> per F1-R5
 //   - overloads: preserved per pinned declaration SHA; no coalescing
 //   - value identity: struct/protocol shape
-public protocol MonaEditorICursorPositionChangedEvent {}
+public protocol MonaEditorICursorPositionChangedEvent {
+    var position: MonaPosition { get }
+    var secondaryPositions: [MonaPosition]? { get }
+}
 
 // PATH: editor.ICursorSelectionChangedEvent
 // ORDINAL: 127
@@ -2530,7 +2533,9 @@ public protocol MonaEditorICursorPositionChangedEvent {}
 //   - optionality: MonaPresence<T> / MonaNullable<T> / MonaNullish<T> per F1-R5
 //   - overloads: preserved per pinned declaration SHA; no coalescing
 //   - value identity: struct/protocol shape
-public protocol MonaEditorICursorSelectionChangedEvent {}
+public protocol MonaEditorICursorSelectionChangedEvent {
+    var selection: MonaSelection { get }
+}
 
 // PATH: editor.AccessibilitySupport
 // ORDINAL: 128
