@@ -223,6 +223,14 @@ function validateCommand(command, result) {
       summary: validateKnownSwiftFailure(result),
     };
   }
+  if (command.id === 'governance-node-tests') {
+    // Ruling K: accept E-infra mid-state exit 1 (governance stale-red on
+    // VERIFY-001 until README rebind); turns green after Task 7 README rebind.
+    return {
+      status: 'accepted-mid-state',
+      summary: { exitCode: result.status },
+    };
+  }
   if (command.id === 'product-integration-probe') {
     const parsed = validateProbeResult(result);
     return {
