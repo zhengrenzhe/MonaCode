@@ -323,4 +323,127 @@ final class MonaCodeModelSurfaceTests: XCTestCase {
         XCTAssertEqual(model.getEndOfLineSequence(), .crlf)
         XCTAssertEqual(model.getEOL(), "\r\n")
     }
+
+    // MARK: - 5. Search delegation to MonaLiteralSearch (Task 2)
+
+    /// `findMatches` must delegate to `MonaLiteralSearch.findAll` and return real
+    /// matches (not the Phase-01 stub `[]`), with each match's range adapted from
+    /// the engine's UTF-16 `startOffset`/`length` to a `MonaRange` of positions.
+    func testFindMatchesDelegatesToSearchEngine() {
+        // "Hello World Hello"
+        //  offsets: H=0..4, ' '=5, W=6..10, ' '=11, H=12..16
+        let model = MonaCodeModel(text: "Hello World Hello", uri: MonaURI(scheme: "inmemory", path: "/m"))
+
+        let matches = model.findMatches(
+            searchString: "Hello",
+            searchScope: .fullModel,
+            isRegex: false,
+            matchCase: false,
+            captureMatches: false
+        )
+        XCTAssertEqual(matches.count, 2, "findMatches returns real matches, not the stub []")
+
+        // First "Hello" spans UTF-16 offsets 0..<5 → (1,1)..(1,6).
+        XCTAssertEqual(
+            matches[0].range,
+            MonaRange(startPosition: MonaPosition(line: 1, column: 1), endPosition: MonaPosition(line: 1, column: 6))
+        )
+        // Second "Hello" spans UTF-16 offsets 12..<17 → (1,13)..(1,18).
+        XCTAssertEqual(
+            matches[1].range,
+            MonaRange(startPosition: MonaPosition(line: 1, column: 13), endPosition: MonaPosition(line: 1, column: 18))
+        )
+    }
+
+    /// Case sensitivity must reach the engine: case-sensitive search for
+    /// `"hello"` finds nothing in `"Hello World Hello"`; case-insensitive finds 2.
+    /// This guards against a stub or a re-implementation that ignores `matchCase`.
+    func testFindMatchesHonorsMatchCaseThroughEngine() {
+        let model = MonaCodeModel(text: "Hello World Hello", uri: MonaURI(scheme: "inmemory", path: "/m"))
+
+        let caseSensitive = model.findMatches(
+            searchString: "hello",
+            searchScope: .fullModel,
+            isRegex: false,
+            matchCase: true,
+            captureMatches: false
+        )
+        XCTAssertTrue(caseSensitive.isEmpty, "case-sensitive findMatches for 'hello' must be empty")
+
+        let caseInsensitive = model.findMatches(
+            searchString: "hello",
+            searchScope: .fullModel,
+            isRegex: false,
+            matchCase: false,
+            captureMatches: false
+        )
+        XCTAssertEqual(caseInsensitive.count, 2, "case-insensitive findMatches for 'hello' finds both 'Hello's")
+    }
+
+    /// `findNextMatch` delegates to `MonaLiteralSearch.findNext` from offset 0 and
+    /// returns the first match (not the Phase-01 stub `nil`).
+    func testFindNextMatchDelegatesToSearchEngine() {
+        let model = MonaCodeModel(text: "Hello World Hello", uri: MonaURI(scheme: "inmemory", path: "/m"))
+
+        let next = model.findNextMatch(
+            searchString: "Hello",
+            searchScope: .fullModel,
+            isRegex: false,
+            matchCase: false,
+            captureMatches: false
+        )
+        guard let match = next else {
+            XCTFail("findNextMatch must return the first match, not nil")
+            return
+        }
+        XCTAssertEqual(
+            match.range,
+            MonaRange(startPosition: MonaPosition(line: 1, column: 1), endPosition: MonaPosition(line: 1, column: 6))
+        )
+    }
+
+    /// `findPreviousMatch` delegates to `MonaLiteralSearch.findPrevious` from the
+    /// end of the text and returns the last match (not the Phase-01 stub `nil`).
+    func testFindPreviousMatchDelegatesToSearchEngine() {
+        let model = MonaCodeModel(text: "Hello World Hello", uri: MonaURI(scheme: "inmemory", path: "/m"))
+
+        let previous = model.findPreviousMatch(
+            searchString: "Hello",
+            searchScope: .fullModel,
+            isRegex: false,
+            matchCase: false,
+            captureMatches: false
+        )
+        guard let match = previous else {
+            XCTFail("findPreviousMatch must return the last match, not nil")
+            return
+        }
+        XCTAssertEqual(
+            match.range,
+            MonaRange(startPosition: MonaPosition(line: 1, column: 13), endPosition: MonaPosition(line: 1, column: 18))
+        )
+    }
+
+    /// A needle absent from the text yields no matches through the real engine.
+    func testFindMatchesNoMatchReturnsEmpty() {
+        let model = MonaCodeModel(text: "Hello World", uri: MonaURI(scheme: "inmemory", path: "/m"))
+
+        let matches = model.findMatches(
+            searchString: "Goodbye",
+            searchScope: .fullModel,
+            isRegex: false,
+            matchCase: false,
+            captureMatches: false
+        )
+        XCTAssertTrue(matches.isEmpty, "absent needle yields zero matches")
+
+        XCTAssertNil(
+            model.findNextMatch(searchString: "Goodbye", searchScope: .fullModel, isRegex: false, matchCase: false, captureMatches: false),
+            "absent needle yields nil next match"
+        )
+        XCTAssertNil(
+            model.findPreviousMatch(searchString: "Goodbye", searchScope: .fullModel, isRegex: false, matchCase: false, captureMatches: false),
+            "absent needle yields nil previous match"
+        )
+    }
 }

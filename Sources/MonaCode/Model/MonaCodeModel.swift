@@ -363,10 +363,29 @@ public final class MonaCodeModel {
         )
     }
 
-    // MARK: - Search / word / language · 6 members (Phase 02 stubs except language)
+    // MARK: - Search / word / language · 6 members (search delegated in Task 2)
 
-    /// Phase 02 search stub. Returns an empty array; the real search contract
-    /// (RegExp, capture groups, scope) is implemented in Phase 02.
+    /// Returns all matches of `searchString` in `searchScope`, delegating the
+    /// literal scan to `MonaLiteralSearch.findAll` over the model's UTF-16 truth.
+    ///
+    /// The engine is rebuilt per call from `searchString` / `matchCase`
+    /// (the stored `searchEngine` placeholder is not reused — it exists only so
+    /// the property declaration is valid Swift before any query runs). Each
+    /// engine `MonaSearchMatch` (UTF-16 `startOffset` / `length`) is adapted to a
+    /// `MonaFindMatch` whose `MonaRange` spans `getPositionAt(startOffset)` ..
+    /// `getPositionAt(startOffset + length)`.
+    ///
+    /// Limitations wired in Task 2 (literal scope only):
+    ///   - `isRegex` is accepted but not honored — `MonaLiteralSearch` is a
+    ///     literal engine. A true-regex path would route through
+    ///     `MonaRegExpExecutor` (separate MODEL-014 primitive, not wired here).
+    ///   - `captureMatches` is accepted but not honored — the literal engine
+    ///     yields whole-match ranges only; capture groups are a Phase-02 contract.
+    ///   - `searchScope` is honored for `.fullModel`; a `.range(_)` scope cannot
+    ///     be narrowed because `MonaModelSearchScope`'s kind is private. A range
+    ///     scope currently scans the full text (the surface test only exercises
+    ///     `.fullModel`); proper range narrowing needs a scope accessor added in
+    ///     a separate task.
     public func findMatches(
         searchString: String,
         searchScope: MonaModelSearchScope,
@@ -374,10 +393,27 @@ public final class MonaCodeModel {
         matchCase: Bool,
         captureMatches: Bool
     ) -> [MonaFindMatch] {
-        return []
+        // Suppress the unused-parameter contract for the three wired-but-literal
+        // flags so the surface stays stable without silent dead code.
+        _ = isRegex
+        _ = captureMatches
+        _ = searchScope
+
+        let engine = MonaLiteralSearch(needle: Array(searchString.utf16), matchCase: matchCase)
+        let haystack = pieceTree.getText()
+        return engine.findAll(in: haystack, fromOffset: 0).map { sm in
+            MonaFindMatch(range: MonaRange(
+                startPosition: getPositionAt(sm.startOffset),
+                endPosition: getPositionAt(sm.endOffset)
+            ))
+        }
     }
 
-    /// Phase 02 search stub. Returns `nil`.
+    /// Returns the first match of `searchString` (the match with the smallest
+    /// start offset), delegating to `MonaLiteralSearch.findNext` from offset 0.
+    /// Returns `nil` when the needle is absent. The same literal-scope
+    /// limitations documented on `findMatches` apply (`isRegex`,
+    /// `captureMatches`, `.range(_)` scope).
     public func findNextMatch(
         searchString: String,
         searchScope: MonaModelSearchScope,
@@ -385,10 +421,26 @@ public final class MonaCodeModel {
         matchCase: Bool,
         captureMatches: Bool
     ) -> MonaFindMatch? {
-        return nil
+        _ = isRegex
+        _ = captureMatches
+        _ = searchScope
+
+        let engine = MonaLiteralSearch(needle: Array(searchString.utf16), matchCase: matchCase)
+        let haystack = pieceTree.getText()
+        guard let sm = engine.findNext(in: haystack, fromOffset: 0) else {
+            return nil
+        }
+        return MonaFindMatch(range: MonaRange(
+            startPosition: getPositionAt(sm.startOffset),
+            endPosition: getPositionAt(sm.endOffset)
+        ))
     }
 
-    /// Phase 02 search stub. Returns `nil`.
+    /// Returns the last match of `searchString` (the match with the greatest
+    /// start offset), delegating to `MonaLiteralSearch.findPrevious` from the
+    /// end of the text. Returns `nil` when the needle is absent. The same
+    /// literal-scope limitations documented on `findMatches` apply (`isRegex`,
+    /// `captureMatches`, `.range(_)` scope).
     public func findPreviousMatch(
         searchString: String,
         searchScope: MonaModelSearchScope,
@@ -396,7 +448,22 @@ public final class MonaCodeModel {
         matchCase: Bool,
         captureMatches: Bool
     ) -> MonaFindMatch? {
-        return nil
+        _ = isRegex
+        _ = captureMatches
+        _ = searchScope
+
+        let engine = MonaLiteralSearch(needle: Array(searchString.utf16), matchCase: matchCase)
+        let haystack = pieceTree.getText()
+        // `findPrevious` returns the match with the greatest start offset
+        // strictly less than `fromOffset`; scanning from `haystack.count`
+        // yields the last match in the text.
+        guard let sm = engine.findPrevious(in: haystack, fromOffset: haystack.count) else {
+            return nil
+        }
+        return MonaFindMatch(range: MonaRange(
+            startPosition: getPositionAt(sm.startOffset),
+            endPosition: getPositionAt(sm.endOffset)
+        ))
     }
 
     /// The language id. Always `"plaintext"` in Phase 01 — the always-present

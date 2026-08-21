@@ -225,22 +225,42 @@ final class Phase01ModelConformanceTests: XCTestCase {
         XCTAssertEqual(moved, MonaPosition(line: 1, column: 3))
         XCTAssertTrue(model.isValidRange(MonaRange(startLine: 1, startColumn: 1, endLine: 1, endColumn: 2)))
 
-        // Search / word / language · 6 (Phase 02 stubs except language)
-        XCTAssertTrue(model.findMatches(
+        // Search / word / language · 6 (search delegated to MonaLiteralSearch
+        // in Task 2; word remains a Phase 02 stub; language is always live.)
+        // Model text is "  line1\n\tline2\n": "line" appears at line 1 cols
+        // 3..6 and line 2 cols 2..5 (case-sensitive, literal).
+        let searchMatches = model.findMatches(
             searchString: "line",
             searchScope: .fullModel,
             isRegex: false,
             matchCase: true,
             captureMatches: false
-        ).isEmpty, "search is a Phase 02 stub")
-        XCTAssertNil(model.findNextMatch(
-            searchString: "line", searchScope: .fullModel,
-            isRegex: false, matchCase: true, captureMatches: false
-        ))
-        XCTAssertNil(model.findPreviousMatch(
-            searchString: "line", searchScope: .fullModel,
-            isRegex: false, matchCase: true, captureMatches: false
-        ))
+        )
+        XCTAssertEqual(searchMatches.count, 2, "findMatches delegates to MonaLiteralSearch.findAll")
+        XCTAssertEqual(
+            searchMatches[0].range,
+            MonaRange(startPosition: MonaPosition(line: 1, column: 3), endPosition: MonaPosition(line: 1, column: 7))
+        )
+        XCTAssertEqual(
+            searchMatches[1].range,
+            MonaRange(startPosition: MonaPosition(line: 2, column: 2), endPosition: MonaPosition(line: 2, column: 6))
+        )
+        XCTAssertEqual(
+            model.findNextMatch(
+                searchString: "line", searchScope: .fullModel,
+                isRegex: false, matchCase: true, captureMatches: false
+            )?.range,
+            MonaRange(startPosition: MonaPosition(line: 1, column: 3), endPosition: MonaPosition(line: 1, column: 7)),
+            "findNextMatch delegates to MonaLiteralSearch.findNext from offset 0"
+        )
+        XCTAssertEqual(
+            model.findPreviousMatch(
+                searchString: "line", searchScope: .fullModel,
+                isRegex: false, matchCase: true, captureMatches: false
+            )?.range,
+            MonaRange(startPosition: MonaPosition(line: 2, column: 2), endPosition: MonaPosition(line: 2, column: 6)),
+            "findPreviousMatch delegates to MonaLiteralSearch.findPrevious from end of text"
+        )
         XCTAssertEqual(model.getLanguageId(), "plaintext", "plaintext is the always-present fallback")
         XCTAssertNil(model.getWordAtPosition(MonaPosition(line: 1, column: 3)))
         XCTAssertNil(model.getWordUntilPosition(MonaPosition(line: 1, column: 3)))
