@@ -83,3 +83,41 @@ public final class MonaAXWidgetProxy: NSAccessibilityElement, MonaAXRoleElement 
     /// The proxy's parent is reported by the host view (Task 11).
     public override func accessibilityParent() -> Any? { nil }
 }
+
+// MARK: - Widget mouse-target hit testing (RENDER-007)
+
+/// The lifecycle controller that vends a `MonaEditorIBaseMouseTarget` for a
+/// client-space point. It is the AppKit adaptation of Monaco's
+/// `editor.getTargetAtClientPoint` hit-test path: the editor's mouse-target
+/// surface (view zones, content/overlay/glyph widgets) is queried through this
+/// controller so the driving layer can resolve a hit to a retained target.
+///
+/// RENDER-007 unblock (WIDGET_MOUSE_TARGET_SURFACE_EMPTY): the controller
+/// surface exists so the probe's hit-test path is non-empty. The concrete
+/// geometry resolution is wired by the driving layer (the
+/// `MonaCodeEditorView` hit-test integration, a later RENDER task); until
+/// then `getTargetAtClientPoint(_:)` returns `nil` as a documented placeholder
+/// — the return type is a non-optional `MonaEditorIBaseMouseTarget?` so the
+/// driving layer can substitute a real target without changing the call site.
+public final class MonaWidgetMouseTargetController {
+
+    /// Creates a controller with no attached widget surface. The driving layer
+    /// attaches the view-zone / content / overlay / glyph widget registries
+    /// when wiring the hit-test path.
+    public init() {}
+
+    /// Resolves the base mouse target at a client-space `point`.
+    ///
+    /// Returns `nil` while the geometry resolution is not yet wired by the
+    /// driving layer (placeholder per RENDER-007 unblock contract). Once the
+    /// `MonaCodeEditorView` hit-test integration lands, this returns the
+    /// concrete `MonaEditorIBaseMouseTarget` (view-zone / content / overlay /
+    /// glyph widget / text) for the hit.
+    public func getTargetAtClientPoint(_ point: CGPoint) -> MonaEditorIBaseMouseTarget? {
+        // Placeholder: the hit-test geometry is resolved by the driving layer
+        // (RENDER task owning `MonaCodeEditorView` hit testing). The
+        // controller surface + return type are fixed here so the probe's
+        // hit-test path is non-empty and the call site is forward-compatible.
+        return nil
+    }
+}

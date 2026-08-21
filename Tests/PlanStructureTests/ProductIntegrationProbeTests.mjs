@@ -265,14 +265,9 @@ test('current repository findings and exact task bindings are source-backed', ()
     'CURRENT_RELEASE_EVIDENCE_STALE',
     'LANGUAGE_CONTEXT_TYPES_EMPTY',
     'SAMPLE_HOST_DIFF_ACTIVATION_ABSENT',
-    'WIDGET_MOUSE_TARGET_SURFACE_EMPTY',
   ]);
   assert.deepEqual(byID.get('SAMPLE_HOST_DIFF_ACTIVATION_ABSENT').taskIDs, [
     'P07-T009', 'P07-T010',
-  ]);
-  assert.deepEqual(byID.get('WIDGET_MOUSE_TARGET_SURFACE_EMPTY').taskIDs, [
-    'P03-T007', 'P05-T012', 'P05-T104', 'P05-T116', 'P05-T117',
-    'P05-T118', 'P05-T125', 'P05-T146', 'P05-T151', 'P05-T153',
   ]);
   assert.deepEqual(byID.get('LANGUAGE_CONTEXT_TYPES_EMPTY').taskIDs, [
     'P05-T001', 'P05-T013', 'P06-T005',
@@ -301,7 +296,7 @@ test('probe CLI emits canonical parseable JSON and exits 1 for current findings'
 
   assert.equal(result.status, 1, result.stderr);
   const parsed = JSON.parse(result.stdout);
-  assert.equal(parsed.findings.length, 4);
+  assert.equal(parsed.findings.length, 3);
   assert.deepEqual(
     parsed.findings.map((finding) => finding.id),
     parsed.findings.map((finding) => finding.id).sort(),

@@ -103,7 +103,11 @@ public protocol MonaEditorIEditorConstructionOptions {}
 //   - optionality: MonaPresence<T> / MonaNullable<T> / MonaNullish<T> per F1-R5
 //   - overloads: preserved per pinned declaration SHA; no coalescing
 //   - value identity: struct/protocol shape
-public protocol MonaEditorIViewZone {}
+public protocol MonaEditorIViewZone {
+    /// The line number after which this view zone should appear (0 places it
+    /// before the first line). Maps `IViewZone.afterLineNumber`.
+    var afterLineNumber: Int { get }
+}
 
 // PATH: editor.IContentWidget
 // ORDINAL: 191
@@ -119,7 +123,11 @@ public protocol MonaEditorIViewZone {}
 //   - optionality: MonaPresence<T> / MonaNullable<T> / MonaNullish<T> per F1-R5
 //   - overloads: preserved per pinned declaration SHA; no coalescing
 //   - value identity: struct/protocol shape
-public protocol MonaEditorIContentWidget {}
+public protocol MonaEditorIContentWidget {
+    /// Unique identifier of the content widget. Maps `IContentWidget.getId()`
+    /// to an idiomatic Swift property.
+    var id: String { get }
+}
 
 // PATH: editor.IOverlayWidget
 // ORDINAL: 196
@@ -135,7 +143,11 @@ public protocol MonaEditorIContentWidget {}
 //   - optionality: MonaPresence<T> / MonaNullable<T> / MonaNullish<T> per F1-R5
 //   - overloads: preserved per pinned declaration SHA; no coalescing
 //   - value identity: struct/protocol shape
-public protocol MonaEditorIOverlayWidget {}
+public protocol MonaEditorIOverlayWidget {
+    /// Unique identifier of the overlay widget. Maps `IOverlayWidget.getId()`
+    /// to an idiomatic Swift property.
+    var id: String { get }
+}
 
 // PATH: editor.IGlyphMarginWidget
 // ORDINAL: 197
@@ -151,7 +163,11 @@ public protocol MonaEditorIOverlayWidget {}
 //   - optionality: MonaPresence<T> / MonaNullable<T> / MonaNullish<T> per F1-R5
 //   - overloads: preserved per pinned declaration SHA; no coalescing
 //   - value identity: struct/protocol shape
-public protocol MonaEditorIGlyphMarginWidget {}
+public protocol MonaEditorIGlyphMarginWidget {
+    /// Unique identifier of the glyph margin widget. Maps
+    /// `IGlyphMarginWidget.getId()` to an idiomatic Swift property.
+    var id: String { get }
+}
 
 // PATH: editor.IBaseMouseTarget
 // ORDINAL: 200
@@ -167,7 +183,12 @@ public protocol MonaEditorIGlyphMarginWidget {}
 //   - optionality: MonaPresence<T> / MonaNullable<T> / MonaNullish<T> per F1-R5
 //   - overloads: preserved per pinned declaration SHA; no coalescing
 //   - value identity: struct/protocol shape
-public protocol MonaEditorIBaseMouseTarget {}
+public protocol MonaEditorIBaseMouseTarget {
+    /// The `MouseTargetType` discriminator of the hit-tested target. The AppKit
+    /// adaptation collapses the per-subtype `readonly type` members onto the
+    /// base target as an `Int` (the underlying enum's raw value space).
+    var type: Int { get }
+}
 
 // PATH: editor.IDiffEditorConstructionOptions
 // ORDINAL: 220
