@@ -1,0 +1,1768 @@
+{
+  "commands": [
+    {
+      "command": "/usr/bin/xcrun swift test --skip Soak4HourTests",
+      "exitCode": 1,
+      "id": "swift-tests",
+      "status": "accepted-known-product-failure",
+      "stderrSHA256": "115c12db5c352eecfaf9ab10135f3ace5f62cd65e7fffcad85026d2c6ee29969",
+      "stdoutSHA256": "bf55528b5fdf58f47d17a200dd709a92f8842cdba147a4f3f76c7d1f09999f75",
+      "summary": {
+        "assertionFailures": 4,
+        "executedTests": 2842,
+        "failingTests": [
+          "testSampleHostActivatesThreeProducts"
+        ],
+        "skippedTests": 1
+      }
+    },
+    {
+      "command": "/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/ProjectGovernanceTests.mjs Tests/PlanStructureTests/ProductIntegrationProbeTests.mjs Tests/PlanStructureTests/FinalReleaseVerdictTests.mjs",
+      "exitCode": 0,
+      "id": "governance-node-tests",
+      "status": "passed",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdoutSHA256": "f124dfaa0d00376ab688ff53ff59be446d533052379b068b6b48562089d93524",
+      "summary": {
+        "exitCode": 0
+      }
+    },
+    {
+      "command": "/opt/homebrew/Cellar/node/26.7.0/bin/node docs/contracts/monaco-editor-0.56.0/g4-r/verify-contract.mjs",
+      "exitCode": 0,
+      "id": "g4-contract",
+      "status": "passed",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdoutSHA256": "6e040d985d3d19f5552d36f644d6f4cecd73ecfea7c6015e1b7662c443246474",
+      "summary": {
+        "exitCode": 0
+      }
+    },
+    {
+      "command": "/opt/homebrew/Cellar/node/26.7.0/bin/node docs/contracts/monaco-editor-0.56.0/g5-r/verify-contract.mjs",
+      "exitCode": 0,
+      "id": "g5-contract",
+      "status": "passed",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdoutSHA256": "410cecdc83807ed18547f0608cf9b85fe9d2ecd35d7d05d89cad4da29b7e2af1",
+      "summary": {
+        "exitCode": 0
+      }
+    },
+    {
+      "command": "/opt/homebrew/Cellar/node/26.7.0/bin/node docs/contracts/monaco-editor-0.56.0/g6-r/verify-contract.mjs",
+      "exitCode": 0,
+      "id": "g6-contract",
+      "status": "passed",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdoutSHA256": "2d3da631d7260dd048aff415c21d0bf99047c5a42b936c32e487b8f6706e8eea",
+      "summary": {
+        "exitCode": 0
+      }
+    },
+    {
+      "command": "/opt/homebrew/Cellar/node/26.7.0/bin/node Comparators/probes/product-integration-probe.mjs",
+      "exitCode": 1,
+      "id": "product-integration-probe",
+      "status": "accepted-product-findings",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdoutSHA256": "c23cab0773bdfff75a996998174543178fc1aefb61177f66caa34f5d9bb4dafe",
+      "summary": {
+        "findingCount": 5,
+        "findingIDs": [
+          "CURRENT_RELEASE_EVIDENCE_STALE",
+          "CURSOR_EVENT_PAYLOADS_EMPTY",
+          "LANGUAGE_CONTEXT_TYPES_EMPTY",
+          "SAMPLE_HOST_DIFF_ACTIVATION_ABSENT",
+          "WIDGET_MOUSE_TARGET_SURFACE_EMPTY"
+        ]
+      }
+    },
+    {
+      "command": "/opt/homebrew/Cellar/node/26.7.0/bin/node Tools/Release/release-verdict.mjs",
+      "exitCode": 0,
+      "id": "release-verdict",
+      "status": "passed-current-rejection",
+      "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdoutSHA256": "87a5a525b87346617d6916cf84977fdf85df3c9f79d342dc0204053e728e0e6a",
+      "summary": {
+        "blockerCount": 1,
+        "blockerIDs": [
+          "current-acceptance-rebound"
+        ],
+        "verdict": "not-passed"
+      }
+    }
+  ],
+  "digest": "14d96aad86c754be97fd530a6ee377dd10f5fa1ec0245444b95fe7bf003959b2",
+  "g6ManifestDigest": "eb3de0cec0a62f28439126f774aa7ad56a019e766a145c71fcb0349ee50dbd46",
+  "integrationFindings": [
+    {
+      "id": "CURRENT_RELEASE_EVIDENCE_STALE",
+      "observation": "Current verification source digest 14d96aad86c754be97fd530a6ee377dd10f5fa1ec0245444b95fe7bf003959b2 differs from frozen release evidence digest 152c63ffc32ce2a632ff2a2caa2d3ee25063a1150c6f51bb44d5405aa30a1f36.",
+      "paths": [
+        "Tools/Release/release-verdict.mjs"
+      ],
+      "taskIDs": [
+        "P08-T001",
+        "P08-T002",
+        "P08-T003",
+        "P08-T010",
+        "P08-T011",
+        "P08-T012",
+        "P08-T013",
+        "P08-T014",
+        "P08-T015",
+        "P08-T016",
+        "P09-T001",
+        "P09-T002",
+        "P09-T010",
+        "P09-T011",
+        "P09-T012",
+        "P09-T013",
+        "P09-T014",
+        "P09-T015",
+        "P09-T016",
+        "P09-T017",
+        "P09-T018",
+        "P09-T019",
+        "P09-T030",
+        "P09-T031",
+        "P09-T032",
+        "P09-T033",
+        "P09-T034",
+        "P09-T035",
+        "P09-T036",
+        "P09-T037",
+        "P09-T038",
+        "P09-T039",
+        "P09-T040",
+        "P09-T041",
+        "P09-T042",
+        "P09-T043",
+        "P09-T050",
+        "P09-T051",
+        "P09-T052",
+        "P09-T099"
+      ],
+      "unblockCondition": "Regenerate and pass every P08/P09 current-digest release prerequisite before emitting a passed verdict."
+    },
+    {
+      "id": "CURSOR_EVENT_PAYLOADS_EMPTY",
+      "observation": "Cursor position and selection event protocols are zero-member shells despite being exposed by editor instances.",
+      "paths": [
+        "Sources/MonaCode/Generated/MonaPublicAPI.swift",
+        "Sources/MonaCodeAppKit/Views/MonaEditorInstanceAdapters.swift"
+      ],
+      "taskIDs": [
+        "P04-T007",
+        "P05-T012"
+      ],
+      "unblockCondition": "Define concrete position, selection, reason, source, and secondary-position payloads and publish them from editor state."
+    },
+    {
+      "id": "LANGUAGE_CONTEXT_TYPES_EMPTY",
+      "observation": "Retained provider context and result declarations remain zero-member shells and cannot carry Monaco-equivalent request metadata.",
+      "paths": [
+        "Sources/MonaCode/Generated/MonaPublicAPI.swift"
+      ],
+      "taskIDs": [
+        "P05-T001",
+        "P05-T013",
+        "P06-T005"
+      ],
+      "unblockCondition": "Populate every retained context/result declaration and bind direct-provider and LSP adapters to those exact payloads."
+    },
+    {
+      "id": "SAMPLE_HOST_DIFF_ACTIVATION_ABSENT",
+      "observation": "The sample host does not activate all four AppKit and SwiftUI diff editor products.",
+      "paths": [
+        "Sources/MonaCodeSample/main.swift"
+      ],
+      "taskIDs": [
+        "P07-T009",
+        "P07-T010"
+      ],
+      "unblockCondition": "Construct all four diff view/wrapper types in the sample activation path and pass testSampleHostActivatesThreeProducts."
+    },
+    {
+      "id": "WIDGET_MOUSE_TARGET_SURFACE_EMPTY",
+      "observation": "View-zone, content/overlay/glyph widget, and base mouse-target declarations lack concrete payloads and a hit-test controller path.",
+      "paths": [
+        "Sources/MonaCodeAppKit/Accessibility/MonaAXWidgetProxy.swift",
+        "Sources/MonaCodeAppKit/Generated/MonaAppKitPublicAPI.swift"
+      ],
+      "taskIDs": [
+        "P03-T007",
+        "P05-T012",
+        "P05-T104",
+        "P05-T116",
+        "P05-T117",
+        "P05-T118",
+        "P05-T125",
+        "P05-T146",
+        "P05-T151",
+        "P05-T153"
+      ],
+      "unblockCondition": "Implement the retained widget payloads, lifecycle controller, and mouse-target hit testing, then pass dependent feature tests."
+    }
+  ],
+  "schemaVersion": 1,
+  "sourceFileCount": 588,
+  "taskCounts": {
+    "blocked": 56,
+    "done": 141,
+    "inProgress": 0,
+    "todo": 8
+  },
+  "taskResults": [
+    {
+      "acceptance": "/opt/homebrew/Cellar/node/26.7.0/bin/node Tools/Docs/check-project-governance.mjs ⇒ exit 0",
+      "findingIDs": [],
+      "id": "VERIFY-001",
+      "sourceTaskID": "VERIFY-001",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "set -o pipefail; /usr/bin/xcrun swift package dump-package | /opt/homebrew/Cellar/node/26.7.0/bin/node docs/contracts/monaco-editor-0.56.0/g6-r/implementation-plan/runtime/assert-package-graph.mjs ⇒ exit 0",
+      "findingIDs": [],
+      "id": "SURFACE-001",
+      "sourceTaskID": "P00-T001",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/ForbiddenCoreImportsTests.mjs ⇒ exit 0",
+      "findingIDs": [],
+      "id": "VERIFY-002",
+      "sourceTaskID": "P00-T002",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/opt/homebrew/Cellar/node/26.7.0/bin/node Tools/PlanChecks/verify-provenance.mjs ⇒ exit 0",
+      "findingIDs": [],
+      "id": "VERIFY-003",
+      "sourceTaskID": "P00-T003",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/ScopeProbeTests.mjs ⇒ exit 0",
+      "findingIDs": [],
+      "id": "SURFACE-002",
+      "sourceTaskID": "P00-T004",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaClockTests --scratch-path /tmp/monacode-planctl/P00-T005.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "SERVICE-001",
+      "sourceTaskID": "P00-T005",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaEntropyTests --scratch-path /tmp/monacode-planctl/P00-T006.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "SERVICE-002",
+      "sourceTaskID": "P00-T006",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaLocaleBoundaryTests --scratch-path /tmp/monacode-planctl/P00-T007.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "SERVICE-003",
+      "sourceTaskID": "P00-T007",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter DifferentialHarnessTests --scratch-path /tmp/monacode-planctl/P00-T008.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "VERIFY-004",
+      "sourceTaskID": "P00-T008",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter BootstrapStatisticsTests --scratch-path /tmp/monacode-planctl/P00-T009.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "VERIFY-005",
+      "sourceTaskID": "P00-T009",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter Q1R4ControlsTests --scratch-path /tmp/monacode-planctl/P00-T010.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "VERIFY-006",
+      "sourceTaskID": "P00-T010",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/QEnvironmentCollectorTests.mjs ⇒ exit 0",
+      "findingIDs": [],
+      "id": "VERIFY-007",
+      "sourceTaskID": "P00-T011",
+      "state": "TODO"
+    },
+    {
+      "acceptance": "/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/Phase00IntegrationTests.mjs ⇒ exit 0",
+      "findingIDs": [],
+      "id": "VERIFY-008",
+      "sourceTaskID": "P00-T012",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaPositionTests --scratch-path /tmp/monacode-planctl/P01-T001.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "MODEL-001",
+      "sourceTaskID": "P01-T001",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaRangeTests --scratch-path /tmp/monacode-planctl/P01-T002.GREEN.001.PROC.001 && /usr/bin/xcrun swift test --filter MonaSelectionTests --scratch-path /tmp/monacode-planctl/P01-T002.GREEN.001.PROC.002 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "MODEL-002",
+      "sourceTaskID": "P01-T002",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaURITests --scratch-path /tmp/monacode-planctl/P01-T003.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "MODEL-003",
+      "sourceTaskID": "P01-T003",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaValueEnumTests --scratch-path /tmp/monacode-planctl/P01-T004.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "MODEL-004",
+      "sourceTaskID": "P01-T004",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaEmitterTests --scratch-path /tmp/monacode-planctl/P01-T005.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "MODEL-005",
+      "sourceTaskID": "P01-T005",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaCancellationTests --scratch-path /tmp/monacode-planctl/P01-T006.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "MODEL-006",
+      "sourceTaskID": "P01-T006",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaPieceTreeDifferentialTests --scratch-path /tmp/monacode-planctl/P01-T007.GREEN.001.PROC.001 && /usr/bin/xcrun swift test --filter MonaPieceTreeComplexityTests --scratch-path /tmp/monacode-planctl/P01-T007.GREEN.001.PROC.002 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "MODEL-007",
+      "sourceTaskID": "P01-T007",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaCodeModelSurfaceTests --scratch-path /tmp/monacode-planctl/P01-T008.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "MODEL-008",
+      "sourceTaskID": "P01-T008",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaTransactionGatewayTests --scratch-path /tmp/monacode-planctl/P01-T009.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "MODEL-009",
+      "sourceTaskID": "P01-T009",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaAsyncValidityTicketTests --scratch-path /tmp/monacode-planctl/P01-T010.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "MODEL-010",
+      "sourceTaskID": "P01-T010",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaModelFactoryTests --scratch-path /tmp/monacode-planctl/P01-T011.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "MODEL-011",
+      "sourceTaskID": "P01-T011",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaLifetimeRegistryTests --scratch-path /tmp/monacode-planctl/P01-T012.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "SERVICE-004",
+      "sourceTaskID": "P01-T012",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter Phase01ModelConformanceTests --scratch-path /tmp/monacode-planctl/P01-T013.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "VERIFY-009",
+      "sourceTaskID": "P01-T013",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaUndoRedoTests --scratch-path /tmp/monacode-planctl/P02-T001.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "MODEL-012",
+      "sourceTaskID": "P02-T001",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaDecorationTreeDifferentialTests --scratch-path /tmp/monacode-planctl/P02-T002.GREEN.001.PROC.001 && /usr/bin/xcrun swift test --filter MonaDecorationTreeComplexityTests --scratch-path /tmp/monacode-planctl/P02-T002.GREEN.001.PROC.002 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "MODEL-013",
+      "sourceTaskID": "P02-T002",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaWordSearchTests --scratch-path /tmp/monacode-planctl/P02-T003.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "MODEL-014",
+      "sourceTaskID": "P02-T003",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaRegExpParserCompilerTests --scratch-path /tmp/monacode-planctl/P02-T004.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "MODEL-015",
+      "sourceTaskID": "P02-T004",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaRegExpUnicodeProfileTests --scratch-path /tmp/monacode-planctl/P02-T005.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "MODEL-016",
+      "sourceTaskID": "P02-T005",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaRegExpConsumerProfileTests --scratch-path /tmp/monacode-planctl/P02-T006.GREEN.001.PROC.001 && /usr/bin/xcrun swift test --filter MonaRegExpTest262Tests --scratch-path /tmp/monacode-planctl/P02-T006.GREEN.001.PROC.002 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "MODEL-017",
+      "sourceTaskID": "P02-T006",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaEnvironmentSemanticsTests --scratch-path /tmp/monacode-planctl/P02-T007.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "MODEL-018",
+      "sourceTaskID": "P02-T007",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaFiniteIntrinsicTests --scratch-path /tmp/monacode-planctl/P02-T008.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "MODEL-019",
+      "sourceTaskID": "P02-T008",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter Phase02SemanticConformanceTests --scratch-path /tmp/monacode-planctl/P02-T009.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "VERIFY-010",
+      "sourceTaskID": "P02-T009",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaViewGraphDifferentialTests --scratch-path /tmp/monacode-planctl/P03-T001.GREEN.001.PROC.001 && /usr/bin/xcrun swift test --filter MonaVerticalIndexComplexityTests --scratch-path /tmp/monacode-planctl/P03-T001.GREEN.001.PROC.002 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "RENDER-001",
+      "sourceTaskID": "P03-T001",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaTextShaperTests --scratch-path /tmp/monacode-planctl/P03-T002.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "RENDER-002",
+      "sourceTaskID": "P03-T002",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaLineLayoutRecordTests --scratch-path /tmp/monacode-planctl/P03-T003.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "RENDER-003",
+      "sourceTaskID": "P03-T003",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaDependencyStampTests --scratch-path /tmp/monacode-planctl/P03-T004.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "RENDER-004",
+      "sourceTaskID": "P03-T004",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaScrollModelTests --scratch-path /tmp/monacode-planctl/P03-T005.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "RENDER-005",
+      "sourceTaskID": "P03-T005",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaCoreGraphicsRendererTests --scratch-path /tmp/monacode-planctl/P03-T006.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "RENDER-006",
+      "sourceTaskID": "P03-T006",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaQueryGeometryBarrierTests --scratch-path /tmp/monacode-planctl/P03-T007.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "WIDGET_MOUSE_TARGET_SURFACE_EMPTY"
+      ],
+      "id": "RENDER-007",
+      "sourceTaskID": "P03-T007",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaFailedLineRecordTests --scratch-path /tmp/monacode-planctl/P03-T008.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "RENDER-008",
+      "sourceTaskID": "P03-T008",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaRendererMetricsTests --scratch-path /tmp/monacode-planctl/P03-T009.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "RENDER-009",
+      "sourceTaskID": "P03-T009",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaRendererDecisionGateTests --scratch-path /tmp/monacode-planctl/P03-T010.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "RENDER-010",
+      "sourceTaskID": "P03-T010",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaMetalRendererParityTests --scratch-path /tmp/monacode-planctl/P03-T011.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "RENDER-011",
+      "sourceTaskID": "P03-T011",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter Phase03RendererConformanceTests --scratch-path /tmp/monacode-planctl/P03-T012.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "RENDER-012",
+      "sourceTaskID": "P03-T012",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaKeyEventTests --scratch-path /tmp/monacode-planctl/P04-T001.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "INPUT-001",
+      "sourceTaskID": "P04-T001",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaAppKeyEventGatewayTests --scratch-path /tmp/monacode-planctl/P04-T002.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "INPUT-002",
+      "sourceTaskID": "P04-T002",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaKeybindingResolverTests --scratch-path /tmp/monacode-planctl/P04-T003.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "INPUT-003",
+      "sourceTaskID": "P04-T003",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaCompositionTests --scratch-path /tmp/monacode-planctl/P04-T004.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "INPUT-004",
+      "sourceTaskID": "P04-T004",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaModelInputBarrierTests --scratch-path /tmp/monacode-planctl/P04-T005.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "INPUT-005",
+      "sourceTaskID": "P04-T005",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaPointerScrollMenuTests --scratch-path /tmp/monacode-planctl/P04-T006.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "INPUT-006",
+      "sourceTaskID": "P04-T006",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaEventControlTests --scratch-path /tmp/monacode-planctl/P04-T007.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "CURSOR_EVENT_PAYLOADS_EMPTY"
+      ],
+      "id": "INPUT-007",
+      "sourceTaskID": "P04-T007",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaPasteboardTests --scratch-path /tmp/monacode-planctl/P04-T008.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "INPUT-008",
+      "sourceTaskID": "P04-T008",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaDragDropServicesTests --scratch-path /tmp/monacode-planctl/P04-T009.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "INPUT-009",
+      "sourceTaskID": "P04-T009",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaAXTextAreaTests --scratch-path /tmp/monacode-planctl/P04-T010.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "INPUT-010",
+      "sourceTaskID": "P04-T010",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaAXElementGraphTests --scratch-path /tmp/monacode-planctl/P04-T011.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "INPUT-011",
+      "sourceTaskID": "P04-T011",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaAXFocusAnnouncementTests --scratch-path /tmp/monacode-planctl/P04-T012.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "INPUT-012",
+      "sourceTaskID": "P04-T012",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaAXMutationGatewayTests --scratch-path /tmp/monacode-planctl/P04-T013.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "INPUT-013",
+      "sourceTaskID": "P04-T013",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaCodeEditorViewLifecycleTests --scratch-path /tmp/monacode-planctl/P04-T014.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "EDITOR-001",
+      "sourceTaskID": "P04-T014",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaCodeEditorSwiftUILifecycleTests --scratch-path /tmp/monacode-planctl/P04-T015.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "EDITOR-002",
+      "sourceTaskID": "P04-T015",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter Phase04NativeBoundaryConformanceTests --scratch-path /tmp/monacode-planctl/P04-T016.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "VERIFY-011",
+      "sourceTaskID": "P04-T016",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/PublicDeclarationGraphTests.mjs ⇒ exit 0",
+      "findingIDs": [
+        "LANGUAGE_CONTEXT_TYPES_EMPTY"
+      ],
+      "id": "SURFACE-003",
+      "sourceTaskID": "P05-T001",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaCommandActionRegistryTests --scratch-path /tmp/monacode-planctl/P05-T002.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "COMMAND-001",
+      "sourceTaskID": "P05-T002",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaBuiltinKeybindingTests --scratch-path /tmp/monacode-planctl/P05-T003.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "COMMAND-002",
+      "sourceTaskID": "P05-T003",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaMenuRegistryTests --scratch-path /tmp/monacode-planctl/P05-T004.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "COMMAND-003",
+      "sourceTaskID": "P05-T004",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaEditorOptionTests --scratch-path /tmp/monacode-planctl/P05-T005.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "REGISTRY-001",
+      "sourceTaskID": "P05-T005",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaThemeRegistryTests --scratch-path /tmp/monacode-planctl/P05-T006.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "REGISTRY-002",
+      "sourceTaskID": "P05-T006",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaLocalizationTests --scratch-path /tmp/monacode-planctl/P05-T007.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "REGISTRY-003",
+      "sourceTaskID": "P05-T007",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaLanguageRegistryTests --scratch-path /tmp/monacode-planctl/P05-T008.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "LANG-001",
+      "sourceTaskID": "P05-T008",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaColorizeSourceTests --scratch-path /tmp/monacode-planctl/P05-T009.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "RENDER-013",
+      "sourceTaskID": "P05-T009",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaColorizeViewTests --scratch-path /tmp/monacode-planctl/P05-T010.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "RENDER-014",
+      "sourceTaskID": "P05-T010",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaColorizeModelLineTests --scratch-path /tmp/monacode-planctl/P05-T011.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "RENDER-015",
+      "sourceTaskID": "P05-T011",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaEditorInstanceSurfaceTests --scratch-path /tmp/monacode-planctl/P05-T012.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "CURSOR_EVENT_PAYLOADS_EMPTY",
+        "WIDGET_MOUSE_TARGET_SURFACE_EMPTY"
+      ],
+      "id": "EDITOR-003",
+      "sourceTaskID": "P05-T012",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaProviderExecutorTests --scratch-path /tmp/monacode-planctl/P05-T013.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "LANGUAGE_CONTEXT_TYPES_EMPTY"
+      ],
+      "id": "LANG-002",
+      "sourceTaskID": "P05-T013",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaAnchorSelectFeatureTests --scratch-path /tmp/monacode-planctl/P05-T100.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "COMMAND-004",
+      "sourceTaskID": "P05-T100",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaBracketMatchingFeatureTests --scratch-path /tmp/monacode-planctl/P05-T101.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "EDITOR-004",
+      "sourceTaskID": "P05-T101",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaCaretOperationsFeatureTests --scratch-path /tmp/monacode-planctl/P05-T102.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "COMMAND-005",
+      "sourceTaskID": "P05-T102",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaClipboardFeatureTests --scratch-path /tmp/monacode-planctl/P05-T103.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "INPUT-014",
+      "sourceTaskID": "P05-T103",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaCodeActionFeatureTests --scratch-path /tmp/monacode-planctl/P05-T104.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "WIDGET_MOUSE_TARGET_SURFACE_EMPTY"
+      ],
+      "id": "LANG-003",
+      "sourceTaskID": "P05-T104",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaCodeEditorFeatureTests --scratch-path /tmp/monacode-planctl/P05-T105.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "EDITOR-005",
+      "sourceTaskID": "P05-T105",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaCodelensFeatureTests --scratch-path /tmp/monacode-planctl/P05-T106.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "LANG-004",
+      "sourceTaskID": "P05-T106",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaCodiconFeatureTests --scratch-path /tmp/monacode-planctl/P05-T107.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "RENDER-016",
+      "sourceTaskID": "P05-T107",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaColorPickerFeatureTests --scratch-path /tmp/monacode-planctl/P05-T108.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "RENDER-017",
+      "sourceTaskID": "P05-T108",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaCommentFeatureTests --scratch-path /tmp/monacode-planctl/P05-T109.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "COMMAND-006",
+      "sourceTaskID": "P05-T109",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaContextmenuFeatureTests --scratch-path /tmp/monacode-planctl/P05-T110.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "EDITOR-006",
+      "sourceTaskID": "P05-T110",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaCursorUndoFeatureTests --scratch-path /tmp/monacode-planctl/P05-T111.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "INPUT-015",
+      "sourceTaskID": "P05-T111",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaDiffEditorFeatureTests --scratch-path /tmp/monacode-planctl/P05-T112.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "DIFF-001",
+      "sourceTaskID": "P05-T112",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaDiffEditorBreadcrumbsFeatureTests --scratch-path /tmp/monacode-planctl/P05-T113.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "DIFF-002",
+      "sourceTaskID": "P05-T113",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaDndFeatureTests --scratch-path /tmp/monacode-planctl/P05-T114.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "INPUT-016",
+      "sourceTaskID": "P05-T114",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaDocumentSymbolsFeatureTests --scratch-path /tmp/monacode-planctl/P05-T115.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "LANG-005",
+      "sourceTaskID": "P05-T115",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaDropOrPasteIntoFeatureTests --scratch-path /tmp/monacode-planctl/P05-T116.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "WIDGET_MOUSE_TARGET_SURFACE_EMPTY"
+      ],
+      "id": "INPUT-017",
+      "sourceTaskID": "P05-T116",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaFindFeatureTests --scratch-path /tmp/monacode-planctl/P05-T117.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "WIDGET_MOUSE_TARGET_SURFACE_EMPTY"
+      ],
+      "id": "COMMAND-007",
+      "sourceTaskID": "P05-T117",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaFloatingMenuFeatureTests --scratch-path /tmp/monacode-planctl/P05-T118.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "WIDGET_MOUSE_TARGET_SURFACE_EMPTY"
+      ],
+      "id": "RENDER-018",
+      "sourceTaskID": "P05-T118",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaFoldingFeatureTests --scratch-path /tmp/monacode-planctl/P05-T119.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "LANG-006",
+      "sourceTaskID": "P05-T119",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaFontZoomFeatureTests --scratch-path /tmp/monacode-planctl/P05-T120.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "RENDER-019",
+      "sourceTaskID": "P05-T120",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaFormatFeatureTests --scratch-path /tmp/monacode-planctl/P05-T121.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "LANG-007",
+      "sourceTaskID": "P05-T121",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaGotoErrorFeatureTests --scratch-path /tmp/monacode-planctl/P05-T122.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "EDITOR-007",
+      "sourceTaskID": "P05-T122",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaGotoLineFeatureTests --scratch-path /tmp/monacode-planctl/P05-T123.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "COMMAND-008",
+      "sourceTaskID": "P05-T123",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaGotoSymbolFeatureTests --scratch-path /tmp/monacode-planctl/P05-T124.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "LANG-008",
+      "sourceTaskID": "P05-T124",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaHoverFeatureTests --scratch-path /tmp/monacode-planctl/P05-T125.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "WIDGET_MOUSE_TARGET_SURFACE_EMPTY"
+      ],
+      "id": "LANG-009",
+      "sourceTaskID": "P05-T125",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaIndentationFeatureTests --scratch-path /tmp/monacode-planctl/P05-T126.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "LANG-010",
+      "sourceTaskID": "P05-T126",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaInlayHintsFeatureTests --scratch-path /tmp/monacode-planctl/P05-T127.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "LANG-011",
+      "sourceTaskID": "P05-T127",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaInlineCompletionsFeatureTests --scratch-path /tmp/monacode-planctl/P05-T128.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "LANG-012",
+      "sourceTaskID": "P05-T128",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaInlineProgressFeatureTests --scratch-path /tmp/monacode-planctl/P05-T129.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "RENDER-020",
+      "sourceTaskID": "P05-T129",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaInPlaceReplaceFeatureTests --scratch-path /tmp/monacode-planctl/P05-T130.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "COMMAND-009",
+      "sourceTaskID": "P05-T130",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaInsertFinalNewLineFeatureTests --scratch-path /tmp/monacode-planctl/P05-T131.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "COMMAND-010",
+      "sourceTaskID": "P05-T131",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaInspectTokensFeatureTests --scratch-path /tmp/monacode-planctl/P05-T132.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "RENDER-021",
+      "sourceTaskID": "P05-T132",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaLineSelectionFeatureTests --scratch-path /tmp/monacode-planctl/P05-T133.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "INPUT-018",
+      "sourceTaskID": "P05-T133",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaLinesOperationsFeatureTests --scratch-path /tmp/monacode-planctl/P05-T134.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "COMMAND-011",
+      "sourceTaskID": "P05-T134",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaLinkedEditingFeatureTests --scratch-path /tmp/monacode-planctl/P05-T135.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "LANG-013",
+      "sourceTaskID": "P05-T135",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaLinksFeatureTests --scratch-path /tmp/monacode-planctl/P05-T136.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "RENDER-022",
+      "sourceTaskID": "P05-T136",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaLongLinesHelperFeatureTests --scratch-path /tmp/monacode-planctl/P05-T137.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "COMMAND-012",
+      "sourceTaskID": "P05-T137",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaMiddleScrollFeatureTests --scratch-path /tmp/monacode-planctl/P05-T138.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "COMMAND-013",
+      "sourceTaskID": "P05-T138",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaMulticursorFeatureTests --scratch-path /tmp/monacode-planctl/P05-T139.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "INPUT-019",
+      "sourceTaskID": "P05-T139",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaParameterHintsFeatureTests --scratch-path /tmp/monacode-planctl/P05-T140.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "LANG-014",
+      "sourceTaskID": "P05-T140",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaPlaceholderTextFeatureTests --scratch-path /tmp/monacode-planctl/P05-T141.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "RENDER-023",
+      "sourceTaskID": "P05-T141",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaQuickCommandFeatureTests --scratch-path /tmp/monacode-planctl/P05-T142.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "EDITOR-008",
+      "sourceTaskID": "P05-T142",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaQuickHelpFeatureTests --scratch-path /tmp/monacode-planctl/P05-T143.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "EDITOR-009",
+      "sourceTaskID": "P05-T143",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaQuickOutlineFeatureTests --scratch-path /tmp/monacode-planctl/P05-T144.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "EDITOR-010",
+      "sourceTaskID": "P05-T144",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaReadOnlyMessageFeatureTests --scratch-path /tmp/monacode-planctl/P05-T145.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "COMMAND-014",
+      "sourceTaskID": "P05-T145",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaReferenceSearchFeatureTests --scratch-path /tmp/monacode-planctl/P05-T146.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "WIDGET_MOUSE_TARGET_SURFACE_EMPTY"
+      ],
+      "id": "LANG-015",
+      "sourceTaskID": "P05-T146",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaRenameFeatureTests --scratch-path /tmp/monacode-planctl/P05-T147.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "LANG-016",
+      "sourceTaskID": "P05-T147",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaSectionHeadersFeatureTests --scratch-path /tmp/monacode-planctl/P05-T148.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "RENDER-024",
+      "sourceTaskID": "P05-T148",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaSemanticTokensFeatureTests --scratch-path /tmp/monacode-planctl/P05-T149.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "LANG-017",
+      "sourceTaskID": "P05-T149",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaSmartSelectFeatureTests --scratch-path /tmp/monacode-planctl/P05-T150.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "LANG-018",
+      "sourceTaskID": "P05-T150",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaSnippetFeatureTests --scratch-path /tmp/monacode-planctl/P05-T151.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "WIDGET_MOUSE_TARGET_SURFACE_EMPTY"
+      ],
+      "id": "LANG-019",
+      "sourceTaskID": "P05-T151",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaStickyScrollFeatureTests --scratch-path /tmp/monacode-planctl/P05-T152.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "RENDER-025",
+      "sourceTaskID": "P05-T152",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaSuggestFeatureTests --scratch-path /tmp/monacode-planctl/P05-T153.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "WIDGET_MOUSE_TARGET_SURFACE_EMPTY"
+      ],
+      "id": "LANG-020",
+      "sourceTaskID": "P05-T153",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaToggleHighContrastFeatureTests --scratch-path /tmp/monacode-planctl/P05-T154.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "RENDER-026",
+      "sourceTaskID": "P05-T154",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaToggleTabFocusModeFeatureTests --scratch-path /tmp/monacode-planctl/P05-T155.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "INPUT-020",
+      "sourceTaskID": "P05-T155",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaTokenizationFeatureTests --scratch-path /tmp/monacode-planctl/P05-T156.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "LANG-021",
+      "sourceTaskID": "P05-T156",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaUnicodeHighlighterFeatureTests --scratch-path /tmp/monacode-planctl/P05-T157.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "RENDER-027",
+      "sourceTaskID": "P05-T157",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaUnusualLineTerminatorsFeatureTests --scratch-path /tmp/monacode-planctl/P05-T158.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "COMMAND-015",
+      "sourceTaskID": "P05-T158",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaWordHighlighterFeatureTests --scratch-path /tmp/monacode-planctl/P05-T159.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "RENDER-028",
+      "sourceTaskID": "P05-T159",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaWordOperationsFeatureTests --scratch-path /tmp/monacode-planctl/P05-T160.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "COMMAND-016",
+      "sourceTaskID": "P05-T160",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaWordPartOperationsFeatureTests --scratch-path /tmp/monacode-planctl/P05-T161.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "COMMAND-017",
+      "sourceTaskID": "P05-T161",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/NativeDeclarationManifestTests.mjs ⇒ exit 0",
+      "findingIDs": [],
+      "id": "SURFACE-004",
+      "sourceTaskID": "P05-T190",
+      "state": "TODO"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter Phase05PublicSurfaceConformanceTests --scratch-path /tmp/monacode-planctl/P05-T200.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "VERIFY-012",
+      "sourceTaskID": "P05-T200",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaMessageTransportContractTests --scratch-path /tmp/monacode-planctl/P06-T001.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "LANG-022",
+      "sourceTaskID": "P06-T001",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaLSPFrameCodecTests --scratch-path /tmp/monacode-planctl/P06-T002.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "LANG-023",
+      "sourceTaskID": "P06-T002",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaJSONRPCCodecTests --scratch-path /tmp/monacode-planctl/P06-T003.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "LANG-024",
+      "sourceTaskID": "P06-T003",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaLSPClientCapabilityTests --scratch-path /tmp/monacode-planctl/P06-T004.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "LANG-025",
+      "sourceTaskID": "P06-T004",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaProviderRegistryClosureTests --scratch-path /tmp/monacode-planctl/P06-T005.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "LANGUAGE_CONTEXT_TYPES_EMPTY"
+      ],
+      "id": "LANG-026",
+      "sourceTaskID": "P06-T005",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaSnippetParserTests --scratch-path /tmp/monacode-planctl/P06-T006.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "LANG-027",
+      "sourceTaskID": "P06-T006",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaSnippetSessionTests --scratch-path /tmp/monacode-planctl/P06-T007.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "LANG-028",
+      "sourceTaskID": "P06-T007",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaMarkdownSecurityTests --scratch-path /tmp/monacode-planctl/P06-T008.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "LANG-029",
+      "sourceTaskID": "P06-T008",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaProcessMessageTransportTests --scratch-path /tmp/monacode-planctl/P06-T009.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "SERVICE-005",
+      "sourceTaskID": "P06-T009",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter Phase06LanguageInfrastructureTests --scratch-path /tmp/monacode-planctl/P06-T010.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "LANG-030",
+      "sourceTaskID": "P06-T010",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaDiffEngineDifferentialTests --scratch-path /tmp/monacode-planctl/P07-T001.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "DIFF-003",
+      "sourceTaskID": "P07-T001",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaDiffCoordinatorTests --scratch-path /tmp/monacode-planctl/P07-T002.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "DIFF-004",
+      "sourceTaskID": "P07-T002",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaStandaloneServiceTests --scratch-path /tmp/monacode-planctl/P07-T003.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "SERVICE-006",
+      "sourceTaskID": "P07-T003",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaDialogServiceTests --scratch-path /tmp/monacode-planctl/P07-T004.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "SERVICE-007",
+      "sourceTaskID": "P07-T004",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaHostContractClosureTests --scratch-path /tmp/monacode-planctl/P07-T005.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "SERVICE-008",
+      "sourceTaskID": "P07-T005",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaWorkspaceEditTests --scratch-path /tmp/monacode-planctl/P07-T006.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "SERVICE-009",
+      "sourceTaskID": "P07-T006",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaCacheRegistryTests --scratch-path /tmp/monacode-planctl/P07-T007.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [],
+      "id": "SERVICE-010",
+      "sourceTaskID": "P07-T007",
+      "state": "DONE"
+    },
+    {
+      "acceptance": "/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/SourceRuntimeStyleTests.mjs ⇒ exit 0",
+      "findingIDs": [],
+      "id": "SERVICE-011",
+      "sourceTaskID": "P07-T008",
+      "state": "TODO"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter MonaDiffViewLifecycleTests --scratch-path /tmp/monacode-planctl/P07-T009.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "SAMPLE_HOST_DIFF_ACTIVATION_ABSENT"
+      ],
+      "id": "DIFF-005",
+      "sourceTaskID": "P07-T009",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter Phase07HostAndDiffConformanceTests --scratch-path /tmp/monacode-planctl/P07-T010.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "SAMPLE_HOST_DIFF_ACTIVATION_ABSENT"
+      ],
+      "id": "VERIFY-013",
+      "sourceTaskID": "P07-T010",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/PublicAPIClosureTests.mjs ⇒ exit 0",
+      "findingIDs": [],
+      "id": "SURFACE-005",
+      "sourceTaskID": "P07-T011",
+      "state": "TODO"
+    },
+    {
+      "acceptance": "/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/ReleaseBuildTests.mjs ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-014",
+      "sourceTaskID": "P08-T001",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/DistributionScanTests.mjs ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-015",
+      "sourceTaskID": "P08-T002",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/LicenseNoticeTests.mjs ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-016",
+      "sourceTaskID": "P08-T003",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/FinalNativeDeclarationManifestTests.mjs ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-017",
+      "sourceTaskID": "P08-T010",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/FinalRegExpUnicodeManifestTests.mjs ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-018",
+      "sourceTaskID": "P08-T011",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/FinalEnvironmentManifestTests.mjs ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-019",
+      "sourceTaskID": "P08-T012",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/FinalSourceClosureManifestTests.mjs ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-020",
+      "sourceTaskID": "P08-T013",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/FinalCacheManifestTests.mjs ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-021",
+      "sourceTaskID": "P08-T014",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/FinalDistributionManifestTests.mjs ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-022",
+      "sourceTaskID": "P08-T015",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/SixStaticCandidateSetTests.mjs ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-023",
+      "sourceTaskID": "P08-T016",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/FormalQEnvironmentPreflightTests.mjs ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-024",
+      "sourceTaskID": "P09-T001",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/QualifiedCandidateSetTests.mjs ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-025",
+      "sourceTaskID": "P09-T002",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter C01Tests --scratch-path /tmp/monacode-planctl/P09-T010.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-026",
+      "sourceTaskID": "P09-T010",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter C02Tests --scratch-path /tmp/monacode-planctl/P09-T011.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-027",
+      "sourceTaskID": "P09-T011",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter C03Tests --scratch-path /tmp/monacode-planctl/P09-T012.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-028",
+      "sourceTaskID": "P09-T012",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter C04Tests --scratch-path /tmp/monacode-planctl/P09-T013.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-029",
+      "sourceTaskID": "P09-T013",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter C05Tests --scratch-path /tmp/monacode-planctl/P09-T014.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-030",
+      "sourceTaskID": "P09-T014",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter C06Tests --scratch-path /tmp/monacode-planctl/P09-T015.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-031",
+      "sourceTaskID": "P09-T015",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter C07Tests --scratch-path /tmp/monacode-planctl/P09-T016.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-032",
+      "sourceTaskID": "P09-T016",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter C08Tests --scratch-path /tmp/monacode-planctl/P09-T017.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-033",
+      "sourceTaskID": "P09-T017",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter C09Tests --scratch-path /tmp/monacode-planctl/P09-T018.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-034",
+      "sourceTaskID": "P09-T018",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter C10Tests --scratch-path /tmp/monacode-planctl/P09-T019.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-035",
+      "sourceTaskID": "P09-T019",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter P00WorkloadTests --scratch-path /tmp/monacode-planctl/P09-T030.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-036",
+      "sourceTaskID": "P09-T030",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter P01WorkloadTests --scratch-path /tmp/monacode-planctl/P09-T031.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-037",
+      "sourceTaskID": "P09-T031",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter P02WorkloadTests --scratch-path /tmp/monacode-planctl/P09-T032.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-038",
+      "sourceTaskID": "P09-T032",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter P03WorkloadTests --scratch-path /tmp/monacode-planctl/P09-T033.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-039",
+      "sourceTaskID": "P09-T033",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter P04WorkloadTests --scratch-path /tmp/monacode-planctl/P09-T034.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-040",
+      "sourceTaskID": "P09-T034",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter P05WorkloadTests --scratch-path /tmp/monacode-planctl/P09-T035.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-041",
+      "sourceTaskID": "P09-T035",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter P06WorkloadTests --scratch-path /tmp/monacode-planctl/P09-T036.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-042",
+      "sourceTaskID": "P09-T036",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter P07WorkloadTests --scratch-path /tmp/monacode-planctl/P09-T037.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-043",
+      "sourceTaskID": "P09-T037",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter P08WorkloadTests --scratch-path /tmp/monacode-planctl/P09-T038.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-044",
+      "sourceTaskID": "P09-T038",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter P09WorkloadTests --scratch-path /tmp/monacode-planctl/P09-T039.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-045",
+      "sourceTaskID": "P09-T039",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter P10WorkloadTests --scratch-path /tmp/monacode-planctl/P09-T040.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-046",
+      "sourceTaskID": "P09-T040",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter P11WorkloadTests --scratch-path /tmp/monacode-planctl/P09-T041.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-047",
+      "sourceTaskID": "P09-T041",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter P12WorkloadTests --scratch-path /tmp/monacode-planctl/P09-T042.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-048",
+      "sourceTaskID": "P09-T042",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter P13WorkloadTests --scratch-path /tmp/monacode-planctl/P09-T043.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-049",
+      "sourceTaskID": "P09-T043",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter LifecycleSoakSanitizerTests --scratch-path /tmp/monacode-planctl/P09-T050.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-050",
+      "sourceTaskID": "P09-T050",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter FailureAndComplexityTests --scratch-path /tmp/monacode-planctl/P09-T051.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-051",
+      "sourceTaskID": "P09-T051",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/xcrun swift test --filter RendererDecisionValidationTests --scratch-path /tmp/monacode-planctl/P09-T052.GREEN.001.PROC.001 ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-052",
+      "sourceTaskID": "P09-T052",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/opt/homebrew/Cellar/node/26.7.0/bin/node --test Tests/PlanStructureTests/FinalReleaseVerdictTests.mjs ⇒ exit 0",
+      "findingIDs": [
+        "CURRENT_RELEASE_EVIDENCE_STALE"
+      ],
+      "id": "VERIFY-053",
+      "sourceTaskID": "P09-T099",
+      "state": "BLOCKED"
+    },
+    {
+      "acceptance": "/usr/bin/test -d Sources/MonaCodeMobile ⇒ exit 0",
+      "findingIDs": [],
+      "id": "MOBILE-001",
+      "sourceTaskID": "MOBILE-00",
+      "state": "TODO"
+    },
+    {
+      "acceptance": "/usr/bin/test -d Sources/MonaCodeMobile ⇒ exit 0",
+      "findingIDs": [],
+      "id": "MOBILE-002",
+      "sourceTaskID": "MOBILE-01",
+      "state": "TODO"
+    },
+    {
+      "acceptance": "/usr/bin/test -d Sources/MonaCodeMobile ⇒ exit 0",
+      "findingIDs": [],
+      "id": "MOBILE-003",
+      "sourceTaskID": "MOBILE-02",
+      "state": "TODO"
+    },
+    {
+      "acceptance": "/usr/bin/test -d Sources/MonaCodeMobile ⇒ exit 0",
+      "findingIDs": [],
+      "id": "MOBILE-004",
+      "sourceTaskID": "MOBILE-03",
+      "state": "TODO"
+    }
+  ]
+}
