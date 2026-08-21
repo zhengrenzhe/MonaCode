@@ -446,4 +446,93 @@ final class MonaCodeModelSurfaceTests: XCTestCase {
             "absent needle yields nil previous match"
         )
     }
+
+    // MARK: - 6. Word delegation to MonaWordClassifier (Task 3)
+
+    /// `getWordAtPosition` must delegate to `MonaWordClassifier` to find the
+    /// maximal word-character run around the position, returning a real range
+    /// (not the Phase-01 stub `nil`). For "hello world", column 1 sits on 'h';
+    /// the run is "hello" spanning columns 1..<6.
+    func testGetWordAtPositionDelegatesToWordResolver() {
+        // "hello world": h=1 e=2 l=3 l=4 o=5 ' '=6 w=7 o=8 r=9 l=10 d=11
+        let model = MonaCodeModel(text: "hello world", uri: MonaURI(scheme: "inmemory", path: "/m"))
+
+        // Column 1 ('h'): backward scan stops at line start, forward scan stops
+        // at the space → "hello" at columns 1..<6.
+        let range = model.getWordAtPosition(MonaPosition(line: 1, column: 1))
+        XCTAssertNotNil(range, "getWordAtPosition returns a real range, not the stub nil")
+        XCTAssertEqual(
+            range,
+            MonaRange(startPosition: MonaPosition(line: 1, column: 1), endPosition: MonaPosition(line: 1, column: 6))
+        )
+
+        // Column 8 ('o' of "world"): backward scan stops at the space (col 6),
+        // forward scan runs to end-of-line → "world" at columns 7..<12.
+        XCTAssertEqual(
+            model.getWordAtPosition(MonaPosition(line: 1, column: 8)),
+            MonaRange(startPosition: MonaPosition(line: 1, column: 7), endPosition: MonaPosition(line: 1, column: 12))
+        )
+
+        // Column 12 (just past 'd'): the position is past the last unit, which
+        // is a word char, so the enclosing run is still "world".
+        XCTAssertEqual(
+            model.getWordAtPosition(MonaPosition(line: 1, column: 12)),
+            MonaRange(startPosition: MonaPosition(line: 1, column: 7), endPosition: MonaPosition(line: 1, column: 12))
+        )
+
+        // Column 6 (the space): not a word character → no enclosing run → nil.
+        XCTAssertNil(
+            model.getWordAtPosition(MonaPosition(line: 1, column: 6)),
+            "a position on a non-word character yields no word"
+        )
+    }
+
+    /// `getWordUntilPosition` returns the run from the word's start up to (not
+    /// including) the position, delegating boundary detection to
+    /// `MonaWordClassifier`. It never returns nil (matching Monaco's
+    /// `getWordUntilPosition`); a position off a word yields a folded range at
+    /// the position.
+    func testGetWordUntilPositionDelegatesToWordResolver() {
+        let model = MonaCodeModel(text: "hello world", uri: MonaURI(scheme: "inmemory", path: "/m"))
+
+        // Column 4 ('l' of "hello"): word start col 1, end at position col 4 →
+        // "hel" at columns 1..<4. Requires the backward scan to find col 1.
+        XCTAssertEqual(
+            model.getWordUntilPosition(MonaPosition(line: 1, column: 4)),
+            MonaRange(startPosition: MonaPosition(line: 1, column: 1), endPosition: MonaPosition(line: 1, column: 4))
+        )
+
+        // Column 1 (first char of "hello"): word-until is empty → folded range
+        // at the position (end == position, not the full word end col 6).
+        XCTAssertEqual(
+            model.getWordUntilPosition(MonaPosition(line: 1, column: 1)),
+            MonaRange(startPosition: MonaPosition(line: 1, column: 1), endPosition: MonaPosition(line: 1, column: 1))
+        )
+
+        // Column 6 (the space): no enclosing word → folded range at col 6
+        // (non-nil, matching Monaco).
+        XCTAssertEqual(
+            model.getWordUntilPosition(MonaPosition(line: 1, column: 6)),
+            MonaRange(startPosition: MonaPosition(line: 1, column: 6), endPosition: MonaPosition(line: 1, column: 6))
+        )
+    }
+
+    /// Word resolution is per-line: a position on line 2 reads line 2's UTF-16
+    /// content and finds the word there, proving `getLineContent(line)` feeds
+    /// the scan (not the whole model text).
+    func testGetWordAtPositionReadsThePositionLine() {
+        // Line 1 = "ab cd", line 2 = "ef gh".
+        let model = MonaCodeModel(text: "ab cd\nef gh", uri: MonaURI(scheme: "inmemory", path: "/m"))
+
+        // Line 2 "ef gh": e=1 f=2 ' '=3 g=4 h=5. Column 4 ('g') → "gh" 4..<6.
+        XCTAssertEqual(
+            model.getWordAtPosition(MonaPosition(line: 2, column: 4)),
+            MonaRange(startPosition: MonaPosition(line: 2, column: 4), endPosition: MonaPosition(line: 2, column: 6))
+        )
+        // Column 2 ('f'): the whole word "ef" at 1..<3 on line 2.
+        XCTAssertEqual(
+            model.getWordAtPosition(MonaPosition(line: 2, column: 2)),
+            MonaRange(startPosition: MonaPosition(line: 2, column: 1), endPosition: MonaPosition(line: 2, column: 3))
+        )
+    }
 }

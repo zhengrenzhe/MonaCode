@@ -226,9 +226,9 @@ final class Phase01ModelConformanceTests: XCTestCase {
         XCTAssertTrue(model.isValidRange(MonaRange(startLine: 1, startColumn: 1, endLine: 1, endColumn: 2)))
 
         // Search / word / language · 6 (search delegated to MonaLiteralSearch
-        // in Task 2; word remains a Phase 02 stub; language is always live.)
-        // Model text is "  line1\n\tline2\n": "line" appears at line 1 cols
-        // 3..6 and line 2 cols 2..5 (case-sensitive, literal).
+        // in Task 2; word delegated to MonaWordClassifier in Task 3; language
+        // is always live.) Model text is "  line1\n\tline2\n": "line" appears
+        // at line 1 cols 3..6 and line 2 cols 2..5 (case-sensitive, literal).
         let searchMatches = model.findMatches(
             searchString: "line",
             searchScope: .fullModel,
@@ -262,8 +262,17 @@ final class Phase01ModelConformanceTests: XCTestCase {
             "findPreviousMatch delegates to MonaLiteralSearch.findPrevious from end of text"
         )
         XCTAssertEqual(model.getLanguageId(), "plaintext", "plaintext is the always-present fallback")
-        XCTAssertNil(model.getWordAtPosition(MonaPosition(line: 1, column: 3)))
-        XCTAssertNil(model.getWordUntilPosition(MonaPosition(line: 1, column: 3)))
+        // Column 6 sits on 'e' of "line1" (line 1 = "  line1"); the maximal
+        // word run is "line1" at columns 3..<8 (Task 3 wires word members to
+        // MonaWordClassifier, so these now return real ranges, not stub nil).
+        XCTAssertEqual(
+            model.getWordAtPosition(MonaPosition(line: 1, column: 6)),
+            MonaRange(startPosition: MonaPosition(line: 1, column: 3), endPosition: MonaPosition(line: 1, column: 8))
+        )
+        XCTAssertEqual(
+            model.getWordUntilPosition(MonaPosition(line: 1, column: 6)),
+            MonaRange(startPosition: MonaPosition(line: 1, column: 3), endPosition: MonaPosition(line: 1, column: 6))
+        )
 
         // Decorations · 12 (Phase 02 stubs)
         XCTAssertTrue(model.deltaDecorations([], []).isEmpty)

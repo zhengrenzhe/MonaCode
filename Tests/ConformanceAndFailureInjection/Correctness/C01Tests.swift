@@ -204,7 +204,13 @@ final class C01Tests: XCTestCase {
 
         // Search / word / language · 6
         XCTAssertEqual(model.getLanguageId(), "plaintext", "plaintext is the always-present fallback")
-        XCTAssertNil(model.getWordAtPosition(MonaPosition(line: 1, column: 3)))
+        // Column 6 sits on 'e' of "line1" (line 1 = "  line1"); the maximal
+        // word run is "line1" at columns 3..<8 (Task 3 wires word members to
+        // MonaWordClassifier, returning a real range, not the stub nil).
+        XCTAssertEqual(
+            model.getWordAtPosition(MonaPosition(line: 1, column: 6)),
+            MonaRange(startPosition: MonaPosition(line: 1, column: 3), endPosition: MonaPosition(line: 1, column: 8))
+        )
 
         // Decorations · 12 (the model decoration surface)
         XCTAssertTrue(model.deltaDecorations([], []).isEmpty)

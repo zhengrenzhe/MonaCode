@@ -66,7 +66,8 @@ public final class MonaCodeModel {
     private var searchEngine: MonaLiteralSearch = MonaLiteralSearch(needle: [])
 
     /// The word classifier (Monaco's default word-separator profile). Backs
-    /// `getWordAtPosition` / `getWordUntilPosition` once Task 2 wires them.
+    /// `getWordAtPosition` / `getWordUntilPosition`, which Task 3 wires to
+    /// delegate boundary detection to this classifier.
     private var wordResolver: MonaWordClassifier = MonaWordClassifier()
 
     /// The decoration collection. Backs the 12 decoration members once Task 3
@@ -472,14 +473,79 @@ public final class MonaCodeModel {
         return languageIdValue
     }
 
-    /// Phase 02 word stub. Returns `nil`.
-    public func getWordAtPosition(_ position: MonaPosition) -> MonaRange? {
-        return nil
+    // MARK: - Word · 2 members (Task 3: delegated to MonaWordClassifier)
+
+    /// Resolves the maximal run of word characters on `position`'s line that
+    /// encloses the position, delegating each code unit's classification to
+    /// `wordResolver` (`MonaWordClassifier`). Returns `nil` when the position
+    /// is not on a word character.
+    ///
+    /// The scan reads the line's raw UTF-16 units via
+    /// `pieceTree.getLineContent(_:)` and walks outward from `position.column`
+    /// (1-based, raw UTF-16 offset): backward while the unit just before the
+    /// start is a word character, forward while the unit at the end is a word
+    /// character. Both whitespace and configured separators terminate the run,
+    /// matching Monaco's default word regex (`[^\s<separators>]+`). The
+    /// returned range is `(line, startColumn)..(line, endColumn)` where
+    /// `endColumn` is the column just past the run's last unit (exclusive end,
+    /// matching Monaco's `IWordAtPosition.endColumn`).
+    ///
+    /// A position just past the last unit (`column == units.count + 1`) is
+    /// enclosed by the run when the last unit is a word character (Monaco's
+    /// regex `lastIndex >= pos` end-of-line containment).
+    private func wordRangeContaining(_ position: MonaPosition) -> MonaRange? {
+        let units = pieceTree.getLineContent(position.line)
+        guard !units.isEmpty else { return nil }
+        // Clamp column to the valid 1-based range [1, units.count + 1].
+        let column = min(max(position.column, 1), units.count + 1)
+        // The position is "on" a word character when the unit at index
+        // (column - 1) is a word character, or — when column is just past the
+        // last unit — the last unit is a word character.
+        let posIndex = column - 1
+        let onWordChar: Bool
+        if posIndex < units.count {
+            onWordChar = wordResolver.isWordCharacter(units[posIndex])
+        } else {
+            onWordChar = wordResolver.isWordCharacter(units[units.count - 1])
+        }
+        guard onWordChar else { return nil }
+        // Backward scan: extend the start left while the unit just before it is
+        // a word character.
+        var startColumn = column
+        while startColumn > 1, wordResolver.isWordCharacter(units[startColumn - 2]) {
+            startColumn -= 1
+        }
+        // Forward scan: extend the end right while the unit at it is a word
+        // character.
+        var endColumn = column
+        while endColumn <= units.count, wordResolver.isWordCharacter(units[endColumn - 1]) {
+            endColumn += 1
+        }
+        return MonaRange(
+            startPosition: MonaPosition(line: position.line, column: startColumn),
+            endPosition: MonaPosition(line: position.line, column: endColumn)
+        )
     }
 
-    /// Phase 02 word stub. Returns `nil`.
+    /// Returns the word at `position` (the maximal word-character run enclosing
+    /// it), delegating boundary detection to `MonaWordClassifier`. Returns
+    /// `nil` when the position is not on a word character (it sits on a
+    /// separator, whitespace, or past the end of a line whose last unit is not
+    /// a word character).
+    public func getWordAtPosition(_ position: MonaPosition) -> MonaRange? {
+        return wordRangeContaining(position)
+    }
+
+    /// Returns the run from the word's start up to (not including) `position`,
+    /// delegating boundary detection to `MonaWordClassifier`. Never returns
+    /// `nil`: when the position is not on a word, a folded range at the
+    /// position is returned (matching Monaco's `getWordUntilPosition`, which
+    /// always returns a non-null `IWordAtPosition`).
     public func getWordUntilPosition(_ position: MonaPosition) -> MonaRange? {
-        return nil
+        guard let word = wordRangeContaining(position) else {
+            return MonaRange(startPosition: position, endPosition: position)
+        }
+        return MonaRange(startPosition: word.startPosition, endPosition: position)
     }
 
     // MARK: - Decorations · 12 members (Phase 02 stubs)
