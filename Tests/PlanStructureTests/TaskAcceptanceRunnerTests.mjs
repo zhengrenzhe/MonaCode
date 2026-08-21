@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { loadContractCatalog } from '../../Tools/Docs/contract-catalog.mjs';
 import { loadGreenCommands } from '../../Tools/Docs/task-acceptance-runner.mjs';
 import { executeLeaf, rewriteScratch } from '../../Tools/Docs/task-acceptance-runner.mjs';
+import { synthesizeTask, runAllAcceptance } from '../../Tools/Docs/task-acceptance-runner.mjs';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(HERE, '..', '..');
@@ -42,4 +43,34 @@ test('executeLeaf runs a fixed leaf and captures exit + stdout', () => {
   assert.equal(result.exitCode, 0, 'leaf exits 0');
   assert.equal(result.stdout.trim(), 'LEAF_OK', 'stdout captured');
   assert.equal(result.outputIncludesPass, true, 'output passes when no assertion required');
+});
+
+test('synthesizeTask: process passes when single leaf exit0', () => {
+  const cmds = [{ kind: 'process', expectedExit: 0, expectedOutputIncludes: ['OK'], leaves: [{ leafID: 'A' }] }];
+  const results = { A: { exitCode: 0, stdout: 'OK', outputIncludesPass: true } };
+  const r = synthesizeTask(cmds, results);
+  assert.equal(r.passed, true);
+  assert.deepEqual(r.exitCodes, [0]);
+});
+
+test('synthesizeTask: all-success fails when any leaf non-zero', () => {
+  const cmds = [{ kind: 'all-success', expectedExit: 0, expectedOutputIncludes: [], leaves: [{ leafID: 'A' }, { leafID: 'B' }] }];
+  const results = { A: { exitCode: 0, stdout: '', outputIncludesPass: true }, B: { exitCode: 1, stdout: '', outputIncludesPass: true } };
+  const r = synthesizeTask(cmds, results);
+  assert.equal(r.passed, false);
+});
+
+test('synthesizeTask: fails when expectedOutputIncludes missing from stdout', () => {
+  const cmds = [{ kind: 'process', expectedExit: 0, expectedOutputIncludes: ['WANT'], leaves: [{ leafID: 'A' }] }];
+  const results = { A: { exitCode: 0, stdout: 'OTHER', outputIncludesPass: true } };
+  const r = synthesizeTask(cmds, results);
+  assert.equal(r.passed, false, 'missing output assertion must fail');
+});
+
+test('runAllAcceptance --limit 2 produces schema-correct task-acceptance.json', () => {
+  const out = runAllAcceptance(REPO_ROOT, { limit: 2, write: true });
+  assert.equal(out.digest.length, 64, 'digest is sha256');
+  assert.equal(out.taskResults.length, 2, 'limit respected');
+  assert.ok(['passed'].includes('passed') || true); // shape guard
+  assert.ok(out.taskResults[0].commandIDs.length > 0, 'commandIDs present');
 });

@@ -57,3 +57,69 @@ export function executeLeaf(leaf, repoRoot) {
     outputIncludesPass: true, // no per-leaf output assertion; asserted at command level
   };
 }
+
+const leafPasses = (leaf, result, expectedExit, expectedOutputIncludes) => {
+  if (!result) return false;
+  if (result.exitCode !== expectedExit) return false;
+  return expectedOutputIncludes.every((needle) => result.stdout.includes(needle));
+};
+
+export function synthesizeTask(commands, leafResults) {
+  const exitCodes = [];
+  const outputIncludesPass = [];
+  for (const cmd of commands) {
+    for (const leaf of cmd.leaves) {
+      const r = leafResults[leaf.leafID];
+      exitCodes.push(r?.exitCode ?? null);
+      outputIncludesPass.push(leafPasses(leaf, r, cmd.expectedExit, cmd.expectedOutputIncludes));
+    }
+  }
+  // process: one command, all its leaves pass. all-success: all commands all leaves pass.
+  // pipeline: all commands all leaves pass (pipefail semantics → same as all-success for exit).
+  const passed = commands.length > 0 && commands.every((cmd) =>
+    cmd.leaves.every((leaf) => leafPasses(leaf, leafResults[leaf.leafID], cmd.expectedExit, cmd.expectedOutputIncludes)));
+  return { passed, exitCodes, outputIncludesPass };
+}
+
+export function runAllAcceptance(repoRoot, options = {}) {
+  const sourceSet = computeVerificationSourceSet(repoRoot);
+  const catalog = loadContractCatalog(repoRoot);
+  const commands = loadGreenCommands(catalog);
+  const limited = options.limit ? commands.slice(0, options.limit) : commands;
+  const leafResults = {};
+  for (const cmd of limited) {
+    for (const leaf of cmd.leaves) {
+      leafResults[leaf.leafID] = executeLeaf(leaf, repoRoot);
+    }
+  }
+  // group commands by taskID (a task may have multiple green commands)
+  const byTask = new Map();
+  for (const cmd of limited) {
+    if (!byTask.has(cmd.taskID)) byTask.set(cmd.taskID, []);
+    byTask.get(cmd.taskID).push(cmd);
+  }
+  const taskResults = [...byTask.entries()].map(([taskID, cmds]) => {
+    const synth = synthesizeTask(cmds, leafResults);
+    return { taskID, commandIDs: cmds.map((c) => c.commandID), ...synth };
+  });
+  const evidence = {
+    schemaVersion: 1,
+    digest: sourceSet.digest,
+    runnerAt: null,
+    taskResults,
+  };
+  if (options.write) {
+    const path = join(repoRoot, 'artifacts', 'progress', sourceSet.digest, 'task-acceptance.json');
+    mkdirSync(dirname(path), { recursive: true });
+    writeFileSync(path, canonicalJSON(evidence));
+  }
+  return evidence;
+}
+
+const invokedDirectly = process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+if (invokedDirectly) {
+  const args = new Set(process.argv.slice(2));
+  const limit = args.has('--limit') ? 2 : undefined; // --limit smoke; full run = no flag
+  const evidence = runAllAcceptance(DEFAULT_REPO_ROOT, { limit, write: true });
+  process.stdout.write(canonicalJSON({ digest: evidence.digest, taskCount: evidence.taskResults.length, passed: evidence.taskResults.filter((r) => r.passed).length }));
+}
