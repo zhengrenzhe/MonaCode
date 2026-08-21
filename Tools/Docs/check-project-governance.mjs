@@ -114,6 +114,7 @@ export function scanActiveProgressSources({ files, exclusions }) {
     if (
       path.startsWith('docs/contracts/')
       || path.startsWith('docs/implementation-phases/')
+      || path.startsWith('docs/superpowers/')
       || path.startsWith('artifacts/')
       || path.startsWith('.build/')
     ) {
