@@ -26,10 +26,13 @@
 //                              `MonaEmitter` (Base, P01-T005). These are the
 //                              global editor/model sequences.
 //   - diff / multi-diff      — `createDiffEditor` / `createMultiFileDiffEditor`
-//                              are declaration slots preserved from P05-T001's
-//                              graph, but their CONSTRUCTION is behind a Phase
-//                              07 adapter (throws `.phase07NotWired` until
-//                              Phase 07 wires the diff engine).
+//                              construct and return a `MonaDiffEditorView` /
+//                              `MonaMultiDiffEditorView` (P07-T009/T010 wiring:
+//                              the diff engine's views are constructed by the
+//                              factory; `createDiffEditor` attaches the
+//                              original + modified models when both are
+//                              provided, borrowing them weakly via each
+//                              sub-editor's `MonaEditorAttachment`).
 //
 // Lifetime invariants (carried forward from P04-T014/T015):
 //   1. Model lifetime is independent from editor attachment — the factory
@@ -58,10 +61,11 @@ import MonaCode
 /// Errors thrown by `MonaEditorFactory` construction adapters.
 public enum MonaEditorFactoryError: Error, Equatable, Sendable {
 
-    /// The construction adapter is not wired until Phase 07. Thrown by
-    /// `createDiffEditor` and `createMultiFileDiffEditor` — the declaration
-    /// slots are preserved, but no instance is constructible until the Phase
-    /// 07 diff engine lands.
+    /// Reserved construction-adapter error case. The diff / multi-diff factory
+    /// methods (`createDiffEditor` / `createMultiFileDiffEditor`) are now wired
+    /// (P07-T009/T010) and no longer throw this case; it is retained for any
+    /// future construction-adapter error path and for source-stability of the
+    /// public error surface.
     case phase07NotWired
 }
 
@@ -78,10 +82,11 @@ public enum MonaEditorFactoryError: Error, Equatable, Sendable {
 /// `onDidDisposeEditor`, `onDidCreateModel`, `onWillDisposeModel`) fire via
 /// `MonaEmitter`.
 ///
-/// Diff and multi-file diff construction is behind a Phase 07 adapter:
-/// `createDiffEditor` and `createMultiFileDiffEditor` throw
-/// `.phase07NotWired` until Phase 07 wires the diff engine. The declaration
-/// slots (`MonaDiffEditorView`, `MonaMultiDiffEditorView`) are preserved.
+/// Diff and multi-file diff construction is wired through the factory:
+/// `createDiffEditor` returns a `MonaDiffEditorView` (attaching the original +
+/// modified models when both are provided) and `createMultiFileDiffEditor`
+/// returns a `MonaMultiDiffEditorView`. The data source for a multi-file diff
+/// view is attached separately via `MonaMultiDiffEditorView.attach(dataSource:)`.
 @MainActor
 public final class MonaEditorFactory {
 
@@ -268,30 +273,43 @@ public final class MonaEditorFactory {
         editors.removeAll()
     }
 
-    // MARK: - Diff / multi-diff construction (Phase 07 adapters)
+    // MARK: - Diff / multi-diff construction (P07-T009/T010 wiring)
     //
     // The declaration slots (`MonaDiffEditorView`, `MonaMultiDiffEditorView`)
-    // are preserved in `MonaEditorInstanceAdapters.swift`. Their CONSTRUCTION
-    // is behind a Phase 07 adapter: these methods throw `.phase07NotWired`
-    // until the Phase 07 diff engine is wired. The methods exist so the
-    // public declaration graph records the factory surface; they are never
-    // silent no-ops (they throw rather than returning an inert value).
+    // live in `Views/MonaDiffEditorView.swift` / `Views/MonaMultiDiffEditorView.swift`.
+    // These factory methods construct and return them. `createDiffEditor`
+    // attaches the original + modified models to the view's two sub-editors
+    // (borrow — the view never owns either model's lifetime) when both are
+    // provided. `createMultiFileDiffEditor` constructs the view; its data
+    // source is attached separately via `MonaMultiDiffEditorView
+    // .attach(dataSource:)`. The `options` parameter is the P05-T005 option
+    // snapshot, reserved for future diff-options wiring (the view uses its
+    // default options today, mirroring `create(model:options:)`).
 
-    /// `editor.createDiffEditor` — creates a diff editor. Phase 07 adapter:
-    /// throws `.phase07NotWired` until the Phase 07 diff engine is wired.
+    /// `editor.createDiffEditor` — constructs a `MonaDiffEditorView` (P07-T009)
+    /// and, when both `original` and `modified` are provided, attaches them to
+    /// the view's two sub-editors (weak/borrow — lifetime independent). The
+    /// view composes two `MonaCodeEditorView` sub-editors and one shared
+    /// `MonaDiffCoordinator` (P07-T002).
     public func createDiffEditor(
         original: MonaCodeModel?,
         modified: MonaCodeModel?,
         options: MonaOptionSnapshot?
-    ) throws -> MonaDiffEditorView {
-        throw MonaEditorFactoryError.phase07NotWired
+    ) -> MonaDiffEditorView {
+        guard let original, let modified else {
+            return MonaDiffEditorView(frame: NSRect(x: 0, y: 0, width: 0, height: 0))
+        }
+        let diffView = MonaDiffEditorView(frame: NSRect(x: 0, y: 0, width: 0, height: 0))
+        diffView.attach(original: original, modified: modified)
+        return diffView
     }
 
-    /// `editor.createMultiFileDiffEditor` — creates a multi-file diff editor
-    /// (F1-R3 `multiFileDiff.nativeReturnType` = `MonaMultiDiffEditorView`).
-    /// Phase 07 adapter: throws `.phase07NotWired` until Phase 07 wires the
-    /// multi-diff navigator.
-    public func createMultiFileDiffEditor(options: MonaOptionSnapshot?) throws -> MonaMultiDiffEditorView {
-        throw MonaEditorFactoryError.phase07NotWired
+    /// `editor.createMultiFileDiffEditor` — constructs a
+    /// `MonaMultiDiffEditorView` (P07-T010; F1-R3
+    /// `multiFileDiff.nativeReturnType` = `MonaMultiDiffEditorView`). The data
+    /// source is attached separately via `attach(dataSource:)`; the view
+    /// reports `isAttached == false` until then.
+    public func createMultiFileDiffEditor(options: MonaOptionSnapshot?) -> MonaMultiDiffEditorView {
+        return MonaMultiDiffEditorView(frame: NSRect(x: 0, y: 0, width: 0, height: 0))
     }
 }

@@ -117,9 +117,10 @@ public enum MonaEditorGoToDiffDestination: Sendable {
 // .createDiffEditor` / `createMultiFileDiffEditor` return them, the manifest
 // records `multiFileDiffNativeReturnType` as `MonaMultiDiffEditorView`, and
 // `MonaEditorInstanceSurfaceTests` references the metatypes. The factory
-// construction adapter still throws `.phase07NotWired` (P07-T009 keeps the
-// slot — the view exists; full factory construction wiring is a later
-// concern).
+// construction is wired (P07-T009/T010): both methods construct and return
+// the concrete views (the diff view attaches the original + modified models
+// when both are provided; the multi-diff view's data source is attached
+// separately).
 
 // MARK: - The five F1-R3 instance-interface surface protocols
 //

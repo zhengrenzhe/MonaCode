@@ -9,12 +9,13 @@
 // and routes the one mutating command (`diffEditor.revert`) through the
 // transaction gateway.
 //
-// Diff construction itself is behind a Phase 07 adapter: P05-T012 preserved the
+// Diff construction is wired through the factory: P05-T012 preserved the
 // `MonaDiffEditorView` / `MonaMultiDiffEditorView` declaration slots and
-// `MonaEditorFactory.createDiffEditor` throws `.phase07NotWired` until the
-// Phase 07 diff engine is wired. This feature registers the diff-editor
+// `MonaEditorFactory.createDiffEditor` / `createMultiFileDiffEditor` return
+// concrete `MonaDiffEditorView` / `MonaMultiDiffEditorView` instances (the
+// Phase 07 diff-engine wiring). This feature registers the diff-editor
 // command/contribution slice OVER those slots — it does NOT implement diff
-// logic. A diff-editor instance is identified by its instance id (the would-be
+// logic. A diff-editor instance is identified by its instance id (the
 // `MonaDiffEditorView`); the registered command slice is retained per instance
 // so a disposed instance's slice can be released.
 //

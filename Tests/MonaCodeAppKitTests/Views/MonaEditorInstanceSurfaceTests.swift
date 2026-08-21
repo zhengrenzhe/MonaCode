@@ -5,8 +5,8 @@
 // Verifies the editor factory (create/attach/retrieve/dispose + global
 // editor/model event sequences via `MonaEmitter`) and the five F1-R3
 // instance-interface surfaces (exact retained member counts + native type
-// adaptations), with diff/multi-diff construction kept behind Phase 07
-// adapters while their declaration slots are preserved.
+// adaptations), with diff/multi-diff construction wired through the factory to
+// concrete `MonaDiffEditorView` / `MonaMultiDiffEditorView` instances.
 //
 // Test contract (P05-T012): 1 case file. The case proves:
 //   1. editor create/attach/retrieve/dispose lifecycle;
@@ -19,8 +19,9 @@
 //      ClientPoint -> CGPoint, DOMWidget -> the widget NSView protocol,
 //      KeyboardEvent -> the keyboard event snapshot, MouseEvent -> the pointer
 //      event snapshot, FontInfoTarget -> the native font-info target);
-//   5. diff/multi-diff declaration slots are preserved, but their construction
-//      is behind a Phase 07 adapter (unavailable until Phase 07 wires it).
+//   5. diff/multi-diff factory returns concrete views (Phase 07 adapter closed
+//      — `createDiffEditor` / `createMultiFileDiffEditor` return
+//      `MonaDiffEditorView` / `MonaMultiDiffEditorView`).
 
 import XCTest
 import AppKit
@@ -303,41 +304,53 @@ final class MonaEditorInstanceSurfaceTests: XCTestCase {
         }
     }
 
-    // MARK: - 5. Diff/multi-diff declaration slots preserved, Phase 07 adapter
+    // MARK: - 5. Diff/multi-diff factory wired to concrete views
 
     /// The diff editor and multi-file diff editor declaration slots exist as
-    /// native types, but their construction is behind a Phase 07 adapter and
-    /// throws until Phase 07 wires it.
-    func testDiffAndMultiDiffSlotsPreservedButConstructionBehindPhase07() {
+    /// native types AND their construction is wired through the factory: the
+    /// factory returns concrete `MonaDiffEditorView` / `MonaMultiDiffEditorView`
+    /// instances (Phase 07 adapter closed — no longer throws).
+    func testDiffAndMultiDiffFactoryReturnsConcreteViews() {
         // Declaration slots exist (types are real, not absent).
         _ = MonaDiffEditorView.self
         _ = MonaMultiDiffEditorView.self
 
         let factory = MonaEditorFactory()
 
-        // createDiffEditor throws .phase07NotWired.
-        do {
-            _ = try factory.createDiffEditor(
-                original: nil,
-                modified: nil,
-                options: nil
-            )
-            XCTFail("createDiffEditor must throw until Phase 07 wires it")
-        } catch MonaEditorFactoryError.phase07NotWired {
-            // expected
-        } catch {
-            XCTFail("createDiffEditor must throw .phase07NotWired, got: \(error)")
-        }
+        // createDiffEditor returns a MonaDiffEditorView. With no models the
+        // view reports isAttached == false (both sub-editors unattached).
+        let diffView = factory.createDiffEditor(
+            original: nil,
+            modified: nil,
+            options: nil
+        )
+        XCTAssertFalse(diffView.isAttached,
+                       "diff view with no models must report isAttached == false")
 
-        // createMultiFileDiffEditor throws .phase07NotWired.
-        do {
-            _ = try factory.createMultiFileDiffEditor(options: nil)
-            XCTFail("createMultiFileDiffEditor must throw until Phase 07 wires it")
-        } catch MonaEditorFactoryError.phase07NotWired {
-            // expected
-        } catch {
-            XCTFail("createMultiFileDiffEditor must throw .phase07NotWired, got: \(error)")
-        }
+        // createDiffEditor attaches both models when provided (borrow — the
+        // view never owns either model's lifetime).
+        let original = MonaCodeModel(
+            text: "a",
+            uri: MonaURI(scheme: "inmemory", path: "/diff/original")
+        )
+        let modified = MonaCodeModel(
+            text: "b",
+            uri: MonaURI(scheme: "inmemory", path: "/diff/modified")
+        )
+        let attachedDiffView = factory.createDiffEditor(
+            original: original,
+            modified: modified,
+            options: nil
+        )
+        XCTAssertTrue(attachedDiffView.isAttached,
+                      "diff view with both models must report isAttached == true")
+
+        // createMultiFileDiffEditor returns a MonaMultiDiffEditorView (the
+        // F1-R3 multiFileDiff.nativeReturnType). With no data source the view
+        // reports isAttached == false.
+        let multiView = factory.createMultiFileDiffEditor(options: nil)
+        XCTAssertFalse(multiView.isAttached,
+                       "multi-diff view with no data source must report isAttached == false")
 
         // The multi-file diff nativeReturnType is recorded as MonaMultiDiffEditorView
         // (the F1-R3 multiFileDiff.nativeReturnType) — the slot is preserved.

@@ -364,7 +364,7 @@ test('evidence capture runs the seven approved commands exactly once and fails c
   assert.equal(evidence.taskResults.length, 205);
   assert.equal(evidence.taskResults[0].id, 'VERIFY-001');
   assert.equal(evidence.taskResults[0].state, 'DONE');
-  assert.equal(evidence.integrationFindings.length, 8);
+  assert.equal(evidence.integrationFindings.length, 7);
   assert.equal(evidence.commands[0].status, 'accepted-known-product-failure');
 
   let changedFailure;

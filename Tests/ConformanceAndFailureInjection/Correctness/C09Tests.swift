@@ -334,12 +334,13 @@ final class C09Tests: XCTestCase {
         Self.recordNativeOutput("boundary:suggestionBounds=300/200/50/20,rawUnit:40distinctServiceIds")
     }
 
-    // ── 2c. Native-adapted assertion + failure row ──
+    // ── 2c. Native-adapted assertion + diff factory wiring ──
 
     /// The native-adapted assertion: the editor factory creates an editor with
-    // a model and the host environment initializes once. The failure row: the
-    // factory's diff editor construction throws `.phase07NotWired` (the
-    // declaration slot is preserved but no instance is constructible).
+    // a model and the host environment initializes once. The diff factory
+    // wiring: `createDiffEditor` / `createMultiFileDiffEditor` return concrete
+    // `MonaDiffEditorView` / `MonaMultiDiffEditorView` instances (Phase 07
+    // adapter closed — no longer throws `.phase07NotWired`).
     func testC09_NativeAdaptedAssertionAndFailureRows() throws {
         // Native-adapted: factory creates a code editor from a model.
         let factory = MonaEditorFactory()
@@ -349,23 +350,19 @@ final class C09Tests: XCTestCase {
         XCTAssertFalse(editor.id.isEmpty, "editor has a non-empty id (native-adapted)")
         Self.recordNativeOutput("nativeAdapted:factory.create=editor.id=\(editor.id.prefix(20))")
 
-        // Failure row 1: createDiffEditor throws .phase07NotWired.
-        XCTAssertThrowsError(try factory.createDiffEditor(
-            original: model, modified: model, options: nil)) { error in
-            guard case .phase07NotWired = (error as? MonaEditorFactoryError) else {
-                XCTFail("expected .phase07NotWired, got \(error)")
-                return
-            }
-        }
+        // Diff factory wiring: createDiffEditor returns a MonaDiffEditorView
+        // and attaches both models (borrow — lifetime independent).
+        let diffView = factory.createDiffEditor(
+            original: model, modified: model, options: nil)
+        XCTAssertTrue(diffView.isAttached,
+                      "diff view with both models must report isAttached == true")
 
-        // Failure row 2: createMultiFileDiffEditor throws .phase07NotWired.
-        XCTAssertThrowsError(try factory.createMultiFileDiffEditor(options: nil)) { error in
-            guard case .phase07NotWired = (error as? MonaEditorFactoryError) else {
-                XCTFail("expected .phase07NotWired, got \(error)")
-                return
-            }
-        }
-        Self.recordNativeOutput("failureRows:diffEditor+multiDiffEditor=phase07NotWired")
+        // Multi-diff factory wiring: createMultiFileDiffEditor returns a
+        // MonaMultiDiffEditorView (data source attached separately).
+        let multiView = factory.createMultiFileDiffEditor(options: nil)
+        XCTAssertFalse(multiView.isAttached,
+                        "multi-diff view with no data source must report isAttached == false")
+        Self.recordNativeOutput("wiredRows:diffEditor+multiDiffEditor=concreteViews")
     }
 
     // MARK: Operation 3 — Bind evidence manifest
