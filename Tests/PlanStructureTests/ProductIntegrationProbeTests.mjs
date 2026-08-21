@@ -206,7 +206,14 @@ public protocol MonaEditorIBaseMouseTarget {}
     path: PATHS.publicAPI,
     seed: RESOLVED_PUBLIC_API
       .replace(/public protocol MonaLanguagesCodeActionContext \{[^}]*\}/, 'public protocol MonaLanguagesCodeActionContext {}')
-      .replace(/public struct MonaLanguagesProviderResult \{[^}]*\}/, 'public struct MonaLanguagesProviderResult {}'),
+      .replace(/public struct MonaLanguagesProviderResult \{[^}]*\}/, 'public struct MonaLanguagesProviderResult {}')
+      .replace(/public protocol MonaLanguagesHoverContext \{[^}]*\}/, 'public protocol MonaLanguagesHoverContext {}')
+      .replace(/public protocol MonaLanguagesCompletionContext \{[^}]*\}/, 'public protocol MonaLanguagesCompletionContext {}')
+      .replace(/public protocol MonaLanguagesInlineCompletionContext \{[^}]*\}/, 'public protocol MonaLanguagesInlineCompletionContext {}')
+      .replace(/public protocol MonaLanguagesSignatureHelpResult \{[^}]*\}/, 'public protocol MonaLanguagesSignatureHelpResult {}')
+      .replace(/public protocol MonaLanguagesSignatureHelpContext \{[^}]*\}/, 'public protocol MonaLanguagesSignatureHelpContext {}')
+      .replace(/public protocol MonaLanguagesReferenceContext \{[^}]*\}/, 'public protocol MonaLanguagesReferenceContext {}')
+      .replace(/public protocol MonaLanguagesFoldingContext \{[^}]*\}/, 'public protocol MonaLanguagesFoldingContext {}'),
   },
   {
     id: 'FEATURE_ACTIVATION_PATH_ABSENT',
@@ -263,14 +270,10 @@ test('current repository findings and exact task bindings are source-backed', ()
 
   assert.deepEqual([...byID.keys()].sort(), [
     'CURRENT_RELEASE_EVIDENCE_STALE',
-    'LANGUAGE_CONTEXT_TYPES_EMPTY',
     'SAMPLE_HOST_DIFF_ACTIVATION_ABSENT',
   ]);
   assert.deepEqual(byID.get('SAMPLE_HOST_DIFF_ACTIVATION_ABSENT').taskIDs, [
     'P07-T009', 'P07-T010',
-  ]);
-  assert.deepEqual(byID.get('LANGUAGE_CONTEXT_TYPES_EMPTY').taskIDs, [
-    'P05-T001', 'P05-T013', 'P06-T005',
   ]);
 
   const phase89 = loadContractCatalog(REPO_ROOT).planTasks
@@ -296,7 +299,7 @@ test('probe CLI emits canonical parseable JSON and exits 1 for current findings'
 
   assert.equal(result.status, 1, result.stderr);
   const parsed = JSON.parse(result.stdout);
-  assert.equal(parsed.findings.length, 3);
+  assert.equal(parsed.findings.length, 2);
   assert.deepEqual(
     parsed.findings.map((finding) => finding.id),
     parsed.findings.map((finding) => finding.id).sort(),

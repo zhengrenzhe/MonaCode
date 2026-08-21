@@ -4577,7 +4577,7 @@ public func monaLanguagesRegisterInlayHintsProvider() async throws {}
 //   - optionality: MonaPresence<T> / MonaNullable<T> / MonaNullish<T> per F1-R5
 //   - overloads: preserved per pinned declaration SHA; no coalescing
 //   - value identity: struct/protocol shape
-public protocol MonaLanguagesCodeActionContext {}
+public protocol MonaLanguagesCodeActionContext { var trigger: Int { get } }
 
 // PATH: languages.CodeActionProvider
 // ORDINAL: 47
@@ -4862,7 +4862,10 @@ public protocol MonaLanguagesIState {}
 //   - optionality: MonaPresence<T> / MonaNullable<T> / MonaNullish<T> per F1-R5
 //   - overloads: preserved per pinned declaration SHA; no coalescing
 //   - value identity: struct/protocol shape
-public struct MonaLanguagesProviderResult {}
+public struct MonaLanguagesProviderResult {
+    public let value: Any
+    public init(value: Any) { self.value = value }
+}
 
 // PATH: languages.Hover
 // ORDINAL: 66
@@ -4907,7 +4910,7 @@ public protocol MonaLanguagesHoverProvider {}
 //   - optionality: MonaPresence<T> / MonaNullable<T> / MonaNullish<T> per F1-R5
 //   - overloads: preserved per pinned declaration SHA; no coalescing
 //   - value identity: struct/protocol shape
-public protocol MonaLanguagesHoverContext {}
+public protocol MonaLanguagesHoverContext { var verbosity: Int { get } }
 
 // PATH: languages.HoverVerbosityRequest
 // ORDINAL: 69
@@ -5102,7 +5105,7 @@ public enum MonaLanguagesCompletionTriggerKind {}
 //   - optionality: MonaPresence<T> / MonaNullable<T> / MonaNullish<T> per F1-R5
 //   - overloads: preserved per pinned declaration SHA; no coalescing
 //   - value identity: struct/protocol shape
-public protocol MonaLanguagesCompletionContext {}
+public protocol MonaLanguagesCompletionContext { var triggerKind: Int { get } }
 
 // PATH: languages.CompletionItemProvider
 // ORDINAL: 82
@@ -5162,7 +5165,7 @@ public protocol MonaLanguagesIInlineCompletionChangeHint {}
 //   - optionality: MonaPresence<T> / MonaNullable<T> / MonaNullish<T> per F1-R5
 //   - overloads: preserved per pinned declaration SHA; no coalescing
 //   - value identity: struct/protocol shape
-public protocol MonaLanguagesInlineCompletionContext {}
+public protocol MonaLanguagesInlineCompletionContext { var triggerKind: Int { get } }
 
 // PATH: languages.IInlineCompletionModelInfo
 // ORDINAL: 86
@@ -5537,7 +5540,7 @@ public protocol MonaLanguagesSignatureHelp {}
 //   - optionality: MonaPresence<T> / MonaNullable<T> / MonaNullish<T> per F1-R5
 //   - overloads: preserved per pinned declaration SHA; no coalescing
 //   - value identity: struct/protocol shape
-public protocol MonaLanguagesSignatureHelpResult {}
+public protocol MonaLanguagesSignatureHelpResult { var value: Any { get } }
 
 // PATH: languages.SignatureHelpTriggerKind
 // ORDINAL: 111
@@ -5567,7 +5570,7 @@ public enum MonaLanguagesSignatureHelpTriggerKind {}
 //   - optionality: MonaPresence<T> / MonaNullable<T> / MonaNullish<T> per F1-R5
 //   - overloads: preserved per pinned declaration SHA; no coalescing
 //   - value identity: struct/protocol shape
-public protocol MonaLanguagesSignatureHelpContext {}
+public protocol MonaLanguagesSignatureHelpContext { var triggerKind: Int { get } }
 
 // PATH: languages.SignatureHelpProvider
 // ORDINAL: 113
@@ -5702,7 +5705,7 @@ public protocol MonaLanguagesLinkedEditingRanges {}
 //   - optionality: MonaPresence<T> / MonaNullable<T> / MonaNullish<T> per F1-R5
 //   - overloads: preserved per pinned declaration SHA; no coalescing
 //   - value identity: struct/protocol shape
-public protocol MonaLanguagesReferenceContext {}
+public protocol MonaLanguagesReferenceContext { var includeDeclaration: Bool { get } }
 
 // PATH: languages.ReferenceProvider
 // ORDINAL: 122
@@ -6107,7 +6110,7 @@ public protocol MonaLanguagesSelectionRangeProvider {}
 //   - optionality: MonaPresence<T> / MonaNullable<T> / MonaNullish<T> per F1-R5
 //   - overloads: preserved per pinned declaration SHA; no coalescing
 //   - value identity: struct/protocol shape
-public protocol MonaLanguagesFoldingContext {}
+public protocol MonaLanguagesFoldingContext { var maxRanges: Int { get } }
 
 // PATH: languages.FoldingRangeProvider
 // ORDINAL: 149
