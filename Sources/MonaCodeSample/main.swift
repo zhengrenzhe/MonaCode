@@ -6,14 +6,29 @@
 //
 // The sample host is a NON-PRODUCT executable target (`sample-macOS-host`).
 // It activates all three products — MonaCode (model + URI), MonaCodeAppKit
-// (native editor view + factory), and MonaCodeSwiftUI (lifecycle wrappers).
-// Because the sample is a non-product target, this adds NO production
-// dependencies (products=3 / nonProductTargets=3 preserved).
+// (native editor + diff views + factory), and MonaCodeSwiftUI (lifecycle
+// wrappers incl. diff + multi-diff). Because the sample is a non-product
+// target, this adds NO production dependencies (products=3 /
+// nonProductTargets=3 preserved).
 
 import AppKit
 import MonaCode
 import MonaCodeAppKit
 import MonaCodeSwiftUI
+
+// MARK: - Sample multi-diff data source (MonaMultiDiffDataSource conformer)
+
+// A minimal `MonaMultiDiffDataSource` (P07-T005 host group) conformer for the
+// sample host: an ordered snapshot + a synchronous change emitter. The sample
+// activates the multi-diff data-source contract without wiring real workspace
+// diff events — the emitter exists only to satisfy the protocol's
+// `onDidChangeSnapshot` requirement.
+final class SampleMultiDiffDataSource: MonaMultiDiffDataSource {
+    private let emitter = MonaEmitter<MonaMultiDiffSnapshotChange>()
+    let snapshot: [MonaMultiDiffItem]
+    var onDidChangeSnapshot: MonaEvent<MonaMultiDiffSnapshotChange> { emitter.event }
+    init(items: [MonaMultiDiffItem]) { self.snapshot = items }
+}
 
 // MARK: - Construct the model + editor
 
@@ -28,6 +43,50 @@ let model = MonaCodeModel(
 // lifetime. `create(model:)` attaches the model and registers the editor.
 let factory = MonaEditorFactory()
 let editor = factory.create(model: model)
+
+// MARK: - Construct the diff + multi-diff views (AppKit)
+
+// MonaCodeAppKit: the diff + multi-diff views through the factory. The
+// factory borrows the models weakly via the sub-editors (lifetime independent).
+// `createDiffEditor` attaches the original + modified models to the view's two
+// sub-editors; `createMultiFileDiffEditor` constructs the view (its data
+// source attaches separately via `MonaMultiDiffEditorView.attach(dataSource:)`).
+let originalModel = MonaCodeModel(
+    text: "Hello, MonaCode!\nLine 2\nLine 3\n",
+    uri: MonaURI(scheme: "inmemory", path: "/original")
+)
+let modifiedModel = MonaCodeModel(
+    text: "Hello, MonaCode!\nLine two\nLine 3\nAdded line\n",
+    uri: MonaURI(scheme: "inmemory", path: "/modified")
+)
+let diffView = factory.createDiffEditor(
+    original: originalModel, modified: modifiedModel, options: nil
+)
+let multiDiffView = factory.createMultiFileDiffEditor(options: nil)
+
+// MARK: - Construct the SwiftUI diff + multi-diff wrappers
+
+// MonaCodeSwiftUI: keep the diff + multi-diff lifecycle wrappers live
+// alongside the native views (the sample activates all three products; the
+// wrappers are not shown in the window but prove the SwiftUI product links).
+let multiDiffDataSource = SampleMultiDiffDataSource(items: [
+    MonaMultiDiffItem(
+        id: "demo",
+        originalModelURI: originalModel.uri,
+        modifiedModelURI: modifiedModel.uri,
+        label: "demo.diff",
+        description: "sample diff item"
+    )
+])
+let swiftUIDiff = MonaDiffEditor(
+    controller: MonaDiffEditorController(
+        original: originalModel, modified: modifiedModel))
+let swiftUIMultiDiff = MonaMultiDiffEditor(
+    controller: MonaMultiDiffEditorController(dataSource: multiDiffDataSource))
+_ = diffView
+_ = multiDiffView
+_ = swiftUIDiff
+_ = swiftUIMultiDiff
 
 // MARK: - Host the editor in a window
 
@@ -52,8 +111,8 @@ _ = swiftUICode
 
 print("sample-macOS-host: GUI host ready")
 print("  MonaCode:        MonaCodeModel=\(model.getValueLength()) chars, MonaURI")
-print("  MonaCodeAppKit:  MonaCodeEditorView via MonaEditorFactory.create(model:)")
-print("  MonaCodeSwiftUI: MonaCodeEditor + MonaSwiftUIEditorController")
+print("  MonaCodeAppKit:  MonaCodeEditorView + MonaDiffEditorView + MonaMultiDiffEditorView")
+print("  MonaCodeSwiftUI: MonaCodeEditor + MonaDiffEditor + MonaMultiDiffEditor")
 print("  window:          \(window.frame.size) — contentView=MonaCodeEditorView")
 
 let app = NSApplication.shared
