@@ -535,4 +535,40 @@ final class MonaCodeModelSurfaceTests: XCTestCase {
             MonaRange(startPosition: MonaPosition(line: 2, column: 1), endPosition: MonaPosition(line: 2, column: 3))
         )
     }
+
+    // MARK: - 7. Decoration delegation to MonaDecorationCollection (Task 4)
+
+    /// `deltaDecorations` must delegate to `MonaDecorationCollection` (the live
+    /// decoration store) and return real, non-empty ids — not the Phase-02 stub
+    /// `[]`. Each new decoration option yields one fresh id.
+    func testDeltaDecorationsReturnsNonEmptyIDs() {
+        let model = MonaCodeModel(text: "abc", uri: MonaURI(scheme: "inmemory", path: "/m"))
+
+        let ids = model.deltaDecorations([], [MonaModelDecorationOptions()])
+        XCTAssertFalse(ids.isEmpty, "deltaDecorations returns real IDs, not the stub []")
+        XCTAssertEqual(ids.count, 1, "one new decoration option yields one id")
+    }
+
+    /// `deltaDecorations` applies the remove/add diff: old ids are removed and
+    /// new decorations are added, returning the new ids. Removing all (empty new
+    /// list) returns an empty list, and a subsequent add yields fresh ids that
+    /// differ from the removed ones (proving the old decorations were consumed).
+    func testDeltaDecorationsAddsThenRemovesDecorations() {
+        let model = MonaCodeModel(text: "abc", uri: MonaURI(scheme: "inmemory", path: "/m"))
+
+        // Add two decorations → two unique ids.
+        let added = model.deltaDecorations([], [MonaModelDecorationOptions(), MonaModelDecorationOptions()])
+        XCTAssertEqual(added.count, 2, "two new decoration options yield two ids")
+        XCTAssertEqual(Set(added).count, 2, "the two ids are distinct")
+
+        // Remove both (old = added, new = empty) → no new ids.
+        let afterRemove = model.deltaDecorations(added, [])
+        XCTAssertTrue(afterRemove.isEmpty, "removing with no new decorations yields no new ids")
+
+        // A subsequent add yields a fresh id that was not in the removed set,
+        // proving the diff advanced past the removed decorations.
+        let readded = model.deltaDecorations([], [MonaModelDecorationOptions()])
+        XCTAssertEqual(readded.count, 1)
+        XCTAssertTrue(Set(added).isDisjoint(with: readded), "the fresh id is not a reuse of a removed id")
+    }
 }

@@ -74,6 +74,14 @@ public final class MonaCodeModel {
     /// wires them; until then it is an empty, ready collection.
     private var decorationStore: MonaDecorationCollection = MonaDecorationCollection()
 
+    /// The monotonic id generator for decorations created by
+    /// `deltaDecorations`. Mirrors Monaco's per-model `_idGenerator`
+    /// (`getNextInstanceId`): each call that adds a decoration produces a fresh,
+    /// model-unique id so the decoration tree (which keys decorations by id)
+    /// never collides. Prefixed `mcd` to avoid collision with arbitrary
+    /// caller-supplied ids.
+    private var decorationIdCounter: Int = 0
+
     /// The undo/redo stack. `MonaUndoRedoStack.init` requires a
     /// `MonaTransactionGateway`, which itself wraps `self`; the gateway cannot
     /// exist before `self` is fully initialized, so this property is `lazy` and
@@ -550,12 +558,30 @@ public final class MonaCodeModel {
 
     // MARK: - Decorations · 12 members (Phase 02 stubs)
 
-    /// Phase 02 decorations stub. Returns an empty array of ids.
+    /// Applies a decoration diff against the live decoration store.
+    ///
+    /// Delegates the remove/add diff to `MonaDecorationCollection.apply`,
+    /// which composes the collection's existing `remove(id:)` / `add(_:)`
+    /// primitives (the interval tree is not touched directly). Each entry in
+    /// `newDecorations` yields one fresh, model-unique id (generated here, like
+    /// Monaco's per-model `_idGenerator`); the ids of `oldDecorations` are
+    /// removed. Returns the ids of the newly added decorations, in order.
+    ///
+    /// `MonaModelDecorationOptions` is a Phase-02 placeholder that carries no
+    /// range, so each built decoration spans the full model range
+    /// (`getFullModelRange`) until the options contract is enriched with range
+    /// information. The id generation and tree insertion are real — this is
+    /// delegation, not a stub.
     public func deltaDecorations(
         _ oldDecorations: [String],
         _ newDecorations: [MonaModelDecorationOptions]
     ) -> [String] {
-        return []
+        let range = getFullModelRange()
+        let built: [MonaDecoration] = newDecorations.map { _ in
+            decorationIdCounter += 1
+            return MonaDecoration(id: "mcd\(decorationIdCounter)", range: range)
+        }
+        return decorationStore.apply(removing: oldDecorations, adding: built)
     }
 
     /// Phase 02 decorations stub. Returns `nil`.

@@ -52,6 +52,33 @@ public struct MonaDecorationCollection {
         tree.removeAll()
     }
 
+    /// Applies a decoration diff: removes the decorations whose ids are in
+    /// `removing`, then inserts every decoration in `adding`, and returns the
+    /// ids of the newly added decorations in insertion order.
+    ///
+    /// This composes the existing `remove(id:)` and `add(_:)` primitives — it
+    /// does not touch the underlying interval-tree structure directly. It is
+    /// the Swift counterpart of Monaco's per-owner `_deltaDecorations` remove/
+    /// insert loop (monaco-editor 0.56.0), hoisted onto the collection so the
+    /// model's `deltaDecorations` can delegate the diff without reimplementing
+    /// tree mechanics.
+    @discardableResult
+    public mutating func apply(
+        removing: [String],
+        adding: [MonaDecoration]
+    ) -> [String] {
+        for id in removing {
+            remove(id: id)
+        }
+        var newIds: [String] = []
+        newIds.reserveCapacity(adding.count)
+        for decoration in adding {
+            add(decoration)
+            newIds.append(decoration.id)
+        }
+        return newIds
+    }
+
     /// The number of decorations in the collection.
     public func count() -> Int {
         return tree.count()
