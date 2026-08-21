@@ -218,10 +218,10 @@ export function validateReleaseResult(result) {
 
 function validateCommand(command, result) {
   if (command.id === 'swift-tests') {
-    return {
-      status: 'accepted-known-product-failure',
-      summary: validateKnownSwiftFailure(result),
-    };
+    if (result.status !== 0) {
+      throw new Error(`EVIDENCE_CAPTURE_SWIFT_FAILURE_UNEXPECTED exit=${result.status}`);
+    }
+    return { status: 'passed', summary: { exitCode: 0 } };
   }
   if (command.id === 'governance-node-tests') {
     if (result.status === 0) {

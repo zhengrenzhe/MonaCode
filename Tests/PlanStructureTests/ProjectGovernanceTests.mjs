@@ -46,17 +46,13 @@ const validLedger = `<!-- MONACODE_TASKS:BEGIN -->
 <!-- MONACODE_TASKS:END -->`;
 
 const knownSwiftFailure = `
-/repo/Tests/MonaCodeAppKitTests/Views/MonaDiffViewLifecycleTests.swift:264: error: MonaDiffViewLifecycleTests.testSampleHostActivatesThreeProducts : XCTAssertTrue failed - MonaDiffEditorView
-/repo/Tests/MonaCodeAppKitTests/Views/MonaDiffViewLifecycleTests.swift:265: error: MonaDiffViewLifecycleTests.testSampleHostActivatesThreeProducts : XCTAssertTrue failed - MonaMultiDiffEditorView
-/repo/Tests/MonaCodeAppKitTests/Views/MonaDiffViewLifecycleTests.swift:266: error: MonaDiffViewLifecycleTests.testSampleHostActivatesThreeProducts : XCTAssertTrue failed - MonaDiffEditor
-/repo/Tests/MonaCodeAppKitTests/Views/MonaDiffViewLifecycleTests.swift:267: error: MonaDiffViewLifecycleTests.testSampleHostActivatesThreeProducts : XCTAssertTrue failed - MonaMultiDiffEditor
-Test Case '-[MonaCodeAppKitTests.MonaDiffViewLifecycleTests testSampleHostActivatesThreeProducts]' failed (0.001 seconds)
-Executed 2864 tests, with 1 test skipped and 4 failures (0 unexpected) in 1.000 (1.000) seconds
+Test Case '-[MonaCodeAppKitTests.MonaDiffViewLifecycleTests testSampleHostActivatesThreeProducts]' passed (0.001 seconds)
+Executed 2864 tests, with 1 test skipped and 0 failures (0 unexpected) in 1.000 (1.000) seconds
 `;
 
 function syntheticCaptureRunner(command) {
   if (command.id === 'swift-tests') {
-    return { status: 1, stdout: knownSwiftFailure, stderr: '' };
+    return { status: 0, stdout: knownSwiftFailure, stderr: '' };
   }
   if (command.id === 'product-integration-probe') {
     return {
@@ -364,27 +360,18 @@ test('evidence capture runs the seven approved commands exactly once and fails c
   assert.equal(evidence.taskResults.length, 205);
   assert.equal(evidence.taskResults[0].id, 'VERIFY-001');
   assert.equal(evidence.taskResults[0].state, 'DONE');
-  assert.equal(evidence.integrationFindings.length, 2);
-  assert.equal(evidence.commands[0].status, 'accepted-known-product-failure');
+  assert.equal(evidence.integrationFindings.length, 1);
+  assert.equal(evidence.commands[0].status, 'passed');
 
-  let changedFailure;
   assert.throws(
     () => captureProjectEvidence(REPO_ROOT, {
       runCommand(command) {
         if (command.id !== 'swift-tests') return syntheticCaptureRunner(command);
-        return {
-          status: 1,
-          stdout: `${knownSwiftFailure}\nOtherTests.testUnexpected : XCTAssertEqual failed`,
-          stderr: '',
-        };
+        return { status: 1, stdout: '', stderr: '' };
       },
     }),
-    (error) => {
-      changedFailure = error;
-      return /EVIDENCE_CAPTURE_SWIFT_FAILURE_SET_CHANGED/.test(error.message);
-    },
+    (error) => /EVIDENCE_CAPTURE_SWIFT_FAILURE_UNEXPECTED/.test(error.message),
   );
-  assert.match(changedFailure.message, /OtherTests\.testUnexpected/);
 });
 
 test('rendered initial task table is a complete valid 205-row ledger', () => {
