@@ -264,7 +264,6 @@ test('current repository findings and exact task bindings are source-backed', ()
   assert.deepEqual([...byID.keys()].sort(), [
     'CURRENT_RELEASE_EVIDENCE_STALE',
     'CURSOR_EVENT_PAYLOADS_EMPTY',
-    'FEATURE_ACTIVATION_PATH_ABSENT',
     'INSTANCE_SURFACE_UNCONFORMED',
     'LANGUAGE_CONTEXT_TYPES_EMPTY',
     'SAMPLE_HOST_DIFF_ACTIVATION_ABSENT',
@@ -286,10 +285,6 @@ test('current repository findings and exact task bindings are source-backed', ()
   assert.deepEqual(byID.get('LANGUAGE_CONTEXT_TYPES_EMPTY').taskIDs, [
     'P05-T001', 'P05-T013', 'P06-T005',
   ]);
-  assert.deepEqual(
-    byID.get('FEATURE_ACTIVATION_PATH_ABSENT').taskIDs,
-    Array.from({ length: 62 }, (_, index) => `P05-T${String(index + 100).padStart(3, '0')}`),
-  );
 
   const phase89 = loadContractCatalog(REPO_ROOT).planTasks
     .filter((task) => task.phase === '08' || task.phase === '09')
@@ -314,7 +309,7 @@ test('probe CLI emits canonical parseable JSON and exits 1 for current findings'
 
   assert.equal(result.status, 1, result.stderr);
   const parsed = JSON.parse(result.stdout);
-  assert.equal(parsed.findings.length, 7);
+  assert.equal(parsed.findings.length, 6);
   assert.deepEqual(
     parsed.findings.map((finding) => finding.id),
     parsed.findings.map((finding) => finding.id).sort(),

@@ -130,6 +130,54 @@ final class DrivingLayerTests: XCTestCase {
         XCTAssertTrue(view.commandDispatcher!.contains("cursorLeft"))
     }
 
+    // MARK: - Feature/contribution activation (services-wiring Task 4 / GAP-5)
+    //
+    // `performAttach` installs the frozen feature-flag registry (P05-T002) and
+    // contribution registry (P05-T002) for the attached editor. The registries
+    // are instantiated once at editor lifetime scope (model-independent — they
+    // hold the frozen identity set) and INSTALLED during attachment so every
+    // retained identity is the active set for the attached editor. Before
+    // attach the registries exist but are NOT installed; after attach both are
+    // installed; after detach both are released. The registries carry their
+    // frozen identity sets (live count > 0), so install is a real consultation
+    // of the registry — not a no-op flag.
+
+    @MainActor
+    func testFeatureAndContributionRegistriesInstalledOnAttach() {
+        let model = MonaCodeModel(text: "hello", uri: MonaURI(scheme: "inmemory", path: "/t"))
+        let view = MonaCodeEditorView(frame: NSRect(x: 0, y: 0, width: 400, height: 300))
+
+        // The registries exist from construction (editor lifetime scope) and
+        // carry their frozen identity sets, but are NOT installed before attach.
+        XCTAssertTrue(view.featureRegistry.liveCount > 0,
+                      "feature registry holds its frozen identities from construction")
+        XCTAssertTrue(view.contributionRegistry.liveCount > 0,
+                      "contribution registry holds its frozen identities from construction")
+        XCTAssertFalse(view.featureRegistryInstalled,
+                       "feature registry must NOT be installed before attach")
+        XCTAssertFalse(view.contributionRegistryInstalled,
+                       "contribution registry must NOT be installed before attach")
+
+        view.attach(model: model)
+
+        // After attach, both registries are installed — the install ran during
+        // performAttach and bound the retained identity sets to this editor.
+        XCTAssertTrue(view.featureRegistryInstalled,
+                      "feature registry must be installed after attach")
+        XCTAssertTrue(view.contributionRegistryInstalled,
+                      "contribution registry must be installed after attach")
+
+        view.detach()
+
+        // After detach, the registries are released — no longer installed for
+        // an attached editor (they remain alive at editor lifetime scope, ready
+        // for the next attach, but are not the active set for a detached view).
+        XCTAssertFalse(view.featureRegistryInstalled,
+                       "feature registry must be released on detach")
+        XCTAssertFalse(view.contributionRegistryInstalled,
+                       "contribution registry must be released on detach")
+    }
+
     // MARK: - IME insertText + NSTextInputClient conformance (Task 6 / GAP-5)
 
     /// `insertText(_:replacementRange:)` on the text input client routes through

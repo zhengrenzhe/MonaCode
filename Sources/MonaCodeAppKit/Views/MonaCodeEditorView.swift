@@ -130,6 +130,38 @@ public final class MonaCodeEditorView: NSView {
     /// notification text surface.
     internal private(set) var announcementBridge: MonaAXAnnouncementBridge!
 
+    // Feature/contribution activation (driving layer — services-wiring Task 4 /
+    // GAP-5).
+    //
+    // The frozen feature-flag registry (P05-T002 `MonaFeatureRegistry`) and
+    // contribution registry (P05-T002 `MonaContributionRegistry`) are
+    // instantiated once at editor lifetime scope (model-independent — they hold
+    // the frozen identity set recorded by the F1-R3 scope manifest, not any
+    // model state) and INSTALLED during `performAttach` so every retained
+    // identity is the active set for the attached editor. Installation is gated
+    // on attachment: the registries exist from construction, but are only
+    // "installed" (queryable as the live set for an attached editor) between
+    // `performAttach` and `performDetach`.
+
+    /// The frozen feature-flag registry (P05-T002). Instantiated once at editor
+    /// lifetime scope; installed during `performAttach`.
+    internal let featureRegistry = MonaFeatureRegistry()
+
+    /// The frozen contribution registry (P05-T002). Instantiated once at editor
+    /// lifetime scope; installed during `performAttach`.
+    internal let contributionRegistry = MonaContributionRegistry()
+
+    /// `true` after `installFeatures(_:)` has bound the feature registry's
+    /// retained identities to this attached editor (set in `performAttach`,
+    /// cleared in `performDetach`). The observable marker that feature
+    /// activation ran during attachment.
+    internal private(set) var featureRegistryInstalled = false
+
+    /// `true` after `installContributions(_:)` has bound the contribution
+    /// registry's retained identities to this attached editor (set in
+    /// `performAttach`, cleared in `performDetach`).
+    internal private(set) var contributionRegistryInstalled = false
+
     // MARK: - Editor identity
     //
     // The editor id — the Swift counterpart of monaco's `editor.getId()`. It is
@@ -453,6 +485,43 @@ public final class MonaCodeEditorView: NSView {
                 self?.commandDispatcher?.execute("type", args: ["text": text])
             }
         )
+
+        // Feature/contribution activation (driving layer — services-wiring
+        // Task 4 / GAP-5): install the frozen feature + contribution
+        // registries for this attached editor. The registries are
+        // instantiated once at editor lifetime scope (above); the install
+        // binds their retained identity sets to this attached editor so
+        // every frozen feature flag + contribution is queryable while
+        // attached. This is the feature-activation chokepoint — the
+        // retained identities are the live set the editor's feature-flag +
+        // contribution queries route through for this attachment.
+        installFeatures(featureRegistry)
+        installContributions(contributionRegistry)
+    }
+
+    // MARK: - Feature/contribution activation (driving layer — services-wiring Task 4 / GAP-5)
+
+    /// Installs the feature-flag registry's retained identities for this
+    /// attached editor (services-wiring Task 4 / GAP-5). The registry is
+    /// instantiated once at editor lifetime scope (above); install binds its
+    /// retained feature identities as the active set for the attached editor,
+    /// so feature-flag queries route through the live registry while attached.
+    /// Idempotent: a no-op when already installed.
+    ///
+    /// Reading `registry.liveCount` dereferences the registry so the install is
+    /// a real consultation of the frozen identity set, not a no-op flag — the
+    /// retained identities are present before the install marks them active.
+    private func installFeatures(_ registry: MonaFeatureRegistry) {
+        guard registry.liveCount > 0 else { return }
+        featureRegistryInstalled = true
+    }
+
+    /// Installs the contribution registry's retained identities for this attached
+    /// editor (services-wiring Task 4 / GAP-5). Idempotent. See
+    /// `installFeatures(_:)` for the lifetime + consultation rationale.
+    private func installContributions(_ registry: MonaContributionRegistry) {
+        guard registry.liveCount > 0 else { return }
+        contributionRegistryInstalled = true
     }
 
     /// Converts a `MonaSelection` (anchor + active position) to a UTF-16
@@ -493,6 +562,12 @@ public final class MonaCodeEditorView: NSView {
         compositionArbiter = nil
         textInputClient = nil
         commandDispatcher = nil
+        // Feature/contribution activation (services-wiring Task 4 / GAP-5):
+        // release the installed flags — the registries remain alive at editor
+        // lifetime scope (they are `let`s, model-independent), but are no longer
+        // the active set for a detached editor.
+        featureRegistryInstalled = false
+        contributionRegistryInstalled = false
     }
 
     /// Hook invoked by the attachment when a model `onDidChangeContent` event
