@@ -70,7 +70,7 @@ function syntheticCaptureRunner(command) {
       status: 0,
       stdout: JSON.stringify({
         verdict: 'not-passed',
-        blockers: [{ id: 'current-source-evidence-stale' }],
+        blockers: [{ id: 'current-acceptance-rebound' }],
       }),
       stderr: '',
     };

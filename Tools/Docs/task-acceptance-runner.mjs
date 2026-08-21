@@ -85,12 +85,27 @@ function executePipelineLeaves(leaves, repoRoot) {
   return results;
 }
 
-const leafPasses = (leaf, result, expectedExit, expectedOutputIncludes) => {
+const leafPasses = (leaf, result, expectedExit) => {
   if (!result) return false;
-  // Ruling I: expectedOutputIncludes markers are plan-frozen but absent from actual
-  // command output (process tasks don't print them; pipeline leaves aren't piped).
-  // Judge by exit code only until the marker contract is reconciled.
+  // Ruling I: expectedOutputIncludes markers are plan-frozen but absent from
+  // actual command output for process/all-success tasks (they don't print
+  // them). Judge by exit code only for those kinds. Pipeline markers are
+  // verified separately by commandMarkersPass — Ruling J pipes leaves, so the
+  // final leaf's stdout carries the marker (e.g. PACKAGE_GRAPH products=3...).
   return result.exitCode === expectedExit;
+};
+
+// I3: pipeline-kind commands pipe leaf[i].stdout → leaf[i+1].stdin (Ruling J),
+// so the final leaf's stdout carries the plan marker. Verify
+// expectedOutputIncludes there. process/all-success remain exit-only
+// (Ruling I) and return true here.
+const commandMarkersPass = (cmd, leafResults) => {
+  if (cmd.kind !== 'pipeline' || !cmd.expectedOutputIncludes || cmd.expectedOutputIncludes.length === 0) {
+    return true;
+  }
+  const lastLeaf = cmd.leaves[cmd.leaves.length - 1];
+  const stdout = leafResults[lastLeaf?.leafID]?.stdout ?? '';
+  return cmd.expectedOutputIncludes.every((marker) => stdout.includes(marker));
 };
 
 export function synthesizeTask(commands, leafResults) {
@@ -100,13 +115,16 @@ export function synthesizeTask(commands, leafResults) {
     for (const leaf of cmd.leaves) {
       const r = leafResults[leaf.leafID];
       exitCodes.push(r?.exitCode ?? null);
-      outputIncludesPass.push(leafPasses(leaf, r, cmd.expectedExit, cmd.expectedOutputIncludes));
+      outputIncludesPass.push(leafPasses(leaf, r, cmd.expectedExit));
     }
   }
-  // process: one command, all its leaves pass. all-success: all commands all leaves pass.
-  // pipeline: all commands all leaves pass (pipefail semantics → same as all-success for exit).
+  // process: one command, all its leaves pass. all-success: all commands all
+  // leaves pass. pipeline: all commands all leaves pass (pipefail semantics →
+  // same as all-success for exit) AND the final leaf's stdout carries every
+  // expectedOutputIncludes marker (I3).
   const passed = commands.length > 0 && commands.every((cmd) =>
-    cmd.leaves.every((leaf) => leafPasses(leaf, leafResults[leaf.leafID], cmd.expectedExit, cmd.expectedOutputIncludes)));
+    cmd.leaves.every((leaf) => leafPasses(leaf, leafResults[leaf.leafID], cmd.expectedExit))
+    && commandMarkersPass(cmd, leafResults));
   return { passed, exitCodes, outputIncludesPass };
 }
 

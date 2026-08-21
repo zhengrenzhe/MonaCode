@@ -78,11 +78,15 @@ export const FROZEN_SOURCE_REVISION = 'P07-T011';
 export const FROZEN_SOURCE_SET_DIGEST =
   '152c63ffc32ce2a632ff2a2caa2d3ee25063a1150c6f51bb44d5405aa30a1f36';
 
-// Reads the task-acceptance.json produced by task-acceptance-runner for the
-// given digest. Returns null when the file is absent or malformed — the
-// rebound prerequisite then fails with an "evidence missing" blocker reason.
+// Reads the task-evidence.json produced by capture-project-evidence for the
+// given digest. I1: the rebound prerequisite follows spec §4.3 —
+// reboundPassed = "all applicable tasks state==DONE". task-evidence.json's
+// taskResults carry a `state` field (DONE/BLOCKED/TODO, post-classify), which
+// prevents a false passed when every task exit-0s but a probe marks some
+// BLOCKED. Returns null when the file is absent or malformed — the rebound
+// prerequisite then fails with an "evidence missing" blocker reason.
 function readCurrentAcceptance(digest) {
-  const p = join(REPO_ROOT, 'artifacts', 'progress', digest, 'task-acceptance.json');
+  const p = join(REPO_ROOT, 'artifacts', 'progress', digest, 'task-evidence.json');
   if (!existsSync(p)) return null;
   try {
     return JSON.parse(readFileSync(p, 'utf8'));
@@ -535,14 +539,22 @@ export function aggregateVerdict() {
   // Ruling 3: dead branch removed; only the `todo` count is kept.
   const acceptance = readCurrentAcceptance(verificationSourceSet.digest);
   let reboundPassed = false;
-  let undoneCounts = { todo: 0 };
+  let undoneCounts = { blocked: 0, todo: 0 };
   if (verificationSourceSet.digest === FROZEN_SOURCE_SET_DIGEST) {
     reboundPassed = true; // 源码恰回冻结点，历史证据直接适用
   } else if (acceptance) {
+    // I1: spec §4.3 — reboundPassed = all applicable tasks state==DONE.
+    // task-evidence.json's taskResults carry `state` (DONE/BLOCKED/TODO),
+    // so a probe-BLOCKED task counts as not-DONE even if its exit was 0.
     const results = acceptance.taskResults ?? [];
-    const todo = results.filter((r) => r.passed !== true).length;
-    reboundPassed = results.length > 0 && todo === 0;
-    if (!reboundPassed) undoneCounts.todo = todo;
+    const blocked = results.filter((r) => r.state === 'BLOCKED').length;
+    const todo = results.filter((r) => r.state === 'TODO').length;
+    const notDone = results.filter((r) => r.state !== 'DONE').length;
+    reboundPassed = results.length > 0 && notDone === 0;
+    if (!reboundPassed) {
+      undoneCounts.blocked = blocked;
+      undoneCounts.todo = todo;
+    }
   }
 
   // Build the passed-prerequisite set (sorted by id).
@@ -650,11 +662,11 @@ export function aggregateVerdict() {
       id: 'current-acceptance-rebound',
       status: 'not-passed',
       reason: acceptance
-        ? `Current verification source-set digest (${verificationSourceSet.digest}) has ${undoneCounts.todo} task(s) not DONE under the current digest. ${acceptance.taskResults.length} tasks recorded.`
-        : `Current verification source-set digest (${verificationSourceSet.digest}) differs from the frozen evidence digest (${FROZEN_SOURCE_SET_DIGEST}) and no task-acceptance.json found — run task-acceptance-runner first.`,
+        ? `Current verification source-set digest (${verificationSourceSet.digest}) has ${undoneCounts.blocked + undoneCounts.todo} task(s) not DONE under the current digest (${undoneCounts.blocked} BLOCKED, ${undoneCounts.todo} TODO). ${acceptance.taskResults.length} tasks recorded.`
+        : `Current verification source-set digest (${verificationSourceSet.digest}) differs from the frozen evidence digest (${FROZEN_SOURCE_SET_DIGEST}) and no task-evidence.json found — run capture-project-evidence first.`,
       deferredTo: acceptance
-        ? 'fill remaining BLOCKED/TODO tasks (subprojects A-D) and re-run task-acceptance-runner'
-        : 'run task-acceptance-runner to generate current-digest acceptance evidence',
+        ? 'fill remaining BLOCKED/TODO tasks (subprojects A-D) and re-run capture-project-evidence'
+        : 'run capture-project-evidence to generate current-digest acceptance evidence',
     });
   }
   blockers.sort((a, b) => a.id.localeCompare(b.id));

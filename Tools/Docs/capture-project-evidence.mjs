@@ -224,11 +224,28 @@ function validateCommand(command, result) {
     };
   }
   if (command.id === 'governance-node-tests') {
-    // Ruling K: accept E-infra mid-state exit 1 (governance stale-red on
-    // VERIFY-001 until README rebind); turns green after Task 7 README rebind.
+    if (result.status === 0) {
+      return { status: 'passed', summary: { exitCode: 0 } };
+    }
+    // Ruling K (narrowed, I2): accept exit 1 ONLY when identifiable as the
+    // VERIFY-001 stale-digest mid-state (README not yet rebound to the current
+    // source-set digest). The signature is GOVERNANCE_DONE_DIGEST_STALE in the
+    // governance-node-tests stdout. A non-stale exit 1 is a real regression
+    // and must throw — do not mask it.
+    const isStaleMidState = /GOVERNANCE_DONE_DIGEST_STALE/.test(result.stdout);
+    if (!isStaleMidState) {
+      throw new Error(
+        `EVIDENCE_CAPTURE_GOVERNANCE_REGRESSION exit=${result.status}`
+        + ' (no GOVERNANCE_DONE_DIGEST_STALE marker; not the VERIFY-001 stale mid-state)'
+        + ` stdout=${result.stdout.slice(0, 500)}`,
+      );
+    }
     return {
-      status: 'accepted-mid-state',
-      summary: { exitCode: result.status },
+      status: 'accepted-mid-state-stale',
+      summary: {
+        exitCode: result.status,
+        reason: 'VERIFY-001 stale-digest mid-state (README not yet rebound to current source-set digest)',
+      },
     };
   }
   if (command.id === 'product-integration-probe') {
