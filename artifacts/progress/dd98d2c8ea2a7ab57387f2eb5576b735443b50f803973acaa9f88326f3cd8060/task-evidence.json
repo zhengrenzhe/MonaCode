@@ -5,8 +5,8 @@
       "exitCode": 0,
       "id": "swift-tests",
       "status": "passed",
-      "stderrSHA256": "73c4ce9f61739ee2347f1618f6d5ef1b1eaca14fd865fdd55cf44d228e0913ef",
-      "stdoutSHA256": "b8c6908d3b3123b249e53acc8ba05a7e52d8bc64e3784587f080fd650b2fd180",
+      "stderrSHA256": "300a7588ae92d9bf8abf81e9df0e1becdc1407a219a34b9c4e46226046486a76",
+      "stdoutSHA256": "e107a469a34e40ee14dff8a61cf5ed238068f895f116192408fa4dc9283655d9",
       "summary": {
         "exitCode": 0
       }
@@ -17,7 +17,7 @@
       "id": "governance-node-tests",
       "status": "passed",
       "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "stdoutSHA256": "6a4d044bb2948aca5a6fa2974e092af8b409acebf20c3083254c9a9483faaed7",
+      "stdoutSHA256": "eac5d6f12ea4291c28ad7c5fe1880b748ba14aa954caec41ea1d6488aa15adc7",
       "summary": {
         "exitCode": 0
       }
@@ -62,7 +62,7 @@
       "id": "product-integration-probe",
       "status": "passed",
       "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "stdoutSHA256": "e729d3ff611a1e314584d0f7b33199bb9f50cd09d5d1aa669bd4e7fb45352210",
+      "stdoutSHA256": "4b5dc16bfc624cbb8395a47243a54081e973c80c8b1148d7f2cb4a5b3e0dfcc7",
       "summary": {
         "findingCount": 0,
         "findingIDs": []
@@ -72,15 +72,13 @@
       "command": "/opt/homebrew/Cellar/node/26.7.0/bin/node Tools/Release/release-verdict.mjs",
       "exitCode": 0,
       "id": "release-verdict",
-      "status": "passed-current-rejection",
+      "status": "passed",
       "stderrSHA256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-      "stdoutSHA256": "f80d85767704a35e0cf74a0c00991c61dc9cb5146b697edba5ab98485c3b82cf",
+      "stdoutSHA256": "dd1f62a9c512dbab03e4697e8ad1d40e8a23a59378934092ed43452180660fac",
       "summary": {
-        "blockerCount": 1,
-        "blockerIDs": [
-          "current-acceptance-rebound"
-        ],
-        "verdict": "not-passed"
+        "blockerCount": 0,
+        "blockerIDs": [],
+        "verdict": "passed"
       }
     }
   ],
