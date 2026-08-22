@@ -174,7 +174,7 @@ Files under `implementation-plan/verification/` prove plan structure only and ar
 - Complete a correct Core Graphics renderer before the Phase 03 renderer-owned C03/C08 decision gate; create Metal only inside the declared conditional task.
 - Keep language behavior transport-neutral and LSP-first; without an attached provider or LSP capability, retain plain-text behavior.
 - Keep built-in language packs, JavaScript runtimes, web workers, WebView/DOM/CSS runtimes, TextKit semantic substitution, third-party production runtimes, telemetry, persistence, and later mobile adapters out of production.
-- Run all formal C/P evidence on exact macOS build `25G76`, Chrome `151.0.7922.138`, built-in display only, zero external displays, and the fixed input-source/font prerequisites.
+- Run all formal C/P evidence on exact macOS build `25G83`, Chrome `151.0.7922.170`, built-in display only, zero external displays, and the fixed input-source/font prerequisites.
 - Treat every skipped, missing, stale, malformed, unauthorized, or incomplete cell as not-passed.
 
 ## Machine verification

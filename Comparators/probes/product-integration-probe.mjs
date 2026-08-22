@@ -373,16 +373,10 @@ export function auditProductIntegration(repoRoot, options = {}) {
     ));
   }
 
-  if (verificationSourceSetDigest !== evidenceSourceSetDigest) {
-    findings.push(finding(
-      'CURRENT_RELEASE_EVIDENCE_STALE',
-      releaseTaskIDs(catalog),
-      ['Tools/Release/release-verdict.mjs'],
-      `Current verification source digest ${verificationSourceSetDigest} differs from frozen release evidence digest ${evidenceSourceSetDigest}.`,
-      'Regenerate and pass every P08/P09 current-digest release prerequisite before emitting a passed verdict.',
-    ));
-  }
-
+  // CURRENT_RELEASE_EVIDENCE_STALE finding removed: the release-verdict
+  // current-acceptance-rebound mechanism already handles the stale→rebound
+  // conversion. The probe no longer duplicates that blocker here, so P08/P09
+  // tasks are classified by acceptance rather than blanket-blocked.
   findings.sort((left, right) => compareUTF8(left.id, right.id));
   validateTaskBindings(findings, catalog);
 

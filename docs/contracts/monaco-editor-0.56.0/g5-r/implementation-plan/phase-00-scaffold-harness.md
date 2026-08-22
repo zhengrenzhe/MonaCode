@@ -668,7 +668,7 @@ Minimal implementation operations:
 Green verification:
 - Run: `node --test Tests/PlanStructureTests/QEnvironmentCollectorTests.mjs`
   - Expected exit: `0`
-  - Expected output includes: `QENVIRONMENT_PREFLIGHT build=25G76 chrome=151.0.7922.138 externalDisplays=0 privacy=pass`
+  - Expected output includes: `QENVIRONMENT_PREFLIGHT build=25G83 chrome=151.0.7922.170 externalDisplays=0 privacy=pass`
 
 Evidence:
 - `artifacts/acceptance-evidence/g5-r/phase-00/P00-T011.json`

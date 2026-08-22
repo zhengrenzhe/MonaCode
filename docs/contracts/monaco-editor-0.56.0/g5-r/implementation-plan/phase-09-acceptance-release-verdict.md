@@ -42,14 +42,14 @@ Red verification:
 
 Minimal implementation operations:
 - `Collect a fresh environment identity immediately before each formal run.`
-- `Require macOS build 25G76, Chrome 151.0.7922.138 with pinned binary and ICU hashes, arm64, built-in display only, zero external displays, exact 60 or 120 Hz cell, required ABC and SCIM.ITABC input sources, runtime locale fields, and manifest-approved fonts.`
+- `Require macOS build 25G83, Chrome 151.0.7922.170 with pinned binary and ICU hashes, arm64, built-in display only, zero external displays, exact 60 or 120 Hz cell, required ABC and SCIM.ITABC input sources, runtime locale fields, and manifest-approved fonts.`
 - `Recursively reject serial, account, user, UUID, UDID, raw identity keys, and UUID-shaped values in every produced artifact.`
 - `Bind the environment, six static candidate hashes, source revision, and run nonce-free identifier by SHA-256.`
 
 Green verification:
 - Run: `node --test Tests/PlanStructureTests/FormalQEnvironmentPreflightTests.mjs`
   - Expected exit: `0`
-  - Expected output includes: `CANDIDATE_FINAL name=QEnvironmentID.json build=25G76 chrome=151.0.7922.138 externalDisplays=0 privacy=pass`
+  - Expected output includes: `CANDIDATE_FINAL name=QEnvironmentID.json build=25G83 chrome=151.0.7922.170 externalDisplays=0 privacy=pass`
 
 Evidence:
 - `artifacts/acceptance-evidence/g5-r/phase-09/P09-T001.json`

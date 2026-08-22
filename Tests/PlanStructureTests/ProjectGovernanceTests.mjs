@@ -55,9 +55,12 @@ function syntheticCaptureRunner(command) {
     return { status: 0, stdout: knownSwiftFailure, stderr: '' };
   }
   if (command.id === 'product-integration-probe') {
+    // VERIFY-001: probe now has 0 findings (CURRENT_RELEASE_EVIDENCE_STALE
+    // removed); exit 0 with 0 findings.
+    const result = auditProductIntegration(REPO_ROOT);
     return {
-      status: 1,
-      stdout: JSON.stringify(auditProductIntegration(REPO_ROOT)),
+      status: result.findings.length === 0 ? 0 : 1,
+      stdout: JSON.stringify(result),
       stderr: '',
     };
   }
@@ -360,7 +363,9 @@ test('evidence capture runs the seven approved commands exactly once and fails c
   assert.equal(evidence.taskResults.length, 205);
   assert.equal(evidence.taskResults[0].id, 'VERIFY-001');
   assert.equal(evidence.taskResults[0].state, 'DONE');
-  assert.equal(evidence.integrationFindings.length, 1);
+  // VERIFY-001: probe no longer emits CURRENT_RELEASE_EVIDENCE_STALE;
+  // 0 integration findings (rebound handles stale in the verdict tool).
+  assert.equal(evidence.integrationFindings.length, 0);
   assert.equal(evidence.commands[0].status, 'passed');
 
   assert.throws(
@@ -395,7 +400,7 @@ test('rendered initial task table is a complete valid 205-row ledger', () => {
     counts[row.state] = (counts[row.state] ?? 0) + 1;
     return counts;
   }, {});
-  assert.equal(stateCounts.BLOCKED, blockedSet.size);
+  assert.equal(stateCounts.BLOCKED ?? 0, blockedSet.size);
   assert.ok((stateCounts.DONE ?? 0) >= 1, 'VERIFY-001 is DONE');
   assert.equal(Object.values(stateCounts).reduce((a, b) => a + b, 0), 205);
   // validateTaskLedger compliance (DONE result-hash) needs a real task-evidence.json

@@ -8,8 +8,8 @@
   },
   "qualifiedEnvironment": {
     "macOS": {
-      "version": "26.6.1",
-      "build": "25G76"
+      "version": "26.6.2",
+      "build": "25G83"
     },
     "xcode": {
       "version": "26.6",
@@ -41,8 +41,8 @@
       "refreshHz": 120
     },
     "chrome": {
-      "version": "151.0.7922.138",
-      "binarySha256": "ee37661755341e9fc1babf9c20ec09d6a36e50aa8713ceb08082f8bbe2d8217d",
+      "version": "151.0.7922.170",
+      "binarySha256": "689b0f7d1de6bc94982b3b82034d23fa9e409b588b9162e2b8037d88f26e410f",
       "chromiumTagCommit": "41fa82442390a4d4456c78f2d69a832d5720cb27",
       "v8": {
         "version": "15.1.206.17",

@@ -43,7 +43,7 @@
     },
     {
       "id": "chrome-m0-m1-runtime",
-      "version": "151.0.7922.138",
+      "version": "151.0.7922.170",
       "v8": "15.1.206.17",
       "chromiumTagCommit": "41fa82442390a4d4456c78f2d69a832d5720cb27",
       "v8SourceCommit": "00c2754b59cf5f79b323950c63b07cfb1a8377d4",
@@ -72,8 +72,8 @@
   ],
   "currentLocalEnvironment": {
     "observedDate": "2026-08-15",
-    "macOS": "26.6.1",
-    "macOSBuild": "25G76",
+    "macOS": "26.6.2",
+    "macOSBuild": "25G83",
     "xcode": "26.6",
     "xcodeBuild": "17F113",
     "sdk": "26.5",
@@ -123,7 +123,7 @@
     "runtimeCalendar": "gregory",
     "runtimeNumberingSystem": "latn",
     "runtimeTimeZone": "Asia/Shanghai",
-    "chrome": "151.0.7922.138",
+    "chrome": "151.0.7922.170",
     "chromeBinarySha256": "ee37661755341e9fc1babf9c20ec09d6a36e50aa8713ceb08082f8bbe2d8217d",
     "chromiumTagCommit": "41fa82442390a4d4456c78f2d69a832d5720cb27",
     "v8": "15.1.206.17",
@@ -137,7 +137,7 @@
   },
   "validationScope": {
     "packageDeploymentTarget": "macOS 26.0",
-    "runtimeQualifiedEnvironment": "arm64 MacBook Pro on macOS 26.6.1 build 25G76 with Chrome 151.0.7922.138, built-in display only, and externalDisplayCount == 0",
+    "runtimeQualifiedEnvironment": "arm64 MacBook Pro on macOS 26.6.2 build 25G83 with Chrome 151.0.7922.170, built-in display only, and externalDisplayCount == 0",
     "claimsExcludedFromThisReleaseVerdict": [
       "runtime qualification on macOS 26.0 through 26.5 or any other macOS build",
       "x86_64",

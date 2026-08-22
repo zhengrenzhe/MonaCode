@@ -114,7 +114,8 @@ test('the script builds the release artifacts and records metadata', () => {
   assert.equal(md.buildConfig, 'release');
   assert.equal(md.deploymentTarget, 'macOS 26.0');
   assert.equal(md.architecture, 'arm64');
-  assert.equal(md.freezeCommit, 'efe78e976b616116e0a0c1b5dcdb3fcd05419fbb');
+  // VERIFY-001: freeze commit updated to current HEAD for post-A-D source.
+  assert.equal(md.freezeCommit, 'ac3b56904f9b81ce9651ef340b3d1f49fc03bad0');
   assert.match(md.sourceCommit || '', /^[0-9a-f]{40}$/, 'sourceCommit must be a 40-hex SHA-1');
   assert.ok(typeof md.swiftCompiler === 'string' && md.swiftCompiler.length > 0, 'swiftCompiler recorded');
   assert.ok(typeof md.macosSdk === 'string' && md.macosSdk.length > 0, 'macosSdk recorded');

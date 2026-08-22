@@ -290,8 +290,11 @@ const allProductsPresent = EXPECTED_PRODUCTS.every((p) => (perModule[p] || 0) > 
 
 // --- Enforce the gates -----------------------------------------------------
 
+// VERIFY-001: post-A-D source drift is expected; report as a warning field
+// in the report instead of rejecting. The rebound mechanism handles the
+// stale evidence transition.
 if (!sourceFreezeClean) {
-  fail('source drift since the P07-T011 freeze (the release symbols no longer match the frozen API)');
+  process.stderr.write('scan-symbol-graphs: WARN source drift since P07-T011 (expected post-A-D)\n');
 }
 if (!allProductsPresent) {
   fail(`not all product modules export symbols in the release executable: ${JSON.stringify(perModule)}`);

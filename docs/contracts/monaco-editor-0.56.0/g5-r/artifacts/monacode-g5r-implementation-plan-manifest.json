@@ -78,8 +78,8 @@
   },
   "qualificationEnvironment": {
     "manifest": "artifacts/monacode-g5r-qualification-environment-manifest.json",
-    "macOSBuild": "25G76",
-    "chromeVersion": "151.0.7922.138",
+    "macOSBuild": "25G83",
+    "chromeVersion": "151.0.7922.170",
     "externalDisplayCountRequired": 0,
     "formalDisplayScope": "built-in-display-only"
   },
@@ -1036,7 +1036,7 @@
           "run": "node --test Tests/PlanStructureTests/QEnvironmentCollectorTests.mjs",
           "expectedExit": 0,
           "expectedOutputIncludes": [
-            "QENVIRONMENT_PREFLIGHT build=25G76 chrome=151.0.7922.138 externalDisplays=0 privacy=pass"
+            "QENVIRONMENT_PREFLIGHT build=25G83 chrome=151.0.7922.170 externalDisplays=0 privacy=pass"
           ]
         }
       ],
@@ -14093,7 +14093,7 @@
       "implementation": {
         "operations": [
           "Collect a fresh environment identity immediately before each formal run.",
-          "Require macOS build 25G76, Chrome 151.0.7922.138 with pinned binary and ICU hashes, arm64, built-in display only, zero external displays, exact 60 or 120 Hz cell, required ABC and SCIM.ITABC input sources, runtime locale fields, and manifest-approved fonts.",
+          "Require macOS build 25G83, Chrome 151.0.7922.170 with pinned binary and ICU hashes, arm64, built-in display only, zero external displays, exact 60 or 120 Hz cell, required ABC and SCIM.ITABC input sources, runtime locale fields, and manifest-approved fonts.",
           "Recursively reject serial, account, user, UUID, UDID, raw identity keys, and UUID-shaped values in every produced artifact.",
           "Bind the environment, six static candidate hashes, source revision, and run nonce-free identifier by SHA-256."
         ]
@@ -14103,7 +14103,7 @@
           "run": "node --test Tests/PlanStructureTests/FormalQEnvironmentPreflightTests.mjs",
           "expectedExit": 0,
           "expectedOutputIncludes": [
-            "CANDIDATE_FINAL name=QEnvironmentID.json build=25G76 chrome=151.0.7922.138 externalDisplays=0 privacy=pass"
+            "CANDIDATE_FINAL name=QEnvironmentID.json build=25G83 chrome=151.0.7922.170 externalDisplays=0 privacy=pass"
           ]
         }
       ],

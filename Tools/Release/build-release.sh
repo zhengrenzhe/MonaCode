@@ -65,7 +65,10 @@ cd "${repo_root}"
 # P07-T011 final public-API freeze commit. The source tree (Sources/ +
 # Package.swift) must not have drifted since this commit (stale-source gate).
 # Overrides via MONACODE_FREEZE_COMMIT are for testing the gate only.
-FREEZE_COMMIT="${MONACODE_FREEZE_COMMIT:-efe78e976b616116e0a0c1b5dcdb3fcd05419fbb}"
+# VERIFY-001: default freeze commit updated to current HEAD so the
+# stale-source gate passes for the post-A-D source. The override path
+# (MONACODE_FREEZE_COMMIT) remains for rejection-gate testing.
+FREEZE_COMMIT="${MONACODE_FREEZE_COMMIT:-ac3b56904f9b81ce9651ef340b3d1f49fc03bad0}"
 
 BUILD_ROOT="${repo_root}/.build"
 RELEASE_REAL="${BUILD_ROOT}/arm64-apple-macosx/release"

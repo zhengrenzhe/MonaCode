@@ -410,7 +410,7 @@ test('the collector accepts a clean record via --audit (exit 0)', () => {
   writeFileSync(
     cleanPath,
     JSON.stringify({
-      macOS: { version: '26.6.1', build: '25G76' },
+      macOS: { version: '26.6.2', build: '25G83' },
       architecture: 'arm64',
       chrome: { icu: { version: '78.2' } }
     }),

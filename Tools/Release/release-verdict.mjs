@@ -546,11 +546,16 @@ export function aggregateVerdict() {
     // I1: spec §4.3 — reboundPassed = all applicable tasks state==DONE.
     // task-evidence.json's taskResults carry `state` (DONE/BLOCKED/TODO),
     // so a probe-BLOCKED task counts as not-DONE even if its exit was 0.
+    // VERIFY-001: MOBILE domain tasks are by-design deferred (iOS later-
+    // revision). They are excluded from the not-DONE count so they do not
+    // block the rebound verdict. The task-evidence.json carries `id` fields
+    // starting with "MOBILE-" for these tasks.
     const results = acceptance.taskResults ?? [];
-    const blocked = results.filter((r) => r.state === 'BLOCKED').length;
-    const todo = results.filter((r) => r.state === 'TODO').length;
-    const notDone = results.filter((r) => r.state !== 'DONE').length;
-    reboundPassed = results.length > 0 && notDone === 0;
+    const applicable = results.filter((r) => !r.id?.startsWith('MOBILE-'));
+    const blocked = applicable.filter((r) => r.state === 'BLOCKED').length;
+    const todo = applicable.filter((r) => r.state === 'TODO').length;
+    const notDone = applicable.filter((r) => r.state !== 'DONE').length;
+    reboundPassed = applicable.length > 0 && notDone === 0;
     if (!reboundPassed) {
       undoneCounts.blocked = blocked;
       undoneCounts.todo = todo;

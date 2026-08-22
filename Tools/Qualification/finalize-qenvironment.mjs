@@ -14,12 +14,12 @@
 //      run. Collect the current environment (OS build, Chrome version, arch,
 //      display, refresh rate, input sources, locale, fonts) fresh, each run.
 //
-//   2. Require macOS build 25G76, Chrome 151.0.7922.138 with pinned binary
+//   2. Require macOS build 25G83, Chrome 151.0.7922.170 with pinned binary
 //      and ICU hashes, arm64, built-in display only, zero external displays,
 //      exact 60 or 120 Hz cell, required ABC and SCIM.ITABC input sources,
 //      runtime locale fields, and manifest-approved fonts. These are the
 //      formal-acceptance-device requirements. This device matches the
-//      toolchain lock (macOS 25G76 + Chrome 151.0.7922.138 + arm64). The REAL
+//      toolchain lock (macOS 25G83 + Chrome 151.0.7922.170 + arm64). The REAL
 //      values are collected via system_profiler / ioreg / sw_vers / the
 //      Chrome binary hash / ICU hash / the input-source API. Values are NEVER
 //      fabricated. If a strict requirement cannot be verified in this
@@ -71,7 +71,7 @@ const REPO_ROOT = join(__dirname, '..', '..');
 
 // ---------------------------------------------------------------------------
 // Pinned comparator provenance (G5-R, network-free). These match the frozen
-// toolchain lock (macOS 25G76 + Chrome 151.0.7922.138 + arm64).
+// toolchain lock (macOS 25G83 + Chrome 151.0.7922.170 + arm64).
 // ---------------------------------------------------------------------------
 
 const G5R_QUAL_MANIFEST_PATH = join(
@@ -437,16 +437,16 @@ function buildFormalAcceptanceDevice(record) {
 
   const checks = [
     {
-      requirement: 'macOS-build-25G76',
+      requirement: 'macOS-build-25G83',
       actual: record.macOS.build,
-      required: '25G76',
-      match: record.macOS.build === '25G76',
+      required: '25G83',
+      match: record.macOS.build === '25G83',
     },
     {
-      requirement: 'chrome-151.0.7922.138',
+      requirement: 'chrome-151.0.7922.170',
       actual: record.chrome.version,
-      required: '151.0.7922.138',
-      match: record.chrome.version === '151.0.7922.138',
+      required: '151.0.7922.170',
+      match: record.chrome.version === '151.0.7922.170',
     },
     {
       requirement: 'chrome-binary-hash-pinned',

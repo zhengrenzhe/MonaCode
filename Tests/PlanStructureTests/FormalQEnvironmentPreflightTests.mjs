@@ -12,8 +12,8 @@
 //
 //   1. Collects a FRESH environment identity each run (OS build, Chrome
 //      version, arch, display, refresh rate, input sources, locale, fonts).
-//   2. Requires the formal-acceptance-device profile: macOS build 25G76,
-//      Chrome 151.0.7922.138 with pinned binary + ICU hashes, arm64,
+//   2. Requires the formal-acceptance-device profile: macOS build 25G83,
+//      Chrome 151.0.7922.170 with pinned binary + ICU hashes, arm64,
 //      built-in display only, zero external displays, exact 60 or 120 Hz cell,
 //      required ABC + SCIM.ITABC input sources, runtime locale fields, and
 //      manifest-approved fonts. Hardware mismatches are flagged as CONCERNS,
@@ -213,8 +213,8 @@ test('Operation 2: the formal-acceptance-device profile checks every strict requ
 
   // Every formal-acceptance-device requirement is checked.
   const expectedReqs = [
-    'macOS-build-25G76',
-    'chrome-151.0.7922.138',
+    'macOS-build-25G83',
+    'chrome-151.0.7922.170',
     'chrome-binary-hash-pinned',
     'chrome-icu-hash-pinned',
     'arch-arm64',
@@ -299,7 +299,7 @@ test('Operation 3: the privacy filter hard-fails when the collected record carri
     () => {
       // The finalizer exposes the recursive audit; a forbidden record throws.
       const forbidden = {
-        macOS: { version: '26.6.1', build: '25G76' },
+        macOS: { version: '26.6.2', build: '25G83' },
         serial: 'redacted',
         value: 'BF2C6A3A-E639-51FE-853D-E9CE245A77D6',
       };

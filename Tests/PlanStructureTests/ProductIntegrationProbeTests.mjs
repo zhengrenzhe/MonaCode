@@ -251,7 +251,11 @@ for (const fixture of seededCases) {
   });
 }
 
-test('CURRENT_RELEASE_EVIDENCE_STALE compares the two source digests directly', () => {
+test('CURRENT_RELEASE_EVIDENCE_STALE is no longer emitted (rebound handles stale)', () => {
+  // The finding was removed: the release-verdict current-acceptance-rebound
+  // mechanism handles stale→rebound conversion. The probe no longer duplicates
+  // that blocker, so both matching and mismatched digests produce zero findings
+  // for the resolved source set.
   assert.equal(
     audit(RESOLVED_SOURCES, FROZEN_DIGEST, FROZEN_DIGEST).findings
       .some((finding) => finding.id === 'CURRENT_RELEASE_EVIDENCE_STALE'),
@@ -260,7 +264,7 @@ test('CURRENT_RELEASE_EVIDENCE_STALE compares the two source digests directly', 
   assert.equal(
     audit(RESOLVED_SOURCES, '0'.repeat(64), FROZEN_DIGEST).findings
       .some((finding) => finding.id === 'CURRENT_RELEASE_EVIDENCE_STALE'),
-    true,
+    false,
   );
 });
 
@@ -268,16 +272,11 @@ test('current repository findings and exact task bindings are source-backed', ()
   const { findings } = auditProductIntegration(REPO_ROOT);
   const byID = new Map(findings.map((finding) => [finding.id, finding]));
 
-  assert.deepEqual([...byID.keys()].sort(), [
-    'CURRENT_RELEASE_EVIDENCE_STALE',
-  ]);
-
-  const phase89 = loadContractCatalog(REPO_ROOT).planTasks
-    .filter((task) => task.phase === '08' || task.phase === '09')
-    .map((task) => task.id)
-    .sort();
-  assert.equal(phase89.length, 40);
-  assert.deepEqual(byID.get('CURRENT_RELEASE_EVIDENCE_STALE').taskIDs, phase89);
+  // CURRENT_RELEASE_EVIDENCE_STALE was removed: the probe no longer emits
+  // any finding for the current repository (rebound handles stale in the
+  // verdict tool). All product-integration findings from subprojects A-D
+  // were eliminated, so the current source produces zero findings.
+  assert.deepEqual([...byID.keys()].sort(), []);
 
   for (const finding of findings) {
     assert.equal(finding.paths.length > 0, true, `${finding.id} must name source paths`);
@@ -286,18 +285,14 @@ test('current repository findings and exact task bindings are source-backed', ()
   }
 });
 
-test('probe CLI emits canonical parseable JSON and exits 1 for current findings', () => {
+test('probe CLI emits canonical parseable JSON and exits 0 with zero findings', () => {
   const result = spawnSync(
     NODE,
     ['Comparators/probes/product-integration-probe.mjs'],
     { cwd: REPO_ROOT, encoding: 'utf8' },
   );
 
-  assert.equal(result.status, 1, result.stderr);
+  assert.equal(result.status, 0, result.stderr);
   const parsed = JSON.parse(result.stdout);
-  assert.equal(parsed.findings.length, 1);
-  assert.deepEqual(
-    parsed.findings.map((finding) => finding.id),
-    parsed.findings.map((finding) => finding.id).sort(),
-  );
+  assert.equal(parsed.findings.length, 0);
 });

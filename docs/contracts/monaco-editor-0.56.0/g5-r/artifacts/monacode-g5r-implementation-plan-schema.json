@@ -83,10 +83,10 @@
           "$ref": "#/$defs/path"
         },
         "macOSBuild": {
-          "const": "25G76"
+          "const": "25G83"
         },
         "chromeVersion": {
-          "const": "151.0.7922.138"
+          "const": "151.0.7922.170"
         },
         "externalDisplayCountRequired": {
           "const": 0
