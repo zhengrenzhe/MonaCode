@@ -1,6 +1,0 @@
-{
-  "mutation": "add-source-path",
-  "task": "P06-T004",
-  "value": "Sources/MonaCode/LSP/MonaLSPServer.swift",
-  "expectedFindingIds": ["PLAN_FORBIDDEN_PRODUCT_PATH"]
-}

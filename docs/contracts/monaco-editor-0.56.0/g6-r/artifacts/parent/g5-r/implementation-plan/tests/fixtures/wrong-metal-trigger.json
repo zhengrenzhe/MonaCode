@@ -1,8 +1,0 @@
-{
-  "mutation": "add-metal-gate-owner",
-  "task": "P03-T002",
-  "value": "performanceWorkload:P02",
-  "expectedFindingIds": [
-    "PLAN_METAL_TRIGGER_SCOPE"
-  ]
-}

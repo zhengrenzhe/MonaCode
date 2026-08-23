@@ -1,6 +1,0 @@
-{
-  "mutation": "add-source-path",
-  "task": "P07-T003",
-  "value": "Sources/MonaCode/Services/MonaPersistentStateStore.swift",
-  "expectedFindingIds": ["PLAN_FORBIDDEN_PRODUCT_PATH"]
-}

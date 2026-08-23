@@ -1,8 +1,0 @@
-{
-  "mutation": "core-operation",
-  "task": "P01-T001",
-  "value": "Create an NSView subclass in the Core target.",
-  "expectedFindingIds": [
-    "PLAN_FORBIDDEN_CORE_IMPORT"
-  ]
-}

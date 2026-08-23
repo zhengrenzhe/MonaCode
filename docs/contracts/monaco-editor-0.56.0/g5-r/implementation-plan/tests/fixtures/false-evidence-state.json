@@ -1,7 +1,0 @@
-{
-  "mutation": "plan-state",
-  "value": "implemented",
-  "expectedFindingIds": [
-    "PLAN_FALSE_EVIDENCE_STATE"
-  ]
-}

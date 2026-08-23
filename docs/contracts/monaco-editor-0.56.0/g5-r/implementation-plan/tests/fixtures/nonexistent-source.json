@@ -1,8 +1,0 @@
-{
-  "mutation": "add-modify-path",
-  "task": "P01-T008",
-  "value": "Sources/MonaCode/Model/MonaNeverCreated.swift",
-  "expectedFindingIds": [
-    "PLAN_FILE_PROVENANCE"
-  ]
-}

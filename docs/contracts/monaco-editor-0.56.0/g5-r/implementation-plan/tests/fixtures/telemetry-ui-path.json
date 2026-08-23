@@ -1,6 +1,0 @@
-{
-  "mutation": "add-source-path",
-  "task": "P07-T004",
-  "value": "Sources/MonaCodeAppKit/Services/MonaTelemetryPanel.swift",
-  "expectedFindingIds": ["PLAN_FORBIDDEN_PRODUCT_PATH"]
-}

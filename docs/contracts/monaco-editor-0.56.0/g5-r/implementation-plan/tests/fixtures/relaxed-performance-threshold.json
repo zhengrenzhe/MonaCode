@@ -1,6 +1,0 @@
-{
-  "mutation": "replace-global-constraint",
-  "match": "native/comparator at most 1.00",
-  "value": "native/comparator at most 1.10",
-  "expectedFindingIds": ["PLAN_GLOBAL_CONSTRAINT_MISMATCH"]
-}

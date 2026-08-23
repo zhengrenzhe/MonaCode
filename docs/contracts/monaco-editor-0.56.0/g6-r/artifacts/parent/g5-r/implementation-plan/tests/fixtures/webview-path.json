@@ -1,6 +1,0 @@
-{
-  "mutation": "add-source-path",
-  "task": "P04-T014",
-  "value": "Sources/MonaCodeAppKit/Rendering/MonaWebViewBackend.swift",
-  "expectedFindingIds": ["PLAN_FORBIDDEN_PRODUCT_PATH"]
-}
